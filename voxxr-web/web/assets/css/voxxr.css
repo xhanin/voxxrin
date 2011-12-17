@@ -1,0 +1,23 @@
+// FEEDBACK
+
+#feedback .rate {
+    border:     1px solid #CCC;
+    overflow:   visible;
+    padding:    10px;
+    position:   relative;
+    width:      180px;
+    height:     32px;
+}
+#feedback .rate .star {
+    background: url('/assets/img/star_empty.png') no-repeat;
+    float:      left;
+    height:     28px;
+    padding:    2px;
+    width:      32px;  
+}
+#feedback .rate .star.vote {
+    background: url('/assets/img/star_full.png') no-repeat;
+}
+#feedback .rate .star.over {
+    background: url('/assets/img/star_highlight.png') no-repeat;
+}

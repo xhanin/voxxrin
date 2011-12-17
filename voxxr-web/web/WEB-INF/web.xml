@@ -27,7 +27,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.config.property.classnames</param-name>
-            <param-value>voxxr.web.FileResource voxxr.web.JQueryPubSub</param-value>
+            <param-value>voxxr.web.FileResource voxxr.web.JQueryPubSub voxxr.web.Feedback</param-value>
         </init-param>
 
         <load-on-startup>0</load-on-startup>
