@@ -1,61 +1,140 @@
 $(function() {
+    var user = "xavierhanin",
+        room = "123",
+        transport = "streaming";
+
     // COMMON
     function isTouchDevice() {
         return "ontouchstart" in window;
     }
 
-    // FEEDBACK
-    var feedbackPnl = $("#feedback");
 
-    // FEEDBACK.RATE
-    var ratePnl = feedbackPnl.find(".rate");
-    var myRate = {avg: 0, last: 0};
+    function feedback(user, room, v) {
+        return room + '|' + user + '|' + v;
+    }
 
-    var stars = ratePnl.find(".star");
 
-    if (isTouchDevice()) {
-        ratePnl.on('touchend', '.star', function() {
-            stars.removeClass('over');
-            vote($(this).attr('data-rate'));
-            return false;
-        });
-    } else {
-        stars.hover(
-            function() {
-                $(this).prevAll().andSelf().addClass('over');
-                $(this).nextAll().removeClass('vote');
-            },
-            function() {
+    function parseFeedback(f) {
+        var parts = f.split('|');
+        var feedback = {};
+        if (parts.length > 2) {
+            feedback.room = parts[0];
+            feedback.user = parts[1];
+            feedback.value = parts[2];
+        } else {
+            feedback.room = room;
+            feedback.user = parts[0];
+            feedback.value = parts[1];
+        }
+        
+        feedback.isRate = (function() {
+            return this.value.substr(0,1) === 'R'
+        }).bind(feedback);
+
+        feedback.rateValue = (function() {
+            if (this.isRate()) return this.value.substr(1);
+            return null;
+        }).bind(feedback);
+
+        return feedback;
+    }
+
+
+    (function() {
+        // FEEDBACK
+
+        var feedbackPnl = $("#feedback");
+
+        // FEEDBACK.RATE
+        var ratePnl = feedbackPnl.find(".rate");
+        var myRate = {avg: 0, last: 0};
+
+        var stars = ratePnl.find(".star");
+
+        if (isTouchDevice()) {
+            ratePnl.on('touchend', '.star', function() {
                 stars.removeClass('over');
-                setVotes();
-            }
-        );
-
-        ratePnl.on('click', '.star', function() {
-            stars.removeClass('over');
-            vote($(this).attr('data-rate'));
-            return false;
-        });
-    }
-
-
-    function setVotes() {
-        ratePnl
-            .find('[data-rate="' + myRate.last + '"]').prevAll().andSelf().addClass('vote')
-            .find('[data-rate="' + myRate.last + '"]').nextAll().removeClass('vote');
-    }
-
-    function vote(r) {
-        $.ajax({
-            type: "POST",
-            url: "/feedback",
-            data: "R" + r,
-            dataType:"json"
-        }).done(function( resp ) {
-                if (resp.status === 'ok') {
-                    myRate.last = r;
+                vote($(this).attr('data-rate'));
+                return false;
+            });
+        } else {
+            stars.hover(
+                function() {
+                    $(this).prevAll().andSelf().addClass('over');
+                    $(this).nextAll().removeClass('vote');
+                },
+                function() {
+                    stars.removeClass('over');
                     setVotes();
                 }
+            );
+
+            ratePnl.on('click', '.star', function() {
+                stars.removeClass('over');
+                vote($(this).attr('data-rate'));
+                return false;
             });
-    }
+        }
+
+
+        function setVotes() {
+            ratePnl
+                .find('[data-rate="' + myRate.last + '"]').prevAll().andSelf().addClass('vote')
+                .find('[data-rate="' + myRate.last + '"]').nextAll().removeClass('vote');
+        }
+
+        function vote(r) {
+            $.ajax({
+                type: "POST",
+                url: "/feedback",
+                data: feedback(user, room, "R" + r),
+                dataType:"json"
+            }).done(function( resp ) {
+                    if (resp.status === 'ok') {
+                        myRate.last = r;
+                        setVotes();
+                    }
+                });
+        }
+    })();
+
+
+    (function() {
+        // DASHBOARD
+        var dashboardPnl = $("#dashboard");
+
+        var ratePnl = dashboardPnl.find(".rate");
+
+        var rate =  {
+            nb: 0,
+            avg: 0
+        }
+
+        function subscribe() {
+                $.atmosphere.subscribe(
+                    '/room/' + room,
+                    function(response) {
+                        if (response.transport != 'polling' && response.state != 'connected' && response.state != 'closed') {
+                            if (response.status == 200) {
+                                var data = response.responseBody;
+                                if (data.length > 0) {
+                                    var f = parseFeedback(data);
+
+                                    if (f.isRate()) {
+                                        rate.avg = ((rate.avg * rate.nb) + (f.rateValue() * 100)) / (rate.nb + 1);
+                                        rate.nb++;
+
+                                        ratePnl.find(".mean").html((rate.avg / 100).toFixed(2));
+                                    }
+
+                                }
+                            }
+                        }
+                    },
+                    $.atmosphere.request = { transport: transport });
+        }
+
+        subscribe();
+
+    })();
 });
