@@ -31,3 +31,9 @@
 #dashboard .rate .mean {
     font-size: 48px;
 }
+
+
+#rateDrops {
+    width: 160px;
+    height: 60px;
+}

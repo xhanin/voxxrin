@@ -27,14 +27,11 @@ $(function() {
             feedback.value = parts[1];
         }
         
-        feedback.isRate = (function() {
-            return this.value.substr(0,1) === 'R'
-        }).bind(feedback);
-
-        feedback.rateValue = (function() {
-            if (this.isRate()) return this.value.substr(1);
-            return null;
-        }).bind(feedback);
+        feedback.isRate = feedback.value.substr(0,1) === 'R';
+        if (feedback.isRate) {
+            feedback.rateValue = feedback.value.substr(1);
+            feedback.index = feedback.rateValue;
+        }
 
         return feedback;
     }
@@ -120,11 +117,15 @@ $(function() {
                                 if (data.length > 0) {
                                     var f = parseFeedback(data);
 
-                                    if (f.isRate()) {
-                                        rate.avg = ((rate.avg * rate.nb) + (f.rateValue() * 100)) / (rate.nb + 1);
+                                    if (f.isRate) {
+                                        rate.avg = ((rate.avg * rate.nb) + (f.rateValue * 100)) / (rate.nb + 1);
                                         rate.nb++;
 
                                         ratePnl.find(".mean").html((rate.avg / 100).toFixed(2));
+
+
+                                        var rateDrops = Processing.getInstanceById("rateDrops");
+                                        if(rateDrops != null) { rateDrops.addEvenire(f); }
                                     }
 
                                 }

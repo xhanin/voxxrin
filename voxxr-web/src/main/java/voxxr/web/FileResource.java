@@ -40,6 +40,12 @@ public class FileResource {
         return sc.getResourceAsStream("/assets/img/" + ps.getPath());
     }
 
+    @Path("/assets/pde/{path}")
+    @GET
+    public InputStream getPde(@PathParam("path") PathSegment ps) {
+        return sc.getResourceAsStream("/assets/pde/" + ps.getPath());
+    }
+
     @Produces("text/html")
     @GET
     public InputStream getIndex() {
