@@ -8,10 +8,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 /**
- * Simple PubSub resource that demonstrate many functionality supported by
- * Atmosphere JQuery Plugin and Atmosphere Jersey extension.
- *
- * @author Jeanfrancois Arcand
  */
 @Path("/room/{room}")
 @Produces("text/html;charset=ISO-8859-1")
@@ -27,8 +23,8 @@ public class RoomResource {
     public Response preFlightSubscribe(@PathParam("room") String room) {
         return Response.ok()
                 .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET")
-                .header("Access-Control-Allow-Headers", "Origin, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Allow-Methods", "GET, POST")
+                .header("Access-Control-Allow-Headers", "Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-tracking-id, X-Atmosphere-Transport")
                 .build();
     }
 

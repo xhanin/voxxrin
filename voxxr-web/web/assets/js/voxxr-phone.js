@@ -4,13 +4,10 @@ var jQT = new $.jQTouch({
 
 $(function() {
 
-    // LOGIN  screen
-    var login = $("#login");
-
     var user = "xavierhanin",
         room = "123",
-        baseUrl = "http://localhost:8076"
-        transport = "streaming";
+        baseUrl = document.location.protocol === 'file:' ? "http://localhost:8076/r" : "/r",
+        transport = "long-polling";
 
     // COMMON
 
@@ -41,7 +38,6 @@ $(function() {
         return feedback;
     }
 
-
     (function() {
         // FEEDBACK
 
@@ -59,8 +55,15 @@ $(function() {
         });
 
         function setVotes() {
-            ratePnl.find('[data-rate="' + myRate.last + '"]').prevAll().andSelf().addClass('vote');
-            ratePnl.find('[data-rate="' + myRate.last + '"]').nextAll().removeClass('vote');
+            for (var i = 1; i <= 5; i++) {
+                var v = ratePnl.find('[data-rate="' + i + '"]');
+                if (i<=myRate.last) {
+                    v.addClass('vote');
+                } else {
+                    v.removeClass('vote');
+                }
+            }
+
         }
 
         function vote(r) {
@@ -68,16 +71,16 @@ $(function() {
                 type: "POST",
                 url: baseUrl + "/feedback",
                 data: feedback(user, room, "R" + r),
-                dataType:"json"
-            }).done(function( resp ) {
+                dataType:"json",
+                success: function( resp ) {
                     if (resp.status === 'ok') {
                         myRate.last = r;
                         setVotes();
                     }
-                });
+                }
+            });
         }
     })();
-
 
     (function() {
         // DASHBOARD
@@ -115,4 +118,5 @@ $(function() {
         subscribe();
 
     })();
+
 });

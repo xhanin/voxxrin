@@ -5,12 +5,8 @@ import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
 import org.atmosphere.jersey.SuspendResponse;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 
 /**
  * Simple PubSub resource that demonstrate many functionality supported by
@@ -25,6 +21,15 @@ public class JQueryPubSub {
     private
     @PathParam("topic")
     Broadcaster topic;
+
+    @OPTIONS
+    public Response preFlightSubscribe() {
+        return Response.ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST")
+                .header("Access-Control-Allow-Headers", "Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-tracking-id, X-Atmosphere-Transport")
+                .build();
+    }
 
     @GET
     public SuspendResponse<String> subscribe() {

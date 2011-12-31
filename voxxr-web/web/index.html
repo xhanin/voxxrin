@@ -1,11 +1,13 @@
 <html>
   <head>
-      <script type="text/javascript" src="/assets/js/libs/jquery-1.6.4.js"></script>
-      <script type="text/javascript" src="/assets/js/libs/jquery.atmosphere.js"></script>
-      <script type="text/javascript" src="/assets/js/libs/jquery.form.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery-1.6.4.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
 
       <script type="text/javascript">
         $(document).ready(function() {
+            var baseUrl = document.location.protocol === 'file:' ? "http://localhost:8076/r" : "/r";
+
             var connectedEndpoint;
             var callbackAdded = false;
             var detectedTransport = null;
@@ -53,7 +55,7 @@
                     }
                 }
 
-                var location = document.location.toString() + 'pubsub/' + getElementByIdValue('topic');
+                var location =  baseUrl + '/pubsub/' + getElementByIdValue('topic');
                 $.atmosphere.subscribe(location, !callbackAdded ? callback : null,
                         $.atmosphere.request = { transport: getElementByIdValue('transport') });
                 connectedEndpoint = $.atmosphere.response;
@@ -96,7 +98,7 @@
                         m = " sent trying to use " + detectedTransport;
                     }
 
-                    connectedEndpoint.push(document.location.toString() + 'pubsub/' + getElementByIdValue('topic'),
+                    connectedEndpoint.push(baseUrl + '/pubsub/' + getElementByIdValue('topic'),
                             null,
                             $.atmosphere.request = {data: 'message=' + getElementByIdValue('phrase') + m});
 
@@ -118,7 +120,7 @@
                     m = " sent trying to use " + detectedTransport;
                 }
 
-                connectedEndpoint.push(document.location.toString() + 'pubsub/' + getElementById('topic').value,
+                connectedEndpoint.push(baseUrl + '/pubsub/' + getElementById('topic').value,
                         null,
                         $.atmosphere.request = {data: 'message=' + getElementByIdValue('phrase') + m});
 

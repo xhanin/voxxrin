@@ -28,10 +28,9 @@
         <init-param>
             <param-name>com.sun.jersey.config.property.classnames</param-name>
             <param-value>
-                voxxr.web.FileResource
-                voxxr.web.JQueryPubSub
                 voxxr.web.FeedbackResource
                 voxxr.web.RoomResource
+                voxxr.web.JQueryPubSub
             </param-value>
         </init-param>
 
@@ -39,6 +38,10 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>AtmosphereServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/r/*</url-pattern>
     </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>voxxr.html</welcome-file>
+    </welcome-file-list>
 </web-app>

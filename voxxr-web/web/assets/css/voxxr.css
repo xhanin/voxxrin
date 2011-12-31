@@ -9,15 +9,15 @@
     padding:    10px;
     margin:     5px auto;
     position:   relative;
-    width:      360px;
-    height:     64px;
+    width:      300px;
+    height:     60px;
 }
 #feedback .rate .star {
     background: #FF6B6B; /* url('../img/star_empty.png') no-repeat; */
     float:      left;
-    height:     56px;
+    height:     52px;
     margin:     4px;
-    width:      64px;
+    width:      52px;
 }
 #feedback .rate .star.vote {
     background:  #C7F464; /* url('../img/star_full.png') no-repeat; */
