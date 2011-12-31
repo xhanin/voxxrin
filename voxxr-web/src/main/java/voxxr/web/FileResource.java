@@ -51,4 +51,11 @@ public class FileResource {
     public InputStream getIndex() {
         return sc.getResourceAsStream("/voxxr.html");
     }
+
+    @Path("/m")
+    @Produces("text/html")
+    @GET
+    public InputStream getMobileIndex() {
+        return sc.getResourceAsStream("/voxxr-phone.html");
+    }
 }

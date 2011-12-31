@@ -4,7 +4,7 @@ import org.atmosphere.cpr.Broadcaster;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 /**
  * User: xavierhanin
@@ -37,8 +37,7 @@ public class FeedbackResource {
 
 
     @POST
-    @Produces("application/json")
-    public String sendFeedback(String feedback) {
+    public Response sendFeedback(String feedback) {
         Feedback f = Feedback.parse(feedback);
 
         Broadcaster broadcaster = RoomResource.roomBroadcaster(f.room);
@@ -47,6 +46,9 @@ public class FeedbackResource {
             broadcaster.broadcast(feedback);
         }
 
-        return "{\"status\":\"ok\"}";
+        return Response
+                .ok("{\"status\":\"ok\"}", "application/json")
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
     }
 }

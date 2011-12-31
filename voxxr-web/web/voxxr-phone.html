@@ -1,0 +1,163 @@
+<html>
+  <head>
+      <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
+      <script type="application/x-javascript" src="assets/js/libs/jqtouch.js" charset="utf-8"></script>
+      <script type="application/x-javascript" src="assets/js/libs/jqtouch-jquery.js" charset="utf-8"></script>
+
+      <script type="text/javascript" src="assets/js/voxxr-phone.js"></script>
+
+
+      <style type="text/css" media="screen">@import "assets/css/jqtouch/jqtouch.css";</style>
+      <style type="text/css" media="screen">@import "assets/css/jqtouch/themes/jqt/theme.css";</style>
+      <link rel="stylesheet" href="assets/css/voxxr.css" />
+</head>
+<body>
+<div id="jqt">
+    <div id="about" class="selectable">
+            <p>
+                <a href="http://voxxr.in/"><strong>VoxxR</strong>.in</a>
+                <br />Version 1.0 beta<br />
+            </p>
+            <p><br /><br /><a href="#" class="grayButton goback">Close</a></p>
+    </div>
+    <div id="login">
+        <div class="toolbar">
+            <h1>VoxxR.in</h1>
+            <a class="button slideup" href="#about">About</a>
+        </div>
+        <form class="login">
+            <h2>Login</h2>
+            <ul class="edit rounded">
+                <li><input type="text" name="login" placeholder="Login" /></li>
+                <li><input type="password" name="password" placeholder="Password" /></li>
+            </ul>
+            <a href="#events" class="login whiteButton">Login</a>
+            <br/>
+            <a href="#signup" class="grayButton">No account yet?</a>
+        </form>
+    </div>
+    <div id="signup" class="current">
+        <div class="toolbar">
+            <h1>VoxxR.in</h1>
+            <a class="button slideup" href="#about">About</a>
+        </div>
+        <form class="signup">
+            <h2>Sign up</h2>
+            <ul class="edit rounded">
+                <li><input type="text" name="login" placeholder="Login" /></li>
+                <li><input type="password" name="password" placeholder="Password" /></li>
+                <li><input type="password" name="confirmPassword" placeholder="Confirm Password" /></li>
+            </ul>
+            <a href="#events" class="signup whiteButton">Sign up</a>
+            <br/>
+            <a href="#login" class="grayButton">Already have an account?</a>
+        </form>
+    </div>
+    <div id="events">
+        <div class="toolbar">
+            <h1>VoxxR.in</h1>
+            <a class="button slideup" href="#about">About</a>
+        </div>
+        <ul class="metal">
+            <li class="arrow"><a href="#event"><small>72 talks</small> Devoxx FR <em>Apr 18-20, 2012</em></a></li>
+        </ul>
+     </div>
+    <div id="event">
+        <div class="toolbar">
+            <h1>Devoxx FR</h1>
+            <a href="#" class="back">Events</a>
+        </div>
+        <ul class="rounded">
+            <li class="arrow"><a href="#nowplaying">Now playing</a> <small class="counter">4</small></li>
+            <li class="arrow"><a href="#schedule">Full schedule</a> <small class="counter">72</small></li>
+        </ul>
+    </div>
+    <div id="nowplaying">
+        <div class="toolbar">
+            <h1>Now playing</h1>
+            <a href="#" class="back">Event</a>
+        </div>
+        <ul class="metal">
+            <li class="arrow"><a href="#room"><small></small> Lorem Ipsum <em>Dolor Es, 9am, room 1</em></a></li>
+            <li class="arrow"><a href="#room"><small></small> Sic Nergitur <em>Fit Eliat, 9am, room 2</em></a></li>
+            <li class="arrow"><a href="#room"><small></small> Trendy Session <em>Merry Hell, 9am, room 3</em></a></li>
+            <li class="arrow"><a href="#room"><small></small> Ze Highly Interactive Talk <em>Xavier Hanin, 9am, room 4</em></a></li>
+        </ul>
+    </div>
+    <div id="schedule">
+        <div class="toolbar">
+            <h1>Schedule</h1>
+            <a href="#" class="back">Event</a>
+        </div>
+        <ul class="rounded">
+            <li class="arrow"><a href="#dayschedule">Apr 18 - University</a> <small class="counter">18</small></li>
+            <li class="arrow"><a href="#dayschedule">Apr 19 - Conference day 1</a> <small class="counter">24</small></li>
+            <li class="arrow"><a href="#dayschedule">Apr 20 - Conference day 2</a> <small class="counter">18</small></li>
+        </ul>
+    </div>
+    <div id="dayschedule">
+        <div class="toolbar">
+            <h1>University</h1>
+            <a href="#" class="back">Event</a>
+        </div>
+        <ul class="edgetoedge">
+            <li class="sep">Apr 18 - 9am</li>
+            <li><a href="#room">Flintstone, <em>Fred</em></a></li>
+            <li><a href="#room">Flintstone, <em>Pebble</em></a></li>
+            <li><a href="#room">Flintstone, <em>Wilma</em></a></li>
+            <li class="sep">Apr 18 - 10am</li>
+            <li><a href="#room">Jetson, <em>Elroy</em></a></li>
+            <li><a href="#room">Jetson, <em>George</em></a></li>
+            <li><a href="#room">Jetson, <em>Jane</em></a></li>
+            <li><a href="#room">Jetson, <em>Judy</em></a></li>
+            <li class="sep">Apr 18 - 11am</li>
+            <li><a href="#room">Rubble, <em>Bambam</em></a></li>
+            <li><a href="#room">Rubble, <em>Barney</em></a></li>
+            <li><a href="#room">Rubble, <em>Betty</em></a></li>
+        </ul>
+    </div>
+    <div id="room">
+        <div class="toolbar">
+            <h1>Ze Highly Interactive Talk</h1>
+            <a href="#" class="back">Back</a>
+        </div>
+        <h2 class="title">Ze Highly Interactive Talk <span>Apr 18, 9am</span></h2>
+        <a href="#roomRT" class="joinroom flipleft greenButton">Join room now</a>
+        <h2>Abstract</h2>
+        <p>What makes a Java developer "well-grounded"?<br/>
+We believe that in the coming years, one of the most important skills a developer needs is a sense of perspective. Perspective is ...<a>[read more]</a>
+        </p>
+        <h2>Speaker(s)</h2>
+        <ul>
+            <li>Martijn Verburg</li>
+            <li>Ben Evans</li>
+        </ul>
+    </div>
+    <div id="roomRT">
+        <h1>Ze Highly Interactive Talk</h1>
+        <div id="feedback">
+            How do you rate it right now?
+            <div class="rate">
+                <a class="star" data-rate="1" href="#"></a>
+                <a class="star" data-rate="2" href="#"></a>
+                <a class="star" data-rate="3" href="#"></a>
+                <a class="star" data-rate="4" href="#"></a>
+                <a class="star" data-rate="5" href="#"></a>
+            </div>
+            <div class="dashboard">
+                <span class="rateMean"></span>
+            </div>
+            <div class="feeling">
+                <div class="applause"></div>
+                <div class="yawn"></div>
+                <div class="wonder"></div>
+            </div>
+        </div>
+        <br/>
+        <a href="#" class="grayButton goback quit">Quit</a>
+    </div>
+</div>
+</body>
+</html>

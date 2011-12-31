@@ -1,29 +1,33 @@
-// FEEDBACK
+/* http://www.colourlovers.com/palette/1930/cheer_up_emo_kid
+   #556270 #4ECDC4 #FF6B6B #C7F464 #C44D58
+ */
 
+/* FEEDBACK */
+#feedback { height: 300px;}
 #feedback .rate {
-    border:     1px solid #CCC;
     overflow:   visible;
     padding:    10px;
+    margin:     5px auto;
     position:   relative;
-    width:      180px;
-    height:     32px;
+    width:      360px;
+    height:     64px;
 }
 #feedback .rate .star {
-    background: url('/assets/img/star_empty.png') no-repeat;
+    background: #FF6B6B; /* url('../img/star_empty.png') no-repeat; */
     float:      left;
-    height:     28px;
-    padding:    2px;
-    width:      32px;  
+    height:     56px;
+    margin:     4px;
+    width:      64px;
 }
 #feedback .rate .star.vote {
-    background: url('/assets/img/star_full.png') no-repeat;
+    background:  #C7F464; /* url('../img/star_full.png') no-repeat; */
 }
 #feedback .rate .star.over {
-    background: url('/assets/img/star_highlight.png') no-repeat;
+    background: url('../img/star_highlight.png') no-repeat;
 }
 
 
-// DASHBOARD
+/* DASHBOARD */
 #dashboard .rate {
     padding: 20px;
 }
@@ -36,4 +40,21 @@
 #rateDrops {
     width: 160px;
     height: 60px;
+}
+
+/* PHONE */
+#roomRT h1 {
+    color:  #4ECDC4;
+}
+
+#roomRT #feedback .dashboard {
+    width: 160px;
+    height: 52px;
+    margin: 5px auto;
+    text-align: center;
+}
+
+#roomRT #feedback .rateMean {
+    font-size: 48px;
+    color: #C7F464;
 }
