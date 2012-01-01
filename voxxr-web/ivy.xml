@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organization="voxxr" module="voxxr-web"/>
+    <info organisation="voxxr" module="voxxr-web"/>
     <configurations>
         <conf name="default" />
         <conf name="sources" />
