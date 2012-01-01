@@ -6,7 +6,7 @@ $(function() {
 
     var user = "xavierhanin",
         room = "123",
-        baseUrl = document.location.protocol === 'file:' ? "http://localhost:8076/r" : "/r",
+        baseUrl = document.location.protocol === 'file:' ? "http://192.168.0.45:8076/r" : "/r",
         transport = "long-polling";
 
     // COMMON
@@ -67,6 +67,7 @@ $(function() {
         }
 
         function vote(r) {
+            console.debug('-------------- VOTING ', r, ' ON ', baseUrl, "/feedback");
             $.ajax({
                 type: "POST",
                 url: baseUrl + "/feedback",
@@ -77,6 +78,9 @@ $(function() {
                         myRate.last = r;
                         setVotes();
                     }
+                },
+                error: function(xhr, type) {
+                    console.error('-------------- VOTE ERROR' + xhr);
                 }
             });
         }
@@ -92,6 +96,7 @@ $(function() {
         }
 
         function subscribe() {
+                console.info('-------------- SUBSCRIBING TO ' + baseUrl + '/room/' + room);
                 $.atmosphere.subscribe(
                     baseUrl + '/room/' + room,
                     function(response) {

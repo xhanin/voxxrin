@@ -1,4 +1,6 @@
 out
 .idea/workspace.xml
 .DS_Store
-
+voxxr-droid/bin
+voxxr-droid/gen
+voxxr-droid/assets
