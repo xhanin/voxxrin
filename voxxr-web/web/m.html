@@ -143,7 +143,14 @@ We believe that in the coming years, one of the most important skills a develope
     <div id="roomRT" class="current">
         <h1></h1>
         <div class="message">Connecting to room...</div>
-        <div id="feedback" style="display:none;">
+        <div class="content" style="display:none;">
+        <div class="tabs">
+            <ul class="individual">
+                <li><a href="#" class="rate current">RATE</a></li>
+                <li><a href="#" class="poll">POLL</a></li>
+            </ul>
+        </div>
+        <div id="feedback">
             <div class="dashboard">
                 C
                 <span class="connections">###</span>
@@ -163,6 +170,13 @@ We believe that in the coming years, one of the most important skills a develope
                 <div class="yawn"></div>
                 <div class="wonder"></div>
             </div>
+        </div>
+        <div id="poll" style="display:none;">
+            <div class="nopoll">
+                No current poll
+            </div>
+            <ul class="rounded" style="display:none;"></ul>
+        </div>
         </div>
         <br/>
         <div class="reconnect" style="display:none;">

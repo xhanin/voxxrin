@@ -42,6 +42,11 @@ $(function() {
         if (feedback.isTitle) {
             feedback.title = feedback.value.substr(1);
         }
+        feedback.isPollStart = feedback.value.substr(0,2) === 'PS';
+        if (feedback.isPollStart) {
+            feedback.items = feedback.value.substr(2).split(',');
+        }
+        feedback.isPollEnd = feedback.value.substr(0,2) === 'PE';
 
         return feedback;
     }
@@ -112,7 +117,7 @@ $(function() {
                         if (response.state == 'error' || response.state == 'closed') {
                             $("#roomRT .message").text("Room connection lost").show();
                             $("#roomRT div.reconnect").show();
-                            $("#feedback").hide();
+                            $("#roomRT .content").hide();
                             return;
                         }
                         if (response.transport != 'polling'
@@ -127,6 +132,20 @@ $(function() {
                                     }
                                     if (f.isTitle) {
                                         $("#roomRT h1").text(f.title);
+                                    }
+                                    if (f.isPollStart) {
+                                        $("#roomRT #poll .nopoll").hide();
+                                        var p = ''
+                                        $(f.items).each(function(i) {
+                                            p += '<li><a href="#" data-value="' + i + '">' + this + '</a></li>'
+                                        });
+                                        $("#roomRT #poll ul").html(p).show();
+                                        $("#roomRT .tabs a.poll").text('< POLL >');
+                                    }
+                                    if (f.isPollEnd) {
+                                        $("#roomRT #poll .nopoll").show();
+                                        $("#roomRT #poll ul").hide();
+                                        $("#roomRT .tabs a.poll").text('POLL');
                                     }
                                     if (f.isRate) {
                                         rate.avg = ((rate.avg * rate.nb) + (f.rateValue * 100)) / (rate.nb + 1);
@@ -158,7 +177,7 @@ $(function() {
                         rateMean.text((rate.avg / 100).toFixed(2));
                         
                         $("#roomRT .message").hide();
-                        $("#feedback").show();
+                        $("#roomRT .content").show();
                         $("#roomRT div.reconnect").show();
                         subscribe();
                     } else {
@@ -175,12 +194,48 @@ $(function() {
         };
         connect();
 
+        function voteForPoll(r) {
+            console.debug('-------------- VOTING FOR POLL ', r, ' ON ', baseUrl, "/feedback");
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "/feedback",
+                data: feedback(user, "PV" + r),
+                dataType:"json",
+                success: function( resp ) {
+                    if (resp.status === 'ok') {
+                        $("#roomRT #poll ul li a").removeClass("current");
+                        $("#roomRT #poll ul li a[data-value='" + r + "']").addClass("current");
+                    }
+                },
+                error: function(xhr, type) {
+                    console.error('-------------- POLL VOTE ERROR' + xhr);
+                }
+            });
+        }
+
         $("#roomRT a.reconnect").click(function() {
             $.atmosphere.closeSuspendedConnection();
             connect();
         });
 
 
+        $("#roomRT .tabs a.rate").click(function() {
+            $("#roomRT .tabs a").removeClass("current");
+            $(this).addClass("current");
+            $("#roomRT #feedback").show();
+            $("#roomRT div#poll").hide();
+        });
+
+        $("#roomRT .tabs a.poll").click(function() {
+            $("#roomRT .tabs a").removeClass("current");
+            $(this).addClass("current");
+            $("#roomRT #feedback").hide();
+            $("#roomRT div#poll").show();
+        });
+
+        $("#roomRT #poll ul li a").live('click', function() {
+            voteForPoll($(this).attr('data-value'));
+        });
     })();
 
 });
