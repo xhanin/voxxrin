@@ -14,33 +14,33 @@ import javax.ws.rs.core.Response;
 @Path("/feedback")
 public class FeedbackResource {
     public static class Feedback {
-        final String room;
         final String user;
         final String value;
 
-        private Feedback(String room, String user, String value) {
+        private Feedback(String user, String value) {
             this.user = user;
-            this.room = room;
             this.value = value;
         }
 
         @Override
         public String toString() {
-            return room + '|' + user + '|' + value;
+            return user + '|' + value;
         }
 
         public static Feedback parse(String s) {
             String[] parts = s.split("\\|");
-            return new Feedback(parts[0], parts[1], parts[2]);
+            return new Feedback(parts[0], parts[1]);
         }
     }
 
+
+    private String room = "r1";
 
     @POST
     public Response sendFeedback(String feedback) {
         Feedback f = Feedback.parse(feedback);
 
-        Broadcaster broadcaster = RoomResource.roomBroadcaster(f.room);
+        Broadcaster broadcaster = RoomResource.roomBroadcaster(room);
         if (broadcaster != null) {
             System.out.println("broadcasting " + feedback);
             broadcaster.broadcast(feedback);
