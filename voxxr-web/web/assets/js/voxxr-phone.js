@@ -47,29 +47,6 @@ $(function() {
     }
 
     (function() {
-        $.ajax({
-                type: "GET",
-                url: baseUrl + "/room",
-                dataType:"json",
-                success: function( resp ) {
-                    if (resp.status === 'ok') {
-                        $("#roomRT h1").text(resp.title);
-                        $("#feedback .dashboard .connections").text(resp.connections);
-                        $("#feedback").show();
-                    } else {
-                        $("#roomRT h1").text(resp.message);
-                        // TODO: add something to allow to retry
-                    }
-                },
-                error: function(xhr, type) {
-                    console.error('-------------- CONNECTION ERROR' + xhr);
-                    $("#roomRT h1").text("Can't connect to room. Is it currently opened?");
-                        // TODO: add something to allow to retry
-                }
-            });
-    })();
-
-    (function() {
         // FEEDBACK
 
         var feedbackPnl = $("#feedback");
@@ -132,7 +109,14 @@ $(function() {
                 $.atmosphere.subscribe(
                     baseUrl + '/room/rt',
                     function(response) {
-                        if (response.transport != 'polling' && response.state != 'connected' && response.state != 'closed') {
+                        if (response.state == 'error' || response.state == 'closed') {
+                            $("#roomRT .message").text("Room connection lost").show();
+                            $("#roomRT div.reconnect").show();
+                            $("#feedback").hide();
+                            return;
+                        }
+                        if (response.transport != 'polling'
+                            && response.state != 'connected' && response.state != 'closed') {
                             if (response.status == 200) {
                                 var data = response.responseBody;
                                 if (data.length > 0) {
@@ -158,7 +142,44 @@ $(function() {
                     $.atmosphere.request = { transport: transport });
         }
 
-        subscribe();
+        var connect = function() {
+            $("#roomRT div.reconnect").hide();
+            $("#roomRT .message").text("Connecting to room...").show();
+            $.ajax({
+                type: "GET",
+                url: baseUrl + "/room",
+                dataType:"json",
+                success: function(resp) {
+                    if (resp.status === 'ok') {
+                        $("#roomRT h1").text(resp.title);
+                        $("#feedback .dashboard .connections").text(resp.connections);
+                        rate.nb = resp.ratings;
+                        rate.avg = resp.rate * 100;
+                        rateMean.text((rate.avg / 100).toFixed(2));
+                        
+                        $("#roomRT .message").hide();
+                        $("#feedback").show();
+                        $("#roomRT div.reconnect").show();
+                        subscribe();
+                    } else {
+                        $("#roomRT .message").text(resp.message).show();
+                        $("#roomRT div.reconnect").show();
+                    }
+                },
+                error: function(xhr, type) {
+                    console.error('-------------- CONNECTION ERROR', xhr);
+                    $("#roomRT .message").text("Can't connect to room. Is it currently opened?").show();
+                    $("#roomRT div.reconnect").show();
+                }
+            });
+        };
+        connect();
+
+        $("#roomRT a.reconnect").click(function() {
+            $.atmosphere.closeSuspendedConnection();
+            connect();
+        });
+
 
     })();
 

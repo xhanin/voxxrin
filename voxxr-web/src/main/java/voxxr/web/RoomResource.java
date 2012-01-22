@@ -8,6 +8,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  */
@@ -18,6 +20,16 @@ public class RoomResource {
     }
     public static Broadcaster roomBroadcaster(String room, boolean createIfNull) {
         return BroadcasterFactory.getDefault().lookup("room#" + room, createIfNull);
+    }
+
+    // DIRTY AND NON THREAD SAFETY WAY TO STORE SOME DATA, WILL LATER PUT THAT IN A STORE
+    private static BigDecimal rate = BigDecimal.ZERO;
+    private static long ratings;
+
+    public static void rate(int r) {
+        BigDecimal t = rate.multiply(BigDecimal.valueOf(ratings));
+        ratings++;
+        rate = t.add(BigDecimal.valueOf(r)).divide(BigDecimal.valueOf(ratings), 8, RoundingMode.HALF_UP);
     }
 
     private String room = "r1";
@@ -34,7 +46,10 @@ public class RoomResource {
         }
         return Response.ok("{\"status\":\"ok\"" +
                 ",\"title\":\"" + roomTitle + "\"" +
-                ",\"connections\":\"" + connections + "\"}",
+                ",\"connections\":\"" + connections + "\"" +
+                ",\"rate\":" + rate +
+                ",\"ratings\":" + ratings +
+                "}",
                 "application/json")
                 .header("Access-Control-Allow-Origin", "*")
                 .build();

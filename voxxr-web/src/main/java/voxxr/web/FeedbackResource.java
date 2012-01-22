@@ -40,11 +40,23 @@ public class FeedbackResource {
     public Response sendFeedback(String feedback) {
         Feedback f = Feedback.parse(feedback);
 
+        if (f.value.startsWith("R")) {
+            try {
+                RoomResource.rate(Integer.parseInt(f.value.substring(1)));
+            } catch (NumberFormatException e) {
+                return Response
+                        .ok("{\"status\":\"nok\", \"message\":\"Invalid rate\"}", "application/json")
+                        .header("Access-Control-Allow-Origin", "*")
+                        .build();
+            }
+        }
+
         Broadcaster broadcaster = RoomResource.roomBroadcaster(room);
         if (broadcaster != null) {
             System.out.println("broadcasting " + feedback);
             broadcaster.broadcast(feedback);
         }
+
 
         return Response
                 .ok("{\"status\":\"ok\"}", "application/json")
