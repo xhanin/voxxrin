@@ -27,6 +27,33 @@
 }
 
 
+#feedback .feeling {
+    overflow:   visible;
+    padding:    10px;
+    margin:     5px auto;
+    position:   relative;
+    width:      180px;
+    height:     60px;
+}
+
+#feedback .feeling a {
+    float:      left;
+    height:     52px;
+    margin:     4px;
+    width:      52px;
+}
+
+#feedback .feeling .applause {
+    background:  #C7F464;
+}
+#feedback .feeling .yawn {
+    background:  #C44D58;
+}
+#feedback .feeling .wonder {
+    background:  #4ECDC4;
+}
+
+
 /* DASHBOARD */
 #dashboard .rate {
     padding: 20px;

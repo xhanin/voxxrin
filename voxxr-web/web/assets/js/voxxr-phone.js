@@ -97,6 +97,29 @@ $(function() {
                 }
             });
         }
+
+        var feelingPanel = feedbackPnl.find('.feeling');
+        feelingPanel.find('a').tap(function() {
+            feeling($(this).attr('data-value'));
+        });
+
+        function feeling(r) {
+            console.debug('-------------- FEELING ', r, ' ON ', baseUrl, "/feedback");
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "/feedback",
+                data: feedback(user, "F" + r),
+                dataType:"json",
+                success: function( resp ) {
+                    if (resp.status === 'ok') {
+                        feelingPanel.find("a[data-value='" + r + "']").gfxFlipIn({});
+                    }
+                },
+                error: function(xhr, type) {
+                    console.error('-------------- FEELING ERROR' + xhr);
+                }
+            });
+        }
     })();
 
     (function() {
@@ -140,6 +163,9 @@ $(function() {
                                             p += '<li><a href="#" data-value="' + i + '">' + this + '</a></li>'
                                         });
                                         $("#roomRT #poll ul").html(p).show();
+                                        $("#roomRT #poll ul li a").tap(function() {
+                                            voteForPoll($(this).attr('data-value'));
+                                        });
                                         $("#roomRT .tabs a.poll").text('< POLL >');
                                     }
                                     if (f.isPollEnd) {
@@ -213,29 +239,26 @@ $(function() {
             });
         }
 
-        $("#roomRT a.reconnect").click(function() {
+        $("#roomRT a.reconnect").tap(function() {
             $.atmosphere.closeSuspendedConnection();
             connect();
         });
 
 
-        $("#roomRT .tabs a.rate").click(function() {
+        $("#roomRT .tabs a.rate").tap(function() {
             $("#roomRT .tabs a").removeClass("current");
             $(this).addClass("current");
             $("#roomRT #feedback").show();
             $("#roomRT div#poll").hide();
         });
 
-        $("#roomRT .tabs a.poll").click(function() {
+        $("#roomRT .tabs a.poll").tap(function() {
             $("#roomRT .tabs a").removeClass("current");
             $(this).addClass("current");
             $("#roomRT #feedback").hide();
             $("#roomRT div#poll").show();
         });
 
-        $("#roomRT #poll ul li a").live('click', function() {
-            voteForPoll($(this).attr('data-value'));
-        });
     })();
 
 });
