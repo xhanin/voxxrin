@@ -18,6 +18,12 @@
     height:     52px;
     margin:     4px;
     width:      52px;
+
+    border: 1px solid #333;
+    -webkit-border-radius: 8px;
+    -webkit-box-sizing: border-box;
+    -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
+    box-sizing: border-box;
 }
 #feedback .rate .star.vote {
     background:  #C7F464; /* url('../img/star_full.png') no-repeat; */
@@ -41,6 +47,12 @@
     height:     52px;
     margin:     4px;
     width:      52px;
+        
+    border: 1px solid #333;
+    -webkit-border-radius: 8px;
+    -webkit-box-sizing: border-box;
+    -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
+    box-sizing: border-box;
 }
 
 #feedback .feeling .applause {
@@ -98,4 +110,3 @@
 a.current {
     background-color: #C7F464;
 }
-
