@@ -9,6 +9,10 @@ $(function() {
         baseUrl = "http://r" + room + ".voxxr.in:8076/r",
         transport = "long-polling";
 
+    if ('WebSocket' in window) {
+        transport = "websocket";
+    }
+
     // COMMON
 
     function feedback(user, v) {
@@ -133,7 +137,7 @@ $(function() {
         }
 
         function subscribe() {
-                console.info('-------------- SUBSCRIBING TO ' + baseUrl + '/room/rt');
+                console.info('-------------- SUBSCRIBING TO ', baseUrl, '/room/rt', ' with transport ', transport);
                 $.atmosphere.subscribe(
                     baseUrl + '/room/rt',
                     function(response) {
