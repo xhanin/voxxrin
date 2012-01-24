@@ -270,7 +270,7 @@
         }
         function goTo(toPage, animation) {
 
-            var fromPage = history[0].page;
+            var fromPage = history[0] ? history[0].page : '';
 
             if (typeof animation === 'string') {
                 for (var i=0, max=animations.length; i < max; i++) {
@@ -300,7 +300,7 @@
             }
         }
         function hashChangeHandler(e) {
-            if (location.hash === history[0].hash) {
+            if (history[0] && location.hash === history[0].hash) {
                 return true;
             } else if (location.hash === '') {
                 goBack();
