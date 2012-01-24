@@ -1366,6 +1366,7 @@ window.Zepto = Zepto;
     }
   }
 
+  var doubleTapDelay = 50;
   var longTapDelay = 750;
   function longTap(){
     if (touch.last && (Date.now() - touch.last >= longTapDelay)) {
@@ -1381,7 +1382,7 @@ window.Zepto = Zepto;
       touchTimeout && clearTimeout(touchTimeout);
       touch.x1 = e.touches[0].pageX;
       touch.y1 = e.touches[0].pageY;
-      if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
+      if (delta > 0 && delta <= doubleTapDelay) touch.isDoubleTap = true;
       touch.last = now;
       setTimeout(longTap, longTapDelay);
     }).bind('touchmove', function(e){
@@ -1401,7 +1402,7 @@ window.Zepto = Zepto;
           touchTimeout = null;
           $(touch.target).trigger('tap')
           touch = {};
-        }, 250);
+        }, doubleTapDelay);
       }
     }).bind('touchcancel', function(){ touch = {} });
   });
