@@ -71,19 +71,21 @@ $(function() {
             return false;
         });
 
-        function setVotes() {
+        function setVotes(rate, style) {
+            rate = rate || myRate.last;
+            style = style || 'vote';
             for (var i = 1; i <= 5; i++) {
                 var v = ratePnl.find('[data-rate="' + i + '"]');
-                if (i<=myRate.last) {
-                    v.addClass('vote');
-                } else {
-                    v.removeClass('vote');
+                v.removeClass('vote').removeClass('voting');
+                if (i<=rate) {
+                    v.addClass(style);
                 }
             }
 
         }
 
         function vote(r) {
+            setVotes(r, 'voting');
             console.debug('-------------- VOTING ', r, ' ON ', baseUrl, "/feedback");
             $.ajax({
                 type: "POST",
@@ -92,12 +94,14 @@ $(function() {
                 dataType:"json",
                 success: function( resp ) {
                     if (resp.status === 'ok') {
+                        console.debug('-------------- VOTE SUCCESS ', r);
                         myRate.last = r;
                         setVotes();
                     }
                 },
                 error: function(xhr, type) {
                     console.error('-------------- VOTE ERROR' + xhr);
+                    setVotes();
                 }
             });
         }

@@ -33,6 +33,9 @@
     /* background:  #FBD405; /* url('../img/star_full.png') no-repeat; */
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FBD405), to(#FFAF36));
 }
+#feedback .rate .star.voting {
+    background: #FBD405;
+}
 #feedback .rate .star.over {
     background: url('../img/star_highlight.png') no-repeat;
 }
