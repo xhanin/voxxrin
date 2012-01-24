@@ -118,6 +118,7 @@
         opts = $.extend({}, defaults, options || {}),
         distance,
         third = function () {
+          distance /= 2;
           $that.animate({translateX: distance + 'px'},
             opts.duration, opts.easing, function () {
 
@@ -126,10 +127,12 @@
           });
         },
         second = function () {
+          distance /= 2;
           $that.animate({translateX: '-' + distance + 'px'},
             opts.duration, opts.easing, third);
         },
         first = function () {
+          distance /= 2;
           $that.animate({translateX: distance + 'px'},
             opts.duration, opts.easing, second);
         };

@@ -170,12 +170,14 @@ $(function() {
                                         $("#roomRT #poll ul li a").tap(function() {
                                             voteForPoll($(this).attr('data-value'));
                                         });
-                                        $("#roomRT .tabs a.poll").text('< POLL >');
+                                        $("#roomRT .tabs a.poll").text('< POLL >')
+                                            .gfxShake({distance: 20, duration: 100});
                                     }
                                     if (f.isPollEnd) {
                                         $("#roomRT #poll .nopoll").show();
                                         $("#roomRT #poll ul").hide();
-                                        $("#roomRT .tabs a.poll").text('POLL');
+                                        $("#roomRT .tabs a.poll").text('POLL')
+                                            .gfxShake({distance: 20, duration: 100});
                                     }
                                     if (f.isRate) {
                                         rate.avg = ((rate.avg * rate.nb) + (f.rateValue * 100)) / (rate.nb + 1);
@@ -252,15 +254,17 @@ $(function() {
         $("#roomRT .tabs a.rate").tap(function() {
             $("#roomRT .tabs a").removeClass("current");
             $(this).addClass("current");
-            $("#roomRT #feedback").show();
-            $("#roomRT div#poll").hide();
+            $("#roomRT div#poll").gfxPopOut({duration: 100}, function() {
+                $("#roomRT #feedback").gfxPopIn({duration: 200, easing: 'ease-out'});
+            });
         });
 
         $("#roomRT .tabs a.poll").tap(function() {
             $("#roomRT .tabs a").removeClass("current");
             $(this).addClass("current");
-            $("#roomRT #feedback").hide();
-            $("#roomRT div#poll").show();
+            $("#roomRT #feedback").gfxPopOut({duration: 100}, function() {
+                $("#roomRT div#poll").gfxPopIn({duration: 200, easing: 'ease-out'});
+            });
         });
 
     })();
