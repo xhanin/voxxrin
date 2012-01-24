@@ -83,7 +83,7 @@
     <import file="${sdk.dir}/tools/ant/build.xml" />
 
     <target name="assets" description="--> init assets from voxxr-web module">
-        <copy todir="${basedir}/assets/www">
+        <copy todir="${basedir}/assets/www" overwrite="true">
             <fileset dir="${basedir}/../voxxr-web/web" includes="m.html, assets/**" />
         </copy>
     </target>
