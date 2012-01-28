@@ -4,7 +4,9 @@
 
     <target name="deps" description="--> resolve and fetch dependencies">
         <ivy:retrieve conf="default" pattern="web/WEB-INF/lib/[artifact]-[revision].[ext]" sync="true"/>
+        <ivy:retrieve conf="provided" pattern="lib/[artifact]-[revision].[ext]" sync="true"/>
         <path id="deps">
+            <fileset dir="lib" includes="*.jar" />
             <fileset dir="web/WEB-INF/lib" includes="*.jar" />
         </path>
     </target>
@@ -23,7 +25,7 @@
         </condition>
         <echo>
 ---------------------------------------------------------------------------
--- VOXXRIN ${git.commit} ${git.modified}
+-- ${project.name} ${git.commit} ${git.modified}
 
 ${git.status}
 ---------------------------------------------------------------------------
@@ -32,16 +34,17 @@ ${git.status}
 
     <target name="compile" depends="deps, info"
             description="--> compiles project">
-        <mkdir dir="target/classes" />
-        <javac srcdir="src/main/java" destdir="target/classes"
-               classpathref="deps" includeantruntime="false" />
-        <copy todir="target/classes">
+        <mkdir dir="web/WEB-INF/classes" />
+        <javac srcdir="src/main/java" destdir="web/WEB-INF/classes"
+               classpathref="deps" includeantruntime="false"
+                target="1.6" />
+        <copy todir="web/WEB-INF/classes">
             <fileset dir="src/main/java" excludes="**/*.java" />
         </copy>
     </target>
 
     <target name="package" depends="compile"
             description="--> package this module sources">
-        <jar basedir="target/classes" destfile="target/voxxr-web.jar" />
+        <jar basedir="web" destfile="target/${ant.project.name}.war" />
     </target>
 </project>

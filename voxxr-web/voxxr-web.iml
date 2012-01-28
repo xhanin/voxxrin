@@ -16,7 +16,7 @@
       <facet type="google-app-engine" name="Google App Engine">
         <configuration>
           <password>dfeedfccdfcddff5df93df9adfc6dfc1</password>
-          <sdk-home-path>$MODULE_DIR$/../../../../tools/appengine/appengine-java-sdk-1.5.5</sdk-home-path>
+          <sdk-home-path>$MODULE_DIR$/../../../../tools/appengine/appengine-java-sdk-1.6.1.1</sdk-home-path>
           <email>xavier.hanin@gmail.com</email>
         </configuration>
       </facet>
@@ -41,6 +41,7 @@
       <library name="IvyIDEA">
         <CLASSES>
           <root url="jar://$USER_HOME$/.ivy2/cache/com.google.appengine/appengine-api-1.0-sdk/jars/appengine-api-1.0-sdk-1.6.1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/javax.servlet/servlet-api/jars/servlet-api-2.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

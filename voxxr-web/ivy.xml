@@ -7,5 +7,6 @@
     </configurations>
     <dependencies defaultconf="default,sources->@">
         <dependency org="com.google.appengine" name="appengine-api-1.0-sdk" rev="1.6.1.1" />
+        <dependency org="javax.servlet" name="servlet-api" rev="2.5" conf="provided->default" />
     </dependencies>
 </ivy-module>
