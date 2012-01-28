@@ -12,16 +12,15 @@ public class FeedbackTest {
 
     @Test
     public void shouldParse() {
-        FeedbackResource.Feedback f = FeedbackResource.Feedback.parse("12345|xavierhanin|R2");
+        FeedbackResource.Feedback f = FeedbackResource.Feedback.parse("xavierhanin|R2");
 
-        Assert.assertEquals("12345", f.room);
         Assert.assertEquals("xavierhanin", f.user);
         Assert.assertEquals("R2", f.value);
     }
 
     @Test
     public void shouldToString() {
-        FeedbackResource.Feedback f = FeedbackResource.Feedback.parse("12345|xavierhanin|R2");
-        Assert.assertEquals("12345|xavierhanin|R2", f.toString());
+        FeedbackResource.Feedback f = FeedbackResource.Feedback.parse("xavierhanin|R2");
+        Assert.assertEquals("xavierhanin|R2", f.toString());
     }
 }

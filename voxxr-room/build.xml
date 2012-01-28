@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="voxxr-room"
+        xmlns:ivy="antlib:org.apache.ivy.ant" >
+
+    <target name="deps" description="--> resolve and fetch dependencies">
+        <ivy:retrieve conf="default" pattern="lib/[artifact].[ext]" sync="true"/>
+        <path id="deps">
+            <fileset dir="lib" includes="*.jar" />
+        </path>
+    </target>
+
+    <target name="info">
+        <exec executable="git" outputproperty="git.commit">
+          <arg value="rev-parse"/>
+          <arg value="HEAD" />
+        </exec>
+        <exec executable="git" outputproperty="git.status">
+          <arg value="status"/>
+          <arg value="--porcelain" />
+        </exec>
+        <condition property="git.modified" value="M" else="">
+            <length string="${git.status}" trim="true" when="greater" length="0"/>
+        </condition>
+        <echo>
+---------------------------------------------------------------------------
+-- ${project.name} ${git.commit} ${git.modified}
+
+${git.status}
+---------------------------------------------------------------------------
+        </echo>
+    </target>
+
+    <target name="compile" depends="deps, info"
+            description="--> compiles project">
+        <mkdir dir="target/classes" />
+        <javac srcdir="src/main/java" destdir="target/classes"
+               classpathref="deps" includeantruntime="false" />
+        <copy todir="target/classes">
+            <fileset dir="src/main/java" excludes="**/*.java" />
+        </copy>
+    </target>
+
+    <target name="package" depends="compile"
+            description="--> package this module sources">
+        <jar basedir="target/classes" destfile="target/${project.name}.jar" />
+    </target>
+
+    <target name="run" depends="package"
+            description="--> launch ${project.name}">
+        <echo>
+---------------------------------------------------------------------------
+            STARTING ${project.name} ${git.commit} ${git.modified}
+---------------------------------------------------------------------------
+        </echo>
+        <java fork="true" classname="voxxr.Main">
+            <classpath>
+                <path refid="deps" />
+                <file file="target/${project.name}.jar" />
+            </classpath>
+        </java>
+    </target>
+</project>

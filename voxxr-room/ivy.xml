@@ -1,0 +1,28 @@
+<ivy-module version="2.0">
+    <info organisation="voxxr" module="voxxr-room"/>
+    <configurations>
+        <conf name="default" />
+        <conf name="sources" />
+        <conf name="test" />
+    </configurations>
+    <dependencies defaultconf="default,sources->@">
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.6.4" />
+        <dependency org="ch.qos.logback" name="logback-classic" rev="1.0.0" />
+
+        <dependency org="org.eclipse.jetty" name="jetty-webapp" rev="7.5.1.v20110908" />
+        <dependency org="org.eclipse.jetty" name="jetty-websocket" rev="7.5.1.v20110908" />
+
+        <dependency org="javax.ws.rs" name="jsr311-api" rev="1.1.1"  />
+        <dependency org="com.sun.jersey" name="jersey-core" rev="1.10" />
+        <dependency org="com.sun.jersey" name="jersey-server" rev="1.10" />
+        <dependency org="com.sun.jersey" name="jersey-servlet" rev="1.10" />
+
+        <dependency org="org.atmosphere" name="atmosphere-runtime" rev="0.8.1" />
+        <dependency org="org.atmosphere" name="atmosphere-jersey" rev="0.8.1" />
+        <dependency org="org.atmosphere" name="atmosphere-jquery" rev="0.8.1" />
+
+        <dependency org="junit" name="junit" rev="4.10" conf="test->default" />
+
+        <exclude module="atmosphere-compat-jetty" />
+    </dependencies>
+</ivy-module>
