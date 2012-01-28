@@ -23,7 +23,7 @@
         </condition>
         <echo>
 ---------------------------------------------------------------------------
--- ${project.name} ${git.commit} ${git.modified}
+-- ${ant.project.name} ${git.commit} ${git.modified}
 
 ${git.status}
 ---------------------------------------------------------------------------
@@ -42,20 +42,20 @@ ${git.status}
 
     <target name="package" depends="compile"
             description="--> package this module sources">
-        <jar basedir="target/classes" destfile="target/${project.name}.jar" />
+        <jar basedir="target/classes" destfile="target/${ant.project.name}.jar" />
     </target>
 
     <target name="run" depends="package"
-            description="--> launch ${project.name}">
+            description="--> launch ${ant.project.name}">
         <echo>
 ---------------------------------------------------------------------------
-            STARTING ${project.name} ${git.commit} ${git.modified}
+            STARTING ${ant.project.name} ${git.commit} ${git.modified}
 ---------------------------------------------------------------------------
         </echo>
         <java fork="true" classname="voxxr.Main">
             <classpath>
                 <path refid="deps" />
-                <file file="target/${project.name}.jar" />
+                <file file="target/${ant.project.name}.jar" />
             </classpath>
         </java>
     </target>
