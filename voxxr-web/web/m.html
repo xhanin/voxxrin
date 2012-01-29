@@ -7,6 +7,8 @@
         -->
       <!--<script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>-->
       <script type="text/javascript" src="assets/js/libs/zepto-0.8.js"></script>
+      <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
+      <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
       <script type="text/javascript" src="assets/js/libs/zepto-gfx.js"></script>
@@ -24,14 +26,14 @@
 <div id="jqt">
     <div id="about" class="selectable">
             <p>
-                <a href="http://voxxr.in/"><strong>VoxxR</strong>.in</a>
+                <a href="http://Voxxr/"><strong>VoxxR</strong>.in</a>
                 <br />Version 1.0 beta<br />
             </p>
             <p><br /><br /><a href="#" class="grayButton goback">Close</a></p>
     </div>
     <div id="login">
         <div class="toolbar">
-            <h1>VoxxR.in</h1>
+            <h1>Voxxr</h1>
             <a class="button slideup" href="#about">About</a>
         </div>
         <form class="login">
@@ -47,7 +49,7 @@
     </div>
     <div id="signup">
         <div class="toolbar">
-            <h1>VoxxR.in</h1>
+            <h1>Voxxr</h1>
             <a class="button slideup" href="#about">About</a>
         </div>
         <form class="signup">
@@ -62,35 +64,37 @@
             <a href="#login" class="grayButton">Already have an account?</a>
         </form>
     </div>
-    <div id="events">
+    <div id="events" class="current">
         <div class="toolbar">
-            <h1>VoxxR.in</h1>
+            <h1>Voxxr ~ Events</h1>
             <a class="button slideup" href="#about">About</a>
         </div>
-        <ul class="metal">
-            <li class="arrow"><a href="#event"><small>72 talks</small> Devoxx FR <em>Apr 18-20, 2012</em></a></li>
+        <ul class="metal events"  data-bind="foreach: events">
+            <li class="arrow"><a href="#event" data-bind='attr: { "data-eventId": id }, click: $root.chosenEvent'>
+                <small><span data-bind="text: nbTalks"> </span> talks</small> <span data-bind="text: title"> </span>
+                <em><span data-bind="text: subtitle"> </span> ~ <span data-bind="text: dates"> </span></em>
+            </a></li>
         </ul>
      </div>
-    <div id="event">
+    <div id="event" data-bind="with: chosenEvent">
         <div class="toolbar">
-            <h1>Devoxx FR</h1>
+            <h1 data-bind="text: title"></h1>
             <a href="#" class="back">Events</a>
         </div>
         <ul class="rounded">
-            <li class="arrow"><a href="#nowplaying">Now playing</a> <small class="counter">4</small></li>
-            <li class="arrow"><a href="#schedule">Full schedule</a> <small class="counter">72</small></li>
+            <li class="arrow nowplaying"><a href="#nowplaying">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
+            <li class="arrow schedule"><a href="#schedule">Full schedule</a> <small class="counter" data-bind="text: nbTalks"></small></li>
         </ul>
     </div>
-    <div id="nowplaying">
+    <div id="nowplaying" data-bind="with: chosenEvent">
         <div class="toolbar">
             <h1>Now playing</h1>
             <a href="#" class="back">Event</a>
         </div>
-        <ul class="metal">
-            <li class="arrow"><a href="#room"><small></small> Lorem Ipsum <em>Dolor Es, 9am, room 1</em></a></li>
-            <li class="arrow"><a href="#room"><small></small> Sic Nergitur <em>Fit Eliat, 9am, room 2</em></a></li>
-            <li class="arrow"><a href="#room"><small></small> Trendy Session <em>Merry Hell, 9am, room 3</em></a></li>
-            <li class="arrow"><a href="#room"><small></small> Ze Highly Interactive Talk <em>Xavier Hanin, 9am, room 4</em></a></li>
+        <ul class="metal" data-bind="foreach: nowplaying">
+            <li class="arrow"><a href="#room"><small></small> <span data-bind="text: title"> </span>
+                <em><span data-bind="text: speakerNames"> </span>,
+                    <span data-bind="text: start"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
         </ul>
     </div>
     <div id="schedule">
@@ -142,7 +146,7 @@ We believe that in the coming years, one of the most important skills a develope
             <li>Ben Evans</li>
         </ul>
     </div>
-    <div id="roomRT" class="current">
+    <div id="roomRT">
         <h1></h1>
         <div class="message">Connecting to room...</div>
         <div class="content" style="display:none;">

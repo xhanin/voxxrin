@@ -11,7 +11,7 @@ import java.io.IOException;
  * Date: 1/28/12
  * Time: 8:51 PM
  */
-public class EventsResources extends HttpServlet {
+public class NowPlayingResources extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
@@ -20,13 +20,10 @@ public class EventsResources extends HttpServlet {
         response.addHeader("Content-Type", "application/json");
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.getWriter().write("[" +
-                "{" +
-                "\"id\":\"1\"," +
-                "\"title\":\"BordeauxJUG\"," +
-                "\"subtitle\":\"Soiree Voxxr / Neo4j\"," +
-                "\"nbTalks\":2," +
-                "\"dates\":\"Apr 12, 2012\"" +
-                "}" +
+                "{\"id\":\"1\", \"title\":\"Ze Highly Interactive Talk\", \"speakers\": [\"Xavier Hanin\"], \"start\": \"7pm\", \"room\": {\"id\":\"1\", \"name\": \"Room 1\"}}," +
+                "{\"id\":\"2\", \"title\":\"Neo4J\", \"speakers\": [\"TRE TRE\", \"DFG DFG\"], \"start\": \"7pm\", \"room\": {\"id\":\"1\", \"name\": \"Room 1\"}}" +
                 "]");
     }
 }
+
+

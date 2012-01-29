@@ -14,6 +14,15 @@
         <url-pattern>/r/events</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>NowPlayingResources</servlet-name>
+        <servlet-class>voxxr.web.NowPlayingResources</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NowPlayingResources</servlet-name>
+        <url-pattern>/r/events/nowplaying/*</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>voxxr.html</welcome-file>
     </welcome-file-list>
