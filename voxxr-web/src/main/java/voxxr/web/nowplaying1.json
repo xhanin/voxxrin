@@ -1,0 +1,12 @@
+[
+    {"id":"1", "title":"Ze Highly Interactive Talk", "type":"Talk", "kind":"Talk",
+        "uri":"/r/events/1//presentations/1",
+        "speakers": [{"id":1, "name":"Xavier Hanin", "uri":"/r/events/1/speakers/1"}],
+        "room": {"id":"1", "name": "Room 1", "uri": "/r/events/1/room/1"},
+        "start": "7pm", "fromTime":"2012-04-18 19:00:00.0","toTime":"2011-11-15 12:30:00.0"},
+    {"id":"2", "title":"Neo4j", "type":"Talk", "kind":"Talk",
+        "uri":"/r/events/1//presentations/1",
+        "speakers": [{"id":2, "name":"TRE TRE", "uri":"/r/events/1/speakers/2"}, {"id":3, "name":"DFG DFG", "uri":"/r/events/1/speakers/3"}],
+        "room": {"id":"1", "name": "Room 1", "uri": "/r/events/1/room/1"},
+        "start": "7pm", "fromTime":"2012-04-18 19:00:00.0","toTime":"2011-11-15 12:30:00.0"}
+]

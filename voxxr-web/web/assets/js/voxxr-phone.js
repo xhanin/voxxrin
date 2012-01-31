@@ -9,20 +9,41 @@ $(function() {
     function Room(data) {
         var self = this;
         self.id = ko.observable(data.id);
+        self.uri = ko.observable(data.uri);
         self.name = ko.observable(data.name);
     }
 
-    function Talk(data) {
+    function Speaker(data) {
         var self = this;
         self.id = ko.observable(data.id);
+        self.uri = ko.observable(data.uri);
+        self.name = ko.observable(data.name);
+    }
+
+    function Presentation(data) {
+        var self = this;
+        self.id = ko.observable(data.id);
+        self.uri = ko.observable(data.uri);
         self.title = ko.observable(data.title);
-        self.speakers = ko.observableArray(data.speakers);
+        self.speakers = ko.observableArray(_(data.speakers).map(function(s) { return new Speaker(s);}));
         self.start = ko.observable(data.start);
+        self.fromTime = ko.observable(data.fromTime);
+        self.toTime = ko.observable(data.toTime);
         self.room = ko.observable(new Room(data.room));
 
         self.speakerNames = ko.computed(function() {
-            return ko.toJS(this.speakers).join(', ');
+            return _(this.speakers()).map(function(s){return s.name();}).join(', ');
         }, self);
+    }
+
+    function ScheduleDay(data) {
+        var self = this;
+        self.id = ko.observable(data.id);
+        self.uri = ko.observable(data.uri);
+        self.name = ko.observable(data.name);
+        self.presentations = ko.observableArray([]);
+
+        // TODO: add load function
     }
 
     function Event(data) {
@@ -30,21 +51,27 @@ $(function() {
         self.id = ko.observable(data.id);
         self.title = ko.observable(data.title);
         self.subtitle = ko.observable(data.subtitle);
-        self.nbTalks = ko.observable(data.nbTalks);
+        self.nbPresentations = ko.observable(data.nbPresentations);
         self.dates = ko.observable(data.dates);
         self.nowplaying = ko.observableArray([]);
+        self.days = ko.observableArray(_(data.days).map(function(day) { return new ScheduleDay(day);}));
 
-//        $.getJSON(baseUrl + "/events/" + id() + "/nowplaying", function(data) {
-        // TODO: we shoudn't trigger that right now, but only when we want to access event detail (enter event)
-        $.getJSON(baseUrl + "/events/nowplaying/" + self.id(), function(data) {
-            self.nowplaying(_(data).map(function(talk) { return new Talk(talk); }));
-        });
+        self.refreshNowPlaying = function() {
+            $.getJSON(baseUrl + "/events/" + self.id() + "/nowplaying", function(data) {
+                self.nowplaying(_(data).map(function(presentation) { return new Presentation(presentation); }));
+            });
+        }
     }
 
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
         self.chosenEvent = ko.observable(null);
+
+        self.selectEvent = function(event) {
+            event.refreshNowPlaying();
+            self.chosenEvent(event);
+        };
 
         $.getJSON(baseUrl + "/events", function(data) {
             self.events(_(data).map(function(event) { return new Event(event); }));
@@ -57,63 +84,7 @@ $(function() {
         ko.applyBindings(voxxr);
     })();
 
-    (function(){
-        function displayEvents(events) {
-            var eventsLis = '';
-            _(events).each(function(event){
-                eventsLis +=
-                    '<li class="arrow"><a href="#event" class="event">' +
-                        '<small>' + event.nbTalks + ' talks</small> ' +
-                        event.title + ' ' +
-                        '<em>' + (event.subtitle ? event.subtitle + ' ~ ' : '') + event.dates + '</em>' +
-                    '</a></li>';
-            });
-            $("#events ul.events").html(eventsLis);
-        }
 
-        function loadEvents() {
-            $.ajax({
-                url: baseUrl + "/events",
-                type: 'GET',
-                dataType: 'json',
-                success: function(events) {
-                    voxxr.events = events;
-                    displayEvents(voxxr.events);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR, textStatus, errorThrown);
-                }
-            });
-        }
-
-        $("#events ul.events").empty();
-        loadEvents();
-    });
-
-
-    (function(){
-        function displayEvent(event) {
-            var page = $("#event");
-            page.find('.title').text(event.title);
-            page.find('.schedule .counter').text(event.nbTalks);
-            page.find('.nowplaying .counter').text(event.nowplaying ? event.nowplaying.length : '');
-        }
-
-        function loadEventNowPlaying(event) {
-            $.ajax({
-                url: baseUrl + "/events/" + event.id + "/nowplaying",
-                type: 'GET',
-                dataType: 'json',
-                success: function(nowplaying) {
-                    event.nowplaying = nowplaying;
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR, textStatus, errorThrown);
-                }
-            });
-        }
-
-    });
 //    var room = "1",
 //        baseRoomUrl = "http://r" + room + ".voxxr.in:8076/r";
 

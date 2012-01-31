@@ -70,8 +70,8 @@
             <a class="button slideup" href="#about">About</a>
         </div>
         <ul class="metal events"  data-bind="foreach: events">
-            <li class="arrow"><a href="#event" data-bind='attr: { "data-eventId": id }, click: $root.chosenEvent'>
-                <small><span data-bind="text: nbTalks"> </span> talks</small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a href="#event" data-bind='attr: { "data-eventId": id }, click: $root.selectEvent'>
+                <small><span data-bind="text: nbPresentations"> </span> pres'</small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: subtitle"> </span> ~ <span data-bind="text: dates"> </span></em>
             </a></li>
         </ul>
@@ -83,7 +83,7 @@
         </div>
         <ul class="rounded">
             <li class="arrow nowplaying"><a href="#nowplaying">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
-            <li class="arrow schedule"><a href="#schedule">Full schedule</a> <small class="counter" data-bind="text: nbTalks"></small></li>
+            <li class="arrow schedule"><a href="#schedule">Full schedule</a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="nowplaying" data-bind="with: chosenEvent">
