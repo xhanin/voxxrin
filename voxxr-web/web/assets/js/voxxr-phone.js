@@ -41,6 +41,7 @@ $(function() {
         self.id = ko.observable(data.id);
         self.uri = ko.observable(data.uri);
         self.name = ko.observable(data.name);
+        self.nbPresentations = ko.observable(data.nbPresentations);
         self.presentations = ko.observableArray([]);
 
         // TODO: add load function

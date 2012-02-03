@@ -83,7 +83,10 @@
         </div>
         <ul class="rounded">
             <li class="arrow nowplaying"><a href="#nowplaying">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
-            <li class="arrow schedule"><a href="#schedule">Full schedule</a> <small class="counter" data-bind="text: nbPresentations"></small></li>
+        </ul>
+        <h2>Schedule</h2>
+        <ul class="rounded" data-bind="foreach: days">
+            <li class="arrow"><a href="#dayschedule"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="nowplaying" data-bind="with: chosenEvent">
@@ -97,15 +100,13 @@
                     <span data-bind="text: start"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
         </ul>
     </div>
-    <div id="schedule">
+    <div id="schedule" data-bind="with: chosenEvent">
         <div class="toolbar">
             <h1>Schedule</h1>
             <a href="#" class="back">Event</a>
         </div>
-        <ul class="rounded">
-            <li class="arrow"><a href="#dayschedule">Apr 18 - University</a> <small class="counter">18</small></li>
-            <li class="arrow"><a href="#dayschedule">Apr 19 - Conference day 1</a> <small class="counter">24</small></li>
-            <li class="arrow"><a href="#dayschedule">Apr 20 - Conference day 2</a> <small class="counter">18</small></li>
+        <ul class="rounded" data-bind="foreach: days">
+            <li class="arrow"><a href="#dayschedule"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="dayschedule">
