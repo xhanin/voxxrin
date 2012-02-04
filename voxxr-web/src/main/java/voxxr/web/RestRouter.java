@@ -39,7 +39,9 @@ public class RestRouter extends HttpServlet {
     private final List<Route> routes = Arrays.asList(
         new Route(new EventsResources(), Pattern.compile("/r/events"), new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new NowPlayingResources(), Pattern.compile("/r/events/(\\d+)/nowplaying"),
-                new ImmutableMap.Builder<Integer, String>().put(1, "eventId").build())
+                new ImmutableMap.Builder<Integer, String>().put(1, "eventId").build()),
+        new Route(new DayScheduleResources(), Pattern.compile("/r/events/(\\d+)/day/(\\d+)"),
+                new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "dayId").build())
     );
 
     @Override

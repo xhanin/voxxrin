@@ -86,7 +86,7 @@
         </ul>
         <h2>Schedule</h2>
         <ul class="rounded" data-bind="foreach: days">
-            <li class="arrow"><a href="#dayschedule"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
+            <li class="arrow"><a href="#dayschedule" data-bind="click: $root.selectDay"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="nowplaying" data-bind="with: chosenEvent">
@@ -97,7 +97,7 @@
         <ul class="metal" data-bind="foreach: nowplaying">
             <li class="arrow"><a href="#room"><small></small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: speakerNames"> </span>,
-                    <span data-bind="text: start"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
+                    <span data-bind="text: slot"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
         </ul>
     </div>
     <div id="schedule" data-bind="with: chosenEvent">
@@ -109,25 +109,17 @@
             <li class="arrow"><a href="#dayschedule"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
-    <div id="dayschedule">
+    <div id="dayschedule" data-bind="with: chosenDay">
         <div class="toolbar">
-            <h1>University</h1>
+            <h1 data-bind="text: name"></h1>
             <a href="#" class="back">Event</a>
         </div>
-        <ul class="edgetoedge">
-            <li class="sep">Apr 18 - 9am</li>
-            <li><a href="#room">Flintstone, <em>Fred</em></a></li>
-            <li><a href="#room">Flintstone, <em>Pebble</em></a></li>
-            <li><a href="#room">Flintstone, <em>Wilma</em></a></li>
-            <li class="sep">Apr 18 - 10am</li>
-            <li><a href="#room">Jetson, <em>Elroy</em></a></li>
-            <li><a href="#room">Jetson, <em>George</em></a></li>
-            <li><a href="#room">Jetson, <em>Jane</em></a></li>
-            <li><a href="#room">Jetson, <em>Judy</em></a></li>
-            <li class="sep">Apr 18 - 11am</li>
-            <li><a href="#room">Rubble, <em>Bambam</em></a></li>
-            <li><a href="#room">Rubble, <em>Barney</em></a></li>
-            <li><a href="#room">Rubble, <em>Betty</em></a></li>
+        <ul class="edgetoedge" data-bind="foreach: slots">
+            <li class="sep" data-bind="text: name"></li>
+            <!-- ko foreach: presentations -->
+            <li class="arrow"><a href="#room"><small></small> <span data-bind="text: title"> </span>
+                <em data-bind="text: room().name"></em></a></li>
+            <!-- /ko -->
         </ul>
     </div>
     <div id="room">

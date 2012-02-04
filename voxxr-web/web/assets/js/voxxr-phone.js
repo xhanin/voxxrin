@@ -26,7 +26,7 @@ $(function() {
         self.uri = ko.observable(data.uri);
         self.title = ko.observable(data.title);
         self.speakers = ko.observableArray(_(data.speakers).map(function(s) { return new Speaker(s);}));
-        self.start = ko.observable(data.start);
+        self.slot = ko.observable(data.slot);
         self.fromTime = ko.observable(data.fromTime);
         self.toTime = ko.observable(data.toTime);
         self.room = ko.observable(new Room(data.room));
@@ -36,6 +36,13 @@ $(function() {
         }, self);
     }
 
+    function ScheduleSlot(data) {
+        var self = this;
+        self.name = ko.observable(data.name);
+        self.nbPresentations = ko.observable(data.presentations.length);
+        self.presentations = ko.observableArray(_(data.presentations).map(function(presentation) { return new Presentation(presentation); }));
+    }
+
     function ScheduleDay(data) {
         var self = this;
         self.id = ko.observable(data.id);
@@ -43,8 +50,17 @@ $(function() {
         self.name = ko.observable(data.name);
         self.nbPresentations = ko.observable(data.nbPresentations);
         self.presentations = ko.observableArray([]);
+        self.slots = ko.observableArray([]);
 
-        // TODO: add load function
+        self.refreshPresentations = function() {
+            $.getJSON(baseUrl + self.uri(), function(data) {
+                self.presentations(_(data).map(function(presentation) { return new Presentation(presentation); }));
+                self.slots(_.chain(data).groupBy('slot').map(function(pres, slot) {
+                    return new ScheduleSlot({name: slot, presentations: pres});
+                }).value());
+                self.nbPresentations(data.length);
+            });
+        }
     }
 
     function Event(data) {
@@ -62,16 +78,23 @@ $(function() {
                 self.nowplaying(_(data).map(function(presentation) { return new Presentation(presentation); }));
             });
         }
+
     }
 
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
         self.chosenEvent = ko.observable(null);
+        self.chosenDay = ko.observable(null);
 
         self.selectEvent = function(event) {
             event.refreshNowPlaying();
             self.chosenEvent(event);
+        };
+
+        self.selectDay = function(day) {
+            day.refreshPresentations();
+            self.chosenDay(day);
         };
 
         $.getJSON(baseUrl + "/events", function(data) {
