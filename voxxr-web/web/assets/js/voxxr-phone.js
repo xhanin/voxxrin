@@ -22,18 +22,39 @@ $(function() {
 
     function Presentation(data) {
         var self = this;
+
         self.id = ko.observable(data.id);
         self.uri = ko.observable(data.uri);
-        self.title = ko.observable(data.title);
-        self.speakers = ko.observableArray(_(data.speakers).map(function(s) { return new Speaker(s);}));
-        self.slot = ko.observable(data.slot);
-        self.fromTime = ko.observable(data.fromTime);
-        self.toTime = ko.observable(data.toTime);
-        self.room = ko.observable(new Room(data.room));
+        self.title = ko.observable(null);
+        self.speakers = ko.observableArray(null);
+        self.slot = ko.observable(null);
+        self.fromTime = ko.observable(null);
+        self.toTime = ko.observable(null);
+        self.room = ko.observable(null);
+        self.summary = ko.observable(null);
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
         }, self);
+        self.shortSummary = ko.computed(function() {
+           return (self.summary() && self.summary().length > 200) ?
+               self.summary().substring(0, 197) + "..."
+               : self.summary();
+        });
+
+        function loadData(data) {
+            self.title(data.title);
+            self.speakers(_(data.speakers).map(function(s) { return new Speaker(s);}));
+            self.slot(data.slot);
+            self.fromTime(data.fromTime);
+            self.toTime(data.toTime);
+            self.room(new Room(data.room));
+            self.summary(data.summary);
+        }
+
+        self.load = function() { $.getJSON(baseUrl + self.uri(), loadData); }
+
+        loadData(data);
     }
 
     function ScheduleSlot(data) {
@@ -86,6 +107,7 @@ $(function() {
         self.events = ko.observableArray([]);
         self.chosenEvent = ko.observable(null);
         self.chosenDay = ko.observable(null);
+        self.chosenPresentation = ko.observable(null);
 
         self.selectEvent = function(event) {
             event.refreshNowPlaying();
@@ -95,6 +117,11 @@ $(function() {
         self.selectDay = function(day) {
             day.refreshPresentations();
             self.chosenDay(day);
+        };
+
+        self.selectPresentation = function(presentation) {
+            presentation.load();
+            self.chosenPresentation(presentation);
         };
 
         $.getJSON(baseUrl + "/events", function(data) {

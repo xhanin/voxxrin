@@ -1,0 +1,16 @@
+{
+    "id":1064,
+    "uri":"/r/events/1/presentations/1",
+    "title":"Voxxr: Ze Highly Interactive Talk",
+    "speakers":[{"uri":"/events/1/speakers/1","name":"Xavier Hanin"}],
+    "track":"Web, Mobile et le Cloud",
+    "type":"Conference",
+    "kind":"Talk",
+    "experience":"NOVICE",
+    "room": {"id":"1", "name": "Room 1", "uri": "/r/events/1/room/1"},
+    "slot": "7pm",
+    "fromTime":"2012-04-18 19:00:00.0",
+    "toTime":"2011-11-15 12:30:00.0",
+    "tags":[{"name":"HTML5"},{"name":"iPhone"},{"name":"jQuery"},{"name":"javascript"},{"name":"websockets"},{"name":"Cassandra"},{"name":"android"}],
+    "summary":"Une séance hautement interactive pour découvrir ce qui il y a sous le capot d'un nouveau service qui permet de faire passer un talk en version 2.0 : le talk participatif. Partagez en temps réel vos impressions gràce à  l'appli iPhone / Android et prenez même le contrôle du déroulement de la session ! Et au passage découvrez comment ce service a été développé exclusivement pour DevoxxFR ! Au menu : HTML5, WebSocket / Atmosphere, Canvas / ProcessingJS, jQuery, PhoneGap, Cassandra, Amazon Web Services, ..."
+}
