@@ -1,0 +1,16 @@
+{
+    "id":2,
+    "uri":"/events/1/presentations/2",
+    "title":"Neo4j",
+    "speakers": [{"id":2, "name":"TRE TRE", "uri":"/events/1/speakers/2"}, {"id":3, "name":"DFG DFG", "uri":"/events/1/speakers/3"}],
+    "track":"Web, Mobile et le Cloud",
+    "type":"Conference",
+    "kind":"Talk",
+    "experience":"NOVICE",
+    "room": {"id":"1", "name": "Room 1", "uri": "/events/1/room/1"},
+    "slot": "8pm",
+    "fromTime":"2012-04-18 20:00:00.0",
+    "toTime":"2011-11-15 12:30:00.0",
+    "tags":[{"name":"HTML5"},{"name":"iPhone"},{"name":"jQuery"},{"name":"javascript"},{"name":"websockets"},{"name":"Cassandra"},{"name":"android"}],
+    "summary":"Neo4j lorem ipsum dolor es nec mergitur ..."
+}

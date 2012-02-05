@@ -1,27 +1,131 @@
+_.mixin({
+  capitalize : function(string) {
+    return string.charAt(0).toUpperCase() + string.substring(1);
+  }
+});
+
+
 var jQT = new $.jQTouch({
     statusBar: 'black'
 });
 
 $(function() {
 
-//    var baseUrl = "http://localhost:8080/r";
-    var baseUrl = "http://voxxr-web.appspot.com/r";
+    var baseUrl = "http://localhost:8080/r";
+//    var baseUrl = "http://voxxr-web.appspot.com/r";
 
-    function Room(data) {
+    
+    var models = {};
+    models.Room = function(data) {
+        var self = this;
+        self.id = ko.observable(data.id);
+        self.uri = ko.observable(data.uri);
+        self.name = ko.observable(data.name);
+        self.rt = ko.observable(null);
+        self.connections = ko.observable(0);
+        self.currentPresentation = ko.observable(null);
+        self.status = ko.observable(models.Room.DISCONNECTED);  
+        self.message = ko.observable(null);
+        self.connected = ko.computed(function() {
+            return self.status() === models.Room.CONNECTED;
+        });
+        self.connecting = ko.computed(function() {
+            return self.status() === models.Room.CONNECTING;
+        });
+
+        self.join = function() {
+            voxxr.currentRoom(self);
+            self.connect();
+        };
+        self.quit = function() {
+            self.disconnect();
+            voxxr.currentRoom(null);
+            jQT.goBack();
+        };
+
+        self.connect = function() {
+            if (self.status() === models.Room.DISCONNECTED) {
+                self.message("Connecting to room...");
+                self.status(models.Room.CONNECTING);
+                $.ajax({
+                    type: "GET",
+                    url: self.rt() + "/r/room",
+                    dataType:"json",
+                    success: function(resp) {
+                        if (resp.status === 'ok') {
+                            self.connections(resp.connections);
+                            self.currentPresentation().title(resp.title);
+                            self.currentPresentation().rate.nb(resp.ratings);
+                            self.currentPresentation().rate.avg(resp.rate * 100);
+                            self.message(null);
+                            self.status(models.Room.CONNECTED);
+                            subscribe();
+                        } else {
+                            self.message(resp.message);
+                            self.status(models.Room.DISCONNECTED);
+                        }
+                    },
+                    error: function(xhr, type) {
+                        console.error('-------------- CONNECTION ERROR', xhr);
+                        self.message("Can't connect to room. Is it currently opened?");
+                        self.status(models.Room.DISCONNECTED);
+                    }
+                });
+            }
+        };
+
+        self.reconnect = function() {
+            self.disconnect();
+            self.connect();
+        };
+
+        self.disconnect = function() {
+            if (self.status() !== models.Room.DISCONNECTED) {
+                $.atmosphere.closeSuspendedConnection();
+            }
+            self.message(null);
+            self.status(models.Room.DISCONNECTED);
+        };
+
+        function loadData(data) {
+            if (data.rt) self.rt(data.rt);
+        }
+        self.load = function(data) {
+            if (data) {
+                loadData(data);
+            } else {
+                $.getJSON(baseUrl + self.uri(), loadData);
+            }
+        }
+
+        loadData(data);
+    };
+    models.Room.DISCONNECTED = "disconnected";
+    models.Room.CONNECTED = "connected";
+    models.Room.CONNECTING = "connecting";
+
+    models.Speaker = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
         self.uri = ko.observable(data.uri);
         self.name = ko.observable(data.name);
     }
 
-    function Speaker(data) {
+    models.PresentationRate = function() {
         var self = this;
-        self.id = ko.observable(data.id);
-        self.uri = ko.observable(data.uri);
-        self.name = ko.observable(data.name);
+        self.nb = ko.observable(0);
+        self.avg = ko.observable(0);
+        self.avgDisplay = ko.computed(function() {
+            return (self.avg() / 100).toFixed(2);
+        });
     }
 
-    function Presentation(data) {
+    models.PresentationPoll = function(data) {
+        var self = this;
+        self.choices = ko.observableArray(data.choices);
+    }
+    
+    models.Presentation = function(data) {
         var self = this;
 
         self.id = ko.observable(data.id);
@@ -33,6 +137,9 @@ $(function() {
         self.toTime = ko.observable(null);
         self.room = ko.observable(null);
         self.summary = ko.observable(null);
+        self.playing = ko.observable(false);
+        self.rate = new models.PresentationRate();
+        self.currentPoll = ko.observable(null);
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -45,27 +152,36 @@ $(function() {
 
         function loadData(data) {
             self.title(data.title);
-            self.speakers(_(data.speakers).map(function(s) { return new Speaker(s);}));
+            self.speakers(_(data.speakers).map(function(s) { return voxxr.speaker(s);}));
             self.slot(data.slot);
             self.fromTime(data.fromTime);
             self.toTime(data.toTime);
-            self.room(new Room(data.room));
+            self.room(voxxr.room(data.room));
             self.summary(data.summary);
         }
 
-        self.load = function() { $.getJSON(baseUrl + self.uri(), loadData); }
+        self.load = function(data) {
+            if (data) {
+                loadData(data);
+            } else {
+                if (!self.summary()) { // check if already loaded
+                    $.getJSON(baseUrl + self.uri(), loadData);
+                }
+            }
+        }
 
         loadData(data);
     }
 
-    function ScheduleSlot(data) {
+    models.ScheduleSlot = function(data) {
         var self = this;
+        self.id = ko.observable(data.id);
         self.name = ko.observable(data.name);
         self.nbPresentations = ko.observable(data.presentations.length);
-        self.presentations = ko.observableArray(_(data.presentations).map(function(presentation) { return new Presentation(presentation); }));
+        self.presentations = ko.observableArray(_(data.presentations).map(function(presentation) { return voxxr.presentation(presentation); }));
     }
 
-    function ScheduleDay(data) {
+    models.ScheduleDay = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
         self.uri = ko.observable(data.uri);
@@ -76,16 +192,16 @@ $(function() {
 
         self.refreshPresentations = function() {
             $.getJSON(baseUrl + self.uri(), function(data) {
-                self.presentations(_(data).map(function(presentation) { return new Presentation(presentation); }));
+                self.presentations(_(data).map(function(presentation) { return voxxr.presentation(presentation); }));
                 self.slots(_.chain(data).groupBy('slot').map(function(pres, slot) {
-                    return new ScheduleSlot({name: slot, presentations: pres});
+                    return voxxr.scheduleSlot({id: self.id + '/' + slot, name: slot, presentations: pres});
                 }).value());
                 self.nbPresentations(data.length);
             });
         }
     }
 
-    function Event(data) {
+    models.Event = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
         self.title = ko.observable(data.title);
@@ -93,11 +209,27 @@ $(function() {
         self.nbPresentations = ko.observable(data.nbPresentations);
         self.dates = ko.observable(data.dates);
         self.nowplaying = ko.observableArray([]);
-        self.days = ko.observableArray(_(data.days).map(function(day) { return new ScheduleDay(day);}));
+        self.days = ko.observableArray(_(data.days).map(function(day) { return voxxr.scheduleDay(day);}));
 
         self.refreshNowPlaying = function() {
             $.getJSON(baseUrl + "/events/" + self.id() + "/nowplaying", function(data) {
-                self.nowplaying(_(data).map(function(presentation) { return new Presentation(presentation); }));
+                var wasplaying = self.nowplaying();
+
+                self.nowplaying(_(data).map(function(presentation) {
+                    var p = voxxr.presentation(presentation);
+                    p.playing(true);
+                    p.room().currentPresentation(p);
+                    wasplaying = _(wasplaying).reject(function(e) { return e.id() === p.id() });
+                    return p;
+                }));
+
+                // reset playing status for old nowplaying presentations
+                _(wasplaying).each(function(p) { 
+                    p.playing(false);
+                    if (p.room().currentPresentation() === p) {
+                        p.room().currentPresentation(null);
+                    }
+                });
             });
         }
 
@@ -109,7 +241,35 @@ $(function() {
         self.chosenEvent = ko.observable(null);
         self.chosenDay = ko.observable(null);
         self.chosenPresentation = ko.observable(null);
+        self.currentRoom = ko.observable(null);
+        self.user = ko.observable({ name: ko.observable("anonymous") });
 
+        // factories / data storage
+        function factory(cache, type, data) {
+            var o;
+            if (data.id) {
+                o = cache[data.id];
+                if (o) {
+                    if (o.load) { o.load(data); }
+                    return o;
+                }
+            }
+            o = new models[_(type).capitalize()](data);
+            if (data.id) {
+                cache[data.id] = o;
+            }
+            return o;
+        }
+
+        _(['event', 'scheduleDay', 'scheduleSlot', 'presentation', 'speaker', 'room'])
+                .each(function(type) {
+            self[type + 'Cache'] = {};
+            self[type] = function(data) {
+                return factory(self[type + 'Cache'], type, data);
+            }
+        });
+
+        // change current selection function
         self.selectEvent = function(event) {
             event.refreshNowPlaying();
             self.chosenEvent(event);
@@ -125,287 +285,189 @@ $(function() {
             self.chosenPresentation(presentation);
         };
 
+        // load
         $.getJSON(baseUrl + "/events", function(data) {
-            self.events(_(data).map(function(event) { return new Event(event); }));
+            self.events(_(data).map(function(event) { return voxxr.event(event); }));
         });
     };
 
     var voxxr = new VoxxrViewModel();
+    ko.applyBindings(voxxr);
 
-    (function(){
-        ko.applyBindings(voxxr);
-    })();
-
-
-//    var room = "1",
-//        baseRoomUrl = "http://r" + room + ".voxxr.in:8076/r";
 
     var transport = "long-polling";
-    if ('WebSocket' in window) {
-        transport = "websocket";
-    }
+//    if ('WebSocket' in window) {
+//        transport = "websocket";
+//    }
+    function subscribe() {
+        console.info('-------------- SUBSCRIBING TO ', voxxr.currentRoom().rt(), '/r/room/rt', ' with transport ', transport);
+        $.atmosphere.subscribe(
+            voxxr.currentRoom().rt() + '/r/room/rt',
+            function(response) {
+                var room = voxxr.currentRoom();
+                if (response.state == 'error' || response.state == 'closed') {
+                    room.message("Room connection lost");
+                    room.status(models.Room.DISCONNECTED);
+                    return;
+                }
+                if (response.transport != 'polling'
+                    && response.state != 'connected' && response.state != 'closed') {
+                    if (response.status == 200) {
+                        var data = response.responseBody;
+                        if (data.length > 0) {
+                            var f = parseFeedback(data);
 
+                            if (f.isConnection) {
+                                room.connections(f.connections);
+                            }
+                            var pres = room.currentPresentation();
+                            if (f.isTitle) {
+                                pres.title(f.title);
+                            }
+                            if (f.isPollStart) {
+                                pres.currentPoll(new models.PresentationPoll({
+                                    choices: _(f.items).map(function(e,i) { return {title: e, index: i}; })
+                                }));
+                                $("#roomRT .tabs a.poll").text('< POLL >')
+                                    .gfxShake({distance: 20, duration: 100});
+                            }
+                            if (f.isPollEnd) {
+                                pres.currentPoll(null);
+                                $("#roomRT .tabs a.poll").text('POLL')
+                                    .gfxShake({distance: 20, duration: 100});
+                            }
+                            if (f.isRate) {
+                                var rate = pres.rate;
+                                rate.avg(((rate.avg() * rate.nb()) + (f.rateValue * 100)) / (rate.nb() + 1));
+                                rate.nb(rate.nb() + 1);
+                            }
 
-    function joinRoom(room, baseRoomUrl) {
-        // COMMON
-        function feedback(user, v) {
-            return user + '|' + v;
-        }
-
-
-        function parseFeedback(f) {
-            var parts = f.split('|');
-            var feedback = {};
-            if (parts.length > 2) {
-                feedback.room = parts[0];
-                feedback.user = parts[1];
-                feedback.value = parts[2];
-            } else {
-                feedback.room = room;
-                feedback.user = parts[0];
-                feedback.value = parts[1];
-            }
-
-            feedback.isRate = feedback.value.substr(0,1) === 'R';
-            if (feedback.isRate) {
-                feedback.rateValue = feedback.value.substr(1);
-                feedback.index = feedback.rateValue;
-            }
-            feedback.isConnection = feedback.value.substr(0,1) === 'C';
-            if (feedback.isConnection) {
-                feedback.connections = feedback.value.substr(1);
-            }
-            feedback.isTitle = feedback.value.substr(0,1) === 'T';
-            if (feedback.isTitle) {
-                feedback.title = feedback.value.substr(1);
-            }
-            feedback.isPollStart = feedback.value.substr(0,2) === 'PS';
-            if (feedback.isPollStart) {
-                feedback.items = feedback.value.substr(2).split(',');
-            }
-            feedback.isPollEnd = feedback.value.substr(0,2) === 'PE';
-
-            return feedback;
-        }
-
-        (function() {
-            // FEEDBACK
-
-            var feedbackPnl = $("#feedback");
-
-            // FEEDBACK.RATE
-            var ratePnl = feedbackPnl.find(".rate");
-            var myRate = {avg: 0, last: 0};
-
-            var stars = ratePnl.find(".star");
-
-            stars.tap(function() {
-                vote($(this).attr('data-rate'));
-                return false;
-            });
-
-            function setVotes(rate, style) {
-                rate = rate || myRate.last;
-                style = style || 'vote';
-                for (var i = 1; i <= 5; i++) {
-                    var v = ratePnl.find('[data-rate="' + i + '"]');
-                    v.removeClass('vote').removeClass('voting');
-                    if (i<=rate) {
-                        v.addClass(style);
+                        }
                     }
                 }
-
-            }
-
-            function vote(r) {
-                setVotes(r, 'voting');
-                console.debug('-------------- VOTING ', r, ' ON ', baseRoomUrl, "/feedback");
-                $.ajax({
-                    type: "POST",
-                    url: baseRoomUrl + "/feedback",
-                    data: feedback(user, "R" + r),
-                    dataType:"json",
-                    success: function( resp ) {
-                        if (resp.status === 'ok') {
-                            console.debug('-------------- VOTE SUCCESS ', r);
-                            myRate.last = r;
-                            setVotes();
-                        }
-                    },
-                    error: function(xhr, type) {
-                        console.error('-------------- VOTE ERROR' + xhr);
-                        setVotes();
-                    }
-                });
-            }
-
-            var feelingPanel = feedbackPnl.find('.feeling');
-            feelingPanel.find('a').tap(function() {
-                feeling($(this).attr('data-value'));
-            });
-
-            function feeling(r) {
-                console.debug('-------------- FEELING ', r, ' ON ', baseRoomUrl, "/feedback");
-                $.ajax({
-                    type: "POST",
-                    url: baseRoomUrl + "/feedback",
-                    data: feedback(user, "F" + r),
-                    dataType:"json",
-                    success: function( resp ) {
-                        if (resp.status === 'ok') {
-                            feelingPanel.find("a[data-value='" + r + "']").gfxFlipIn({});
-                        }
-                    },
-                    error: function(xhr, type) {
-                        console.error('-------------- FEELING ERROR' + xhr);
-                    }
-                });
-            }
-        })();
-
-        (function() {
-            // DASHBOARD
-            var rateMean = $("#feedback .dashboard .rateMean");
-            var connections = $("#feedback .dashboard .connections");
-
-            var rate =  {
-                nb: 0,
-                avg: 0
-            }
-
-            function subscribe() {
-                console.info('-------------- SUBSCRIBING TO ', baseRoomUrl, '/room/rt', ' with transport ', transport);
-                $.atmosphere.subscribe(
-                    baseRoomUrl + '/room/rt',
-                    function(response) {
-                        if (response.state == 'error' || response.state == 'closed') {
-                            $("#roomRT .message").text("Room connection lost").show();
-                            $("#roomRT div.reconnect").show();
-                            $("#roomRT .content").hide();
-                            return;
-                        }
-                        if (response.transport != 'polling'
-                            && response.state != 'connected' && response.state != 'closed') {
-                            if (response.status == 200) {
-                                var data = response.responseBody;
-                                if (data.length > 0) {
-                                    var f = parseFeedback(data);
-
-                                    if (f.isConnection) {
-                                        connections.text(f.connections);
-                                    }
-                                    if (f.isTitle) {
-                                        $("#roomRT h1").text(f.title);
-                                    }
-                                    if (f.isPollStart) {
-                                        $("#roomRT #poll .nopoll").hide();
-                                        var p = ''
-                                        $(f.items).each(function(i) {
-                                            p += '<li><a href="#" data-value="' + i + '">' + this + '</a></li>'
-                                        });
-                                        $("#roomRT #poll ul").html(p).show();
-                                        $("#roomRT #poll ul li a").tap(function() {
-                                            voteForPoll($(this).attr('data-value'));
-                                        });
-                                        $("#roomRT .tabs a.poll").text('< POLL >')
-                                            .gfxShake({distance: 20, duration: 100});
-                                    }
-                                    if (f.isPollEnd) {
-                                        $("#roomRT #poll .nopoll").show();
-                                        $("#roomRT #poll ul").hide();
-                                        $("#roomRT .tabs a.poll").text('POLL')
-                                            .gfxShake({distance: 20, duration: 100});
-                                    }
-                                    if (f.isRate) {
-                                        rate.avg = ((rate.avg * rate.nb) + (f.rateValue * 100)) / (rate.nb + 1);
-                                        rate.nb++;
-
-                                        rateMean.text((rate.avg / 100).toFixed(2));
-                                    }
-
-                                }
-                            }
-                        }
-                    },
-                    $.atmosphere.request = { transport: transport });
-            }
-
-            var connect = function() {
-                $("#roomRT div.reconnect").hide();
-                $("#roomRT .message").text("Connecting to room...").show();
-                $.ajax({
-                    type: "GET",
-                    url: baseRoomUrl + "/room",
-                    dataType:"json",
-                    success: function(resp) {
-                        if (resp.status === 'ok') {
-                            $("#roomRT h1").text(resp.title);
-                            $("#feedback .dashboard .connections").text(resp.connections);
-                            rate.nb = resp.ratings;
-                            rate.avg = resp.rate * 100;
-                            rateMean.text((rate.avg / 100).toFixed(2));
-
-                            $("#roomRT .message").hide();
-                            $("#roomRT .content").show();
-                            $("#roomRT div.reconnect").show();
-                            subscribe();
-                        } else {
-                            $("#roomRT .message").text(resp.message).show();
-                            $("#roomRT div.reconnect").show();
-                        }
-                    },
-                    error: function(xhr, type) {
-                        console.error('-------------- CONNECTION ERROR', xhr);
-                        $("#roomRT .message").text("Can't connect to room. Is it currently opened?").show();
-                        $("#roomRT div.reconnect").show();
-                    }
-                });
-            };
-            connect();
-
-            function voteForPoll(r) {
-                console.debug('-------------- VOTING FOR POLL ', r, ' ON ', baseRoomUrl, "/feedback");
-                $.ajax({
-                    type: "POST",
-                    url: baseRoomUrl + "/feedback",
-                    data: feedback(user, "PV" + r),
-                    dataType:"json",
-                    success: function( resp ) {
-                        if (resp.status === 'ok') {
-                            $("#roomRT #poll ul li a").removeClass("current");
-                            $("#roomRT #poll ul li a[data-value='" + r + "']").addClass("current");
-                        }
-                    },
-                    error: function(xhr, type) {
-                        console.error('-------------- POLL VOTE ERROR' + xhr);
-                    }
-                });
-            }
-
-            $("#roomRT a.reconnect").tap(function() {
-                $.atmosphere.closeSuspendedConnection();
-                connect();
-            });
-
-
-            $("#roomRT .tabs a.rate").tap(function() {
-                $("#roomRT .tabs a").removeClass("current");
-                $(this).addClass("current");
-                $("#roomRT div#poll").gfxPopOut({duration: 100}, function() {
-                    $("#roomRT #feedback").gfxPopIn({duration: 200, easing: 'ease-out'});
-                });
-            });
-
-            $("#roomRT .tabs a.poll").tap(function() {
-                $("#roomRT .tabs a").removeClass("current");
-                $(this).addClass("current");
-                $("#roomRT #feedback").gfxPopOut({duration: 100}, function() {
-                    $("#roomRT div#poll").gfxPopIn({duration: 200, easing: 'ease-out'});
-                });
-            });
-
-
-        })();
+            },
+            $.atmosphere.request = { transport: transport });
     }
+
+    // COMMON
+    function feedback(user, v) {
+        return user + '|' + v;
+    }
+
+    function parseFeedback(f) {
+        var parts = f.split('|');
+        var feedback = {};
+        if (parts.length > 2) {
+            feedback.room = parts[0];
+            feedback.user = parts[1];
+            feedback.value = parts[2];
+        } else {
+            feedback.room = voxxr.currentRoom() ? voxxr.currentRoom().id() : null;
+            feedback.user = parts[0];
+            feedback.value = parts[1];
+        }
+
+        feedback.isRate = feedback.value.substr(0,1) === 'R';
+        if (feedback.isRate) {
+            feedback.rateValue = feedback.value.substr(1);
+            feedback.index = feedback.rateValue;
+        }
+        feedback.isConnection = feedback.value.substr(0,1) === 'C';
+        if (feedback.isConnection) {
+            feedback.connections = feedback.value.substr(1);
+        }
+        feedback.isTitle = feedback.value.substr(0,1) === 'T';
+        if (feedback.isTitle) {
+            feedback.title = feedback.value.substr(1);
+        }
+        feedback.isPollStart = feedback.value.substr(0,2) === 'PS';
+        if (feedback.isPollStart) {
+            feedback.items = feedback.value.substr(2).split(',');
+        }
+        feedback.isPollEnd = feedback.value.substr(0,2) === 'PE';
+
+        return feedback;
+    }
+
+    function sendFeedback(f, onsuccess, onerror) {
+        console.debug('--------------  FEEDBACK ', f, ' ON ', voxxr.currentRoom().rt(), "/r/feedback");
+        $.ajax({
+            type: "POST",
+            url: voxxr.currentRoom().rt() + "/r/feedback",
+            data: feedback(voxxr.user().name(), f),
+            dataType:"json",
+            success: function( resp ) {
+                if (resp.status === 'ok') {
+                    console.debug('-------------- FEEDBACK SUCCESS ', f);
+                    if (onsuccess) onsuccess(resp);
+                }
+            },
+            error: function(xhr, type) {
+                console.error('-------------- FEEDBACK ERROR' + xhr);
+                if (onerror) onerror();
+            }
+        });
+    }
+
+    (function() {
+        var myRate = {avg: 0, last: 0};
+
+        $("#feedback .rate .star").live('tap', function() {
+            vote($(this).attr('data-rate'));
+            return false;
+        });
+
+        function setVotes(rate, style) {
+            rate = rate || myRate.last;
+            style = style || 'vote';
+            for (var i = 1; i <= 5; i++) {
+                var v = $("#feedback .rate").find('[data-rate="' + i + '"]');
+                v.removeClass('vote').removeClass('voting');
+                if (i<=rate) {
+                    v.addClass(style);
+                }
+            }
+        }
+
+        function vote(r) {
+            setVotes(r, 'voting');
+            sendFeedback("R" + r, function() { myRate.last = r; setVotes();}, function() { setVotes(); });
+        }
+
+        $("#feedback .feeling a").live('tap', function() {
+            feeling($(this).attr('data-value'));
+        });
+
+        function feeling(r) {
+            sendFeedback("F" + r, function() {
+                $("#feedback .feeling a[data-value='" + r + "']").gfxFlipIn({});
+            });
+        }
+
+        $("#roomRT #poll ul li a").live('tap', function() {
+            var r = $(this).attr('data-value');
+            sendFeedback("PV" + r, function() {
+                $("#roomRT #poll ul li a").removeClass("current");
+                $("#roomRT #poll ul li a[data-value='" + r + "']").addClass("current");
+            });
+        });
+    })();
+
+    // tabs handling
+    $("#roomRT .tabs a.rate").live('tap', function() {
+        $("#roomRT .tabs a").removeClass("current");
+        $(this).addClass("current");
+        $("#roomRT div#poll").gfxPopOut({duration: 100}, function() {
+            $("#roomRT #feedback").gfxPopIn({duration: 200, easing: 'ease-out'});
+        });
+    });
+
+    $("#roomRT .tabs a.poll").live('tap', function() {
+        $("#roomRT .tabs a").removeClass("current");
+        $(this).addClass("current");
+        $("#roomRT #feedback").gfxPopOut({duration: 100}, function() {
+            $("#roomRT div#poll").gfxPopIn({duration: 200, easing: 'ease-out'});
+        });
+    });
 
 });

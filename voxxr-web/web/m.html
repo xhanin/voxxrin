@@ -95,10 +95,11 @@
             <a href="#" class="back">Event</a>
         </div>
         <ul class="metal" data-bind="foreach: nowplaying">
-            <li class="arrow"><a href="#presentation"><small></small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a href="#presentation" data-bind="event: {tap: $root.selectPresentation}"><small></small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: speakerNames"> </span>,
                     <span data-bind="text: slot"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
         </ul>
+        <a data-bind="click: refreshNowPlaying" class="grayButton">Refresh</a>
     </div>
     <div id="schedule" data-bind="with: chosenEvent">
         <div class="toolbar">
@@ -124,11 +125,13 @@
     </div>
     <div id="presentation" data-bind="with: chosenPresentation">
         <div class="toolbar">
-            <h1 data-bind="text: title">Ze Highly Interactive Talk</h1>
+            <h1 data-bind="text: title"> </h1>
             <a href="#" class="back">Back</a>
         </div>
         <h2 class="title"><span data-bind="text: title"> </span> <span data-bind="text: slot"> </span></h2>
-        <a href="#roomRT" class="joinroom flipleft greenButton">Join room now</a>
+        <a href="#roomRT" class="joinroom flipleft greenButton"
+           data-bind="visible: playing, event: {tap: room().join}">
+            Join room now</a>
         <h2>Abstract</h2>
         <p>
             <span data-bind="text: shortSummary"> </span>
@@ -141,11 +144,13 @@
     </div>
     <div id="presentationDetails" data-bind="with: chosenPresentation">
         <div class="toolbar">
-            <h1 data-bind="text: title">Ze Highly Interactive Talk</h1>
+            <h1 data-bind="text: title"> </h1>
             <a href="#" class="back">Back</a>
         </div>
         <h2 class="title"><span data-bind="text: title"> </span> <span data-bind="text: slot"> </span></h2>
-        <a href="#roomRT" class="joinroom flipleft greenButton">Join room now</a>
+        <a href="#roomRT" class="joinroom flipleft greenButton"
+           data-bind="visible: playing, event: {tap: room().join}">
+            Join room now</a>
         <h2>Abstract</h2>
         <p data-bind="text: summary"></p>
         <h2>Speaker(s)</h2>
@@ -153,10 +158,10 @@
             <li><span data-bind="text: name"></span></li>
         </ul>
     </div>
-    <div id="roomRT">
+    <div id="roomRT" data-bind="with: currentRoom">
         <h1></h1>
-        <div class="message">Connecting to room...</div>
-        <div class="content" style="display:none;">
+        <div class="message" data-bind="text: message, visible: message"> </div>
+        <div class="content" data-bind="visible: connected">
         <div class="tabs">
             <ul class="individual">
                 <li><a href="#" class="rate current">RATE</a></li>
@@ -167,9 +172,9 @@
             <div id="feedback">
                 <div class="dashboard">
                     C
-                    <span class="connections">###</span>
+                    <span class="connections" data-bind="text: connections">###</span>
                      - R
-                    <span class="rateMean">#.##</span>
+                    <span class="rateMean" data-bind="text: currentPresentation().rate.avgDisplay">#.##</span>
                 </div>
                 <label class="rate">How do you rate it right now?</label>
                 <div class="rate">
@@ -185,19 +190,23 @@
                     <a class="wonder" data-value="W" href="#"></a>
                 </div>
             </div>
-            <div id="poll" style="display:none;">
-                <div class="nopoll">
+            <div id="poll" style="display:none;" data-bind="with: currentPresentation">
+                <div class="nopoll" data-bind="visible: currentPoll() === null">
                     No current poll
                 </div>
-                <ul class="rounded" style="display:none;"></ul>
+                <!-- ko if: currentPoll -->
+                <ul class="rounded" data-bind="foreach: currentPoll().choices">
+                    <li><a href="#" data-bind='text: title, attr: {"data-value": index}'> </a></li>
+                </ul>
+                <!-- /ko -->
             </div>
         </div>
         </div>
         <br/>
-        <div class="reconnect" style="display:none;">
-            <a href="#" class="grayButton reconnect">Reconnect</a>
+        <div class="reconnect" data-bind="visible: !connecting">
+            <a href="#" data-bind="event: {tap: reconnect }" class="grayButton reconnect">Reconnect</a>
         </div>
-        <!--<a href="#" class="grayButton goback quit">Quit</a>-->
+        <a href="#" data-bind="event: {tap: quit }" class="grayButton quit">Quit</a>
     </div>
 </div>
 </body>
