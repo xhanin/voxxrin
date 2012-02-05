@@ -71,7 +71,7 @@
             <a class="button slideup" href="#about">About</a>
         </div>
         <ul class="metal events"  data-bind="foreach: events">
-            <li class="arrow"><a href="#event" data-bind='event: {tap: $root.selectEvent}'>
+            <li class="arrow"><a href="#event" data-bind='tap: $root.selectEvent'>
                 <small><span data-bind="text: nbPresentations"> </span> pres'</small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: subtitle"> </span> ~ <span data-bind="text: dates"> </span></em>
             </a></li>
@@ -93,7 +93,7 @@
         </ul>
         <h2>Schedule</h2>
         <ul class="rounded" data-bind="foreach: days">
-            <li class="arrow"><a href="#dayschedule" data-bind="event: {tap: $root.selectDay}"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
+            <li class="arrow"><a href="#dayschedule" data-bind="tap: $root.selectDay"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="nowplaying" data-bind="with: chosenEvent">
@@ -105,11 +105,11 @@
             No presentations right now
         </div>
         <ul class="metal" data-bind="foreach: nowplaying">
-            <li class="arrow"><a href="#presentation" data-bind="event: {tap: $root.selectPresentation}"><small></small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a href="#presentation" data-bind="tap: $root.selectPresentation"><small></small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: speakerNames"> </span>,
                     <span data-bind="text: slot"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
         </ul>
-        <a data-bind="click: refreshNowPlaying" class="grayButton">Refresh</a>
+        <a data-bind="tap: refreshNowPlaying" class="grayButton">Refresh</a>
     </div>
     <div id="schedule" data-bind="with: chosenEvent">
         <div class="toolbar">
@@ -128,7 +128,7 @@
         <ul class="edgetoedge" data-bind="foreach: slots">
             <li class="sep" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
-            <li class="arrow"><a href="#presentation" data-bind="event: {tap: $root.selectPresentation}"><small></small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a href="#presentation" data-bind="tap: $root.selectPresentation"><small></small> <span data-bind="text: title"> </span>
                 <em data-bind="text: room().name"></em></a></li>
             <!-- /ko -->
         </ul>
@@ -140,7 +140,7 @@
         </div>
         <h2 class="title"><span data-bind="text: title"> </span> <span data-bind="text: slot"> </span></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
-           data-bind="visible: playing, event: {tap: room().join}">
+           data-bind="visible: playing, tap: room().join">
             Join room now</a>
         <h2>Abstract</h2>
         <p>
@@ -159,7 +159,7 @@
         </div>
         <h2 class="title"><span data-bind="text: title"> </span> <span data-bind="text: slot"> </span></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
-           data-bind="visible: playing, event: {tap: room().join}">
+           data-bind="visible: playing, tap: room().join">
             Join room now</a>
         <h2>Abstract</h2>
         <p data-bind="text: summary"></p>
@@ -214,9 +214,9 @@
         </div>
         <br/>
         <div class="reconnect" data-bind="visible: !connecting">
-            <a href="#" data-bind="event: {tap: reconnect }" class="grayButton reconnect">Reconnect</a>
+            <a href="#" data-bind="tap: reconnect" class="grayButton reconnect">Reconnect</a>
         </div>
-        <a href="#" data-bind="event: {tap: leave }" class="grayButton quit">Quit</a>
+        <a href="#" data-bind="tap: leave" class="grayButton quit">Quit</a>
     </div>
 </div>
 </body>

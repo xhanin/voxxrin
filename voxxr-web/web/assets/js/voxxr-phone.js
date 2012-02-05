@@ -4,6 +4,17 @@ _.mixin({
   }
 });
 
+ko.bindingHandlers.tap = {
+        'init': function(element, valueAccessor, allBindingsAccessor, viewModel) {
+            var newValueAccessor = function () {
+                var result = {};
+                result.tap = valueAccessor();
+                return result;
+            };
+            return ko.bindingHandlers['event']['init'].call(this, element, newValueAccessor, allBindingsAccessor, viewModel);
+        }
+};
+
 
 var jQT = new $.jQTouch({
     statusBar: 'black'
