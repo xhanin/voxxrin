@@ -37,10 +37,14 @@ $(function() {
             voxxr.currentRoom(self);
             self.connect();
         };
+        self.leave = function() {
+            self.quit();
+            jQT.goBack();
+        };
         self.quit = function() {
+            console.log("quitting room ", self.name());
             self.disconnect();
             voxxr.currentRoom(null);
-            jQT.goBack();
         };
 
         self.connect = function() {
@@ -171,6 +175,8 @@ $(function() {
         }
 
         loadData(data);
+
+        self.quit = function() {}
     }
 
     models.ScheduleSlot = function(data) {
@@ -199,6 +205,8 @@ $(function() {
                 self.nbPresentations(data.length);
             });
         }
+
+        self.quit = function() {}
     }
 
     models.Event = function(data) {
@@ -540,6 +548,50 @@ $(function() {
         $("#roomRT #feedback").gfxPopOut({duration: 100}, function() {
             $("#roomRT div#poll").gfxPopIn({duration: 200, easing: 'ease-out'});
         });
+    });
+
+
+    // quit handling
+    $("#events").bind('pageAnimationEnd', function(e, info) {
+        if (info.direction === 'in') {
+            // we are going to events page, we make sure se reset current event
+            if (voxxr.chosenEvent()) {
+                console.log("quitting event ", voxxr.chosenEvent().title());
+                voxxr.chosenEvent().quit();
+                voxxr.chosenEvent(null);
+            }
+        }
+    });
+    $("#event, #nowplaying").bind('pageAnimationEnd', function(e, info) {
+        if (info.direction === 'in') {
+            if (voxxr.chosenPresentation()) {
+                console.log("quitting presentation ", voxxr.chosenPresentation().title());
+                voxxr.chosenPresentation().quit();
+                voxxr.chosenPresentation(null);
+            }
+            if (voxxr.chosenDay()) {
+                console.log("quitting day ", voxxr.chosenDay().name());
+                voxxr.chosenDay().quit();
+                voxxr.chosenDay(null);
+            }
+        }
+    });
+    $("#dayschedule").bind('pageAnimationEnd', function(e, info) {
+        if (info.direction === 'in') {
+            if (voxxr.chosenPresentation()) {
+                console.log("quitting presentation ", voxxr.chosenPresentation().title());
+                voxxr.chosenPresentation().quit();
+                voxxr.chosenPresentation(null);
+            }
+        }
+    });
+    $("#presentation, #presentationDetails").bind('pageAnimationEnd', function(e, info) {
+        if (info.direction === 'in') {
+            if (voxxr.currentRoom()) {
+                voxxr.currentRoom().quit();
+                voxxr.currentRoom(null);
+            }
+        }
     });
 
 });
