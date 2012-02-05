@@ -4,7 +4,8 @@ var jQT = new $.jQTouch({
 
 $(function() {
 
-    var baseUrl = "http://localhost:8080/r"; // "http://voxxr-web.appspot.com/r";
+//    var baseUrl = "http://localhost:8080/r";
+    var baseUrl = "http://voxxr-web.appspot.com/r";
 
     function Room(data) {
         var self = this;

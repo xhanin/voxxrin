@@ -70,7 +70,7 @@
             <a class="button slideup" href="#about">About</a>
         </div>
         <ul class="metal events"  data-bind="foreach: events">
-            <li class="arrow"><a href="#event" data-bind='attr: { "data-eventId": id }, click: $root.selectEvent'>
+            <li class="arrow"><a href="#event" data-bind='event: {tap: $root.selectEvent}'>
                 <small><span data-bind="text: nbPresentations"> </span> pres'</small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: subtitle"> </span> ~ <span data-bind="text: dates"> </span></em>
             </a></li>
@@ -86,7 +86,7 @@
         </ul>
         <h2>Schedule</h2>
         <ul class="rounded" data-bind="foreach: days">
-            <li class="arrow"><a href="#dayschedule" data-bind="click: $root.selectDay"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
+            <li class="arrow"><a href="#dayschedule" data-bind="event: {tap: $root.selectDay}"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="nowplaying" data-bind="with: chosenEvent">
@@ -117,7 +117,7 @@
         <ul class="edgetoedge" data-bind="foreach: slots">
             <li class="sep" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
-            <li class="arrow"><a href="#presentation" data-bind="click: $root.selectPresentation"><small></small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a href="#presentation" data-bind="event: {tap: $root.selectPresentation}"><small></small> <span data-bind="text: title"> </span>
                 <em data-bind="text: room().name"></em></a></li>
             <!-- /ko -->
         </ul>
