@@ -12,6 +12,7 @@
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
       <script type="text/javascript" src="assets/js/libs/zepto-gfx.js"></script>
+      <script type="text/javascript" src="assets/js/libs/remaining-1.1.js"></script>
       <script type="application/x-javascript" src="assets/js/libs/jqtouch.js" charset="utf-8"></script>
       <!--<script type="application/x-javascript" src="assets/js/libs/jqtouch-jquery.js" charset="utf-8"></script>-->
 
@@ -81,6 +82,12 @@
             <h1 data-bind="text: title"></h1>
             <a href="#" class="back">Events</a>
         </div>
+        <div class="message" data-bind="visible: remaining">
+            <span data-bind="text: remaining"></span>
+        </div>
+        <div class="message" data-bind="visible: since">
+            <span data-bind="text: since"></span>
+        </div>
         <ul class="rounded">
             <li class="arrow nowplaying"><a href="#nowplaying">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
         </ul>
@@ -93,6 +100,9 @@
         <div class="toolbar">
             <h1>Now playing</h1>
             <a href="#" class="back">Event</a>
+        </div>
+        <div class="noplaying message" data-bind="visible: nowplaying().length === 0">
+            No presentations right now
         </div>
         <ul class="metal" data-bind="foreach: nowplaying">
             <li class="arrow"><a href="#presentation" data-bind="event: {tap: $root.selectPresentation}"><small></small> <span data-bind="text: title"> </span>

@@ -1,11 +1,11 @@
 [
     {"id":"1","title":"BordeauxJUG","subtitle":"Soiree Voxxr / Neo4j","description":"",
-        "dates":"Apr 12, 2012", "from":"2012-04-12", "to":"2012-04-12",
+        "dates":"Apr 12, 2012", "from":"2012-02-05 21:58", "to":"2012-02-12 22:00",
         "location":"ENSEIRB-MATMECA", "nbPresentations":2,
         "days":[{"id":"1", "name": "Apr 12", "uri": "/events/1/day/1", "nbPresentations":2}],
         "enabled":true},
     {"id":"2","title":"Devoxx France 2012","subtitle":"","description":"Devoxx France 2012",
-        "dates":"Apr 18-20, 2012", "from":"2012-04-18", "to":"2012-04-20",
+        "dates":"Apr 18-20, 2012", "from":"2012-04-18 09:00", "to":"2012-04-20 18:00",
         "location":"Marriott Hotel - Paris", "nbPresentations":72,
         "days":[
             {"id":"1", "name": "Apr 18 - University", "uri": "/events/2/day/1", "nbPresentations":18},

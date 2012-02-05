@@ -120,6 +120,9 @@
     color: #000000;
 }
 
+#jqt div.message {
+    margin: 15px;
+}
 
 #roomRT #poll {
     height: 300px;
