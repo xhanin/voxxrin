@@ -139,3 +139,44 @@
 .feeling img {
     margin: 8px;
 }
+
+
+
+#about h2 {
+  font-size: 1.8em;
+  font-family: "Asap","Georgia",sans-serif;
+  color: #C7F464;
+}
+
+#about .subtitle {
+  font-size: 1.2em;
+  font-family: "Asap","Georgia",sans-serif;
+  color: #4ECDC4;
+  margin: 10px 15px 5px;
+  border-bottom: 1px solid #4ECDC4;
+  padding-bottom: 0.5em;
+  padding-left: 40px;
+}
+
+#about p {
+    margin: 10px 15px 5px;
+    font-family: "Asap","Georgia",sans-serif;
+}
+#about p span {
+    color: #C44D58;
+    font-style: italic;
+}
+
+#about p span.voxxr {
+    color: #AAA;
+    font-style: italic;
+}
+
+#about .version {
+    font-style: italic;
+    font-size: 0.8em;
+    color: #4ECDC4;
+    border-top: 1px solid #4ECDC4;
+    padding: 5px 10px 5px 40px;
+    letter-spacing: 0.1em;
+}
