@@ -47,7 +47,7 @@ public class RestRouter extends HttpServlet {
     );
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = req.getRequestURI();
 
         for (Route route : routes) {

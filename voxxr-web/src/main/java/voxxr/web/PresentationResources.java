@@ -1,6 +1,8 @@
 package voxxr.web;
 
-import com.google.common.io.Resources;
+import com.google.appengine.api.datastore.Entity;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,12 +17,17 @@ import java.util.Map;
 public class PresentationResources implements RestRouter.RequestHandler {
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
-        resp.addHeader("Content-Type", "application/json");
-        resp.addHeader("Access-Control-Allow-Origin", "*");
-
-        Resources.copy(
-                Resources.getResource(EventsResources.class, "presentation-" + params.get("eventId") + "-" + params.get("presentationId") + ".json"),
-                resp.getOutputStream());
+        String kind = "Presentation";
+        if ("GET".equalsIgnoreCase(req.getMethod())) {
+            Rests.sendAsJsonObject(Rests.createKey(kind, params.get("presentationId")), resp);
+        } else if ("POST".equalsIgnoreCase(req.getMethod())) {
+            Rests.storeFromRequest(req, resp, kind, new PrepareEntityCallback() {
+                @Override
+                public Entity prepare(JSONObject json, Entity entity) throws JSONException {
+                    return entity;
+                }
+            });
+        }
     }
 }
 
