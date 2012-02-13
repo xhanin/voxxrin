@@ -3,10 +3,5 @@
         "uri":"/events/1/presentations/1",
         "speakers": [{"id":1, "name":"Xavier Hanin", "uri":"/events/1/speakers/1"}],
         "room": {"id":"1", "name": "Room 1", "uri": "/events/1/room/1"},
-        "slot": "7pm", "fromTime":"2012-04-18 19:00:00.0","toTime":"2011-11-15 12:30:00.0"},
-    {"id":"2", "title":"Neo4j", "type":"Talk", "kind":"Talk",
-        "uri":"/events/1/presentations/2",
-        "speakers": [{"id":2, "name":"TRE TRE", "uri":"/events/1/speakers/2"}, {"id":3, "name":"DFG DFG", "uri":"/events/1/speakers/3"}],
-        "room": {"id":"1", "name": "Room 1", "uri": "/events/1/room/1"},
-        "slot": "8pm", "fromTime":"2012-04-18 20:00:00.0","toTime":"2011-11-15 12:30:00.0"}
+        "slot": "7pm", "fromTime":"2012-04-12 19:15:00.0","toTime":"2012-04-12 20:15:00.0"}
 ]
