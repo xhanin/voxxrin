@@ -25,9 +25,6 @@
 		DCBF863C14EF9C17003410CC /* PhoneGap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCBF863B14EF9C17003410CC /* PhoneGap.framework */; };
 		DCBF864114EF9C17003410CC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DCBF863F14EF9C17003410CC /* Localizable.strings */; };
 		DCBF864514EF9C17003410CC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DCBF864314EF9C17003410CC /* Localizable.strings */; };
-		DCBF864814EF9C17003410CC /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF864714EF9C17003410CC /* icon.png */; };
-		DCBF864A14EF9C17003410CC /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF864914EF9C17003410CC /* icon@2x.png */; };
-		DCBF864C14EF9C17003410CC /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF864B14EF9C17003410CC /* icon-72.png */; };
 		DCBF864F14EF9C17003410CC /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF864E14EF9C17003410CC /* Default.png */; };
 		DCBF865114EF9C17003410CC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF865014EF9C17003410CC /* Default@2x.png */; };
 		DCBF865314EF9C17003410CC /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DCBF865214EF9C17003410CC /* Capture.bundle */; };
@@ -36,6 +33,9 @@
 		DCBF865C14EF9C17003410CC /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DCBF865B14EF9C17003410CC /* MainViewController.m */; };
 		DCBF865E14EF9C17003410CC /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCBF865D14EF9C17003410CC /* MainViewController.xib */; };
 		DCBF866E14EF9EAB003410CC /* www in Resources */ = {isa = PBXBuildFile; fileRef = DCBF866D14EF9EAB003410CC /* www */; };
+		DCBF867214EFACCB003410CC /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF866F14EFACCB003410CC /* icon.png */; };
+		DCBF867314EFACCB003410CC /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF867014EFACCB003410CC /* icon-72.png */; };
+		DCBF867414EFACCB003410CC /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DCBF867114EFACCB003410CC /* icon@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,9 +60,6 @@
 		DCBF863B14EF9C17003410CC /* PhoneGap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhoneGap.framework; path = /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework; sourceTree = "<absolute>"; };
 		DCBF864014EF9C17003410CC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DCBF864414EF9C17003410CC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Resources/es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		DCBF864714EF9C17003410CC /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = Resources/icons/icon.png; sourceTree = "<group>"; };
-		DCBF864914EF9C17003410CC /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon@2x.png"; path = "Resources/icons/icon@2x.png"; sourceTree = "<group>"; };
-		DCBF864B14EF9C17003410CC /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-72.png"; path = "Resources/icons/icon-72.png"; sourceTree = "<group>"; };
 		DCBF864E14EF9C17003410CC /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Resources/splash/Default.png; sourceTree = "<group>"; };
 		DCBF865014EF9C17003410CC /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "Resources/splash/Default@2x.png"; sourceTree = "<group>"; };
 		DCBF865214EF9C17003410CC /* Capture.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Capture.bundle; path = Resources/Capture.bundle; sourceTree = "<group>"; };
@@ -74,6 +71,9 @@
 		DCBF865D14EF9C17003410CC /* MainViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainViewController.xib; path = Classes/MainViewController.xib; sourceTree = "<group>"; };
 		DCBF866014EF9C17003410CC /* README */ = {isa = PBXFileReference; lastKnownFileType = text; name = README; path = Plugins/README; sourceTree = "<group>"; };
 		DCBF866D14EF9EAB003410CC /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = "../../voxxr-droid/assets/www"; sourceTree = "<group>"; };
+		DCBF866F14EFACCB003410CC /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../../../design/icon.png; sourceTree = "<group>"; };
+		DCBF867014EFACCB003410CC /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-72.png"; path = "../../../design/icon-72.png"; sourceTree = "<group>"; };
+		DCBF867114EFACCB003410CC /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon@2x.png"; path = "../../../design/icon@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,9 +202,9 @@
 		DCBF864614EF9C17003410CC /* icons */ = {
 			isa = PBXGroup;
 			children = (
-				DCBF864714EF9C17003410CC /* icon.png */,
-				DCBF864914EF9C17003410CC /* icon@2x.png */,
-				DCBF864B14EF9C17003410CC /* icon-72.png */,
+				DCBF866F14EFACCB003410CC /* icon.png */,
+				DCBF867014EFACCB003410CC /* icon-72.png */,
+				DCBF867114EFACCB003410CC /* icon@2x.png */,
 			);
 			name = icons;
 			sourceTree = "<group>";
@@ -295,15 +295,15 @@
 				DCBF863714EF9C17003410CC /* InfoPlist.strings in Resources */,
 				DCBF864114EF9C17003410CC /* Localizable.strings in Resources */,
 				DCBF864514EF9C17003410CC /* Localizable.strings in Resources */,
-				DCBF864814EF9C17003410CC /* icon.png in Resources */,
-				DCBF864A14EF9C17003410CC /* icon@2x.png in Resources */,
-				DCBF864C14EF9C17003410CC /* icon-72.png in Resources */,
 				DCBF864F14EF9C17003410CC /* Default.png in Resources */,
 				DCBF865114EF9C17003410CC /* Default@2x.png in Resources */,
 				DCBF865314EF9C17003410CC /* Capture.bundle in Resources */,
 				DCBF865514EF9C17003410CC /* PhoneGap.plist in Resources */,
 				DCBF865E14EF9C17003410CC /* MainViewController.xib in Resources */,
 				DCBF866E14EF9EAB003410CC /* www in Resources */,
+				DCBF867214EFACCB003410CC /* icon.png in Resources */,
+				DCBF867314EFACCB003410CC /* icon-72.png in Resources */,
+				DCBF867414EFACCB003410CC /* icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -162,7 +162,7 @@
     margin: 10px 15px 5px;
     font-family: "Asap","Georgia",sans-serif;
 }
-#about p span {
+#about p span, #about li span {
     color: #C44D58;
     font-style: italic;
 }
@@ -179,4 +179,28 @@
     border-top: 1px solid #4ECDC4;
     padding: 5px 10px 5px 40px;
     letter-spacing: 0.1em;
+}
+
+#about ul li {
+    background-image: none;
+    padding:  0px;
+    border: none;
+    display: block;
+    color: #DDD;
+    height: 60px;
+}
+
+#about ul li img {
+    float: left;
+    display: block;
+    margin-right: 5px;
+}
+
+#about ul {
+    border: none;
+    font: normal 1em "Asap","Georgia",sans-serif;
+}
+
+#about a {
+    color: #FFF;
 }
