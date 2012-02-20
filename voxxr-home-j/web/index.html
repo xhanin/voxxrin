@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Voxxrin ~ Your conference companion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Voxxrin, your conference companion">
+    <meta name="author" content="Xavier Hanin">
+
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Voxxrin</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+		    <li class="active"><a href="#">Home</a></li>
+		     <li><a href="#events">Events</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+	<div class="span8">
+           <div class="hero-unit">
+		   <h1>Voxxrin</h1>
+		   <h2>your conference companion</h2>
+	<p><span class="voxxr">Voxxrin</span> is your best tool when attending a <span>conference</span> covered by <span class="voxxr">Voxxrin</span>: you can browse the conference <span>schedule</span>, get details on presentations and speakers, and when a presentation is going on, you can join the virtual room.</p>
+            </div>
+         </div>
+	 <div class="span4" style="text-align: center;"><img src="assets/img/app-50.png" alt="screenshot"></div>
+      </div>
+
+      <div class="row">
+        <div class="span4">
+          <h2>Easy Schedule</h2>
+	  <p>Get simple and easy access to conference schedule with no clutter</p>
+	  <p style="text-align:center;"><img src="assets/img/schedule-50.png" alt="screenshot"></p>
+        </div>
+        <div class="span4">
+          <h2>Real Time</h2>
+	  <p>You can send feedback on the sessions you're attending in real time.</p>
+	   <p>Get instant access to what others think of the sessions in the conference, and better choose what to do next.</p>
+       </div>
+        <div class="span3">
+          <h2>Always with you</h2>
+	  <p><span class="label label-info">soon</span> You can find Voxxrin on Apple App Store and Android Market.</p>
+	  <p style="text-align:center;">
+	  <a href="http://store.apple.com/"><img src="assets/img/appstore.jpg" alt="app store" width="100"></a>
+	  <a href="https://market.android.com/"><img src="assets/img/android.png" alt="android market" width="100"></a>
+	  </p>
+        </div>
+</div>
+
+<hr>
+
+<div class="row">
+ <div class="span4">
+	      <a name="events"></a>
+	      <div>
+		      <h2>Events</h2>
+		      <p>Here is the list of events planned to be covered by Voxxrin</p>
+		      <div id="events" data-bind="foreach: events">
+                <blockquote>
+			<p><span data-bind="text: title">Devoxx</span> ~ <em data-bind="text: subtitle"> </em> </p>
+  <small  data-bind="text: dates">Apr 18-20</small>
+</blockquote>
+		      </div>
+	      </div>
+      </div>
+
+
+      <div class="span4">
+	      <a name="about"></a>
+	      <div>
+		      <h2>About</h2>
+		      <p>Voxxrin has been created for <a href="http://devoxx.fr/">Devoxx France 2012</a>, the conference made by developers for developers.</p>
+		      <p>It is currently limited to only a few events, if your favorite conference is not listed here, you can <a href="#contact">contact us</a> and ask for it.</p>
+	      </div>
+      </div>
+
+      <div class="span4">
+	      <a name="contact"></a>
+	      <div>
+		      <h2>Contact</h2>
+		      <p>An idea to submit? A conference to suggest? Feel free to contact us:</p>
+		      <p><a href="mailto:info@voxxr.in">info@voxxr.in</a>
+	      </div>
+      </div>
+</div>
+
+     
+      <hr>
+
+      <footer>
+        <p>&copy; Voxxrin 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="assets/js/knockout-2.0.0.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/underscore-min.js"></script>
+    <script>
+    function Event(data) {
+        var self = this;
+        self.id = ko.observable(data.id);
+        self.title = ko.observable(data.title);
+        self.subtitle = ko.observable(data.subtitle);
+        self.from = ko.observable(data.from);
+        self.to = ko.observable(data.to);
+        self.nbPresentations = ko.observable(data.nbPresentations);
+        self.dates = ko.observable(data.dates);
+    }
+
+    function VoxxrViewModel() {
+        var self = this;
+        self.events = ko.observableArray([]);
+        $.getJSON("http://voxxr-web.appspot.com/r/events", function(data) {
+            self.events(_(data).map(function(event) { return new Event(event); }));
+        });
+    }
+    
+    var voxxr = new VoxxrViewModel();
+    ko.applyBindings(voxxr);
+
+    </script>
+  </body>
+</html>
+
