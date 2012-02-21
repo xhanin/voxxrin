@@ -209,11 +209,12 @@ $(function() {
 
         self.refreshPresentations = function() {
             $.getJSON(baseUrl + self.uri(), function(data) {
-                self.presentations(_(data).map(function(presentation) { return voxxr.presentation(presentation); }));
-                self.slots(_.chain(data).groupBy('slot').map(function(pres, slot) {
+                var schedule = data.schedule;
+                self.presentations(_(schedule).map(function(presentation) { return voxxr.presentation(presentation); }));
+                self.slots(_.chain(schedule).groupBy('slot').map(function(pres, slot) {
                     return voxxr.scheduleSlot({id: self.id + '/' + slot, name: slot, presentations: pres});
                 }).value());
-                self.nbPresentations(data.length);
+                self.nbPresentations(schedule.length);
             });
         }
 
