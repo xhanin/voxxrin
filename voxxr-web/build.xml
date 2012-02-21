@@ -32,7 +32,13 @@ ${git.status}
         </echo>
     </target>
 
-    <target name="compile" depends="deps, info"
+    <target name="lessc">
+        <exec executable="lessc" output="${basedir}/web/assets/css/voxxr.css">
+            <arg value="${basedir}/web/assets/css/voxxr.less" />
+        </exec>
+    </target>
+
+    <target name="compile" depends="deps, info, lessc"
             description="--> compiles project">
         <mkdir dir="web/WEB-INF/classes" />
         <javac srcdir="src/main/java" destdir="web/WEB-INF/classes"

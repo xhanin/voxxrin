@@ -1,0 +1,219 @@
+/* http://www.colourlovers.com/palette/1930/cheer_up_emo_kid
+   + http://www.colourlovers.com/palette/2033/Llanowar_elf
+ */
+@color1: #556270; @color2: #4ECDC4; @color3: #FF6B6B; @color4: #C7F464; @color5: #C44D58;
+@color6: #FBD405; @color7: #FFAF36;
+
+@about-font-family: "Asap","Georgia",sans-serif;
+
+/* FEEDBACK */
+#feedback {
+    height: 280px;
+
+    .rate {
+        overflow:   visible;
+        padding:    10px;
+        margin:     5px auto;
+        position:   relative;
+        width:      300px;
+        height:     60px;
+
+        .star {
+            /* background: @color3; /* url('../img/star_empty.png') no-repeat; */
+            float:      left;
+            height:     52px;
+            margin:     4px;
+            width:      52px;
+
+            border: 1px solid #333;
+            -webkit-border-radius: 26px;
+            -webkit-box-sizing: border-box;
+            -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#4C4D4E), to(#404142));
+            box-sizing: border-box;
+        }
+        .star.vote {
+            /* background:  @color6; /* url('../img/star_full.png') no-repeat; */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@color6), to(@color7));
+        }
+        .star.voting {
+            background: @color6;
+        }
+        .star.over {
+            background: url('../img/star_highlight.png') no-repeat;
+        }
+    }
+
+
+    .feeling {
+        overflow:   visible;
+        padding:    10px;
+        margin:     5px auto;
+        position:   relative;
+        width:      180px;
+        height:     60px;
+
+        a {
+            float:      left;
+            height:     52px;
+            margin:     4px;
+            width:      52px;
+
+            border: 1px solid #333;
+            -webkit-border-radius: 8px;
+            -webkit-box-sizing: border-box;
+            -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
+            box-sizing: border-box;
+        }
+
+        .applause {
+            background:  @color4;
+        }
+        .yawn {
+            background:  @color5;
+        }
+        .wonder {
+            background:  @color2;
+        }
+    }
+
+}
+
+
+/* DASHBOARD */
+#dashboard {
+    .rate {
+        padding: 20px;
+    }
+
+    .rate .mean {
+        font-size: 48px;
+    }
+}
+
+#rateDrops {
+    width: 160px;
+    height: 60px;
+}
+
+/* PHONE */
+#roomRT {
+    h1 {
+        color:  @color2;
+    }
+
+    #feedback {
+        .dashboard {
+            width: 260px;
+            height: 52px;
+            margin: 5px auto;
+            text-align: center;
+            font-size: 32px;
+            color: @color2;
+        }
+
+        .rateMean, .connections {
+            font-size: 44px;
+            color: @color4;
+        }
+
+        label.rate {
+            padding-left: 40px;
+        }
+    }
+
+    #poll {
+        height: 280px;
+    }
+}
+
+#jqt ul li a.current {
+    background-color: @color4;
+    color: #000000;
+}
+
+#jqt div.message {
+    margin: 15px;
+}
+
+
+#presentation {
+    p a {
+        color: white;
+    }
+    ul li {
+        color: #AAA;
+    }
+}
+
+
+.feeling img {
+    margin: 8px;
+}
+
+
+
+#about {
+    h2 {
+      font-size: 1.8em;
+      font-family: @about-font-family;
+      color: @color4;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      font-family: @about-font-family;
+      color: @color2;
+      margin: 10px 15px 5px;
+      border-bottom: 1px solid @color2;
+      padding-bottom: 0.5em;
+      padding-left: 40px;
+    }
+
+    p {
+        margin: 10px 15px 5px;
+        font-family: @about-font-family;
+    }
+    p span, li span {
+        color: @color5;
+        font-style: italic;
+    }
+
+    p span.voxxr {
+        color: #AAA;
+        font-style: italic;
+    }
+
+    .version {
+        font-style: italic;
+        font-size: 0.8em;
+        color: @color2;
+        border-top: 1px solid @color2;
+        padding: 5px 10px 5px 40px;
+        letter-spacing: 0.1em;
+    }
+
+    ul li {
+        background-image: none;
+        padding:  0px;
+        border: none;
+        display: block;
+        color: #DDD;
+        height: 60px;
+    }
+
+    ul li img {
+        float: left;
+        display: block;
+        margin-right: 5px;
+    }
+
+    ul {
+        border: none;
+        font: normal 1em @about-font-family;
+    }
+
+    a {
+        color: white;
+    }
+}

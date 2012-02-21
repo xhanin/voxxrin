@@ -1,206 +1,173 @@
 /* http://www.colourlovers.com/palette/1930/cheer_up_emo_kid
-   #556270 #4ECDC4 #FF6B6B #C7F464 #C44D58
-
    + http://www.colourlovers.com/palette/2033/Llanowar_elf
-   #FBD405 #FFAF36
  */
-
 /* FEEDBACK */
-#feedback { height: 300px;}
+#feedback {
+  height: 280px;
+}
 #feedback .rate {
-    overflow:   visible;
-    padding:    10px;
-    margin:     5px auto;
-    position:   relative;
-    width:      300px;
-    height:     60px;
+  overflow: visible;
+  padding: 10px;
+  margin: 5px auto;
+  position: relative;
+  width: 300px;
+  height: 60px;
 }
 #feedback .rate .star {
-    /* background: #FF6B6B; /* url('../img/star_empty.png') no-repeat; */
-    float:      left;
-    height:     52px;
-    margin:     4px;
-    width:      52px;
+  /* background: @color3; /* url('../img/star_empty.png') no-repeat; */
 
-    border: 1px solid #333;
-    -webkit-border-radius: 26px;
-    -webkit-box-sizing: border-box;
-    -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#4C4D4E), to(#404142));
-    box-sizing: border-box;
+  float: left;
+  height: 52px;
+  margin: 4px;
+  width: 52px;
+  border: 1px solid #333;
+  -webkit-border-radius: 26px;
+  -webkit-box-sizing: border-box;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 3px;
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#4c4d4e), to(#404142));
+  box-sizing: border-box;
 }
 #feedback .rate .star.vote {
-    /* background:  #FBD405; /* url('../img/star_full.png') no-repeat; */
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FBD405), to(#FFAF36));
+  /* background:  @color6; /* url('../img/star_full.png') no-repeat; */
+
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fbd405), to(#ffaf36));
 }
 #feedback .rate .star.voting {
-    background: #FBD405;
+  background: #fbd405;
 }
 #feedback .rate .star.over {
-    background: url('../img/star_highlight.png') no-repeat;
+  background: url('../img/star_highlight.png') no-repeat;
 }
-
-
 #feedback .feeling {
-    overflow:   visible;
-    padding:    10px;
-    margin:     5px auto;
-    position:   relative;
-    width:      180px;
-    height:     60px;
+  overflow: visible;
+  padding: 10px;
+  margin: 5px auto;
+  position: relative;
+  width: 180px;
+  height: 60px;
 }
-
 #feedback .feeling a {
-    float:      left;
-    height:     52px;
-    margin:     4px;
-    width:      52px;
-        
-    border: 1px solid #333;
-    -webkit-border-radius: 8px;
-    -webkit-box-sizing: border-box;
-    -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
-    box-sizing: border-box;
+  float: left;
+  height: 52px;
+  margin: 4px;
+  width: 52px;
+  border: 1px solid #333;
+  -webkit-border-radius: 8px;
+  -webkit-box-sizing: border-box;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 3px;
+  box-sizing: border-box;
 }
-
 #feedback .feeling .applause {
-    background:  #C7F464;
+  background: #c7f464;
 }
 #feedback .feeling .yawn {
-    background:  #C44D58;
+  background: #c44d58;
 }
 #feedback .feeling .wonder {
-    background:  #4ECDC4;
+  background: #4ecdc4;
 }
-
-
 /* DASHBOARD */
 #dashboard .rate {
-    padding: 20px;
+  padding: 20px;
 }
-
 #dashboard .rate .mean {
-    font-size: 48px;
+  font-size: 48px;
 }
-
 #rateDrops {
-    width: 160px;
-    height: 60px;
+  width: 160px;
+  height: 60px;
 }
-
 /* PHONE */
 #roomRT h1 {
-    color:  #4ECDC4;
+  color: #4ecdc4;
 }
-
 #roomRT #feedback .dashboard {
-    width: 260px;
-    height: 52px;
-    margin: 5px auto;
-    text-align: center;
+  width: 260px;
+  height: 52px;
+  margin: 5px auto;
+  text-align: center;
+  font-size: 32px;
+  color: #4ecdc4;
 }
-
-#roomRT #feedback .dashboard {
-    font-size: 32px;
-    color: #4ECDC4;
+#roomRT #feedback .rateMean,
+#roomRT #feedback .connections {
+  font-size: 44px;
+  color: #c7f464;
 }
-
-#roomRT #feedback .rateMean, #roomRT #feedback .connections {
-    font-size: 44px;
-    color: #C7F464;
-}
-
 #roomRT #feedback label.rate {
-    padding-left: 40px;
+  padding-left: 40px;
 }
-
-
-#jqt ul li a.current {
-    background-color: #C7F464;
-    color: #000000;
-}
-
-#jqt div.message {
-    margin: 15px;
-}
-
 #roomRT #poll {
-    height: 300px;
+  height: 280px;
 }
-
+#jqt ul li a.current {
+  background-color: #c7f464;
+  color: #000000;
+}
+#jqt div.message {
+  margin: 15px;
+}
 #presentation p a {
-    color: white;
+  color: white;
 }
-
 #presentation ul li {
-    color: #AAA;
+  color: #AAA;
 }
-
 .feeling img {
-    margin: 8px;
+  margin: 8px;
 }
-
-
-
 #about h2 {
   font-size: 1.8em;
-  font-family: "Asap","Georgia",sans-serif;
-  color: #C7F464;
+  font-family: "Asap", "Georgia", sans-serif;
+  color: #c7f464;
 }
-
 #about .subtitle {
   font-size: 1.2em;
-  font-family: "Asap","Georgia",sans-serif;
-  color: #4ECDC4;
+  font-family: "Asap", "Georgia", sans-serif;
+  color: #4ecdc4;
   margin: 10px 15px 5px;
-  border-bottom: 1px solid #4ECDC4;
+  border-bottom: 1px solid #4ecdc4;
   padding-bottom: 0.5em;
   padding-left: 40px;
 }
-
 #about p {
-    margin: 10px 15px 5px;
-    font-family: "Asap","Georgia",sans-serif;
+  margin: 10px 15px 5px;
+  font-family: "Asap", "Georgia", sans-serif;
 }
-#about p span, #about li span {
-    color: #C44D58;
-    font-style: italic;
+#about p span,
+#about li span {
+  color: #c44d58;
+  font-style: italic;
 }
-
 #about p span.voxxr {
-    color: #AAA;
-    font-style: italic;
+  color: #AAA;
+  font-style: italic;
 }
-
 #about .version {
-    font-style: italic;
-    font-size: 0.8em;
-    color: #4ECDC4;
-    border-top: 1px solid #4ECDC4;
-    padding: 5px 10px 5px 40px;
-    letter-spacing: 0.1em;
+  font-style: italic;
+  font-size: 0.8em;
+  color: #4ecdc4;
+  border-top: 1px solid #4ecdc4;
+  padding: 5px 10px 5px 40px;
+  letter-spacing: 0.1em;
 }
-
 #about ul li {
-    background-image: none;
-    padding:  0px;
-    border: none;
-    display: block;
-    color: #DDD;
-    height: 60px;
+  background-image: none;
+  padding: 0px;
+  border: none;
+  display: block;
+  color: #DDD;
+  height: 60px;
 }
-
 #about ul li img {
-    float: left;
-    display: block;
-    margin-right: 5px;
+  float: left;
+  display: block;
+  margin-right: 5px;
 }
-
 #about ul {
-    border: none;
-    font: normal 1em "Asap","Georgia",sans-serif;
+  border: none;
+  font: normal 1em "Asap", "Georgia", sans-serif;
 }
-
 #about a {
-    color: #FFF;
+  color: white;
 }
