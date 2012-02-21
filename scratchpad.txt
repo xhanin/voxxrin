@@ -1,0 +1,57 @@
+# get the script : 
+~$ wget http://www.ovh.com/fr/cloud/api/ovhcloud
+
+
+# ./ovhcloud instance login --language en --login hx306-ovh
+       
+
+
+#create your project (you already need to be connected)
+~$ ./ovhcloud instance addProject --name voxxr
+#create an Ubuntu instance, with id instanceId, xs type, at rbx1
+~$ ./ovhcloud instance newInstance --projectName voxxr --offerName xs --distributionName ubuntu1004-x64 --zoneName rbx1 --name voxxr-w1
+
+# get instance informations
+~$ ./ovhcloud instance getInstances --projectName voxxr
+# get credentials to access the instance
+~$ ./ovhcloud instance getLoginInformations --instanceId instanceId
+
+ # alldone, your project is up in the cloud
+# you can ssh ! (don't forget to change your password)  
+~$ ./ovhcloud instance ssh --instanceId instanceId
+
+
+./ovhcloud instance stopInstance --instanceId 65102
+
+
+
+
+# node install script
+apt-get update
+apt-get install -y openjdk-6-jdk ant git-core
+wget http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar -O /usr/share/ant/lib/ivy.jar
+
+@local: scp voxxr_rsa root@178.32.209.169:~/.ssh/
+
+ssh-agent $SHELL
+ssh-add .ssh/voxxr_rsa
+
+
+# TODO : add bitbucket server to known hosts
+git clone git@bitbucket.org:xhanin/voxxr.git
+
+cd voxxr/ && git checkout dev
+cd voxxr-web
+ant run
+
+
+
+
+############
+
+
+git push git@bitbucket.org:xhanin/voxxr.git dev
+
+
+
+
