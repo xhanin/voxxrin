@@ -22,8 +22,8 @@ var jQT = new $.jQTouch({
 
 $(function() {
 
-    var baseUrl = "http://localhost:8080/r";
-//    var baseUrl = "http://voxxr-web.appspot.com/r";
+//    var baseUrl = "http://localhost:8080/r";
+    var baseUrl = "http://voxxr-web.appspot.com/r";
 
     
     var models = {};
@@ -322,18 +322,28 @@ $(function() {
         }
 
         self.enter = function() {
-            self.refreshNowPlaying();
-            updateRemaining();
-            updateSince();
+            self.autorefresh(true);
         }
 
         self.quit = function() {
-            _(crons).each(function(cron, key) {
-                if (cron) {
-                    clearTimeout(cron);
-                    crons[key] = null;
-                }
-            });
+            self.autorefresh(false);
+        }
+
+        self.autorefresh = function(b) {
+            if (self.autorefresh.status === b) return;
+            self.autorefresh.status = b;
+            if (b) {
+                self.refreshNowPlaying();
+                updateRemaining();
+                updateSince();
+            } else {
+                 _(crons).each(function(cron, key) {
+                    if (cron) {
+                        clearTimeout(cron);
+                        crons[key] = null;
+                    }
+                });
+            }
         }
 
     }
@@ -600,8 +610,16 @@ $(function() {
                 voxxr.chosenDay().quit();
                 voxxr.chosenDay(null);
             }
+            console.log("start autorefeshing event ", voxxr.chosenEvent().title());
+            voxxr.chosenEvent().autorefresh(true);
+        }
+    }).bind('pageAnimationStart', function(e, info) {
+        if (info.direction === 'out') {
+            console.log("stop autorefeshing event ", voxxr.chosenEvent().title());
+            voxxr.chosenEvent().autorefresh(false);
         }
     });
+
     $("#dayschedule").bind('pageAnimationEnd', function(e, info) {
         if (info.direction === 'in') {
             if (voxxr.chosenPresentation()) {
