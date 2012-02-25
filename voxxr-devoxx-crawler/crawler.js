@@ -116,10 +116,14 @@ function onFailure(err) {
 
 var port = process.env.PORT || 3000;
 http.createServer(function(req, response) {
-  crawl();
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write("Started crawling...");
-  response.end();
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    if (req.method === 'POST') {
+        crawl();
+        response.write("Started crawling...");
+    } else {
+        response.write("Ready...");
+    }
+    response.end();
 }).listen(port);
 
 console.log('server ready on http://localhost:' + port + '/');
