@@ -143,7 +143,7 @@
         text-shadow: none;
     }
     h3 {
-        margin-left: 20px;
+        margin: 10px 0 5px 20px;
         color: @color4;
         font-weight: normal;
     }
@@ -151,18 +151,45 @@
         content: ":: ";
     }
 
-    ul.edgetoedge li.sep {
-        color: @color2;
+    ul.edgetoedge {
+        li.sep {
+            color: @color2;
+        }
+        li em {
+            font-size: 0.6em;
+            display: block;
+            float: right;
+            margin-right: 10px;
+        }
+    }
+}
+
+#dayschedule {
+    li .speakers {
+        color: @color4;
+    }
+    li .room:before {
+        content: "@ ";
     }
 }
 
 
-#presentation {
+#presentation, #presentationDetails {
     p a {
         color: white;
     }
     ul li {
-        color: #AAA;
+        color: white;
+    }
+    .slot, .room {
+        color: @color2;
+    }
+    .room:before {
+        content: "@ ";
+    }
+    h2 em {
+        display: block;
+        float: right;
     }
 }
 

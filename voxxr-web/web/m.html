@@ -97,10 +97,10 @@
             <h1>Voxxrin</h1>
             <a class="button slideup" href="#about">About</a>
         </div>
-        <p class="loading" data-bind="if: events.loading">
+        <p class="loading" data-bind="visible: events.loading">
             Loading...
         </p>
-        <p data-bind="if: events().length === 0 && !events.loading()">
+        <p data-bind="visible: events().length === 0 && !events.loading()">
             No upcoming event covered :(
         </p>
         <ul class="metal events"  data-bind="foreach: events">
@@ -158,17 +158,17 @@
             <h1 data-bind="text: name"></h1>
             <a href="#" class="back">Event</a>
         </div>
-        <p class="loading" data-bind="if: slots.loading">
+        <p class="loading" data-bind="visible: slots.loading">
             Loading...
         </p>
-        <p data-bind="if: slots().length === 0 && !slots.loading()">
+        <p data-bind="visible: slots().length === 0 && !slots.loading()">
             Schedule not available yet.
         </p>
         <ul class="edgetoedge" data-bind="foreach: slots">
             <li class="sep" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
             <li class="arrow"><a href="#presentation" data-bind="tap: $root.selectPresentation"><small></small> <span data-bind="text: title"> </span>
-                <em data-bind="text: room().name"></em></a></li>
+                <em><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></em></a></li>
             <!-- /ko -->
         </ul>
     </div>
@@ -177,11 +177,11 @@
             <h1 data-bind="text: title"> </h1>
             <a href="#" class="back">Back</a>
         </div>
-        <h2 class="title"><span data-bind="text: title"> </span> <span data-bind="text: slot"> </span></h2>
+        <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
            data-bind="visible: playing, tap: room().join">
             Join room now</a>
-        <p class="loading" data-bind="if: loading">
+        <p class="loading" data-bind="visible: loading">
             Loading...
         </p>
         <h3>Abstract</h3>
@@ -199,7 +199,7 @@
             <h1 data-bind="text: title"> </h1>
             <a href="#" class="back">Back</a>
         </div>
-        <h2 class="title"><span data-bind="text: title"> </span> <span data-bind="text: slot"> </span></h2>
+        <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
            data-bind="visible: playing, tap: room().join">
             Join room now</a>

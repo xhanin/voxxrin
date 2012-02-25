@@ -115,7 +115,7 @@
   text-shadow: none;
 }
 #jqt h3 {
-  margin-left: 20px;
+  margin: 10px 0 5px 20px;
   color: #c7f464;
   font-weight: normal;
 }
@@ -125,11 +125,40 @@
 #jqt ul.edgetoedge li.sep {
   color: #4ecdc4;
 }
-#presentation p a {
+#jqt ul.edgetoedge li em {
+  font-size: 0.6em;
+  display: block;
+  float: right;
+  margin-right: 10px;
+}
+#dayschedule li .speakers {
+  color: #c7f464;
+}
+#dayschedule li .room:before {
+  content: "@ ";
+}
+#presentation p a,
+#presentationDetails p a {
   color: white;
 }
-#presentation ul li {
-  color: #AAA;
+#presentation ul li,
+#presentationDetails ul li {
+  color: white;
+}
+#presentation .slot,
+#presentationDetails .slot,
+#presentation .room,
+#presentationDetails .room {
+  color: #4ecdc4;
+}
+#presentation .room:before,
+#presentationDetails .room:before {
+  content: "@ ";
+}
+#presentation h2 em,
+#presentationDetails h2 em {
+  display: block;
+  float: right;
 }
 .feeling img {
   margin: 8px;
