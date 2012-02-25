@@ -161,9 +161,11 @@
         }
         li em {
             font-size: 0.6em;
-            display: block;
-            float: right;
             margin-right: 10px;
+        }
+        li em:before {
+            content: '\a';
+            white-space: pre;
         }
     }
 }

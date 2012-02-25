@@ -131,9 +131,11 @@
 }
 #jqt ul.edgetoedge li em {
   font-size: 0.6em;
-  display: block;
-  float: right;
   margin-right: 10px;
+}
+#jqt ul.edgetoedge li em:before {
+  content: '\a';
+  white-space: pre;
 }
 #dayschedule li .speakers {
   color: #c7f464;
