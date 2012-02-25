@@ -107,6 +107,24 @@
 #jqt div.message {
   margin: 15px;
 }
+#jqt p {
+  margin: 0 10px;
+}
+#jqt h2 {
+  color: #c7f464;
+  text-shadow: none;
+}
+#jqt h3 {
+  margin-left: 20px;
+  color: #c7f464;
+  font-weight: normal;
+}
+#jqt h3:before {
+  content: ":: ";
+}
+#jqt ul.edgetoedge li.sep {
+  color: #4ecdc4;
+}
 #presentation p a {
   color: white;
 }

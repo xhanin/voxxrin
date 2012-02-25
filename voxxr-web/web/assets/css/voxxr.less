@@ -127,13 +127,33 @@
     }
 }
 
-#jqt ul li a.current {
-    background-color: @color4;
-    color: #000000;
-}
+#jqt {
+    ul li a.current {
+        background-color: @color4;
+        color: #000000;
+    }
+    div.message {
+        margin: 15px;
+    }
+    p {
+        margin: 0 10px;
+    }
+    h2 {
+        color: @color4;
+        text-shadow: none;
+    }
+    h3 {
+        margin-left: 20px;
+        color: @color4;
+        font-weight: normal;
+    }
+    h3:before {
+        content: ":: ";
+    }
 
-#jqt div.message {
-    margin: 15px;
+    ul.edgetoedge li.sep {
+        color: @color2;
+    }
 }
 
 
@@ -150,7 +170,6 @@
 .feeling img {
     margin: 8px;
 }
-
 
 
 #about {

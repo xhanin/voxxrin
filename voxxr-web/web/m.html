@@ -97,6 +97,12 @@
             <h1>Voxxrin</h1>
             <a class="button slideup" href="#about">About</a>
         </div>
+        <p class="loading" data-bind="if: events.loading">
+            Loading...
+        </p>
+        <p data-bind="if: events().length === 0 && !events.loading()">
+            No upcoming event covered :(
+        </p>
         <ul class="metal events"  data-bind="foreach: events">
             <li class="arrow"><a href="#event" data-bind='tap: $root.selectEvent'>
                 <small><span data-bind="text: nbPresentations"> </span> pres'</small> <span data-bind="text: title"> </span>
@@ -152,6 +158,12 @@
             <h1 data-bind="text: name"></h1>
             <a href="#" class="back">Event</a>
         </div>
+        <p class="loading" data-bind="if: slots.loading">
+            Loading...
+        </p>
+        <p data-bind="if: slots().length === 0 && !slots.loading()">
+            Schedule not available yet.
+        </p>
         <ul class="edgetoedge" data-bind="foreach: slots">
             <li class="sep" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
@@ -169,12 +181,15 @@
         <a href="#roomRT" class="joinroom flipleft greenButton"
            data-bind="visible: playing, tap: room().join">
             Join room now</a>
-        <h2>Abstract</h2>
+        <p class="loading" data-bind="if: loading">
+            Loading...
+        </p>
+        <h3>Abstract</h3>
         <p>
             <span data-bind="text: shortSummary"> </span>
             <a href="#presentationDetails">[read more]</a>
         </p>
-        <h2>Speaker(s)</h2>
+        <h3>Speaker(s)</h3>
         <ul data-bind="foreach: speakers">
             <li><span data-bind="text: name"></span></li>
         </ul>
@@ -188,9 +203,9 @@
         <a href="#roomRT" class="joinroom flipleft greenButton"
            data-bind="visible: playing, tap: room().join">
             Join room now</a>
-        <h2>Abstract</h2>
+        <h3>Abstract</h3>
         <p data-bind="text: summary"></p>
-        <h2>Speaker(s)</h2>
+        <h3>Speaker(s)</h3>
         <ul data-bind="foreach: speakers">
             <li><span data-bind="text: name"></span></li>
         </ul>

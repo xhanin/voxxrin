@@ -155,6 +155,7 @@ $(function() {
         self.playing = ko.observable(false);
         self.rate = new models.PresentationRate();
         self.currentPoll = ko.observable(null);
+        self.loading = ko.observable(false);
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -173,6 +174,7 @@ $(function() {
             self.toTime(data.toTime);
             self.room(voxxr.room(data.room));
             self.summary(data.summary);
+            self.loading(false);
         }
 
         self.load = function(data) {
@@ -180,6 +182,7 @@ $(function() {
                 loadData(data);
             } else {
                 if (!self.summary()) { // check if already loaded
+                    self.loading(true);
                     $.getJSON(baseUrl + self.uri(), loadData);
                 }
             }
@@ -206,8 +209,11 @@ $(function() {
         self.nbPresentations = ko.observable(data.nbPresentations);
         self.presentations = ko.observableArray([]);
         self.slots = ko.observableArray([]);
+        self.slots.loading = ko.observable(false);
+
 
         self.refreshPresentations = function() {
+            self.slots.loading(true);
             $.getJSON(baseUrl + self.uri(), function(data) {
                 var schedule = data.schedule;
                 self.presentations(_(schedule).map(function(presentation) { return voxxr.presentation(presentation); }));
@@ -215,6 +221,7 @@ $(function() {
                     return voxxr.scheduleSlot({id: self.id + '/' + slot, name: slot, presentations: pres});
                 }).value());
                 self.nbPresentations(schedule.length);
+                self.slots.loading(false);
             });
         }
 
@@ -299,9 +306,13 @@ $(function() {
                             }
                         }
                     }
-                    refreshIn = Math.max(refreshIn, 15000);
-                    console.log("scheduling now playing auto refresh in ", (refreshIn / 1000), " s");
-                    crons.refreshNowPlaying = setTimeout(self.refreshNowPlaying, refreshIn);
+                    // never shedule auto refresh for more than 2 days
+                    // http://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
+                    if (refreshIn < 172800000) {
+                        refreshIn = Math.max(refreshIn, 15000); // never refresh faster than every 15 seconds
+                        console.log("scheduling now playing auto refresh in ", (refreshIn / 1000), " s");
+                        crons.refreshNowPlaying = setTimeout(self.refreshNowPlaying, refreshIn);
+                    }
                 },
                 error: function() {
                     console.log("error when getting now playing, retry in 15 seconds");
@@ -330,6 +341,7 @@ $(function() {
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
+        self.events.loading = ko.observable(false);
         self.chosenEvent = ko.observable(null);
         self.chosenDay = ko.observable(null);
         self.chosenPresentation = ko.observable(null);
@@ -378,7 +390,9 @@ $(function() {
         };
 
         // load
+        self.events.loading(true);
         $.getJSON(baseUrl + "/events", function(data) {
+            self.events.loading(false);
             self.events(_(data).map(function(event) { return voxxr.event(event); }));
         });
     };
