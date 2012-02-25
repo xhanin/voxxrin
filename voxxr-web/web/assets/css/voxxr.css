@@ -104,6 +104,10 @@
   background-color: #c7f464;
   color: #000000;
 }
+#jqt ul li small {
+  color: #c7f464;
+  text-shadow: none;
+}
 #jqt div.message {
   margin: 15px;
 }
