@@ -1,8 +1,3 @@
-drop keyspace Voxxr;
-create keyspace Voxxr
-    with strategy_options = [{replication_factor:1}]
-    and placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy';
-
 use Voxxr;
 drop column family EV;
 create column family EV
