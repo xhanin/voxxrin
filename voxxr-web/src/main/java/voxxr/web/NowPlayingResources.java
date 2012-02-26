@@ -39,6 +39,11 @@ public class NowPlayingResources implements RestRouter.RequestHandler {
                     Entity entity = datastore.get(Rests.createKey(kind, id));
                     if ("start".equals(action)) {
                         entity.setProperty("nowplaying", true);
+                        if (command.has("roomRT")) {
+                            JSONObject json = new JSONObject(((Text) entity.getProperty("json")).getValue());
+                            json.getJSONObject("room").put("rt", command.getString("roomRT"));
+                            entity.setProperty("json", new Text(json.toString()));
+                        }
                     } else if ("stop".equals(action)) {
                         entity.setProperty("nowplaying", false);
                     } else {
