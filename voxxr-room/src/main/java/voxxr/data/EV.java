@@ -1,5 +1,6 @@
 package voxxr.data;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -47,37 +48,42 @@ public class EV {
         }
     }
 
-    public static EV parse(String room, String evBC) {
+    public static EV parse(String pres, String evBC) {
         String[] parts = evBC.split("\\|");
         for (EV.Type type : EV.Type.values()) {
             if (type.accept(parts[1])) {
-                return new EV(room, parts[0], type, type.getValueIn(parts[1]));
+                return new EV(pres, parts[0], type, type.getValueIn(parts[1]));
             }
         }
         throw new IllegalArgumentException("invalid EV: " + evBC + ": no matched EV.Type");
     }
 
-
-    private final String room;
+    private final UUID key;
+    private final String pres;
     private final String user;
     private final Type type;
     private final String value;
     private final long timestamp;
 
-    public EV(String room, String user, Type type, String value) {
-        this(room, user, type, value, System.currentTimeMillis());
+    public EV(String pres, String user, Type type, String value) {
+        this(UUID.randomUUID(), pres, user, type, value, System.currentTimeMillis());
     }
 
-    public EV(String room, String user, Type type, String value, long timestamp) {
-        this.room = room;
+    public EV(UUID key, String pres, String user, Type type, String value, long timestamp) {
+        this.key = key;
+        this.pres = pres;
         this.user = user;
         this.type = type;
         this.value = value;
         this.timestamp = timestamp;
     }
 
-    public String getRoom() {
-        return room;
+    public UUID getKey() {
+        return key;
+    }
+
+    public String getPres() {
+        return pres;
     }
 
     public String getUser() {
@@ -103,7 +109,7 @@ public class EV {
     @Override
     public String toString() {
         return "EV{" +
-                "room='" + room + '\'' +
+                "room='" + pres + '\'' +
                 ", user='" + user + '\'' +
                 ", type=" + type +
                 ", value='" + value + '\'' +

@@ -1,5 +1,7 @@
 package voxxr.data;
 
+import voxxr.Env;
+
 /**
  * User: xavierhanin
  * Date: 2/26/12
@@ -12,17 +14,13 @@ public class Room {
         return INSTANCE;
     }
 
-    private String id = "r1";
+    private String id = Env.getRoom();
     private String name;
 
     private Presentation currentPres = new Presentation();
 
     public String getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Presentation getCurrentPres() {

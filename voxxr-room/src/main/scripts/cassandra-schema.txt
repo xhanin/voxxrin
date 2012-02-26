@@ -1,0 +1,18 @@
+drop keyspace Voxxr;
+create keyspace Voxxr
+    with strategy_options = [{replication_factor:1}]
+    and placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy';
+
+use Voxxr;
+drop column family EV;
+create column family EV
+    with comparator = UTF8Type
+    and default_validation_class = 'UTF8Type'
+    and key_validation_class = 'UUIDType'
+    and column_metadata = [
+        {column_name: pres, validation_class:UTF8Type},
+        {column_name: user, validation_class:UTF8Type},
+        {column_name: type, validation_class:UTF8Type},
+        {column_name: value, validation_class:UTF8Type}
+    ];
+

@@ -13,7 +13,7 @@ public class EVTest {
 
     @Test
     public void shouldParse() {
-        EV f = EV.parse("r1", "xavierhanin|R2");
+        EV f = EV.parse("1", "xavierhanin|R2");
 
         Assert.assertEquals("xavierhanin", f.getUser());
         Assert.assertEquals(EV.Type.RATE, f.getType());
@@ -22,7 +22,7 @@ public class EVTest {
 
     @Test
     public void shouldBCBeSymetric() {
-        EV f = EV.parse("r1", "xavierhanin|R2");
+        EV f = EV.parse("1", "xavierhanin|R2");
         Assert.assertEquals("xavierhanin|R2", f.toBC());
     }
 }

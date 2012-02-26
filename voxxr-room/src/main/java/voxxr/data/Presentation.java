@@ -6,7 +6,7 @@ package voxxr.data;
  * Time: 10:53 AM
  */
 public class Presentation {
-    private String id;
+    private String id = "1";
     private String title = "Ze Highly interactive talk";
 
     public String getId() {

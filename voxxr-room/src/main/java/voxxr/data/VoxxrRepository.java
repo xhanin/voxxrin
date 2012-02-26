@@ -7,5 +7,5 @@ package voxxr.data;
  */
 public interface VoxxrRepository {
     public void store(EV ev);
-    public MeanRating getRoomMeanRating(String room);
+    public MeanRating getPresMeanRating(String room);
 }

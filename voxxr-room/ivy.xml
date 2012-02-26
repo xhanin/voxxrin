@@ -21,6 +21,8 @@
         <dependency org="org.atmosphere" name="atmosphere-jersey" rev="0.8.1" />
         <dependency org="org.atmosphere" name="atmosphere-jquery" rev="0.8.1" />
 
+        <dependency org="me.prettyprint" name="hector-core" rev="1.0-3" />
+
         <dependency org="junit" name="junit" rev="4.10" conf="test->default" />
 
         <exclude module="atmosphere-compat-jetty" />

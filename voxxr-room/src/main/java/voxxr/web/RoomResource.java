@@ -34,7 +34,7 @@ public class RoomResource {
             broadcaster.broadcast("-----|C" + connections);
         }
         Presentation currentPres = room.getCurrentPres();
-        MeanRating roomMeanRating = repo.getRoomMeanRating(room.getId());
+        MeanRating roomMeanRating = repo.getPresMeanRating(currentPres.getId());
 
         return Response.ok("{\"status\":\"ok\"" +
                 ",\"title\":\"" + currentPres.getTitle() + "\"" +

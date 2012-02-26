@@ -1,10 +1,7 @@
 package voxxr.web;
 
 import org.atmosphere.cpr.Broadcaster;
-import voxxr.data.CassandraVoxxrRepository;
-import voxxr.data.EV;
-import voxxr.data.Room;
-import voxxr.data.VoxxrRepository;
+import voxxr.data.*;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,15 +14,21 @@ import javax.ws.rs.core.Response;
  */
 @Path("/feedback")
 public class EVResource {
-
     private VoxxrRepository repo = CassandraVoxxrRepository.getInstance();
 
     @POST
     public Response sendFeedback(String evBC) {
         Room room = Room.getCurrent();
+        Presentation currentPres = room.getCurrentPres();
+        if (currentPres == null) {
+            return Response
+                    .ok("{\"status\":\"nok\", \"message\":\"Invalid State, no current presentation\"}", "application/json")
+                    .header("Access-Control-Allow-Origin", "*")
+                    .build();
+        }
         EV ev;
         try {
-            ev = EV.parse(room.getId(), evBC);
+            ev = EV.parse(currentPres.getId(), evBC);
         } catch (IllegalArgumentException ex) {
             return Response
                     .ok("{\"status\":\"nok\", \"message\":\"Invalid EV\"}", "application/json")
