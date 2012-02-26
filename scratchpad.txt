@@ -10,42 +10,67 @@
 ~$ ./ovhcloud instance addProject --name voxxr
 #create an Ubuntu instance, with id instanceId, xs type, at rbx1
 ~$ ./ovhcloud instance newInstance --projectName voxxr --offerName xs --distributionName ubuntu1004-x64 --zoneName rbx1 --name voxxr-w1
+~$ ./ovhcloud instance newInstance --projectName voxxr --offerName xs --distributionName ubuntu1004-x64 --zoneName rbx1 --name voxxr-c1
+
 
 # get instance informations
 ~$ ./ovhcloud instance getInstances --projectName voxxr
 # get credentials to access the instance
 ~$ ./ovhcloud instance getLoginInformations --instanceId instanceId
 
+
+./ovhcloud instance startInstance --instanceId 65102
+
  # alldone, your project is up in the cloud
 # you can ssh ! (don't forget to change your password)  
-~$ ./ovhcloud instance ssh --instanceId instanceId
+~$ ./ovhcloud instance ssh 65102
 
 
 ./ovhcloud instance stopInstance --instanceId 65102
+./ovhcloud instance stopInstance --instanceId 69191
 
 
 
+############# room node install script
+@local: scp voxxr_rsa root@178.32.209.169:~/.ssh/
 
-# node install script
 apt-get update
 apt-get install -y openjdk-6-jdk ant git-core
 wget http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar -O /usr/share/ant/lib/ivy.jar
 
-@local: scp voxxr_rsa root@178.32.209.169:~/.ssh/
-
 ssh-agent $SHELL
 ssh-add .ssh/voxxr_rsa
-
 
 # TODO : add bitbucket server to known hosts
 git clone git@bitbucket.org:xhanin/voxxr.git
 
 cd voxxr/ && git checkout dev
-cd voxxr-web
+cd voxxr-room
 ant run
 
+########### cassandra node install script
+echo "deb http://www.apache.org/dist/cassandra/debian 10x main" >> /etc/apt/sources.list
+echo "deb-src http://www.apache.org/dist/cassandra/debian 10x main" >> /etc/apt/sources.list
+gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
+gpg --export --armor F758CE318D77295D | sudo apt-key add -
+gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
+gpg --export --armor 2B5C1B00 | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y cassandra
 
+# manual steps :(
+changed cluster name and s/localhost/machine ip/ in /etc/cassandra/cassandra.yaml
+set host name alias for 127.0.0.1 in /etc/hosts
+adjust memory settings in /etc/cassandra/cassandra-env.sh:
+MAX_HEAP_SIZE="200M"
+HEAP_NEWSIZE="50M"
 
+upload schema.txt to instance
+# end
+
+service cassandra start
+
+cassandra-cli -h 127.0.0.1 -p 9160 < schema.txt
 
 ############
 
@@ -53,5 +78,92 @@ ant run
 git push git@bitbucket.org:xhanin/voxxr.git dev
 
 
+
+
+
+
+
+#############
+
+lynchbages:voxxr-room xavierhanin$ cd /Users/xavierhanin/dev/tools/ovhcloud
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance login --language en --login hx306-ovh
+language (string): en
+login (string): hx306-ovh
+password (string):
+Function returned:
+language billingCountry id                                         startDate                 login
+-------- -------------- --                                         ---------                 -----
+en       FR             hx306-ovh-aa61f39671c315a26d76bc2d24d63cf0 2012-02-26T13:48:22+01:00 hx306-ovh
+
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance getInstances --projectName voxxr
+projectName (string): voxxr
+ERROR: 301, This session id is not valid or expired : hx306-ovh-dadd7c12ab0b71a66bb027e461dcc75f
+login (string): hx306-ovh
+password (string):
+Function returned:
+ipv6 ipv4 netmaskv4 netmaskv6 status  name     distributionName zoneName offerName id
+---- ---- --------- --------- ------  ----     ---------------- -------- --------- --
+          24        64        stopped voxxr-w1 ubuntu1004-x64   rbx1     xs        65102
+
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance getInstances --projectName voxxr
+projectName (string): voxxr
+Function returned:
+ipv6 ipv4 netmaskv4 netmaskv6 status  name     distributionName zoneName offerName id
+---- ---- --------- --------- ------  ----     ---------------- -------- --------- --
+          24        64        stopped voxxr-w1 ubuntu1004-x64   rbx1     xs        65102
+
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance getLoginInformations --instanceId 65102
+instanceId (long): 65102
+Function returned:
+password login
+-------- -----
+OLliUcv7 root
+
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance startInstance --instanceId 65102
+instanceId (long): 65102
+Function returned:
+tasks comment status
+----- ------- ------
+19657         pending
+
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance ssh --instanceId 65102
+No instaceId specified.
+Available options:
+comment updateDate                creationDate              status name  id
+------- ----------                ------------              ------ ----  --
+voxxr   2012-01-03T21:22:48+01:00 2012-01-03T21:22:48+01:00 ok     voxxr 299
+
+projectName (string): ^C
+lynchbages:ovhcloud xavierhanin$ ./ovhcloud instance ssh --instaceId 65102
+Unknown option: instaceid
+The authenticity of host '178.32.211.68 (178.32.211.68)' can't be established.
+RSA key fingerprint is 5c:9a:ca:c6:73:65:23:fd:65:5d:94:14:3d:f0:fc:f4.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '178.32.211.68' (RSA) to the list of known hosts.
+root@178.32.211.68's password:
+Linux localhost.localdomain 2.6.32-23-generic #37-Ubuntu SMP Fri Jun 11 08:03:28 UTC 2010 x86_64 GNU/Linux
+Ubuntu 10.04.3 LTS
+
+Welcome to Ubuntu!
+ * Documentation:  https://help.ubuntu.com/
+Last login: Wed Jan 11 12:10:12 2012
+root@localhost:~# ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:50:56:23:0c:b9
+          inet addr:178.32.211.68  Bcast:178.32.211.68  Mask:255.255.255.255
+          inet6 addr: fe80::250:56ff:fe23:cb9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:12582 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4370 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:17817815 (17.8 MB)  TX bytes:359046 (359.0 KB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:142 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:142 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:15803 (15.8 KB)  TX bytes:15803 (15.8 KB)
 
 
