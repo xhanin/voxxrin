@@ -3,40 +3,29 @@ package voxxr.web;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.jersey.SuspendResponse;
+import voxxr.data.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  */
 @Path("/room")
 public class RoomResource {
-    public static Broadcaster roomBroadcaster(String room) {
+    public static Broadcaster roomBroadcaster(Room room) {
         return roomBroadcaster(room, false);
     }
-    public static Broadcaster roomBroadcaster(String room, boolean createIfNull) {
-        return BroadcasterFactory.getDefault().lookup("room#" + room, createIfNull);
+    public static Broadcaster roomBroadcaster(Room room, boolean createIfNull) {
+        return BroadcasterFactory.getDefault().lookup("room#" + room.getId(), createIfNull);
     }
 
-    // DIRTY AND NON THREAD SAFETY WAY TO STORE SOME DATA, WILL LATER PUT THAT IN A STORE
-    private static BigDecimal rate = BigDecimal.ZERO;
-    private static long ratings;
-
-    public static void rate(int r) {
-        BigDecimal t = rate.multiply(BigDecimal.valueOf(ratings));
-        ratings++;
-        rate = t.add(BigDecimal.valueOf(r)).divide(BigDecimal.valueOf(ratings), 8, RoundingMode.HALF_UP);
-    }
-
-    private String room = "r1";
-    private String roomTitle = "Ze Highly interactive talk";
+    private final VoxxrRepository repo = CassandraVoxxrRepository.getInstance();
 
     @GET
     public Response getRoomDetails() {
+        Room room = Room.getCurrent();
         Broadcaster broadcaster = roomBroadcaster(room);
         int connections = 1;
         if (broadcaster != null) {
@@ -44,11 +33,14 @@ public class RoomResource {
             // !!! on the client if data is less than 8 bytes it doesn't trigger the callback
             broadcaster.broadcast("-----|C" + connections);
         }
+        Presentation currentPres = room.getCurrentPres();
+        MeanRating roomMeanRating = repo.getRoomMeanRating(room.getId());
+
         return Response.ok("{\"status\":\"ok\"" +
-                ",\"title\":\"" + roomTitle + "\"" +
+                ",\"title\":\"" + currentPres.getTitle() + "\"" +
                 ",\"connections\":\"" + connections + "\"" +
-                ",\"rate\":" + rate +
-                ",\"ratings\":" + ratings +
+                ",\"rate\":" + roomMeanRating.getRate() +
+                ",\"ratings\":" + roomMeanRating.getRatingsCount() +
                 "}",
                 "application/json")
                 .header("Access-Control-Allow-Origin", "*")
@@ -68,7 +60,7 @@ public class RoomResource {
     @GET
     @Path("/rt")
     public SuspendResponse<String> subscribe() {
-        Broadcaster broadcaster = roomBroadcaster(room, true);
+        Broadcaster broadcaster = roomBroadcaster(Room.getCurrent(), true);
         return new SuspendResponse.SuspendResponseBuilder<String>()
                 .header("Access-Control-Allow-Origin", "*")
                 .broadcaster(broadcaster)

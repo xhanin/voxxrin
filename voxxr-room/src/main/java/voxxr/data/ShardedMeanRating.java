@@ -48,6 +48,7 @@ public class ShardedMeanRating implements MeanRating {
             sum = sum.add(rating.getRate().multiply(BigDecimal.valueOf(count)));
             ratingsCount += count;
         }
-        return sum.divide(BigDecimal.valueOf(ratingsCount), 8, RoundingMode.HALF_UP);
+        return ratingsCount == 0 ? BigDecimal.ZERO :
+                sum.divide(BigDecimal.valueOf(ratingsCount), 8, RoundingMode.HALF_UP);
     }
 }
