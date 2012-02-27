@@ -15,7 +15,7 @@ public class Env {
     private static String room;
     private static Properties properties;
 
-    static final Logger logger = LoggerFactory.getLogger("ENV");
+    static final Logger logger = LoggerFactory.getLogger(Env.class);
     static {
         properties = new Properties();
         try {

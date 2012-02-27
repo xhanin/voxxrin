@@ -18,7 +18,9 @@ public class EV {
             }
         },
         FEELING("F"), CONNECTION("C"), TITLE("T"),
-        POLL_START("PS"), POLL_END("PE"), POLL_VOTE("PV"), UNKNOWN("");
+        POLL_START("PS"), POLL_END("PE"), POLL_VOTE("PV"),
+        ROOM_START("RS"), ROOM_END("RE"),
+        UNKNOWN("");
 
         public static Type getByCode(String code) {
             for (Type type : values()) {
