@@ -23,6 +23,7 @@ var jQT = new $.jQTouch({
 $(function() {
 
 //    var baseUrl = "http://localhost:8080/r";
+//    var baseUrl = "http://2.latest.voxxr-web.appspot.com/r";
     var baseUrl = "http://voxxr-web.appspot.com/r";
 
     
@@ -33,6 +34,7 @@ $(function() {
         self.uri = ko.observable(data.uri);
         self.name = ko.observable(data.name);
         self.rt = ko.observable(null);
+
         self.connections = ko.observable(0);
         self.currentPresentation = ko.observable(null);
         self.status = ko.observable(models.Room.DISCONNECTED);  
@@ -198,7 +200,10 @@ $(function() {
         self.id = ko.observable(data.id);
         self.name = ko.observable(data.name);
         self.nbPresentations = ko.observable(data.presentations.length);
-        self.presentations = ko.observableArray(_(data.presentations).map(function(presentation) { return voxxr.presentation(presentation); }));
+        self.presentations = ko.observableArray(_.chain(data.presentations)
+            .map(function(presentation) { return voxxr.presentation(presentation); })
+            .sortBy(function (p) { return p.room().id(); })
+            .value());
     }
 
     models.ScheduleDay = function(data) {
