@@ -26,51 +26,14 @@
 ~$ ./ovhcloud instance ssh 65102
 
 
-./ovhcloud instance stopInstance --instanceId 65102
-./ovhcloud instance stopInstance --instanceId 69191
+ovhcloud instance stopInstance --instanceId 65102
+ovhcloud instance stopInstance --instanceId 69191
+ovhcloud instance stopInstance --instanceId 69253
+ovhcloud instance stopInstance --instanceId 69254
 
 
 
-############# room node install script
-@local: scp voxxr_rsa root@178.32.209.169:~/.ssh/
 
-apt-get update
-apt-get install -y openjdk-6-jdk ant git-core
-wget http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar -O /usr/share/ant/lib/ivy.jar
-
-ssh-agent $SHELL
-ssh-add .ssh/voxxr_rsa
-
-# TODO : add bitbucket server to known hosts
-git clone git@bitbucket.org:xhanin/voxxr.git
-
-cd voxxr/ && git checkout dev
-cd voxxr-room
-ant run
-
-########### cassandra node install script
-echo "deb http://www.apache.org/dist/cassandra/debian 10x main" >> /etc/apt/sources.list
-echo "deb-src http://www.apache.org/dist/cassandra/debian 10x main" >> /etc/apt/sources.list
-gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
-gpg --export --armor F758CE318D77295D | sudo apt-key add -
-gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
-gpg --export --armor 2B5C1B00 | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y cassandra
-
-# manual steps :(
-changed cluster name and s/localhost/machine ip/ in /etc/cassandra/cassandra.yaml
-set host name alias for 127.0.0.1 in /etc/hosts
-adjust memory settings in /etc/cassandra/cassandra-env.sh:
-MAX_HEAP_SIZE="200M"
-HEAP_NEWSIZE="50M"
-
-upload schema.txt to instance
-# end
-
-service cassandra start
-
-cassandra-cli -h 127.0.0.1 -p 9160 < schema.txt
 
 ############
 
@@ -78,7 +41,7 @@ cassandra-cli -h 127.0.0.1 -p 9160 < schema.txt
 git push git@bitbucket.org:xhanin/voxxr.git dev
 
 
-
+src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
 
 
 

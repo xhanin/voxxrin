@@ -1,8 +1,9 @@
 #!/bin/sh
 
-SEED_INSTANCE=69191
-NODES=( 69253 69254 )
-HOSTS=( voxxr-c2 voxxr-c3 )
+SEED_INSTANCE=69446
+NODES=( 69447 69448 )
+SEED_HOST=voxxr-c4
+HOSTS=( voxxr-c5 voxxr-c6 )
 TOKENS=( 28356863910078205288614550619314017621 56713727820156410577229101238628035242 )
 VOXXR_HOME=~/dev/wkspace/voxxr/voxxr
 
@@ -20,8 +21,10 @@ done
 
 echo "Cassandra cluster seed machine running. IP=$SEED_IP"
 
-$VOXXR_HOME/voxxr-room/src/main/scripts/deploy-cassandra.sh $SEED_INSTANCE $SEED_IP 0 voxxr-c1
+$VOXXR_HOME/voxxr-room/src/main/scripts/deploy-cassandra.sh $SEED_INSTANCE $SEED_IP 0 $SEED_HOST
 for ((i=0; i < ${#NODES[@]}; i++)); do
   echo "calling deploy cassandra ${NODES[$i]} $SEED_IP ${TOKEN[$i]} ${HOSTS[$i]}"
   $VOXXR_HOME/voxxr-room/src/main/scripts/deploy-cassandra.sh ${NODES[$i]} $SEED_IP ${TOKENS[$i]} ${HOSTS[$i]}
 done
+
+echo $SEED_IP > $VOXXR_HOME/voxxr-room/current-seed-ip
