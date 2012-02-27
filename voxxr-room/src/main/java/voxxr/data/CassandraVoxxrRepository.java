@@ -8,6 +8,8 @@ import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.MutationResult;
 import me.prettyprint.hector.api.mutation.Mutator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import voxxr.Env;
 
 import java.math.BigDecimal;
@@ -33,12 +35,14 @@ public class CassandraVoxxrRepository implements VoxxrRepository {
     private Cluster voxxrCluster;
     private Keyspace voxxrKeyspace;
 
+    private final Logger logger = LoggerFactory.getLogger(CassandraVoxxrRepository.class);
+
     private CassandraVoxxrRepository() {
-        properties = new Properties();
+        properties = Env.getProperties();
 
         voxxrCluster = HFactory.getOrCreateCluster(
                 properties.getProperty("cluster.name", "VoxxrCluster"),
-                properties.getProperty("cluster.hosts", Env.getCassandraClusterHosts()));
+                properties.getProperty("cluster.hosts"));
         ConfigurableConsistencyLevel ccl = new ConfigurableConsistencyLevel();
         ccl.setDefaultReadConsistencyLevel(HConsistencyLevel.ONE);
         voxxrKeyspace = HFactory.createKeyspace(
@@ -58,7 +62,7 @@ public class CassandraVoxxrRepository implements VoxxrRepository {
         mutator.addInsertion(ev.getKey(), "EV", HFactory.createStringColumn("value", ev.getValue()));
 
         MutationResult mr = mutator.execute();
-        System.out.println("inserted EV in " + mr.getExecutionTimeMicro() + "us");
+        logger.debug("inserted EV {} in {}us", ev.getKey(), mr.getExecutionTimeMicro());
     }
 
     public MeanRating getPresMeanRating(String pres) {

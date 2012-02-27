@@ -1,13 +1,13 @@
 package voxxr.web;
 
+import com.google.common.base.Strings;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.jersey.SuspendResponse;
+import org.slf4j.LoggerFactory;
 import voxxr.data.*;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 /**
@@ -34,14 +34,36 @@ public class RoomResource {
             broadcaster.broadcast("-----|C" + connections);
         }
         Presentation currentPres = room.getCurrentPres();
-        MeanRating roomMeanRating = repo.getPresMeanRating(currentPres.getId());
+        MeanRating roomMeanRating = currentPres == null ? null : repo.getPresMeanRating(currentPres.getId());
 
         return Response.ok("{\"status\":\"ok\"" +
-                ",\"title\":\"" + currentPres.getTitle() + "\"" +
+                ",\"title\":\"" + (currentPres == null ? "" : currentPres.getTitle()) + "\"" +
                 ",\"connections\":\"" + connections + "\"" +
-                ",\"rate\":" + roomMeanRating.getRate() +
-                ",\"ratings\":" + roomMeanRating.getRatingsCount() +
+                ",\"rate\":" + (roomMeanRating == null ? "0" : roomMeanRating.getRate()) +
+                ",\"ratings\":" + (roomMeanRating == null ? "0" : roomMeanRating.getRatingsCount()) +
                 "}",
+                "application/json")
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
+    }
+
+    @POST
+    @Path("/presentation")
+    public Response setCurrentPresentation(@QueryParam("id") String id,
+                                           @QueryParam("title") String title) {
+        Room room = Room.getCurrent();
+        if (id == null) {
+            room.setCurrentPres(null);
+        } else {
+            room.setCurrentPres(new Presentation(id, title));
+        }
+        LoggerFactory.getLogger(RoomResource.class).info("current presentation changed to " + room.getCurrentPres());
+        Broadcaster broadcaster = roomBroadcaster(room);
+        if (broadcaster != null) {
+            // !!! on the client if data is less than 8 bytes it doesn't trigger the callback
+            broadcaster.broadcast("------|T" + Strings.nullToEmpty(title));
+        }
+        return Response.ok("{\"status\":\"ok\"}",
                 "application/json")
                 .header("Access-Control-Allow-Origin", "*")
                 .build();

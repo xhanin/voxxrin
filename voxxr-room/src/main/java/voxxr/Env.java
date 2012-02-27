@@ -1,5 +1,11 @@
 package voxxr;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  * User: xavierhanin
  * Date: 2/26/12
@@ -7,18 +13,25 @@ package voxxr;
  */
 public class Env {
     private static String room;
-    private static String cassandraClusterHosts;
+    private static Properties properties;
 
+    static final Logger logger = LoggerFactory.getLogger("ENV");
     static {
-        room = "r1";
-        cassandraClusterHosts = "127.0.0.1:9160";
+        properties = new Properties();
+        try {
+            properties.load(Env.class.getResourceAsStream("/voxxr-room.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("unable to load voxxr-room.properties", e);
+        }
+        logger.info("voxxr-room properties: \n\n" + properties + "\n\n");
+        room = properties.getProperty("room");
     }
 
     public static String getRoom() {
         return room;
     }
 
-    public static String getCassandraClusterHosts() {
-        return cassandraClusterHosts;
+    public static Properties getProperties() {
+        return properties;
     }
 }
