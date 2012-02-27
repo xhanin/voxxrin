@@ -15,7 +15,7 @@ module.exports = function(options, data) {
         if (!error && response.statusCode == 200) {
             deferred.resolve(body);
         } else {
-            deferred.reject(error);
+            deferred.reject({f:'send', error: error, response: response, options: options});
         }
     });
     return deferred.promise

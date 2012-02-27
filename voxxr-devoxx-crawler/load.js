@@ -12,8 +12,10 @@ module.exports = function(options) {
                 console.log('error when parsing response from ', options, body);
                 throw e;
             }
+        } else if(response.statusCode != 200) {
+            deferred.reject('404: ' + options);
         } else {
-            deferred.reject(error);
+            deferred.reject({f:'load', error: error, response: response, options: options});
         }
     });
     return deferred.promise

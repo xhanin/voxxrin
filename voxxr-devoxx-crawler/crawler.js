@@ -17,6 +17,7 @@ var voxxrin = {
 };
 
 function crawl() {
+    console.log('start crawling');
     Q.all([
         load('http://cfp.devoxx.com/rest/v1/events/' + eventId),
         load('http://cfp.devoxx.com/rest/v1/events/' + eventId + '/schedule/rooms'),
@@ -72,18 +73,18 @@ function crawl() {
                             "tags":p.tags,
                             "summary":p.summary
                         }))
-                        .then(function() {console.log('PRESENTATION: ', voxxrinPres)})
+                        .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
                         .fail(onFailure);
                 }).fail(onFailure);
             }
         });
 
         send(baseUrl + '/r/events', voxxrin.event).then(function() {
-            console.log('EVENT:', voxxrin);
+            console.log('EVENT:', voxxrin.event);
         }).fail(onFailure);
         _(voxxrin.daySchedules).each(function (ds) {
             send(baseUrl + '/r/events/' + voxxrin.event.id + '/day/' + ds.id, ds).then(function(){
-                console.log('DAY SCHEDULE:', ds.id, ds.schedule);
+                console.log('DAY SCHEDULE:', ds.id, ' LENGTH:', ds.schedule.length);
             }).fail(onFailure);
         });
     }).fail(onFailure);
@@ -111,7 +112,7 @@ function formatDates(from, to) {
 }
 
 function onFailure(err) {
-    console.log(err);
+    console.log('ERROR', err);
 }
 
 var port = process.env.PORT || 3000;
