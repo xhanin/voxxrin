@@ -1,6 +1,8 @@
 /* http://www.colourlovers.com/palette/1930/cheer_up_emo_kid
    + http://www.colourlovers.com/palette/2033/Llanowar_elf
  */
+/* don't use web font, too slow to load on phone connection
+  @about-font-family: "Asap","Georgia",sans-serif; */
 /* FEEDBACK */
 #feedback {
   height: 280px;
@@ -171,12 +173,12 @@
 }
 #about h2 {
   font-size: 1.8em;
-  font-family: "Asap", "Georgia", sans-serif;
+  font-family: "Helvetica Neue", Helvetica;
   color: #c7f464;
 }
 #about .subtitle {
   font-size: 1.2em;
-  font-family: "Asap", "Georgia", sans-serif;
+  font-family: "Helvetica Neue", Helvetica;
   color: #4ecdc4;
   margin: 10px 15px 5px;
   border-bottom: 1px solid #4ecdc4;
@@ -185,7 +187,7 @@
 }
 #about p {
   margin: 10px 15px 5px;
-  font-family: "Asap", "Georgia", sans-serif;
+  font-family: "Helvetica Neue", Helvetica;
 }
 #about p span,
 #about li span {
@@ -219,7 +221,7 @@
 }
 #about ul {
   border: none;
-  font: normal 1em "Asap", "Georgia", sans-serif;
+  font: normal 1em "Helvetica Neue", Helvetica;
 }
 #about a {
   color: white;
