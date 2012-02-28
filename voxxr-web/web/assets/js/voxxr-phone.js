@@ -1,20 +1,3 @@
-_.mixin({
-  capitalize : function(string) {
-    return string.charAt(0).toUpperCase() + string.substring(1);
-  }
-});
-
-ko.bindingHandlers.tap = {
-        'init': function(element, valueAccessor, allBindingsAccessor, viewModel) {
-            var newValueAccessor = function () {
-                var result = {};
-                result.tap = valueAccessor();
-                return result;
-            };
-            return ko.bindingHandlers['event']['init'].call(this, element, newValueAccessor, allBindingsAccessor, viewModel);
-        }
-};
-
 
 var jQT = new $.jQTouch({
     statusBar: 'black'
@@ -22,104 +5,9 @@ var jQT = new $.jQTouch({
 
 $(function() {
 
-//    var baseUrl = "http://localhost:8080/r";
+    var baseUrl = "http://localhost:8080/r";
 //    var baseUrl = "http://2.latest.voxxr-web.appspot.com/r";
-    var baseUrl = "http://voxxr-web.appspot.com/r";
-
-    
-    var models = {};
-    models.Room = function(data) {
-        var self = this;
-        self.id = ko.observable(data.id);
-        self.uri = ko.observable(data.uri);
-        self.name = ko.observable(data.name);
-        self.rt = ko.observable(null);
-
-        self.connections = ko.observable(0);
-        self.currentPresentation = ko.observable(null);
-        self.status = ko.observable(models.Room.DISCONNECTED);  
-        self.message = ko.observable(null);
-        self.connected = ko.computed(function() {
-            return self.status() === models.Room.CONNECTED;
-        });
-        self.connecting = ko.computed(function() {
-            return self.status() === models.Room.CONNECTING;
-        });
-
-        self.join = function() {
-            voxxr.currentRoom(self);
-            self.connect();
-        };
-        self.leave = function() {
-            self.quit();
-            jQT.goBack();
-        };
-        self.quit = function() {
-            console.log("quitting room ", self.name());
-            self.disconnect();
-            voxxr.currentRoom(null);
-        };
-
-        self.connect = function() {
-            if (self.status() === models.Room.DISCONNECTED) {
-                self.message("Connecting to room...");
-                self.status(models.Room.CONNECTING);
-                $.ajax({
-                    type: "GET",
-                    url: self.rt() + "/r/room",
-                    dataType:"json",
-                    success: function(resp) {
-                        if (resp.status === 'ok') {
-                            self.connections(resp.connections);
-                            self.currentPresentation().title(resp.title);
-                            self.currentPresentation().rate.nb(resp.ratings);
-                            self.currentPresentation().rate.avg(resp.rate * 100);
-                            self.message(null);
-                            self.status(models.Room.CONNECTED);
-                            subscribe();
-                        } else {
-                            self.message(resp.message);
-                            self.status(models.Room.DISCONNECTED);
-                        }
-                    },
-                    error: function(xhr, type) {
-                        console.error('-------------- CONNECTION ERROR', xhr);
-                        self.message("Can't connect to room. Is it currently opened?");
-                        self.status(models.Room.DISCONNECTED);
-                    }
-                });
-            }
-        };
-
-        self.reconnect = function() {
-            self.disconnect();
-            self.connect();
-        };
-
-        self.disconnect = function() {
-            if (self.status() !== models.Room.DISCONNECTED) {
-                $.atmosphere.closeSuspendedConnection();
-            }
-            self.message(null);
-            self.status(models.Room.DISCONNECTED);
-        };
-
-        function loadData(data) {
-            if (data.rt) self.rt(data.rt);
-        }
-        self.load = function(data) {
-            if (data) {
-                loadData(data);
-            } else {
-                $.getJSON(baseUrl + self.uri(), loadData);
-            }
-        }
-
-        loadData(data);
-    };
-    models.Room.DISCONNECTED = "disconnected";
-    models.Room.CONNECTED = "connected";
-    models.Room.CONNECTING = "connecting";
+//    var baseUrl = "http://voxxr-web.appspot.com/r";
 
     models.Speaker = function(data) {
         var self = this;
@@ -360,7 +248,7 @@ $(function() {
         self.chosenEvent = ko.observable(null);
         self.chosenDay = ko.observable(null);
         self.chosenPresentation = ko.observable(null);
-        self.currentRoom = ko.observable(null);
+        self.currentRoom = models.Room.current;
         self.user = ko.observable({ name: ko.observable("anonymous") });
 
         // factories / data storage
@@ -415,107 +303,40 @@ $(function() {
     var voxxr = new VoxxrViewModel();
     ko.applyBindings(voxxr);
 
-
-    var transport = "long-polling";
-//    if ('WebSocket' in window) {
-//        transport = "websocket";
-//    }
-    function subscribe() {
-        console.info('-------------- SUBSCRIBING TO ', voxxr.currentRoom().rt(), '/r/room/rt', ' with transport ', transport);
-        $.atmosphere.subscribe(
-            voxxr.currentRoom().rt() + '/r/room/rt',
-            function(response) {
-                var room = voxxr.currentRoom();
-                if (response.state == 'error' || response.state == 'closed') {
-                    room.message("Room connection lost");
-                    room.status(models.Room.DISCONNECTED);
-                    return;
-                }
-                if (response.transport != 'polling'
-                    && response.state != 'connected' && response.state != 'closed') {
-                    if (response.status == 200) {
-                        var data = response.responseBody;
-                        if (data.length > 0) {
-                            var f = parseFeedback(data);
-
-                            if (f.isConnection) {
-                                room.connections(f.connections);
-                            }
-                            var pres = room.currentPresentation();
-                            if (f.isTitle) {
-                                pres.title(f.title);
-                            }
-                            if (f.isPollStart) {
-                                pres.currentPoll(new models.PresentationPoll({
-                                    choices: _(f.items).map(function(e,i) { return {title: e, index: i}; })
-                                }));
-                                $("#roomRT .tabs a.poll").text('< POLL >')
-                                    .gfxShake({distance: 20, duration: 100});
-                            }
-                            if (f.isPollEnd) {
-                                pres.currentPoll(null);
-                                $("#roomRT .tabs a.poll").text('POLL')
-                                    .gfxShake({distance: 20, duration: 100});
-                            }
-                            if (f.isRate) {
-                                var rate = pres.rate;
-                                rate.avg(((rate.avg() * rate.nb()) + (f.rateValue * 100)) / (rate.nb() + 1));
-                                rate.nb(rate.nb() + 1);
-                            }
-
-                        }
-                    }
-                }
-            },
-            $.atmosphere.request = { transport: transport });
-    }
-
-    // COMMON
-    function feedback(user, v) {
-        return user + '|' + v;
-    }
-
-    function parseFeedback(f) {
-        var parts = f.split('|');
-        var feedback = {};
-        if (parts.length > 2) {
-            feedback.room = parts[0];
-            feedback.user = parts[1];
-            feedback.value = parts[2];
-        } else {
-            feedback.room = voxxr.currentRoom() ? voxxr.currentRoom().id() : null;
-            feedback.user = parts[0];
-            feedback.value = parts[1];
+    models.Room.onEV(function(f) {
+        var room = voxxr.currentRoom();
+        if (f.isConnection) {
+            room.connections(f.connections);
         }
-
-        feedback.isRate = feedback.value.substr(0,1) === 'R';
-        if (feedback.isRate) {
-            feedback.rateValue = feedback.value.substr(1);
-            feedback.index = feedback.rateValue;
+        var pres = room.currentPresentation();
+        if (f.isTitle) {
+            pres.title(f.title);
         }
-        feedback.isConnection = feedback.value.substr(0,1) === 'C';
-        if (feedback.isConnection) {
-            feedback.connections = feedback.value.substr(1);
+        if (f.isPollStart) {
+            pres.currentPoll(new models.PresentationPoll({
+                choices: _(f.items).map(function(e,i) { return {title: e, index: i}; })
+            }));
+            $("#roomRT .tabs a.poll").text('< POLL >')
+                .gfxShake({distance: 20, duration: 100});
         }
-        feedback.isTitle = feedback.value.substr(0,1) === 'T';
-        if (feedback.isTitle) {
-            feedback.title = feedback.value.substr(1);
+        if (f.isPollEnd) {
+            pres.currentPoll(null);
+            $("#roomRT .tabs a.poll").text('POLL')
+                .gfxShake({distance: 20, duration: 100});
         }
-        feedback.isPollStart = feedback.value.substr(0,2) === 'PS';
-        if (feedback.isPollStart) {
-            feedback.items = feedback.value.substr(2).split(',');
+        if (f.isRate) {
+            var rate = pres.rate;
+            rate.avg(((rate.avg() * rate.nb()) + (f.rateValue * 100)) / (rate.nb() + 1));
+            rate.nb(rate.nb() + 1);
         }
-        feedback.isPollEnd = feedback.value.substr(0,2) === 'PE';
-
-        return feedback;
-    }
+    });
 
     function sendFeedback(f, onsuccess, onerror) {
         console.debug('--------------  FEEDBACK ', f, ' ON ', voxxr.currentRoom().rt(), "/r/feedback");
         $.ajax({
             type: "POST",
             url: voxxr.currentRoom().rt() + "/r/feedback",
-            data: feedback(voxxr.user().name(), f),
+            data: models.EV.toBC(voxxr.user().name(), f),
             dataType:"json",
             success: function( resp ) {
                 if (resp.status === 'ok') {
