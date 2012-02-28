@@ -127,6 +127,10 @@ class Evenire {
 }
 
 void addEvenire(HashMap evenire){
+  // expected properties
+  //    - index: the rate value as a number [1-5], telling where the EV wants to be
+  //    - value: what is displayed to the user for this rate (usually Rx, eg R1, R2, ...)
+  //    - user: name of the user who sent the EV
   evenires.add(new Evenire(evenire,evenires.size()));
 }
 

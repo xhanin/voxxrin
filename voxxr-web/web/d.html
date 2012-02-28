@@ -1,35 +1,67 @@
-
+<!doctype html>
 <html>
   <head>
-      <script type="text/javascript" src="/assets/js/libs/jquery-1.7.1.js"></script>
-      <script type="text/javascript" src="/assets/js/libs/jquery.atmosphere.js"></script>
-      <script type="text/javascript" src="/assets/js/libs/jquery.form.js"></script>
-      <script type="text/javascript" src="/assets/js/libs/processing-1.3.6.min.js"></script>
-      <script type="text/javascript" src="/assets/js/voxxr.js"></script>
+      <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
+      <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
+      <script type="text/javascript" src="assets/js/libs/processing-1.3.6.min.js"></script>
+      <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
+      <script type="text/javascript" src="assets/js/models-ds.js"></script>
+      <script type="text/javascript" src="assets/js/models-EV.js"></script>
+      <script type="text/javascript" src="assets/js/models-room.js"></script>
+      <script type="text/javascript" src="assets/js/models-speaker.js"></script>
+      <script type="text/javascript" src="assets/js/models-presentation.js"></script>
+      <script type="text/javascript">
+          $(function() {
+              function withPrez(prez) {
+                  prez = new models.Presentation(prez);
+                  prez.playing(true);
+                  prez.room().currentPresentation(prez);
+                  prez.room().connect();
+                  models.Room.onEV(function(ev) {
+                      console.log('EV', ev);
+                      var rateDrops = Processing.getInstanceById("rateDrops");
+                      if(rateDrops != null) { rateDrops.addEvenire(ev); }
+                  });
+              }
 
-      <link rel="stylesheet" href="/assets/css/voxxr.css" />
+              if (!urlParams['prez'] || !urlParams['event']) {
+                  alert('you must give a presentation id as query param');
+              } else {
+                  var prezId = urlParams['prez'],
+                      eventId = urlParams['event'];
+
+                  models.baseUrl = "http://localhost:8080/r";
+//    models.baseUrl = "http://2.latest.voxxr-web.appspot.com/r";
+//    models.baseUrl = "http://voxxr-web.appspot.com/r";
+
+                  $.ajax({
+                        url: models.baseUrl + "/events/" + eventId + "/nowplaying",
+                        dataType:"json",
+                        success: function(data) {
+                            var prez = _(data).find(function(p) {return p.id == prezId});
+                            if (!prez) {
+                                alert('presentation is not playing now');
+                            } else {
+                                withPrez(prez);
+                            }
+                        }
+                  });
+              }
+          });
+      </script>
+      <style type="text/css">
+      #rateDrops { width: 240px; height: 90px; }
+      </style>
 </head>
 <body>
-<h1>Voxxr.in</h1>
-
-<div id="feedback">
-    <div class="rate">
-        <div class="star" data-rate="1"></div>
-        <div class="star" data-rate="2"></div>
-        <div class="star" data-rate="3"></div>
-        <div class="star" data-rate="4"></div>
-        <div class="star" data-rate="5"></div>
-    </div>
-    <div class="feeling">
-        <div class="applause"></div>
-        <div class="yawn"></div>
-        <div class="wonder"></div>
-    </div>
-</div>
 <div id="dashboard">
+    <h1>Voxxrin DASHBOARD</h1>
     <div class="rate">
         <span class="mean"></span>
-        <canvas id="rateDrops"  data-processing-sources="/assets/pde/evenire-drops.pde"></canvas>
+        <canvas id="rateDrops"  data-processing-sources="assets/pde/evenire-drops.pde"></canvas>
     </div>
     <div class="feeling">
 

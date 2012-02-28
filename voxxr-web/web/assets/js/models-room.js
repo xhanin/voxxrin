@@ -111,7 +111,7 @@
             if (data) {
                 loadData(data);
             } else {
-                $.getJSON(baseUrl + self.uri(), loadData);
+                $.getJSON(models.baseUrl + self.uri(), loadData);
             }
         }
         
@@ -122,7 +122,9 @@
     Room.CONNECTING = "connecting";
     Room.current = ko.observable(null);
     Room.onEV = function(callback) {
-        $("body").bind('EV', function(event) { callback(event.data) });
+        $("body").bind('EV', function(event, ev) {
+            callback(event.data || ev);
+        });
     };
 
     exports.models = exports.models || {};
