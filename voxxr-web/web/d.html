@@ -6,7 +6,7 @@
       <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
-      <script type="text/javascript" src="assets/js/libs/processing-1.3.6.min.js"></script>
+      <script type="text/javascript" src="assets/js/libs/processing-1.3.6.js"></script>
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
       <script type="text/javascript" src="assets/js/models-ds.js"></script>
       <script type="text/javascript" src="assets/js/models-EV.js"></script>
@@ -22,9 +22,20 @@
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
                       console.log('EV', ev);
-                      var rateDrops = Processing.getInstanceById("rateDrops");
-                      if(rateDrops != null) { rateDrops.addEvenire(ev); }
+                      if (ev.isRate) {
+                          var rateDrops = Processing.getInstanceById("rateDrops");
+                          rateDrops.setPalette({1:0xffC44D58, 2:0xffFF6B6B, 3:0xffFBD405, 4:0xff4ECDC4, 5:0xffC7F464});
+                          if(rateDrops != null) { rateDrops.addEvenire(ev); }
+                      }
+                      if (ev.isFeeling) {
+                          var feelingDrops = Processing.getInstanceById("feelingDrops");
+                          feelingDrops.setPalette({1:0xffc7f464, 2:0xffc44d58, 3:0xff4ecdc4})
+                          if(feelingDrops != null) { feelingDrops.addEvenire(ev); }
+                      }
                   });
+
+                  var voxxr = { prez: prez, room: prez.room(), connections: ko.observable(0)};
+                  ko.applyBindings(voxxr);
               }
 
               if (!urlParams['prez'] || !urlParams['event']) {
@@ -53,19 +64,20 @@
           });
       </script>
       <style type="text/css">
-      #rateDrops { width: 240px; height: 90px; }
+      #rateDrops, #feelingDrops { width: 240px; height: 90px; }
+      #conAndMean {  width: 240px; height: 52px; margin: 5px auto; text-align: center; font-size: 32px; color: #4ecdc4; }
+      #conAndMean .connections, #conAndMean .rateMean { font-size: 44px; color: #c7f464; }
       </style>
 </head>
 <body>
 <div id="dashboard">
-    <h1>Voxxrin DASHBOARD</h1>
-    <div class="rate">
-        <span class="mean"></span>
-        <canvas id="rateDrops"  data-processing-sources="assets/pde/evenire-drops.pde"></canvas>
+    <div id="conAndMean" data-bind="with: room">
+        C <span class="connections" data-bind="text: connections">###</span>
+        -
+        R <span class="rateMean" data-bind="text: currentPresentation().rate.avgDisplay">#.##</span>
     </div>
-    <div class="feeling">
-
-    </div>
+    <canvas id="rateDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
+    <canvas id="feelingDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
 </div>
 </body>
 </html>

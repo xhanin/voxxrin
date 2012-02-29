@@ -5,6 +5,6 @@
     <static-files>
         <include path="/assets/**" />
         <include path="/m.html" />
+        <include path="/d.html" />
     </static-files>
-    
 </appengine-web-app>

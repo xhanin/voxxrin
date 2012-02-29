@@ -81,13 +81,14 @@
 //        transport = "websocket";
 //    }
         function subscribe(room) {
-            console.info('-------------- SUBSCRIBING TO ', room.rt(), '/r/room/rt', ' with transport ', transport);
+            var $room = room;
+            console.info('-------------- SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
             $.atmosphere.subscribe(
-                room.rt() + '/r/room/rt',
+                $room.rt() + '/r/room/rt',
                 function(response) {
                     if (response.state == 'error' || response.state == 'closed') {
-                        room.message("Room connection lost");
-                        room.status(models.Room.DISCONNECTED);
+                        $room.message("Room connection lost");
+                        $room.status(models.Room.DISCONNECTED);
                         return;
                     }
                     if (response.transport != 'polling'
@@ -95,13 +96,35 @@
                         if (response.status == 200) {
                             var data = response.responseBody;
                             if (data.length > 0) {
-                                var ev = exports.models.EV.fromBC(data, room.id());
+                                var ev = exports.models.EV.fromBC(data, $room.id());
+
+                                if (ev.isConnection) {
+                                    $room.connections(ev.connections);
+                                }
+                                var pres = $room.currentPresentation();
+                                if (ev.isTitle) {
+                                    pres.title(ev.title);
+                                }
+                                if (ev.isPollStart) {
+                                    pres.currentPoll(new models.PresentationPoll({
+                                        choices: _(ev.items).map(function(e,i) { return {title: e, index: i}; })
+                                    }));
+                                }
+                                if (ev.isPollEnd) {
+                                    pres.currentPoll(null);
+                                }
+                                if (ev.isRate) {
+                                    var rate = pres.rate;
+                                    rate.avg(((rate.avg() * rate.nb()) + (ev.rateValue * 100)) / (rate.nb() + 1));
+                                    rate.nb(rate.nb() + 1);
+                                }
+
                                 $("body").trigger('EV', ev);
                             }
                         }
                     }
                 },
-                $.atmosphere.request = { transport: transport });
+                $.atmosphere.request = { transport: transport, maxRequest : 100000 });
         }
 
         function loadData(data) {

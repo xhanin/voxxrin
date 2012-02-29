@@ -47,30 +47,13 @@ $(function() {
     ko.applyBindings(voxxr);
 
     models.Room.onEV(function(f) {
-        var room = voxxr.currentRoom();
-        if (f.isConnection) {
-            room.connections(f.connections);
-        }
-        var pres = room.currentPresentation();
-        if (f.isTitle) {
-            pres.title(f.title);
-        }
         if (f.isPollStart) {
-            pres.currentPoll(new models.PresentationPoll({
-                choices: _(f.items).map(function(e,i) { return {title: e, index: i}; })
-            }));
             $("#roomRT .tabs a.poll").text('< POLL >')
                 .gfxShake({distance: 20, duration: 100});
         }
         if (f.isPollEnd) {
-            pres.currentPoll(null);
             $("#roomRT .tabs a.poll").text('POLL')
                 .gfxShake({distance: 20, duration: 100});
-        }
-        if (f.isRate) {
-            var rate = pres.rate;
-            rate.avg(((rate.avg() * rate.nb()) + (f.rateValue * 100)) / (rate.nb() + 1));
-            rate.nb(rate.nb() + 1);
         }
     });
 

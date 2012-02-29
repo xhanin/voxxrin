@@ -10,6 +10,11 @@ int box_w       = 20,       box_h     = 10,
     font_size   = 12,
     ev_per_col  = floor((brick_end - brick_start) / box_h) - 1;
 float gravita = 0.03;
+HashMap palette = new HashMap();
+
+void setPalette(HashMap p){
+    palette = p;
+}
 
 class Slot {
   color bcolor;
@@ -49,7 +54,7 @@ class Slot {
   }
 
   color get_color(){
-    return color(desired_index * 10,125,255);
+    return palette[desired_index];
   }
 
   int get_pos_x(col){

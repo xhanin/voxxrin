@@ -23,6 +23,11 @@
             feedback.rateValue = feedback.value.substr(1);
             feedback.index = feedback.rateValue;
         }
+        feedback.isFeeling = feedback.value.substr(0,1) === 'F';
+        if (feedback.isFeeling) {
+            feedback.feelingValue = feedback.value.substr(1);
+            feedback.index = {'A':1, 'Y':2, 'W':3}[feedback.feelingValue];
+        }
         feedback.isConnection = feedback.value.substr(0,1) === 'C';
         if (feedback.isConnection) {
             feedback.connections = feedback.value.substr(1);
