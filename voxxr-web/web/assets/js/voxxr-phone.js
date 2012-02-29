@@ -17,7 +17,7 @@ $(function() {
         self.chosenDay = ko.observable(null);
         self.chosenPresentation = ko.observable(null);
         self.currentRoom = models.Room.current;
-        self.user = ko.observable({ name: ko.observable("anonymous") });
+        self.user = models.User.current;
 
         // change current selection function
         self.selectEvent = function(event) {
@@ -57,25 +57,6 @@ $(function() {
         }
     });
 
-    function sendFeedback(f, onsuccess, onerror) {
-        console.debug('--------------  FEEDBACK ', f, ' ON ', voxxr.currentRoom().rt(), "/r/feedback");
-        $.ajax({
-            type: "POST",
-            url: voxxr.currentRoom().rt() + "/r/feedback",
-            data: models.EV.toBC(voxxr.user().name(), f),
-            dataType:"json",
-            success: function( resp ) {
-                if (resp.status === 'ok') {
-                    console.debug('-------------- FEEDBACK SUCCESS ', f);
-                    if (onsuccess) onsuccess(resp);
-                }
-            },
-            error: function(xhr, type) {
-                console.error('-------------- FEEDBACK ERROR' + xhr);
-                if (onerror) onerror();
-            }
-        });
-    }
 
     (function() {
         var myRate = {avg: 0, last: 0};
@@ -84,6 +65,10 @@ $(function() {
             vote($(this).attr('data-rate'));
             return false;
         });
+
+        function sendEV(ev, onsuccess, onerror) {
+            voxxr.currentRoom().sendEV(ev, onsuccess, onerror);
+        }
 
         function setVotes(rate, style) {
             rate = rate || myRate.last;
@@ -99,7 +84,7 @@ $(function() {
 
         function vote(r) {
             setVotes(r, 'voting');
-            sendFeedback("R" + r, function() { myRate.last = r; setVotes();}, function() { setVotes(); });
+            sendEV("R" + r, function() { myRate.last = r; setVotes();}, function() { setVotes(); });
         }
 
         $("#feedback .feeling a").live('tap', function() {
@@ -107,14 +92,14 @@ $(function() {
         });
 
         function feeling(r) {
-            sendFeedback("F" + r, function() {
+            sendEV("F" + r, function() {
                 $("#feedback .feeling a[data-value='" + r + "']").gfxFlipIn({});
             });
         }
 
         $("#roomRT #poll ul li a").live('tap', function() {
             var r = $(this).attr('data-value');
-            sendFeedback("PV" + r, function() {
+            sendEV("PV" + r, function() {
                 $("#roomRT #poll ul li a").removeClass("current");
                 $("#roomRT #poll ul li a[data-value='" + r + "']").addClass("current");
             });

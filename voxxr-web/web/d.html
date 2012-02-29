@@ -3,6 +3,7 @@
   <head>
       <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
       <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.js"></script>
+      <script type="text/javascript" src="assets/js/libs/date.format.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
@@ -10,6 +11,7 @@
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
       <script type="text/javascript" src="assets/js/models-ds.js"></script>
       <script type="text/javascript" src="assets/js/models-EV.js"></script>
+      <script type="text/javascript" src="assets/js/models-user.js"></script>
       <script type="text/javascript" src="assets/js/models-room.js"></script>
       <script type="text/javascript" src="assets/js/models-speaker.js"></script>
       <script type="text/javascript" src="assets/js/models-presentation.js"></script>
@@ -18,6 +20,7 @@
               function withPrez(prez) {
                   prez = new models.Presentation(prez);
                   prez.playing(true);
+                  models.Room.current(prez.room());
                   prez.room().currentPresentation(prez);
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
@@ -36,7 +39,11 @@
 
                   var voxxr = { prez: prez, room: prez.room(), connections: ko.observable(0)};
                   ko.applyBindings(voxxr);
+
+                  $("#start").click(function() { models.Room.current().sendEV('PZS')});
+                  $("#stop").click(function() { models.Room.current().sendEV('PZE')});
               }
+
 
               if (!urlParams['prez'] || !urlParams['event']) {
                   alert('you must give a presentation id as query param');
@@ -65,7 +72,8 @@
       </script>
       <style type="text/css">
       #rateDrops, #feelingDrops { width: 240px; height: 90px; }
-      #conAndMean {  width: 240px; height: 52px; margin: 5px auto; text-align: center; font-size: 32px; color: #4ecdc4; }
+      #conAndMean, #time {  width: 240px; height: 52px; margin: 5px 0; text-align: center; font-size: 32px; color: #4ecdc4; }
+      #buttons {  width: 240px; text-align: center; margin: 5px 0; }
       #conAndMean .connections, #conAndMean .rateMean { font-size: 44px; color: #c7f464; }
       </style>
 </head>
@@ -78,6 +86,11 @@
     </div>
     <canvas id="rateDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
     <canvas id="feelingDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
+    <div id="time" data-bind="text: prez.time"></div>
+    <div id="buttons" data-bind="with: prez">
+        <button id="start" type="button" data-bind="visible: state() === 'STOPPED'">Start Presentation</button>
+        <button id="stop" type="button" data-bind="visible: state() === 'STARTED'">Stop Presentation</button>
+    </div>
 </div>
 </body>
 </html>

@@ -20,6 +20,7 @@ public class EV {
         FEELING("F"), CONNECTION("C"), TITLE("T"),
         POLL_START("PS"), POLL_END("PE"), POLL_VOTE("PV"),
         ROOM_START("RS"), ROOM_END("RE"),
+        PREZ_START("PZS"), PREZ_END("PZE"),
         UNKNOWN("");
 
         public static Type getByCode(String code) {

@@ -118,6 +118,12 @@
                                     rate.avg(((rate.avg() * rate.nb()) + (ev.rateValue * 100)) / (rate.nb() + 1));
                                     rate.nb(rate.nb() + 1);
                                 }
+                                if (ev.isPrezStart) {
+                                    pres.start();
+                                }
+                                if (ev.isPrezEnd) {
+                                    pres.stop();
+                                }
 
                                 $("body").trigger('EV', ev);
                             }
@@ -126,6 +132,32 @@
                 },
                 $.atmosphere.request = { transport: transport, maxRequest : 100000 });
         }
+
+        self.sendEV = function(ev, onsuccess, onerror) {
+            if (!self.rt()) {
+                console.error('-------------- EV ERROR: cannot send EV when not connected');
+                onerror();
+                return;
+            }
+            console.debug('--------------  EV ', ev, ' ON ', self.rt(), "/r/feedback");
+            $.ajax({
+                type: "POST",
+                url: self.rt() + "/r/feedback",
+                data: models.EV.toBC(models.User.current().name(), ev),
+                dataType:"json",
+                success: function( resp ) {
+                    if (resp.status === 'ok') {
+                        console.debug('-------------- EV SUCCESS ', ev);
+                        if (onsuccess) onsuccess(resp);
+                    }
+                },
+                error: function(xhr, type) {
+                    console.error('-------------- EV ERROR' + xhr);
+                    if (onerror) onerror();
+                }
+            });
+        }
+
 
         function loadData(data) {
             if (data.rt) self.rt(data.rt);

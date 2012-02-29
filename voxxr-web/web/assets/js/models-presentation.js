@@ -30,6 +30,10 @@
         self.rate = new models.PresentationRate();
         self.currentPoll = ko.observable(null);
         self.loading = ko.observable(false);
+        self.state = ko.observable('STOPPED');
+        self.startedAt = ko.observable(null);
+        self.timeElasped = ko.observable(0);
+        self.time = ko.observable('');
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -39,6 +43,25 @@
                self.summary().substring(0, 197) + "..."
                : self.summary();
         });
+
+        var cron = null;
+        function updateTime() {
+            self.time(new Date(new Date() - self.startedAt()).format('UTC:H:MM:ss'));
+            cron = setTimeout(updateTime, 1000);
+        }
+        self.start = function() {
+            self.state('STARTED');
+            self.startedAt(new Date());
+            self.timeElasped(0);
+            updateTime();
+        }
+        self.stop = function() {
+            self.state('STOPPED');
+            self.startedAt(null);
+            self.timeElasped(0);
+            self.time('');
+            clearTimeout(cron);
+        }
 
         function loadData(data) {
             self.title(data.title);
