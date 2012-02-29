@@ -16,9 +16,22 @@ public class EV {
             public boolean accept(String valueWithType) {
                 return REGEX.matcher(valueWithType).matches();
             }
+
+            @Override
+            public int getHotFactorPoints(String value) {
+                return Integer.parseInt(value);
+            }
         },
-        FEELING("F"), CONNECTION("C"), TITLE("T"),
-        POLL_START("PS"), POLL_END("PE"), POLL_VOTE("PV"),
+        FEELING("F") {
+            @Override
+            public int getHotFactorPoints(String value) {
+                return "A".equals(value) ? 8 :
+                        ("W".equals(value) ? 3 :
+                                ("Y".equals(value) ? -5 : 0));
+            }
+        }, CONNECTION("C"), TITLE("T"),
+        HOT_FACTOR("H"),
+        POLL_START("PS", 10), POLL_END("PE", 10), POLL_VOTE("PV", 4),
         ROOM_START("RS"), ROOM_END("RE"),
         PREZ_START("PZS"), PREZ_END("PZE"),
         UNKNOWN("");
@@ -33,9 +46,14 @@ public class EV {
         }
 
         private String code;
+        private int hotFactorPoints = 0;
 
         Type(String code) {
             this.code = code;
+        }
+        Type(String code, int hotFactorPoints) {
+            this.code = code;
+            this.hotFactorPoints = hotFactorPoints;
         }
 
         public String getCode() {
@@ -48,6 +66,10 @@ public class EV {
 
         public String getValueIn(String valueWithType) {
             return valueWithType.substring(code.length());
+        }
+
+        public int getHotFactorPoints(String value) {
+            return hotFactorPoints;
         }
     }
 
@@ -79,6 +101,10 @@ public class EV {
         this.type = type;
         this.value = value;
         this.timestamp = timestamp;
+    }
+
+    public int getHotFactorPoints() {
+        return type.getHotFactorPoints(this.value);
     }
 
     public UUID getKey() {

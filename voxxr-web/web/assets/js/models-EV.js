@@ -18,10 +18,14 @@
             ev.value = parts[1];
         }
 
-        ev.isRate = ev.value.substr(0,1) === 'R' && !isNan(Number(ev.value.substr(1)));
+        ev.isRate = ev.value.substr(0,1) === 'R' && !isNaN(Number(ev.value.substr(1)));
         if (ev.isRate) {
             ev.rateValue = ev.value.substr(1);
             ev.index = ev.rateValue;
+        }
+        ev.isHotFactor = ev.value.substr(0,1) === 'H';
+        if (ev.isHotFactor) {
+            ev.hotFactorValue = ev.value.substr(1);
         }
         ev.isFeeling = ev.value.substr(0,1) === 'F';
         if (ev.isFeeling) {

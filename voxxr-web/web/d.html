@@ -72,7 +72,7 @@
       </script>
       <style type="text/css">
       #rateDrops, #feelingDrops { width: 240px; height: 90px; }
-      #conAndMean, #time {  width: 240px; height: 52px; margin: 5px 0; text-align: center; font-size: 32px; color: #4ecdc4; }
+      #conAndMean, #time, #hotFactor {  width: 240px; height: 52px; margin: 5px 0; text-align: center; font-size: 32px; color: #4ecdc4; }
       #buttons {  width: 240px; text-align: center; margin: 5px 0; }
       #conAndMean .connections, #conAndMean .rateMean { font-size: 44px; color: #c7f464; }
       </style>
@@ -87,6 +87,7 @@
     <canvas id="rateDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
     <canvas id="feelingDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
     <div id="time" data-bind="text: prez.time"></div>
+    <div id="hotFactor" data-bind="text: prez.hotFactor"></div>
     <div id="buttons" data-bind="with: prez">
         <button id="start" type="button" data-bind="visible: state() === 'STOPPED'">Start Presentation</button>
         <button id="stop" type="button" data-bind="visible: state() === 'STARTED'">Stop Presentation</button>

@@ -34,6 +34,7 @@
         self.startedAt = ko.observable(null);
         self.timeElasped = ko.observable(0);
         self.time = ko.observable('');
+        self.hotFactor = ko.observable(0);
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');

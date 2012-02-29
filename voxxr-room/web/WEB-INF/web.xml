@@ -30,7 +30,6 @@
             <param-value>
                 voxxr.web.EVResource
                 voxxr.web.RoomResource
-                voxxr.web.JQueryPubSub
             </param-value>
         </init-param>
 

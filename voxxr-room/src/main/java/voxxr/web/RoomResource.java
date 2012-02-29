@@ -86,7 +86,6 @@ public class RoomResource {
         return new SuspendResponse.SuspendResponseBuilder<String>()
                 .header("Access-Control-Allow-Origin", "*")
                 .broadcaster(broadcaster)
-                .addListener(new EventsLogger())
                 .build();
     }
 

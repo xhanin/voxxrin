@@ -44,6 +44,8 @@ public class EVResource {
             broadcaster.broadcast(ev.toBC());
         }
 
+        currentPres.updateHotFactor(ev);
+
 
         return Response
                 .ok("{\"status\":\"ok\"}", "application/json")

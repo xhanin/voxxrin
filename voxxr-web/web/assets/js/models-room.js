@@ -118,6 +118,9 @@
                                     rate.avg(((rate.avg() * rate.nb()) + (ev.rateValue * 100)) / (rate.nb() + 1));
                                     rate.nb(rate.nb() + 1);
                                 }
+                                if (ev.isHotFactor) {
+                                    pres.hotFactor(ev.hotFactorValue);
+                                }
                                 if (ev.isPrezStart) {
                                     pres.start();
                                 }
