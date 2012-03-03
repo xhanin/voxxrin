@@ -1,0 +1,11 @@
+#main {
+    background-color: white;
+    padding: 40px 60px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+    border: 1px solid rgba(0, 0, 0, .3);
+}
+#main h1 { font-size: 64px; }
+#main h2 { font-size: 64px; font-style: italic; }
+#main .author { margin: 80px 0 0 200px; font-size: 48px; }
