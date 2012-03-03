@@ -5,10 +5,6 @@ var jQT = new $.jQTouch({
 
 $(function() {
 
-    models.baseUrl = "http://localhost:8080/r";
-//    models.baseUrl = "http://2.latest.voxxr-web.appspot.com/r";
-//    models.baseUrl = "http://voxxr-web.appspot.com/r";
-
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
@@ -18,6 +14,7 @@ $(function() {
         self.chosenPresentation = ko.observable(null);
         self.currentRoom = models.Room.current;
         self.user = models.User.current;
+        self.device = models.Device.current;
 
         // change current selection function
         self.selectEvent = function(event) {

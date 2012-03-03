@@ -47,27 +47,36 @@ public class Rests {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
             Entity entity = datastore.get(key);
-            resp.addHeader("Content-Type", "application/json; charset=utf-8");
-            resp.addHeader("Access-Control-Allow-Origin", "*");
-
-            OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream(), "UTF8");
-            writer.append(((Text) entity.getProperty("json")).getValue());
-            writer.flush();
-            writer.close();
+            sendAsJsonObject(entity, resp);
         } catch (EntityNotFoundException e) {
             resp.sendError(404);
         }
     }
 
+    public static void sendAsJsonObject(Entity entity, HttpServletResponse resp) throws IOException {
+        resp.addHeader("Content-Type", "application/json; charset=utf-8");
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+
+        OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream(), "UTF8");
+        writer.append(((Text) entity.getProperty("json")).getValue());
+        writer.flush();
+        writer.close();
+    }
+
     public static void storeFromRequest(HttpServletRequest req, HttpServletResponse resp, String kind, PrepareEntityCallback callback) throws IOException {
+        if (!isSecure(req)) {
+            resp.sendError(403, "Unauthorized");
+            return;
+        }
+        insecureStoreFromRequest(req, resp, kind, callback);
+    }
+
+    public static Entity insecureStoreFromRequest(HttpServletRequest req, HttpServletResponse resp, String kind, PrepareEntityCallback callback) throws IOException {
         try {
-            if (!isSecure(req)) {
-                resp.sendError(403, "Unauthorized");
-                return;
-            }
-            storeFromJSON(jsonObjectFromRequest(req), kind, callback);
+            return storeFromJSON(jsonObjectFromRequest(req), kind, callback);
         } catch (JSONException e) {
             resp.sendError(400, "Invalid json: " + e.getMessage());
+            return null;
         }
     }
 
@@ -82,7 +91,7 @@ public class Rests {
         return "Qh12EEHzVPn2AkKfihVs".equals(req.getHeader("Authorization"));
     }
 
-    public static void storeFromJSON(JSONObject json, String kind, PrepareEntityCallback callback) throws JSONException {
+    public static Entity storeFromJSON(JSONObject json, String kind, PrepareEntityCallback callback) throws JSONException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity entity = null;
         String id = json.has("id") ? json.getString("id") : null;
@@ -104,6 +113,7 @@ public class Rests {
         }
         entity.setProperty("json", new Text(json.toString()));
         datastore.put(callback.prepare(json, entity));
+        return entity;
     }
 
     public static Key createKey(String kind, String id) {
