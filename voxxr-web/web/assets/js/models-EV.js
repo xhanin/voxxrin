@@ -49,6 +49,13 @@
         ev.isPrezStart = ev.value.substr(0,3) === 'PZS';
         ev.isPrezEnd = ev.value.substr(0,3) === 'PZE';
 
+        ev.isPoke = ev.value.substr(0,2) === 'PK';
+        if (ev.isPoke) {
+            var parts = ev.value.substr(2).split(',');
+            ev.toUser = parts[0];
+            ev.msg = parts[1];
+        }
+
         return ev;
     }
 

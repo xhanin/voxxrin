@@ -10,7 +10,7 @@
 
         whenDeviceReady(function() {
             var devicedata = localStorage.getItem('deviceinfo');
-            if (false && devicedata) {
+            if (devicedata) {
                 devicedata = JSON.parse(devicedata);
                 load(devicedata);
                 console.log('device (from ls)', devicedata);

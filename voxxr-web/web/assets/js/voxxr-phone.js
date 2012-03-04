@@ -53,6 +53,14 @@ $(function() {
             $("#roomRT .tabs a.poll").text('POLL')
                 .gfxShake({distance: 20, duration: 100});
         }
+        if (f.isPoke && f.toUser === models.User.current().name()) {
+            navigator.notification.vibrate(2000);
+            navigator.notification.alert(
+                f.msg,  // message
+                'Poked by ' + f.user,            // title
+                'Ok'                  // buttonName
+            );
+        }
     });
 
 

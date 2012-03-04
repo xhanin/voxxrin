@@ -12,7 +12,8 @@
 
     _.extend(window.navigator, {
         notification: {
-            vibrate: function(){}
+            vibrate: function(){},
+            alert: function(msg) {alert(msg)}
         }
     });
     $(deviceready);
