@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="voxxr-ios" default="assets"> 
+
+     <target name="assets" description="--> init assets from voxxr-web module">
+	<delete dir="${basedir}/Voxxrin/www" />
+        <copy todir="${basedir}/Voxxrin/www" overwrite="true">
+            <fileset dir="${basedir}/../voxxr-web/web" includes="m.html, assets/**" />
+        </copy>
+	<copy file="${basedir}/libs/phonegap-1.4.1.js" overwrite="true" 
+		todir="${basedir}/Voxxrin/www/assets/js/libs" />
+    </target>
+</project>

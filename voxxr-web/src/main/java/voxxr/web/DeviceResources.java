@@ -1,6 +1,7 @@
 package voxxr.web;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,6 +29,7 @@ public class DeviceResources implements RestRouter.RequestHandler {
                 }
             });
             if (entity != null) {
+                System.out.println("registered device " + ((Text) entity.getProperty("json")).getValue());
                 Rests.sendAsJsonObject(entity, resp);
             }
         }

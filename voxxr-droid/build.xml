@@ -86,5 +86,7 @@
         <copy todir="${basedir}/assets/www" overwrite="true">
             <fileset dir="${basedir}/../voxxr-web/web" includes="m.html, assets/**" />
         </copy>
+        <copy file="${basedir}/libs/phonegap-1.4.1.js" overwrite="true"
+              todir="${basedir}/assets/www/assets/js/libs" />
     </target>
 </project>
