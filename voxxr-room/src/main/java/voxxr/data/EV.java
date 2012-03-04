@@ -1,5 +1,7 @@
 package voxxr.data;
 
+import com.google.common.base.Strings;
+
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -132,7 +134,8 @@ public class EV {
     }
 
     public String toBC() {
-        return user + '|' + type.getCode() + value;
+        // under 8 bytes atmosphere client doesn't notify the event
+        return Strings.padStart(user + '|' + type.getCode() + value, 8, '-');
     }
 
     @Override
