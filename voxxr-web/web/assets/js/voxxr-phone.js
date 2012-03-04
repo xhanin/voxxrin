@@ -45,6 +45,7 @@ $(function() {
 
     models.Room.onEV(function(f) {
         if (f.isPollStart) {
+            navigator.notification.vibrate(1000);
             $("#roomRT .tabs a.poll").text('< POLL >')
                 .gfxShake({distance: 20, duration: 100});
         }

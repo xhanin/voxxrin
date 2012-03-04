@@ -34,6 +34,7 @@
 
         self.connect = function() {
             if (self.status() === models.Room.DISCONNECTED) {
+                console.log('joining room');
                 self.message("Connecting to room...");
                 self.status(models.Room.CONNECTING);
                 $.ajax({
@@ -48,6 +49,7 @@
                             self.currentPresentation().rate.avg(resp.rate * 100);
                             self.message(null);
                             self.status(models.Room.CONNECTED);
+                            console.log('ROOM CONNECTED');
                             subscribe(self);
                         } else {
                             self.message(resp.message);
@@ -82,7 +84,7 @@
 //    }
         function subscribe(room) {
             var $room = room;
-            console.info('-------------- SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
+            console.log('-------------- SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
             $.atmosphere.subscribe(
                 $room.rt() + '/r/room/rt',
                 function(response) {

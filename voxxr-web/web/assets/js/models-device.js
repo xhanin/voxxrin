@@ -8,7 +8,7 @@
             self.id(data.id);
         }
 
-        $(document).bind('deviceready', function() {
+        whenDeviceReady(function() {
             var devicedata = localStorage.getItem('deviceinfo');
             if (false && devicedata) {
                 devicedata = JSON.parse(devicedata);
@@ -17,7 +17,7 @@
             } else {
                 var deviceinfo = _.extend(
                     {userAgent: navigator.userAgent, userLanguage: navigator.userLanguage},
-                    window.device);
+                    navigator.device);
                 $.ajax({
                     url: models.baseUrl + "/devices/",
                     dataType:"json",

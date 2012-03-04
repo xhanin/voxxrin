@@ -30,3 +30,12 @@ var urlParams = {};
     while (e = r.exec(q))
        urlParams[d(e[1])] = d(e[2]);
 })();
+
+
+function whenDeviceReady(callback) {
+    if (typeof navigator.device == "undefined"){
+         document.addEventListener("deviceready", callback, false);
+    } else {
+        callback.call(document);
+    }
+}

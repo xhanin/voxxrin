@@ -1,12 +1,19 @@
 (function(){
     function deviceready() {
         // fire off deviceready
+        window.device = {};
+        navigator.device = window.device;
         var e = document.createEvent('Events');
         e.initEvent('deviceready');
         document.dispatchEvent(e);
     }
 
-    window.device = {};
     window.PhoneGap = {};
-    deviceready();
+
+    _.extend(window.navigator, {
+        notification: {
+            vibrate: function(){}
+        }
+    });
+    $(deviceready);
 })();
