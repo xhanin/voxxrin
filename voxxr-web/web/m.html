@@ -115,7 +115,7 @@
             No upcoming event covered :(
         </p>
         <ul class="metal events"  data-bind="foreach: events">
-            <li class="arrow"><a href="#event" data-bind='tap: $root.selectEvent'>
+            <li class="arrow"><a data-bind='href: hash'>
                 <span data-bind="text: title"> </span>
                 <em><span data-bind="text: subtitle"> </span> ~ <span data-bind="text: dates"> </span></em>
             </a></li>
@@ -124,7 +124,7 @@
     <div id="event" data-bind="with: chosenEvent">
         <div class="toolbar">
             <h1 data-bind="text: title"></h1>
-            <a href="#" class="back">Events</a>
+            <a href="#events" class="button backBtn slideright">Events</a>
         </div>
         <div class="message" data-bind="visible: remaining">
             <span data-bind="text: remaining"></span>
@@ -133,41 +133,32 @@
             <span data-bind="text: since"></span>
         </div>
         <ul class="rounded">
-            <li class="arrow nowplaying"><a href="#nowplaying">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
+            <li class="arrow nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
         </ul>
         <h2>Schedule</h2>
         <ul class="rounded" data-bind="foreach: days">
-            <li class="arrow"><a href="#dayschedule" data-bind="tap: $root.selectDay"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
+            <li class="arrow"><a data-bind="href: hash"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
         </ul>
     </div>
     <div id="nowplaying" data-bind="with: chosenEvent">
         <div class="toolbar">
             <h1>Now playing</h1>
-            <a href="#" class="back">Event</a>
+            <a data-bind="href: $root.chosenEvent().hash" class="button backBtn slideright">Event</a>
         </div>
         <div class="noplaying message" data-bind="visible: nowplaying().length === 0">
             No presentations right now
         </div>
         <ul class="metal" data-bind="foreach: nowplaying">
-            <li class="arrow"><a href="#presentation" data-bind="tap: $root.selectPresentation"><small></small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a data-bind="href: hash"><small></small> <span data-bind="text: title"> </span>
                 <em><span data-bind="text: speakerNames"> </span>,
                     <span data-bind="text: slot"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
         </ul>
         <a data-bind="tap: refreshNowPlaying" class="grayButton">Refresh</a>
     </div>
-    <div id="schedule" data-bind="with: chosenEvent">
-        <div class="toolbar">
-            <h1>Schedule</h1>
-            <a href="#" class="back">Event</a>
-        </div>
-        <ul class="rounded" data-bind="foreach: days">
-            <li class="arrow"><a href="#dayschedule"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
-        </ul>
-    </div>
     <div id="dayschedule" data-bind="with: chosenDay">
         <div class="toolbar">
             <h1 data-bind="text: name"></h1>
-            <a href="#" class="back">Event</a>
+            <a data-bind="href: $root.chosenEvent().hash" class="button backBtn slideright">Event</a>
         </div>
         <p class="loading" data-bind="visible: slots.loading">
 
@@ -178,7 +169,7 @@
         <ul class="edgetoedge" data-bind="foreach: slots">
             <li class="sep" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
-            <li class="arrow"><a href="#presentation" data-bind="tap: $root.selectPresentation"><small></small> <span data-bind="text: title"> </span>
+            <li class="arrow"><a data-bind="href: hash"><small></small> <span data-bind="text: title"> </span>
                 <em><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></em></a></li>
             <!-- /ko -->
         </ul>
@@ -186,36 +177,20 @@
     <div id="presentation" data-bind="with: chosenPresentation">
         <div class="toolbar">
             <h1 data-bind="text: title"> </h1>
-            <a href="#" class="back">Back</a>
+            <a data-bind="href: parentHash" class="button backBtn slideright">Back</a>
         </div>
         <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
            data-bind="visible: playing, tap: room().join">
             Join room now</a>
+        <h3>Abstract</h3>
         <p class="loading" data-bind="visible: loading">
 
         </p>
-        <h3>Abstract</h3>
         <p>
             <span data-bind="text: shortSummary"> </span>
-            <a href="#presentationDetails">[read more]</a>
+            <a class="toggleDetails" data-bind="tap: toggleDetails, text: moreOrLess">[read more]</a>
         </p>
-        <h3>Speaker(s)</h3>
-        <ul data-bind="foreach: speakers">
-            <li><span data-bind="text: name"></span></li>
-        </ul>
-    </div>
-    <div id="presentationDetails" data-bind="with: chosenPresentation">
-        <div class="toolbar">
-            <h1 data-bind="text: title"> </h1>
-            <a href="#" class="back">Back</a>
-        </div>
-        <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
-        <a href="#roomRT" class="joinroom flipleft greenButton"
-           data-bind="visible: playing, tap: room().join">
-            Join room now</a>
-        <h3>Abstract</h3>
-        <p data-bind="text: summary"></p>
         <h3>Speaker(s)</h3>
         <ul data-bind="foreach: speakers">
             <li><span data-bind="text: name"></span></li>

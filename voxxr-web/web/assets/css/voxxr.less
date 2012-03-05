@@ -170,6 +170,15 @@
             white-space: pre;
         }
     }
+
+    .backBtn {
+        left: 6px;
+        right: auto;
+        padding: 0;
+        max-width: 55px;
+        border-width: 0 8px 0 14px;
+        -webkit-border-image: url(jqtouch/themes/jqt/img/back_button.png) 0 8 0 14;
+    }
 }
 
 #dayschedule {
@@ -182,7 +191,7 @@
 }
 
 
-#presentation, #presentationDetails {
+#presentation {
     p a {
         color: white;
     }
@@ -198,6 +207,11 @@
     h2 em {
         display: block;
         float: right;
+    }
+    a.toggleDetails {
+        cursor: pointer;
+        padding: 0 5px;
+        color: @color2;
     }
 }
 

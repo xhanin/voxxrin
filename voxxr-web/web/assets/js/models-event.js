@@ -9,9 +9,11 @@
         self.nbPresentations = ko.observable(data.nbPresentations);
         self.dates = ko.observable(data.dates);
         self.nowplaying = ko.observableArray([]);
-        self.days = ko.observableArray(_(data.days).map(function(day) { return ds.scheduleDay(day);}));
+        self.days = ko.observableArray(_(data.days).map(function(day) { return ds.scheduleDay(_.extend(day, {eventId: self.id()}));}));
         self.remaining = ko.observable();
         self.since = ko.observable();
+        self.hash = ko.computed(function() {return "#event/" + self.id()});
+        self.nowplaying.hash = ko.computed(function() {return "#nowplaying/" + self.id()});
         var crons = {};
 
         function updateRemaining() {
@@ -43,7 +45,7 @@
                     var wasplaying = self.nowplaying();
 
                     self.nowplaying(_(data).map(function(presentation) {
-                        var p = ds.presentation(presentation);
+                        var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
                         p.playing(true);
                         p.room().currentPresentation(p);
                         wasplaying = _(wasplaying).reject(function(e) { return e.id() === p.id() });
@@ -116,8 +118,8 @@
                 });
             }
         }
-
     }
+    Event.current = ko.observable(null);
 
 
     exports.models = exports.models || {};

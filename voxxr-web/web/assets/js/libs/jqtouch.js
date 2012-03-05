@@ -88,7 +88,7 @@
             history.unshift({
                 page: page,
                 animation: animation,
-                hash: '#' + page.attr('id'),
+                hash: '#' + (page.data('hash') || page.attr('id')),
                 id: page.attr('id')
             });
         }
@@ -224,7 +224,7 @@
 
                 fromPage.unselect();
 
-                setHash($currentPage.attr('id'));
+                setHash($currentPage.data('hash') || $currentPage.attr('id'));
 
                 // Trigger custom events
                 toPage.trigger('pageAnimationEnd', { direction:'in', animation: animation});
@@ -282,7 +282,7 @@
             }
 
             if (typeof toPage === 'string') {
-                var nextPage = $(toPage);
+                var nextPage = $(getPageIdFromHash(toPage));
 
                 if (nextPage.length < 1) {
                     showPageByHref(toPage, {
@@ -290,6 +290,7 @@
                     });
                     return;
                 } else {
+                    nextPage.data('hash', toPage.replace(/^#/, ''));
                     toPage = nextPage;
                 }
             }
@@ -310,8 +311,9 @@
                     goBack();
                     return true;
                 } else {
-                    // Lastly, just try going to the ID...
-                    goTo($(location.hash), jQTSettings.defaultAnimation);
+                    // Lastly, just try going to the hash...
+                    goTo(location.hash, jQTSettings.defaultAnimation);
+                    return true;
                 }
             }
         }
@@ -440,7 +442,7 @@
                         var firstPage = insertPages(data, settings.animation);
                         if (firstPage) {
                             if (settings.method == 'GET' && jQTSettings.cacheGetRequests === true && settings.$referrer) {
-                                settings.$referrer.attr('href', '#' + firstPage.attr('id'));
+                                settings.$referrer.attr('href', '#' + (firstPage.data('hash') || firstPage.attr('id')));
                             }
                             if (settings.callback) {
                                 settings.callback(true);
@@ -589,7 +591,8 @@
                 if (hash && hash !== '#') {
                     // Internal href
                     $el.addClass('active');
-                    goTo($(hash).data('referrer', $el), animation, $el.hasClass('reverse'));
+                    $(getPageIdFromHash(hash)).data('referrer', $el);
+                    goTo(hash, animation, $el.hasClass('reverse'));
                     return false;
                 } else {
                     // External href
@@ -605,6 +608,9 @@
                     return false;
                 }
             }
+        }
+        function getPageIdFromHash(hash) {
+            return hash.split('/')[0];
         }
 
         // Get the party started
@@ -710,7 +716,7 @@
             setHash($currentPage.attr('id'));
             addPageToHistory($currentPage);
 
-            if ($(startHash).length === 1) {
+            if ($(getPageIdFromHash(startHash)).length === 1) {
                 goTo(startHash);
             }
         });

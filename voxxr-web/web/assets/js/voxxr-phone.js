@@ -9,24 +9,76 @@ $(function() {
         var self = this;
         self.events = ko.observableArray([]);
         self.events.loading = ko.observable(false);
-        self.chosenEvent = ko.observable(null);
-        self.chosenDay = ko.observable(null);
+        self.chosenEvent = models.Event.current;
+        self.chosenEventId = ko.observable(null);
+        self.chosenDay = models.ScheduleDay.current;
+        self.chosenDayId = ko.observable(null);
         self.chosenPresentation = ko.observable(null);
+        self.chosenPresentationId = ko.observable(null);
         self.currentRoom = models.Room.current;
         self.user = models.User.current;
         self.device = models.Device.current;
 
+        self.chosenEventId.subscribe(onChosenEvent);
+
+        self.chosenDayId.subscribe(onChosenDay);
+        self.chosenEvent.subscribe(onChosenDay);
+
+        self.chosenPresentationId.subscribe(onChosenPresentation);
+        self.chosenEvent.subscribe(onChosenPresentation);
+
+        function syncById(chosenId, chosenObj, findById) {
+            var old = chosenObj();
+            findById(chosenId(), function(newObj) {
+                if (old !== newObj) {
+                    chosenObj(newObj);
+                    if (old) {
+                        console.log('quitting ' + old.hash())
+                        old.quit();
+                    }
+                    if (newObj) {
+                        console.log('entering ' + newObj.hash())
+                        newObj.enter();
+                    }
+                }
+            });
+        }
+        function findByIdIn(all, id, callback) {
+            var found = id ? _(all).find(function(obj) { return obj.id() === id}) : null;
+            callback(found);
+        }
+
+        function onChosenEvent() {
+            syncById(self.chosenEventId, self.chosenEvent, function(id, callback) {findByIdIn(self.events(), id, callback);});
+        }
+
+        function onChosenDay() {
+            syncById(self.chosenDayId, self.chosenDay, function(id, callback) {
+                findByIdIn(self.chosenEvent() ? self.chosenEvent().days() : [], id, callback);
+            });
+        }
+
+        function onChosenPresentation() {
+            syncById(self.chosenPresentationId, self.chosenPresentation, function(id, callback) {
+                if (!id) {
+                  callback(null);
+                } else {
+                    if (self.chosenEventId()) {
+                        ds.presentation({id: id, eventId:self.chosenEventId()}).load(null, callback);
+                    } else {
+                        callback(null);
+                    }
+                }
+            });
+        }
+
+        self.chosen = function(options) {
+            self.chosenEventId(options['chosenEventId']);
+            self.chosenDayId(options['chosenDayId']);
+            self.chosenPresentationId(options['chosenPresentationId']);
+        };
+
         // change current selection function
-        self.selectEvent = function(event) {
-            event.enter();
-            self.chosenEvent(event);
-        };
-
-        self.selectDay = function(day) {
-            day.refreshPresentations();
-            self.chosenDay(day);
-        };
-
         self.selectPresentation = function(presentation) {
             presentation.load();
             self.chosenPresentation(presentation);
@@ -37,11 +89,26 @@ $(function() {
         $.getJSON(models.baseUrl + "/events", function(data) {
             self.events.loading(false);
             self.events(_(data).map(function(event) { return ds.event(event); }));
+            onChosenEvent();
         });
     };
 
     var voxxr = new VoxxrViewModel();
     ko.applyBindings(voxxr);
+
+    Route
+        .add('#event/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); })
+        .add('#nowplaying/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); })
+        .add('#dayschedule/:event/:day', function() { voxxr.chosen({chosenEventId: this.params.event, chosenDayId: this.params.day}); })
+        .add('#presentation/:event/:presentation', function() {
+            var options = {chosenEventId: this.params.event, chosenPresentationId: this.params.presentation};
+            if (voxxr.chosenDayId()) {
+                options.chosenDayId = voxxr.chosenDayId();
+            }
+            voxxr.chosen(options);
+        })
+        .add('#roomRT', function() { if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0); })
+        .start();
 
     models.Room.onEV(function(f) {
         if (f.isPollStart) {
@@ -134,10 +201,8 @@ $(function() {
     $("#events").bind('pageAnimationEnd', function(e, info) {
         if (info.direction === 'in') {
             // we are going to events page, we make sure se reset current event
-            if (voxxr.chosenEvent()) {
-                console.log("quitting event ", voxxr.chosenEvent().title());
-                voxxr.chosenEvent().quit();
-                voxxr.chosenEvent(null);
+            if (voxxr.chosenEventId()) {
+                voxxr.chosenEventId(null);
             }
         }
     });

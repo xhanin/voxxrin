@@ -10,6 +10,9 @@
     });
 
     function factory(cache, type, data) {
+        if (!data) {
+            return null;
+        }
         var o;
         if (data.id) {
             o = cache[data.id];

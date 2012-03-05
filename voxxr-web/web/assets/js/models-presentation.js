@@ -18,13 +18,14 @@
         var self = this;
 
         self.id = ko.observable(data.id);
-        self.uri = ko.observable(data.uri);
+        self.eventId = ko.observable(data.eventId);
+        self.uri = ko.observable(data.uri || ('/events/' + data.eventId + '/presentations/' + data.id));
         self.title = ko.observable(null);
         self.speakers = ko.observableArray(null);
         self.slot = ko.observable(null);
         self.fromTime = ko.observable(null);
         self.toTime = ko.observable(null);
-        self.room = ko.observable(null);
+        self.room = ko.observable({});
         self.summary = ko.observable(null);
         self.playing = ko.observable(false);
         self.rate = new models.PresentationRate();
@@ -35,12 +36,22 @@
         self.timeElasped = ko.observable(0);
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
+        self.hash = ko.computed(function() {return "#presentation/" + self.eventId() + "/" + self.id()});
+        self.parentHash = ko.computed(function() {
+            return models.ScheduleDay.current() ?
+                models.ScheduleDay.current().hash() :
+                (models.Event.current() ? models.Event.current().hash() : '#events')
+        });
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
         }, self);
+
+        self.withDetails = ko.observable(false);
+        self.toggleDetails = function() { self.withDetails(!self.withDetails()) };
+        self.moreOrLess = ko.computed(function() { return self.withDetails() ? '<<less' : 'more>>'});
         self.shortSummary = ko.computed(function() {
-           return (self.summary() && self.summary().length > 200) ?
+           return self.withDetails() ? self.summary() : (self.summary() && self.summary().length > 200) ?
                self.summary().substring(0, 197) + "..."
                : self.summary();
         });
@@ -65,29 +76,35 @@
         }
 
         function loadData(data) {
-            self.title(data.title);
-            self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
-            self.slot(data.slot);
-            self.fromTime(data.fromTime);
-            self.toTime(data.toTime);
-            self.room(ds.room(data.room));
-            self.summary(data.summary);
+            if (data.title) self.title(data.title);
+            if (data.speakers) self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
+            if (data.slot) self.slot(data.slot);
+            if (data.fromTime) self.fromTime(data.fromTime);
+            if (data.toTime) self.toTime(data.toTime);
+            if (data.room) self.room(ds.room(data.room));
+            if (data.summary)  self.summary(data.summary);
             self.loading(false);
         }
 
-        self.load = function(data) {
+        self.load = function(data, onloaded) {
             if (data) {
                 loadData(data);
+                if (onloaded) onloaded(self);
             } else {
                 if (!self.summary()) { // check if already loaded
                     self.loading(true);
-                    $.getJSON(models.baseUrl + self.uri(), loadData);
+                    $.getJSON(models.baseUrl + self.uri(), function(data) {
+                        loadData(data); if (onloaded) onloaded(self);
+                    });
+                } else {
+                     if (onloaded) onloaded(self);
                 }
             }
         }
 
         loadData(data);
 
+        self.enter = function() {}
         self.quit = function() {}
     }
 
