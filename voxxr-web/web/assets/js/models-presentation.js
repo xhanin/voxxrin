@@ -38,6 +38,7 @@
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation/" + self.eventId() + "/" + self.id()});
         self.parentHash = ko.computed(function() {
+            if (!models.ScheduleDay || !models.Event) return '#events';
             return models.ScheduleDay.current() ?
                 models.ScheduleDay.current().hash() :
                 (models.Event.current() ? models.Event.current().hash() : '#events')
@@ -93,8 +94,16 @@
             } else {
                 if (!self.summary()) { // check if already loaded
                     self.loading(true);
-                    $.getJSON(models.baseUrl + self.uri(), function(data) {
-                        loadData(data); if (onloaded) onloaded(self);
+                    $.ajax({
+                        url: models.baseUrl + self.uri(),
+                        dataType:"json",
+                        type: "GET",
+                        success: function(data) {
+                            loadData(data); if (onloaded) onloaded(self);
+                        },
+                        error: function() {
+                            console.log('error occured while loading ', self.uri());
+                        }
                     });
                 } else {
                      if (onloaded) onloaded(self);

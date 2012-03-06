@@ -1,6 +1,5 @@
 package voxxr;
 
-import org.atmosphere.cpr.Broadcaster;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
@@ -47,12 +46,9 @@ public class Main {
                 if (currentPres != null) {
                     double hotFactor = currentPres.getHotFactor();
                     if (hotFactor > 0) {
-                        EV ev = new EV(currentPres.getId(), "-------", EV.Type.HOT_FACTOR, String.format("%3.2f", hotFactor));
+                        EV ev = new EV(currentPres.getId(), "-", EV.Type.HOT_FACTOR, String.format("%3.2f", hotFactor));
                         CassandraVoxxrRepository.getInstance().store(ev);
-                        Broadcaster broadcaster = RoomResource.roomBroadcaster(Room.getCurrent());
-                        if (broadcaster != null) {
-                            broadcaster.broadcast(ev.toBC());
-                        }
+                        RoomResource.broadcast(Room.getCurrent(), ev.toBC(), ev.getBCModes());
                     }
                 }
             }

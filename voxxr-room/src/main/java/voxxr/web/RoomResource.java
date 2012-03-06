@@ -1,6 +1,7 @@
 package voxxr.web;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.jersey.SuspendResponse;
@@ -14,11 +15,36 @@ import javax.ws.rs.core.Response;
  */
 @Path("/room")
 public class RoomResource {
-    public static Broadcaster roomBroadcaster(Room room) {
-        return roomBroadcaster(room, false);
+    public static enum BroadcastMode {
+        ALL, DASHBOARD, USER
     }
-    public static Broadcaster roomBroadcaster(Room room, boolean createIfNull) {
-        return BroadcasterFactory.getDefault().lookup("room#" + room.getId(), createIfNull);
+
+    private static Broadcaster roomBroadcaster(Room room, BroadcastMode mode) {
+        return roomBroadcaster(room, mode, false);
+    }
+    public static Broadcaster roomBroadcaster(Room room, BroadcastMode mode, boolean createIfNull) {
+        return BroadcasterFactory.getDefault().lookup("room#" + room.getId() + "/" + (mode == null ? BroadcastMode.USER : mode), createIfNull);
+    }
+
+    public static void broadcast(Room room, String data, BroadcastMode... mode) {
+        for (BroadcastMode broadcastMode : Lists.asList(BroadcastMode.ALL, mode)) {
+            Broadcaster bc = roomBroadcaster(room, broadcastMode);
+            if (bc != null) {
+                // under 8 bytes atmosphere client doesn't notify the event
+                bc.broadcast(Strings.padStart(data, 8, '-'));
+            }
+        }
+    }
+
+    public static int connections(Room room) {
+        int con = 0;
+        for (BroadcastMode mode : BroadcastMode.values()) {
+            Broadcaster bc = roomBroadcaster(room, mode);
+            if (bc != null) {
+                con += bc.getAtmosphereResources().size();
+            }
+        }
+        return Math.max(1, con);
     }
 
     private final VoxxrRepository repo = CassandraVoxxrRepository.getInstance();
@@ -26,13 +52,8 @@ public class RoomResource {
     @GET
     public Response getRoomDetails() {
         Room room = Room.getCurrent();
-        Broadcaster broadcaster = roomBroadcaster(room);
-        int connections = 1;
-        if (broadcaster != null) {
-            connections = broadcaster.getAtmosphereResources().size();
-            // !!! on the client if data is less than 8 bytes it doesn't trigger the callback
-            broadcaster.broadcast("-----|C" + connections);
-        }
+        int connections = connections(room);
+        broadcast(room, "-|C" + connections, BroadcastMode.USER, BroadcastMode.DASHBOARD);
         Presentation currentPres = room.getCurrentPres();
         MeanRating roomMeanRating = currentPres == null ? null : repo.getPresMeanRating(currentPres.getId());
 
@@ -58,11 +79,7 @@ public class RoomResource {
             room.setCurrentPres(new Presentation(id, title));
         }
         LoggerFactory.getLogger(RoomResource.class).info("current presentation changed to " + room.getCurrentPres());
-        Broadcaster broadcaster = roomBroadcaster(room);
-        if (broadcaster != null) {
-            // !!! on the client if data is less than 8 bytes it doesn't trigger the callback
-            broadcaster.broadcast("------|T" + Strings.nullToEmpty(title));
-        }
+        broadcast(room, "-|T" + Strings.nullToEmpty(title), BroadcastMode.USER, BroadcastMode.DASHBOARD);
         return Response.ok("{\"status\":\"ok\"}",
                 "application/json")
                 .header("Access-Control-Allow-Origin", "*")
@@ -81,8 +98,8 @@ public class RoomResource {
 
     @GET
     @Path("/rt")
-    public SuspendResponse<String> subscribe() {
-        Broadcaster broadcaster = roomBroadcaster(Room.getCurrent(), true);
+    public SuspendResponse<String> subscribe(@QueryParam("mode") BroadcastMode mode) {
+        Broadcaster broadcaster = roomBroadcaster(Room.getCurrent(), mode, true);
         return new SuspendResponse.SuspendResponseBuilder<String>()
                 .header("Access-Control-Allow-Origin", "*")
                 .broadcaster(broadcaster)

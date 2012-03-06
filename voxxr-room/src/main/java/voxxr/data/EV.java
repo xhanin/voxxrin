@@ -1,6 +1,6 @@
 package voxxr.data;
 
-import com.google.common.base.Strings;
+import voxxr.web.RoomResource;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -11,8 +11,9 @@ import java.util.regex.Pattern;
  * Time: 9:01 AM
  */
 public class EV {
+
     public static enum Type {
-        RATE("R") {
+        RATE("R", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER) {
             private final Pattern REGEX = Pattern.compile("^R\\d+$");
             @Override
             public boolean accept(String valueWithType) {
@@ -31,9 +32,12 @@ public class EV {
                         ("W".equals(value) ? 3 :
                                 ("Y".equals(value) ? -5 : 0));
             }
-        }, CONNECTION("C"), TITLE("T"),
+        }, CONNECTION("C", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        TITLE("T", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         HOT_FACTOR("H"),
-        POLL_START("PS", 10), POLL_END("PE", 10), POLL_VOTE("PV", 4),
+        POLL_START("PS", 10, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        POLL_END("PE", 10, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        POLL_VOTE("PV", 4),
         ROOM_START("RS"), ROOM_END("RE"),
         PREZ_START("PZS"), PREZ_END("PZE"),
         UNKNOWN("");
@@ -49,6 +53,8 @@ public class EV {
 
         private String code;
         private int hotFactorPoints = 0;
+        private RoomResource.BroadcastMode[] bcModes = new RoomResource.BroadcastMode[] {
+                RoomResource.BroadcastMode.DASHBOARD};
 
         Type(String code) {
             this.code = code;
@@ -57,9 +63,18 @@ public class EV {
             this.code = code;
             this.hotFactorPoints = hotFactorPoints;
         }
+        Type(String code, int hotFactorPoints, RoomResource.BroadcastMode... modes) {
+            this.code = code;
+            this.hotFactorPoints = hotFactorPoints;
+            this.bcModes = modes;
+        }
 
         public String getCode() {
             return code;
+        }
+
+        public RoomResource.BroadcastMode[] getBcModes() {
+            return bcModes;
         }
 
         public boolean accept(String valueWithType) {
@@ -134,8 +149,11 @@ public class EV {
     }
 
     public String toBC() {
-        // under 8 bytes atmosphere client doesn't notify the event
-        return Strings.padStart(user + '|' + type.getCode() + value, 8, '-');
+        return user + '|' + type.getCode() + value;
+    }
+
+    public RoomResource.BroadcastMode[] getBCModes() {
+        return getType().getBcModes();
     }
 
     @Override

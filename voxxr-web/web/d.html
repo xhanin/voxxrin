@@ -17,11 +17,13 @@
       <script type="text/javascript" src="assets/js/models-room.js"></script>
       <script type="text/javascript" src="assets/js/models-speaker.js"></script>
       <script type="text/javascript" src="assets/js/models-presentation.js"></script>
+
       <script type="text/javascript">
           $(function() {
               function withPrez(prez) {
                   prez = new models.Presentation(prez);
                   prez.playing(true);
+                  models.Room.bcmode = "DASHBOARD";
                   models.Room.current(prez.room());
                   prez.room().currentPresentation(prez);
                   prez.room().connect();

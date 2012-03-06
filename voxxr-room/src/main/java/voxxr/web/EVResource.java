@@ -1,6 +1,5 @@
 package voxxr.web;
 
-import org.atmosphere.cpr.Broadcaster;
 import voxxr.data.*;
 
 import javax.ws.rs.POST;
@@ -38,14 +37,9 @@ public class EVResource {
 
         repo.store(ev);
 
-        Broadcaster broadcaster = RoomResource.roomBroadcaster(room);
-        if (broadcaster != null) {
-            System.out.println("broadcasting " + ev);
-            broadcaster.broadcast(ev.toBC());
-        }
+        RoomResource.broadcast(room, ev.toBC(), ev.getBCModes());
 
         currentPres.updateHotFactor(ev);
-
 
         return Response
                 .ok("{\"status\":\"ok\"}", "application/json")

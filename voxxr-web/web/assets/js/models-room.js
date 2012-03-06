@@ -86,7 +86,7 @@
             var $room = room;
             console.log('-------------- SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
             $.atmosphere.subscribe(
-                $room.rt() + '/r/room/rt',
+                $room.rt() + '/r/room/rt?mode=' + Room.bcmode,
                 function(response) {
                     if (response.state == 'error' || response.state == 'closed') {
                         $room.message("Room connection lost");
@@ -181,6 +181,7 @@
     Room.CONNECTED = "connected";
     Room.CONNECTING = "connecting";
     Room.current = ko.observable(null);
+    Room.bcmode = "USER";
     Room.onEV = function(callback) {
         $("body").bind('EV', function(event, ev) {
             callback(event.data || ev);
