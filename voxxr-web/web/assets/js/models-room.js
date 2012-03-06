@@ -57,7 +57,7 @@
                         }
                     },
                     error: function(xhr, type) {
-                        console.error('-------------- CONNECTION ERROR', xhr);
+                        console.log('-------------- CONNECTION ERROR', xhr);
                         self.message("Can't connect to room. Is it currently opened?");
                         self.status(models.Room.DISCONNECTED);
                     }
@@ -79,9 +79,9 @@
         };
 
         var transport = "long-polling";
-//    if ('WebSocket' in window) {
-//        transport = "websocket";
-//    }
+        if ('WebSocket' in window) {
+            transport = "websocket";
+        }
         function subscribe(room) {
             var $room = room;
             console.log('-------------- SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
@@ -140,11 +140,11 @@
 
         self.sendEV = function(ev, onsuccess, onerror) {
             if (!self.rt()) {
-                console.error('-------------- EV ERROR: cannot send EV when not connected');
+                console.log('-------------- EV ERROR: cannot send EV when not connected');
                 onerror();
                 return;
             }
-            console.debug('--------------  EV ', ev, ' ON ', self.rt(), "/r/feedback");
+            console.log('--------------  EV ', ev, ' ON ', self.rt(), "/r/feedback");
             $.ajax({
                 type: "POST",
                 url: self.rt() + "/r/feedback",
@@ -152,12 +152,12 @@
                 dataType:"json",
                 success: function( resp ) {
                     if (resp.status === 'ok') {
-                        console.debug('-------------- EV SUCCESS ', ev);
+                        console.log('-------------- EV SUCCESS ', ev);
                         if (onsuccess) onsuccess(resp);
                     }
                 },
                 error: function(xhr, type) {
-                    console.error('-------------- EV ERROR' + xhr);
+                    console.log('-------------- EV ERROR' + xhr);
                     if (onerror) onerror();
                 }
             });
