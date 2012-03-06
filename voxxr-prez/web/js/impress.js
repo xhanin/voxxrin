@@ -259,6 +259,9 @@
             window.clearTimeout( hashTimeout );
             hashTimeout = window.setTimeout(function () {
                 window.location.hash = "#/" + el.id;
+                if (window.parent) {
+                    window.parent.postMessage("hash:" + "#/" + el.id, "*");
+                }
             }, 1000);
             
             var target = {

@@ -3,6 +3,20 @@
 <head>
     <meta charset="utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <script src="js/jquery-1.7.1.js"></script>
+    <script>
+        window.addEventListener("message", function(event) {
+            if (event.data.match(/^hash:/)) {
+                window.location.hash = event.data.substr('hash:'.length)
+            }
+        }, false);
+        $(function() {
+            var prez = $('.prez iframe');
+            if (window.location.hash) {
+                prez.attr('src', prez.attr('src') + window.location.hash);
+            }
+        });
+    </script>
      <style type="text/css">
          body {overflow:hidden}
          body * {margin: 0; padding: 0;}
