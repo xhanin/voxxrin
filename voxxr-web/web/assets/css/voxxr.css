@@ -170,6 +170,9 @@
   display: block;
   float: right;
 }
+#presentation .joinroom {
+  margin-top: 27px;
+}
 #presentation a.toggleDetails {
   cursor: pointer;
   padding: 0 5px;
