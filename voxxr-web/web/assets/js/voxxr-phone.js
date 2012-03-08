@@ -1,7 +1,4 @@
 
-var jQT = new $.jQTouch({
-    statusBar: 'black'
-});
 
 $(function() {
 
@@ -97,16 +94,17 @@ $(function() {
     ko.applyBindings(voxxr);
 
     Route
-        .add('#event/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); })
-        .add('#nowplaying/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); })
-        .add('#dayschedule/:event/:day', function() { voxxr.chosen({chosenEventId: this.params.event, chosenDayId: this.params.day}); })
+        .add('#events', function() {}, [])
+        .add('#event/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events"])
+        .add('#nowplaying/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events", "#event/:event"])
+        .add('#dayschedule/:event/:day', function() { voxxr.chosen({chosenEventId: this.params.event, chosenDayId: this.params.day}); }, ["#events", "#event/:event"])
         .add('#presentation/:event/:presentation', function() {
             var options = {chosenEventId: this.params.event, chosenPresentationId: this.params.presentation};
             if (voxxr.chosenDayId()) {
                 options.chosenDayId = voxxr.chosenDayId();
             }
             voxxr.chosen(options);
-        })
+        }, ["#events", "#event/:event"])
         .add('#roomRT', function() { if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0); })
         .start();
 

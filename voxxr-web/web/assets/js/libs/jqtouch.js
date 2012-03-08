@@ -266,7 +266,6 @@
             } else {
                 return false;
             }
-
         }
         function goTo(toPage, animation) {
 
@@ -616,6 +615,19 @@
         // Get the party started
         init(options);
 
+        // Expose public methods and properties
+        publicObj = {
+            addAnimation: addAnimation,
+            animations: animations,
+            getOrientation: getOrientation,
+            goBack: goBack,
+            insertPages: insertPages,
+            goTo: goTo,
+            history: history,
+            settings: jQTSettings,
+            submitForm: submitHandler
+        };
+
         // Document ready stuff
         $(document).ready(function RUMBLE() {
 
@@ -704,7 +716,6 @@
 
             $(window).bind('hashchange', hashChangeHandler);
 
-            var startHash = location.hash;
 
             // Determine what the initial view should be
             if ($('#jqt > .current').length === 0) {
@@ -713,26 +724,18 @@
                 $currentPage = $('#jqt > .current');
             }
 
+            var startHash = location.hash;
+
             setHash($currentPage.attr('id'));
             addPageToHistory($currentPage);
 
-            if ($(getPageIdFromHash(startHash)).length === 1) {
+            if (startHash && jQTSettings.onInitHistoryFromHash) {
+                jQTSettings.onInitHistoryFromHash(publicObj, startHash);
+            } else if ($(getPageIdFromHash(startHash)).length === 1) {
                 goTo(startHash);
             }
         });
-
-        // Expose public methods and properties
-        publicObj = {
-            addAnimation: addAnimation,
-            animations: animations,
-            getOrientation: getOrientation,
-            goBack: goBack,
-            insertPages: insertPages,
-            goTo: goTo,
-            history: history,
-            settings: jQTSettings,
-            submitForm: submitHandler
-        };
+        
         return publicObj;
     };
 

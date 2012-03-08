@@ -37,12 +37,6 @@
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation/" + self.eventId() + "/" + self.id()});
-        self.parentHash = ko.computed(function() {
-            if (!models.ScheduleDay || !models.Event) return '#events';
-            return models.ScheduleDay.current() ?
-                models.ScheduleDay.current().hash() :
-                (models.Event.current() ? models.Event.current().hash() : '#events')
-        });
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');

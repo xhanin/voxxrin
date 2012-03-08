@@ -19,6 +19,7 @@
       <script type="text/javascript" src="assets/js/libs/phonegap-1.4.1.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
+      <script type="text/javascript" src="assets/js/voxxr-route.js"></script>
       <script type="text/javascript" src="assets/js/voxxr-conf.js"></script>
       <script type="text/javascript" src="assets/js/models-ds.js"></script>
       <script type="text/javascript" src="assets/js/models-device.js"></script>
@@ -124,7 +125,7 @@
     <div id="event" data-bind="with: chosenEvent">
         <div class="toolbar">
             <h1 data-bind="text: title"></h1>
-            <a href="#events" class="button backBtn slideright">Events</a>
+            <a href="#" class="back">Events</a>
         </div>
         <div class="message" data-bind="visible: remaining">
             <span data-bind="text: remaining"></span>
@@ -143,7 +144,7 @@
     <div id="nowplaying" data-bind="with: chosenEvent">
         <div class="toolbar">
             <h1>Now playing</h1>
-            <a data-bind="href: $root.chosenEvent().hash" class="button backBtn slideright">Event</a>
+            <a href="#" class="back">Event</a>
         </div>
         <div class="noplaying message" data-bind="visible: nowplaying().length === 0">
             No presentations right now
@@ -158,7 +159,7 @@
     <div id="dayschedule" data-bind="with: chosenDay">
         <div class="toolbar">
             <h1 data-bind="text: name"></h1>
-            <a data-bind="href: $root.chosenEvent().hash" class="button backBtn slideright">Event</a>
+            <a href="#" class="back">Event</a>
         </div>
         <p class="loading" data-bind="visible: slots.loading">
 
@@ -177,7 +178,7 @@
     <div id="presentation" data-bind="with: chosenPresentation">
         <div class="toolbar">
             <h1 data-bind="text: title"> </h1>
-            <a data-bind="href: parentHash" class="button backBtn slideright">Back</a>
+            <a href="#" class="back">Back</a>
         </div>
         <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
