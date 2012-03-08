@@ -198,7 +198,7 @@
         </ul>
     </div>
     <div id="roomRT" data-bind="with: currentRoom">
-        <h1></h1>
+        <h1 data-bind="text: currentPresentation().title"></h1>
         <div class="message" data-bind="text: message, visible: message"> </div>
         <div class="content" data-bind="visible: connected">
         <div class="tabs">
