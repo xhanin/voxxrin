@@ -81,6 +81,7 @@
     -->
     <div class="step slide" data-x="0" data-y="-1500">
         <q>Don't you think that presentations given <strong>in modern browsers</strong> shouldn't <strong>copy the limits</strong> of 'classic' slide decks?</q>
+        <button id="startPoll">Start Poll</button>
     </div>
 
     <div class="step slide" data-x="1000" data-y="-1500">
@@ -224,7 +225,17 @@ if ("ontouchstart" in document.documentElement) {
 
 -->
 <script src="js/impress.js"></script>
+<script src="js/jquery-1.7.1.js"></script>
 <script>impress();</script>
+<script>
+$(function(){
+    $('#startPoll').on('click', function() {
+        if (window.parent) {
+            window.parent.postMessage("poll:test", "*");
+        }
+    });
+});
+</script>
 
 <!--
 

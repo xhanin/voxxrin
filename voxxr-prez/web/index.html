@@ -9,6 +9,11 @@
             if (event.data.match(/^hash:/)) {
                 window.location.hash = event.data.substr('hash:'.length)
             }
+            if (event.data.match(/^poll:/)) {
+                var poll = event.data.substr('poll:'.length);
+                $('div.prez').fadeOut();
+                $('div.poll').fadeIn();
+            }
         }, false);
         $(function() {
             var prez = $('.prez iframe');
@@ -23,8 +28,9 @@
          #header {position:absolute; top: 0px; left:0px; width: 100%;height:36px;z-index: 2000;background: url('img/devoxx-header-repeat.png') repeat-x;}
          #header-left {position:absolute; top: 0px; left:0px;}
          #header-right {position:absolute; top: 0px; right:0px;}
-         .prez {position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%;}
-         .prez iframe {width: 100%; height: 100%}
+         .prez, .poll {position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%;}
+         .prez iframe, .poll iframe {width: 100%; height: 100%}
+         div.poll {display: none;}
          .dashboard {position:absolute; top: 34px; bottom: 13px; right:0px; width: 20%;}
          .dashboard iframe { width: 100%; height: 100%}
          #footer {position:absolute; bottom: 0px; left:0px; width: 100%;}
@@ -42,6 +48,9 @@
     </div>
     <div class="prez">
         <iframe src="prez.html"></iframe>
+    </div>
+    <div class="poll">
+        <iframe src="http://localhost:8080/p.html?event=1&prez=1"></iframe>
     </div>
     <div class="dashboard">
         <iframe src="http://localhost:8080/d.html?event=1&prez=1"></iframe>
