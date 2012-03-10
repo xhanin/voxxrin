@@ -45,6 +45,10 @@
             ev.items = ev.value.substr(2).split(',');
         }
         ev.isPollEnd = ev.value.substr(0,2) === 'PE';
+        ev.isPollVote = ev.value.substr(0,2) === 'PV';
+        if (ev.isPollVote) {
+            ev.vote = ev.value.substr(2);
+        }
 
         ev.isPrezStart = ev.value.substr(0,3) === 'PZS';
         ev.isPrezEnd = ev.value.substr(0,3) === 'PZE';
