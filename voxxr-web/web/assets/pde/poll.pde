@@ -222,6 +222,7 @@ void startPoll(String title, String subtitle, int duration, String[] options) {
 void stopPoll() {
     stopped = true;
     poll_subtitle = "POLL FINISHED"
+    ticks = total_ticks;
 }
 
 void addPollVote( int id ) {
