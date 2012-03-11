@@ -246,6 +246,10 @@
             
             if ( active ) {
                 active.classList.remove("active");
+
+                if (typeof window[active.id + 'Leave'] === 'function') {
+                    window[active.id + 'Leave'].call(active);
+                }
             }
             el.classList.add("active");
             
@@ -302,7 +306,11 @@
             
             current = target;
             active = el;
-            
+
+            if (typeof window[active.id + 'Enter'] === 'function') {
+                window[active.id + 'Enter'].call(active);
+            }
+
             return el;
         };
         
@@ -368,62 +376,5 @@
         }
     }, false);
     
-    // delegated handler for clicking on the links to presentation steps
-    document.addEventListener("click", function ( event ) {
-        // event delegation with "bubbling"
-        // check if event target (or any of its parents is a link)
-        var target = event.target;
-        while ( (target.tagName != "A") &&
-                (target != document.body) ) {
-            target = target.parentNode;
-        }
-        
-        if ( target.tagName == "A" ) {
-            var href = target.getAttribute("href");
-            
-            // if it's a link to presentation step, target this step
-            if ( href && href[0] == '#' ) {
-                target = document.getElementById( href.slice(1) );
-            }
-        }
-        
-        if ( impress().goto(target) ) {
-            event.stopImmediatePropagation();
-            event.preventDefault();
-        }
-    }, false);
-    
-    // delegated handler for clicking on step elements
-    document.addEventListener("click", function ( event ) {
-        var target = event.target;
-        // find closest step element
-        while ( !target.classList.contains("step") &&
-                (target != document.body) ) {
-            target = target.parentNode;
-        }
-        
-        if ( impress().goto(target) ) {
-            event.preventDefault();
-        }
-    }, false);
-    
-    // touch handler to detect taps on the left and right side of the screen
-    document.addEventListener("touchstart", function ( event ) {
-        if (event.touches.length === 1) {
-            var x = event.touches[0].clientX,
-                width = window.innerWidth * 0.3,
-                result = null;
-                
-            if ( x < width ) {
-                result = impress().prev();
-            } else if ( x > window.innerWidth - width ) {
-                result = impress().next();
-            }
-            
-            if (result) {
-                event.preventDefault();
-            }
-        }
-    }, false);
 })(document, window);
 

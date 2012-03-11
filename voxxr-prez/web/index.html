@@ -14,6 +14,13 @@
                 $('div.prez').fadeOut();
                 $('div.poll').fadeIn();
             }
+            if (event.data.match(/^layout:/)) {
+                var layout = event.data.substr('layout:'.length);
+                $('div.prez, div.poll, div.dashboard')
+                        .removeClass('full')
+                        .removeClass('classic')
+                        .addClass(layout);
+            }
         }, false);
         $(function() {
             var prez = $('.prez iframe');
@@ -28,10 +35,23 @@
          #header {position:absolute; top: 0px; left:0px; width: 100%;height:36px;z-index: 2000;background: url('img/devoxx-header-repeat.png') repeat-x;}
          #header-left {position:absolute; top: 0px; left:0px;}
          #header-right {position:absolute; top: 0px; right:0px;}
-         .prez, .poll {position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%;}
+         .prez, .poll {
+             position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%;
+            -webkit-transition-property: width;
+            -webkit-transition-duration: 1s;
+            -webkit-transition-timing-function: ease-out;
+         }
+         .prez.full, .poll.full {position:absolute; top: 34px; bottom: 13px; left:0px; width: 100%;}
          .prez iframe, .poll iframe {width: 100%; height: 100%}
          div.poll {display: none;}
-         .dashboard {position:absolute; top: 34px; bottom: 13px; right:0px; width: 20%;}
+         .dashboard {
+             position:absolute; top: 34px; bottom: 13px; right:0px; width: 20%;
+             overflow-x: hidden;
+             -webkit-transition-property: width;
+             -webkit-transition-duration: 1s;
+             -webkit-transition-timing-function: ease-out;
+         }
+         .dashboard.full {width: 0px;}
          .dashboard iframe { width: 100%; height: 100%}
          #footer {position:absolute; bottom: 0px; left:0px; width: 100%;}
          #footer-right {position:absolute; bottom: 0px; right:20%;}
@@ -46,14 +66,14 @@
         <img id="header-left" src="img/devoxx-header-left.png">
         <img id="header-right" src="img/devoxx-header-right.png">
     </div>
-    <div class="prez">
-        <iframe src="prez.html"></iframe>
+    <div class="prez full">
+        <iframe id="prezframe" src="prez.html"></iframe>
     </div>
-    <div class="poll">
-        <iframe src="http://localhost:8080/p.html?event=1&prez=1"></iframe>
+    <div class="poll full">
+        <iframe id="pollframe" src="http://localhost:8080/p.html?event=1&prez=1"></iframe>
     </div>
-    <div class="dashboard">
-        <iframe src="http://localhost:8080/d.html?event=1&prez=1"></iframe>
+    <div class="dashboard full">
+        <iframe id="dashboardframe" src="http://localhost:8080/d.html?event=1&prez=1"></iframe>
     </div>
     <div id="footer">
         <div id="footer-main"></div>

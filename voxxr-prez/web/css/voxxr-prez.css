@@ -9,3 +9,7 @@
 #main h1 { font-size: 64px; }
 #main h2 { font-size: 64px; font-style: italic; }
 #main .author { margin: 80px 0 0 200px; font-size: 48px; }
+
+.image, .center {text-align: center;}
+
+.step.image { width: auto; }
