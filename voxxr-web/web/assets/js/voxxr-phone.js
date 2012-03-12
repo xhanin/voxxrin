@@ -61,7 +61,16 @@ $(function() {
                   callback(null);
                 } else {
                     if (self.chosenEventId()) {
-                        ds.presentation({id: id, eventId:self.chosenEventId()}).load(null, callback);
+                        var p = ds.presentation({id: id, eventId:self.chosenEventId()});
+                        if (p.title()) {
+                            // presentation header is already loaded, we can call the callback with it
+                            callback(p);
+                            // and ask it to do the full load when possible
+                            p.load();
+                        } else {
+                            // presentation header is not loaded yet, no need to call callback until we get it
+                            p.load(null, callback);
+                        }
                     } else {
                         callback(null);
                     }
@@ -70,9 +79,11 @@ $(function() {
         }
 
         self.chosen = function(options) {
-            self.chosenEventId(options['chosenEventId']);
-            self.chosenDayId(options['chosenDayId']);
-            self.chosenPresentationId(options['chosenPresentationId']);
+            _(['chosenEventId', 'chosenDayId', 'chosenPresentationId']).each(function (k) {
+                if (options[k] !== self[k]()) {
+                    self[k](options[k]);
+                }
+            });
         };
 
         // change current selection function
