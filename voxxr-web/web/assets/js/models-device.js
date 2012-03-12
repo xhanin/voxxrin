@@ -3,6 +3,12 @@
     var Device = function() {
         var self = this;
         self.id = ko.observable(null);
+        self.offline = function() {
+            if (typeof navigator.device == "undefined") {
+                return true;
+            }
+            return navigator.network.connection.type === Connection.NONE;
+        };
 
         function load(data) {
             self.id(data.id);

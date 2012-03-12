@@ -47,3 +47,28 @@ function whenDeviceReady(callback) {
     }
 }
 
+
+function getJSON(uri, onSuccess) {
+    var json = localStorage.getItem(uri);
+    if (json) {
+        onSuccess(JSON.parse(json));
+    }
+    whenDeviceReady(function() {
+        if (!models.Device.current().offline()) {
+            // refresh
+            $.ajax({
+                url: models.baseUrl + uri,
+                dataType:"text",
+                type: "GET",
+                success: function(json) {
+                    localStorage.setItem(uri, json);
+                    onSuccess(JSON.parse(json));
+                },
+                error: function() {
+                    console.log('error occured while loading ', uri);
+                }
+            });
+        }
+    });
+}
+

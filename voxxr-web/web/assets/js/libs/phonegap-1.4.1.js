@@ -1,3 +1,12 @@
+var Connection = {};
+Connection.UNKNOWN = "unknown";
+Connection.ETHERNET = "ethernet";
+Connection.WIFI = "wifi";
+Connection.CELL_2G = "2g";
+Connection.CELL_3G = "3g";
+Connection.CELL_4G = "4g";
+Connection.NONE = "none";
+
 (function(){
     function deviceready() {
         // fire off deviceready
@@ -14,6 +23,11 @@
         notification: {
             vibrate: function(){},
             alert: function(msg) {alert(msg)}
+        },
+        network: {
+            connection: {
+                type: Connection.UNKNOWN
+            }
         }
     });
     $(deviceready);

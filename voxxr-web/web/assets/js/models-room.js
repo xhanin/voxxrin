@@ -171,7 +171,7 @@
             if (data) {
                 loadData(data);
             } else {
-                $.getJSON(models.baseUrl + self.uri(), loadData);
+                getJSON(self.uri(), loadData);
             }
         }
         

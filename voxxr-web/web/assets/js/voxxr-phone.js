@@ -94,7 +94,7 @@ $(function() {
 
         // load
         self.events.loading(true);
-        $.getJSON(models.baseUrl + "/events", function(data) {
+        getJSON("/events", function(data) {
             self.events.loading(false);
             self.events(_(data).map(function(event) { return ds.event(event); }));
             onChosenEvent();

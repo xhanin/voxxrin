@@ -88,17 +88,10 @@
             } else {
                 if (!self.summary()) { // check if already loaded
                     self.loading(true);
-                    $.ajax({
-                        url: models.baseUrl + self.uri(),
-                        dataType:"json",
-                        type: "GET",
-                        success: function(data) {
+                    getJSON(self.uri(),
+                        function(data) {
                             loadData(data); if (onloaded) onloaded(self);
-                        },
-                        error: function() {
-                            console.log('error occured while loading ', self.uri());
-                        }
-                    });
+                        });
                 } else {
                      if (onloaded) onloaded(self);
                 }

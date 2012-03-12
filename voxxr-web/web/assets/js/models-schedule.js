@@ -26,7 +26,7 @@
 
         self.refreshPresentations = function() {
             self.slots.loading(true);
-            $.getJSON(models.baseUrl + self.uri(), function(data) {
+            getJSON(self.uri(), function(data) {
                 var schedule = data.schedule;
                 self.presentations(_(schedule).map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); }));
                 self.slots(_.chain(schedule).groupBy('slot').map(function(pres, slot) {
