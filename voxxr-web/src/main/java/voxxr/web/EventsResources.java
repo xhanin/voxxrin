@@ -1,12 +1,16 @@
 package voxxr.web;
 
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.common.collect.Lists;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -19,14 +23,21 @@ public class EventsResources implements RestRouter.RequestHandler {
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
 
         String kind = "Event";
+        MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Iterable<Entity> entities = (Iterable<Entity>) memcache.get("events");
+            if (entities == null) {
+                DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+                entities = datastore.prepare(new Query(kind)
+                        .addFilter("enabled", Query.FilterOperator.EQUAL, true)
+                        .addSort("from"))
+                        .asIterable(FetchOptions.Builder.withLimit(100));
+                memcache.put("events", new ArrayList(Lists.newArrayList(entities)));
+            }
             Rests.sendAsJsonArray(
-                    datastore.prepare(new Query(kind)
-                                .addFilter("enabled", Query.FilterOperator.EQUAL, true)
-                                .addSort("from"))
-                            .asIterable(FetchOptions.Builder.withLimit(100)), resp);
+                    entities, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
+            memcache.delete("events");
             Rests.storeFromRequest(req, resp, kind, new PrepareEntityCallback() {
                 @Override
                 public Entity prepare(JSONObject json, Entity entity) throws JSONException {

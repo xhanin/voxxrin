@@ -21,7 +21,8 @@ public class DayScheduleResources implements RestRouter.RequestHandler {
         String kind = "DaySchedule";
         final String eventId = params.get("eventId");
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            Rests.sendAsJsonObject(Rests.createKey(kind, params.get("dayId")), resp);
+            String dayId = params.get("dayId");
+            Rests.sendAsJsonObject(Rests.createKey(kind, dayId), resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             Rests.storeFromRequest(req, resp, kind, new PrepareEntityCallback() {
                 @Override

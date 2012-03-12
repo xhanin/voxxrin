@@ -1,6 +1,8 @@
 package voxxr.web;
 
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -44,9 +46,15 @@ public class Rests {
     }
 
     public static void sendAsJsonObject(Key key, HttpServletResponse resp) throws IOException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         try {
-            Entity entity = datastore.get(key);
+            String cacheKey = KeyFactory.keyToString(key);
+            Entity entity = (Entity) memcache.get(cacheKey);
+            if (entity == null) {
+                DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+                entity = datastore.get(key);
+                memcache.put(cacheKey, entity);
+            }
             sendAsJsonObject(entity, resp);
         } catch (EntityNotFoundException e) {
             resp.sendError(404);
@@ -112,7 +120,9 @@ public class Rests {
             }
         }
         entity.setProperty("json", new Text(json.toString()));
-        datastore.put(callback.prepare(json, entity));
+        Key key = datastore.put(callback.prepare(json, entity));
+
+        MemcacheServiceFactory.getMemcacheService("entities").delete(KeyFactory.keyToString(key));
         return entity;
     }
 
