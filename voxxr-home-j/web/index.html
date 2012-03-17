@@ -45,6 +45,7 @@
                 <li><a href="http://app.voxxr.in/">App</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li><a href="#support">Support</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -113,6 +114,12 @@
       </div>
 
       <div class="span4">
+          <a name="support"></a>
+	      <div>
+		      <h2>Support</h2>
+		      <p>Need support with the app? Please contact us:</p>
+		      <p><a href="mailto:support@voxxr.in">support@voxxr.in</a>
+	      </div>
 	      <a name="contact"></a>
 	      <div>
 		      <h2>Contact</h2>
@@ -150,7 +157,7 @@
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
-        $.getJSON("http://voxxr-web.appspot.com/r/events", function(data) {
+        $.getJSON("http://app.voxxr.in/r/events", function(data) {
             self.events(_(data).map(function(event) { return new Event(event); }));
         });
     }
