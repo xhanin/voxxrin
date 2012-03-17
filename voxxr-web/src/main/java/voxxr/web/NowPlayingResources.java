@@ -26,7 +26,7 @@ public class NowPlayingResources implements RestRouter.RequestHandler {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            Iterable<Entity> entities = (Iterable<Entity>) memcache.get("events");
+            Iterable<Entity> entities = (Iterable<Entity>) memcache.get("nowplaying/" + eventId);
             if (entities == null) {
                 entities = datastore.prepare(new Query(kind)
                         .addFilter("nowplaying", Query.FilterOperator.EQUAL, true)
@@ -53,6 +53,7 @@ public class NowPlayingResources implements RestRouter.RequestHandler {
                             json.getJSONObject("room").put("rt", command.getString("roomRT"));
                             entity.setProperty("json", new Text(json.toString()));
                         }
+                        System.out.println("starting " + entity);
                     } else if ("stop".equals(action)) {
                         entity.setProperty("nowplaying", false);
                     } else {
