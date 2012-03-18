@@ -36,7 +36,7 @@
         self.timeElasped = ko.observable(0);
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
-        self.hash = ko.computed(function() {return "#presentation/" + self.eventId() + "/" + self.id()});
+        self.hash = ko.computed(function() {return "#presentation>" + self.eventId() + ">" + self.id()});
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');

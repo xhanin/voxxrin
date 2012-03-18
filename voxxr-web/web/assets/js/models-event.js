@@ -12,8 +12,8 @@
         self.days = ko.observableArray(_(data.days).map(function(day) { return ds.scheduleDay(_.extend(day, {eventId: self.id()}));}));
         self.remaining = ko.observable();
         self.since = ko.observable();
-        self.hash = ko.computed(function() {return "#event/" + self.id()});
-        self.nowplaying.hash = ko.computed(function() {return "#nowplaying/" + self.id()});
+        self.hash = ko.computed(function() {return "#event>" + self.id()});
+        self.nowplaying.hash = ko.computed(function() {return "#nowplaying>" + self.id()});
         var crons = {};
 
         function updateRemaining() {

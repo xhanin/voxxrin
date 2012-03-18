@@ -72,3 +72,33 @@ function getJSON(uri, onSuccess) {
     });
 }
 
+function jqmClean(selector) {
+    $(selector).find('a').removeClass('ui-btn-text').data('button', null);
+    $(selector).find('ul').data('listview', null);
+    $(selector).find('ul li, ul li div').removeClass('ul-li ui-btn ui-li-static');
+}
+
+function jqmCleanOrRefreshOn(observable, selector) {
+    observable.subscribe(function(newValue) {
+       if (!newValue) {
+           jqmClean(selector);
+       } else {
+           setTimeout(function() {
+               console.log('refreshing ' + selector);
+               jqmClean(selector);
+                $(selector).refreshPage();
+                $(selector).trigger('create');
+           }, 0);
+       }
+    });
+}
+function jqmRefreshOn(observable, selector) {
+    observable.subscribe(function() {
+       setTimeout(function() {
+           console.log('refreshing ' + selector);
+           jqmClean(selector);
+            $(selector).refreshPage();
+            $(selector).trigger('create');
+       }, 0);
+    });
+}

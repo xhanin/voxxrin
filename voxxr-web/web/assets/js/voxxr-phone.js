@@ -10,6 +10,13 @@ $(function() {
         self.chosenEventId = ko.observable(null);
         self.chosenDay = models.ScheduleDay.current;
         self.chosenDayId = ko.observable(null);
+        self.chosenDaySlots = ko.computed(function(){
+            if (self.chosenDay()) {
+                return self.chosenDay().slots();
+            } else {
+                return [];
+            }
+        });
         self.chosenPresentation = ko.observable(null);
         self.chosenPresentationId = ko.observable(null);
         self.currentRoom = models.Room.current;
@@ -106,16 +113,16 @@ $(function() {
 
     Route
         .add('#events', function() {}, [])
-        .add('#event/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events"])
-        .add('#nowplaying/:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events", "#event/:event"])
-        .add('#dayschedule/:event/:day', function() { voxxr.chosen({chosenEventId: this.params.event, chosenDayId: this.params.day}); }, ["#events", "#event/:event"])
-        .add('#presentation/:event/:presentation', function() {
+        .add('#event>:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events"])
+        .add('#nowplaying>:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events", "#event>:event"])
+        .add('#dayschedule>:event>:day', function() { voxxr.chosen({chosenEventId: this.params.event, chosenDayId: this.params.day}); }, ["#events", "#event>:event"])
+        .add('#presentation>:event>:presentation', function() {
             var options = {chosenEventId: this.params.event, chosenPresentationId: this.params.presentation};
             if (voxxr.chosenDayId()) {
                 options.chosenDayId = voxxr.chosenDayId();
             }
             voxxr.chosen(options);
-        }, ["#events", "#event/:event"])
+        }, ["#events", "#event>:event"])
         .add('#roomRT', function() { if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0); })
         .start();
 
@@ -204,6 +211,12 @@ $(function() {
             $("#roomRT div#poll").gfxPopIn({duration: 200, easing: 'ease-out'});
         });
     });
+
+    jqmRefreshOn(voxxr.events, '#events');
+    jqmCleanOrRefreshOn(voxxr.chosenEvent, '#event');
+    jqmCleanOrRefreshOn(voxxr.chosenDay, '#dayschedule');
+    jqmRefreshOn(voxxr.chosenDaySlots, '#dayschedule');
+    jqmCleanOrRefreshOn(voxxr.chosenPresentation, '#presentation');
 
 
     // quit handling

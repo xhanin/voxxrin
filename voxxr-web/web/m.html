@@ -1,20 +1,23 @@
 <!doctype html>
 <html>
   <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="assets/js/libs/jquery.mobile-1.0.1.js"></script>
       <!--
       <script>window.WeinreServerId = "anonymous";</script>
       <script src="http://192.168.0.45:8080/target/target-script-min.js"></script>
         -->
       <!--<script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>-->
-      <script type="text/javascript" src="assets/js/libs/zepto-0.8.js"></script>
+      <!--<script type="text/javascript" src="assets/js/libs/zepto-0.8.js"></script>-->
       <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
       <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
-      <script type="text/javascript" src="assets/js/libs/zepto-gfx.js"></script>
+      <!--<script type="text/javascript" src="assets/js/libs/zepto-gfx.js"></script>-->
       <script type="text/javascript" src="assets/js/libs/remaining-1.1.js"></script>
-      <script type="application/x-javascript" src="assets/js/libs/jqtouch.js" charset="utf-8"></script>
+      <!--<script type="application/x-javascript" src="assets/js/libs/jqtouch.js" charset="utf-8"></script>-->
       <!--<script type="application/x-javascript" src="assets/js/libs/jqtouch-jquery.js" charset="utf-8"></script>-->
       <script type="text/javascript" src="assets/js/libs/phonegap-1.4.1.js"></script>
 
@@ -31,17 +34,45 @@
       <script type="text/javascript" src="assets/js/models-schedule.js"></script>
       <script type="text/javascript" src="assets/js/models-event.js"></script>
       <script type="text/javascript" src="assets/js/voxxr-phone.js"></script>
+      <script>
+          $(document).bind("mobileinit", function(){
+//              $.mobile.touchOverflowEnabled = true;
+          });
+      </script>
 
-      <style type="text/css" media="screen">@import "assets/css/jqtouch/jqtouch.css";</style>
-      <style type="text/css" media="screen">@import "assets/css/jqtouch/themes/jqt/theme.css";</style>
+      <!--<style type="text/css" media="screen">@import "assets/css/jqtouch/jqtouch.css";</style>-->
+      <!--<style type="text/css" media="screen">@import "assets/css/jqtouch/themes/jqt/theme.css";</style>-->
       <link rel="stylesheet" href="assets/css/voxxr.css" />
 </head>
 <body>
 <div id="jqt">
-    <div id="about" class="selectable">
-            <h2>
-                Welcome to <strong>Voxxrin</strong>
-            </h2>
+    <div id="events" data-role="page">
+        <div data-role="header"  data-position="fixed">
+            <h1>Voxxrin</h1>
+            <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
+        </div>
+        <div data-role="content">
+        <p class="loading" data-bind="visible: events.loading">
+
+        </p>
+        <p data-bind="visible: events().length === 0 && !events.loading()">
+            No upcoming event covered :(
+        </p>
+        <ul class="events"  data-role="listview" data-bind="foreach: events">
+            <li data-theme="a"><a data-bind='href: hash'>
+                <h3 data-bind="text: title">Devoxx France</h3>
+                <p><strong data-bind="text: subtitle"></strong></p>
+                <p class="ui-li-aside"><strong data-bind="text: dates"></strong></p>
+            </a></li>
+        </ul>
+        </div>
+     </div>
+    <div id="about" data-role="page">
+        <div data-role="header" data-position="fixed">
+            <a href="#events" data-icon="delete" data-rel="back">Close</a>
+            <h1>Welcome to <strong>Voxxrin</strong></h1>
+        </div>
+        <div data-role="content">
             <p class="subtitle">your conference companion</p>
             <p>
                 <span class="voxxr">Voxxrin</span> is your best tool when attending a <span>conference</span> covered by <span class="voxxr">Voxxrin</span>: you can browse the conference
@@ -63,123 +94,83 @@
                 is also used to provide a <span>hot factor</span> in real time for all the presentations going on, so that you know
                 where to go if you keep using the <span>yawn</span> button in the presentation you're currently following :)
             </p>
-        <p>
-            Get more details at <a href="http://voxxr.in/" target="_blank">http://voxxr.in/</a>
-        </p>
+            <p>
+                Get more details at <a href="http://voxxr.in/" target="_blank">http://voxxr.in/</a>
+            </p>
             <p class="version">
                 Version 1.0 beta
             </p>
-            <p><br /><br /><a href="#" class="grayButton goback">Close</a></p>
-    </div>
-    <div id="login">
-        <div class="toolbar">
-            <h1>Voxxrin</h1>
-            <a class="button slideup" href="#about">About</a>
+            <p><br /><br /><a href="#events" data-icon="delete" data-role="button" data-rel="back">Close</a></p>
         </div>
-        <form class="login">
-            <h2>Login</h2>
-            <ul class="edit rounded">
-                <li><input type="text" name="login" placeholder="Login" /></li>
-                <li><input type="password" name="password" placeholder="Password" /></li>
-            </ul>
-            <a href="#events" class="login whiteButton">Login</a>
-            <br/>
-            <a href="#signup" class="grayButton">No account yet?</a>
-        </form>
     </div>
-    <div id="signup">
-        <div class="toolbar">
-            <h1>Voxxrin</h1>
-            <a class="button slideup" href="#about">About</a>
-        </div>
-        <form class="signup">
-            <h2>Sign up</h2>
-            <ul class="edit rounded">
-                <li><input type="text" name="login" placeholder="Login" /></li>
-                <li><input type="password" name="password" placeholder="Password" /></li>
-                <li><input type="password" name="confirmPassword" placeholder="Confirm Password" /></li>
-            </ul>
-            <a href="#events" class="signup whiteButton">Sign up</a>
-            <br/>
-            <a href="#login" class="grayButton">Already have an account?</a>
-        </form>
-    </div>
-    <div id="events" class="current">
-        <div class="toolbar">
-            <h1>Voxxrin</h1>
-            <a class="button slideup" href="#about">About</a>
-        </div>
-        <p class="loading" data-bind="visible: events.loading">
-
-        </p>
-        <p data-bind="visible: events().length === 0 && !events.loading()">
-            No upcoming event covered :(
-        </p>
-        <ul class="metal events"  data-bind="foreach: events">
-            <li class="arrow"><a data-bind='href: hash'>
-                <span data-bind="text: title"> </span>
-                <em><span data-bind="text: subtitle"> </span> ~ <span data-bind="text: dates"> </span></em>
-            </a></li>
-        </ul>
-     </div>
-    <div id="event" data-bind="with: chosenEvent">
-        <div class="toolbar">
+    <div id="event" data-role="page" data-bind="with: chosenEvent">
+        <div data-role="header" data-position="fixed">
             <h1 data-bind="text: title"></h1>
-            <a href="#" class="back">Events</a>
+            <a href="#events" data-rel="back" data-icon="arrow-l">Events</a>
         </div>
-        <div class="message" data-bind="visible: remaining">
-            <span data-bind="text: remaining"></span>
+        <div data-role="content">
+            <div class="message" data-bind="visible: remaining">
+                <span data-bind="text: remaining"></span>
+            </div>
+            <div class="message" data-bind="visible: since">
+                <span data-bind="text: since"></span>
+            </div>
+            <ul data-role="listview" data-inset="true">
+                <li class="nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <span class="ui-li-count" data-bind="text: nowplaying().length"></span></li>
+            </ul>
+            <h2>Schedule</h2>
+            <ul data-role="listview" data-inset="true" data-bind="foreach: days">
+                <li><a data-bind="href: hash"><span data-bind="text: name"> </span></a> <span class="ui-li-count" data-bind="text: nbPresentations"></span></li>
+            </ul>
         </div>
-        <div class="message" data-bind="visible: since">
-            <span data-bind="text: since"></span>
-        </div>
-        <ul class="rounded">
-            <li class="arrow nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <small class="counter" data-bind="text: nowplaying().length"></small></li>
-        </ul>
-        <h2>Schedule</h2>
-        <ul class="rounded" data-bind="foreach: days">
-            <li class="arrow"><a data-bind="href: hash"><span data-bind="text: name"> </span></a> <small class="counter" data-bind="text: nbPresentations"></small></li>
-        </ul>
     </div>
-    <div id="nowplaying" data-bind="with: chosenEvent">
-        <div class="toolbar">
+    <div id="nowplaying" data-role="page" data-bind="with: chosenEvent">
+        <div data-role="header" data-position="fixed">
             <h1>Now playing</h1>
-            <a href="#" class="back">Event</a>
+            <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
         </div>
-        <div class="noplaying message" data-bind="visible: nowplaying().length === 0">
-            No presentations right now
+        <div data-role="content">
+            <div class="noplaying message" data-bind="visible: nowplaying().length === 0">
+                No presentations right now
+            </div>
+            <ul data-role="listview" data-inset="true" data-bind="foreach: nowplaying">
+                <li><a data-bind="href: hash">
+                    <h3 data-bind="text: title"> </h3>
+                    <p><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></p>
+                </a></li>
+            </ul>
+            <a data-bind="tap: refreshNowPlaying" data-role="button" href="#">Refresh</a>
         </div>
-        <ul class="metal" data-bind="foreach: nowplaying">
-            <li class="arrow"><a data-bind="href: hash"><small></small> <span data-bind="text: title"> </span>
-                <em><span data-bind="text: speakerNames"> </span>,
-                    <span data-bind="text: slot"> </span>, <span data-bind="text: room().name"> </span></em></a></li>
-        </ul>
-        <a data-bind="tap: refreshNowPlaying" class="grayButton">Refresh</a>
     </div>
-    <div id="dayschedule" data-bind="with: chosenDay">
-        <div class="toolbar">
+    <div id="dayschedule" data-role="page" data-bind="with: chosenDay">
+        <div data-role="header" data-position="fixed">
             <h1 data-bind="text: name"></h1>
-            <a href="#" class="back">Event</a>
+            <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
         </div>
+        <div data-role="content">
         <p class="loading" data-bind="visible: slots.loading">
 
         </p>
         <p data-bind="visible: slots().length === 0 && !slots.loading()">
             Schedule not available yet.
         </p>
-        <ul class="edgetoedge" data-bind="foreach: slots">
-            <li class="sep" data-bind="text: name"></li>
+        <ul data-role="listview" data-bind="foreach: slots" data-filter="true" data-theme="a">
+            <li data-role="list-divider" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
-            <li class="arrow"><a data-bind="href: hash"><small></small> <span data-bind="text: title"> </span>
-                <em><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></em></a></li>
+            <li><a data-bind="href: hash">
+                <h3 data-bind="text: title"> </h3>
+                <p><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></p>
+            </a></li>
             <!-- /ko -->
         </ul>
-    </div>
-    <div id="presentation" data-bind="with: chosenPresentation">
-        <div class="toolbar">
-            <h1 data-bind="text: title"> </h1>
-            <a href="#" class="back">Back</a>
         </div>
+    </div>
+    <div id="presentation" data-role="page" data-bind="with: chosenPresentation">
+        <div data-role="header" data-position="fixed">
+            <h1 data-bind="text: title"> </h1>
+            <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
+        </div>
+        <div data-role="content">
         <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="joinroom flipleft greenButton"
            data-bind="visible: playing, tap: room().join">
@@ -193,12 +184,16 @@
             <a class="toggleDetails" data-bind="tap: toggleDetails, text: moreOrLess">[read more]</a>
         </p>
         <h3>Speaker(s)</h3>
-        <ul data-bind="foreach: speakers">
+        <ul data-role="listview" data-inset="true" data-bind="foreach: speakers">
             <li><span data-bind="text: name"></span></li>
         </ul>
+        </div>
     </div>
-    <div id="roomRT" data-bind="with: currentRoom">
+    <div id="roomRT" data-role="page" data-bind="with: currentRoom">
+        <div data-role="header" data-position="fixed">
         <h1 data-bind="text: currentPresentation().title"></h1>
+        </div>
+        <div data-role="content">
         <div class="message" data-bind="text: message, visible: message"> </div>
         <div class="content" data-bind="visible: connected">
         <div class="tabs">
@@ -246,6 +241,7 @@
             <a href="#" data-bind="tap: reconnect" class="grayButton reconnect">Reconnect</a>
         </div>
         <a href="#" data-bind="tap: leave" class="grayButton quit">Quit</a>
+        </div>
     </div>
 </div>
 </body>

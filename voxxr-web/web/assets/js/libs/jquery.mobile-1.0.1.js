@@ -2154,6 +2154,10 @@ $.widget( "mobile.page", $.mobile.widget, {
 				return absUrl;
 			},
 
+            convertToPageId: function( dataUrl ) {
+                return dataUrl.split('>')[0];
+            },
+
 			//get path from current hash, or from a file path
 			get: function( newPath ) {
 				if( newPath === undefined ) {
@@ -2741,8 +2745,9 @@ $.widget( "mobile.page", $.mobile.widget, {
 		// injected by a developer, in which case it would be lacking a data-url
 		// attribute and in need of enhancement.
 		if ( page.length === 0 && dataUrl && !path.isPath( dataUrl ) ) {
-			page = settings.pageContainer.children( "#" + dataUrl )
-				.attr( "data-" + $.mobile.ns + "url", dataUrl );
+			page = settings.pageContainer.children( "#" + path.convertToPageId(dataUrl) )
+				.attr( "data-" + $.mobile.ns + "url", dataUrl )
+                .jqmData('url', dataUrl);
 		}
 
 		// If we failed to find a page in the DOM, check the URL to see if it
@@ -3819,77 +3824,84 @@ $.mobile.page.prototype.options.footerTheme  = "a";
 $.mobile.page.prototype.options.contentTheme = null;
 
 $( document ).delegate( ":jqmData(role='page'), :jqmData(role='dialog')", "pagecreate", function( e ) {
-	
-	var $page = $( this ),
-		o = $page.data( "page" ).options,
-		pageRole = $page.jqmData( "role" ),
-		pageTheme = o.theme;
-	
-	$( ":jqmData(role='header'), :jqmData(role='footer'), :jqmData(role='content')", this ).each(function() {
-		var $this = $( this ),
-			role = $this.jqmData( "role" ),
-			theme = $this.jqmData( "theme" ),
-			contentTheme = theme || o.contentTheme || ( pageRole === "dialog" && pageTheme ),
-			$headeranchors,
-			leftbtn,
-			rightbtn,
-			backBtn;
-			
-		$this.addClass( "ui-" + role );	
-
-		//apply theming and markup modifications to page,header,content,footer
-		if ( role === "header" || role === "footer" ) {
-			
-			var thisTheme = theme || ( role === "header" ? o.headerTheme : o.footerTheme ) || pageTheme;
-
-			$this
-				//add theme class
-				.addClass( "ui-bar-" + thisTheme )
-				// Add ARIA role
-				.attr( "role", role === "header" ? "banner" : "contentinfo" );
-
-			// Right,left buttons
-			$headeranchors	= $this.children( "a" );
-			leftbtn	= $headeranchors.hasClass( "ui-btn-left" );
-			rightbtn = $headeranchors.hasClass( "ui-btn-right" );
-
-			leftbtn = leftbtn || $headeranchors.eq( 0 ).not( ".ui-btn-right" ).addClass( "ui-btn-left" ).length;
-			
-			rightbtn = rightbtn || $headeranchors.eq( 1 ).addClass( "ui-btn-right" ).length;
-			
-			// Auto-add back btn on pages beyond first view
-			if ( o.addBackBtn && 
-				role === "header" &&
-				$( ".ui-page" ).length > 1 &&
-				$this.jqmData( "url" ) !== $.mobile.path.stripHash( location.hash ) &&
-				!leftbtn ) {
-
-				backBtn = $( "<a href='#' class='ui-btn-left' data-"+ $.mobile.ns +"rel='back' data-"+ $.mobile.ns +"icon='arrow-l'>"+ o.backBtnText +"</a>" )
-					// If theme is provided, override default inheritance
-					.attr( "data-"+ $.mobile.ns +"theme", o.backBtnTheme || thisTheme )
-					.prependTo( $this );				
-			}
-
-			// Page title
-			$this.children( "h1, h2, h3, h4, h5, h6" )
-				.addClass( "ui-title" )
-				// Regardless of h element number in src, it becomes h1 for the enhanced page
-				.attr({
-					"tabindex": "0",
-					"role": "heading",
-					"aria-level": "1"
-				});
-
-		} else if ( role === "content" ) {
-			if ( contentTheme ) {
-			    $this.addClass( "ui-body-" + ( contentTheme ) );
-			}
-
-			// Add ARIA role
-			$this.attr( "role", "main" );
-		}
-	});
+    $( this ).refreshPage();
 });
+
+    $.fn.refreshPage = function() {
+        var $page = $( this );
+        if (!$page.data( "page" )) {
+            $page.page();
+            return;
+        }
+        var o = $page.data( "page" ).options,
+            pageRole = $page.jqmData( "role" ),
+            pageTheme = o.theme;
+
+        $( ":jqmData(role='header'), :jqmData(role='footer'), :jqmData(role='content')", this ).each(function() {
+            var $this = $( this ),
+                role = $this.jqmData( "role" ),
+                theme = $this.jqmData( "theme" ),
+                contentTheme = theme || o.contentTheme || ( pageRole === "dialog" && pageTheme ),
+                $headeranchors,
+                leftbtn,
+                rightbtn,
+                backBtn;
+
+            $this.addClass( "ui-" + role );
+
+            //apply theming and markup modifications to page,header,content,footer
+            if ( role === "header" || role === "footer" ) {
+
+                var thisTheme = theme || ( role === "header" ? o.headerTheme : o.footerTheme ) || pageTheme;
+
+                $this
+                    //add theme class
+                    .addClass( "ui-bar-" + thisTheme )
+                    // Add ARIA role
+                    .attr( "role", role === "header" ? "banner" : "contentinfo" );
+
+                // Right,left buttons
+                $headeranchors	= $this.children( "a" );
+                leftbtn	= $headeranchors.hasClass( "ui-btn-left" );
+                rightbtn = $headeranchors.hasClass( "ui-btn-right" );
+
+                leftbtn = leftbtn || $headeranchors.eq( 0 ).not( ".ui-btn-right" ).addClass( "ui-btn-left" ).length;
+
+                rightbtn = rightbtn || $headeranchors.eq( 1 ).addClass( "ui-btn-right" ).length;
+
+                // Auto-add back btn on pages beyond first view
+                if ( o.addBackBtn &&
+                    role === "header" &&
+                    $( ".ui-page" ).length > 1 &&
+                    $this.jqmData( "url" ) !== $.mobile.path.stripHash( location.hash ) &&
+                    !leftbtn ) {
+
+                    backBtn = $( "<a href='#' class='ui-btn-left' data-"+ $.mobile.ns +"rel='back' data-"+ $.mobile.ns +"icon='arrow-l'>"+ o.backBtnText +"</a>" )
+                        // If theme is provided, override default inheritance
+                        .attr( "data-"+ $.mobile.ns +"theme", o.backBtnTheme || thisTheme )
+                        .prependTo( $this );
+                }
+
+                // Page title
+                $this.children( "h1, h2, h3, h4, h5, h6" )
+                    .addClass( "ui-title" )
+                    // Regardless of h element number in src, it becomes h1 for the enhanced page
+                    .attr({
+                        "tabindex": "0",
+                        "role": "heading",
+                        "aria-level": "1"
+                    });
+
+            } else if ( role === "content" ) {
+                if ( contentTheme ) {
+                    $this.addClass( "ui-body-" + ( contentTheme ) );
+                }
+
+                // Add ARIA role
+                $this.attr( "role", "main" );
+            }
+        });
+    }
 
 })( jQuery );/*
 * "collapsible" plugin
@@ -4380,7 +4392,7 @@ $.widget( "mobile.listview", $.mobile.widget, {
 			// If we're creating the element, we update it regardless
 			if ( create || !item.hasClass( "ui-li" ) ) {
 				itemTheme = item.jqmData("theme") || o.theme;
-				a = this._getChildrenByTagName( item[ 0 ], "a", "A" );
+				a = item.find('a');
 
 				if ( a.length ) {
 					icon = item.jqmData("icon");
@@ -4622,7 +4634,7 @@ $( document ).delegate( ":jqmData(role='listview')", "listviewcreate", function(
 	var list = $( this ),
 		listview = list.data( "listview" );
 
-	if ( !listview.options.filter ) {
+	if ( !listview.options.filter || $(this).prev().hasClass('ui-listview-filter') ) {
 		return;
 	}
 

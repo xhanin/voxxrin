@@ -102,6 +102,9 @@
 #roomRT #poll {
   height: 280px;
 }
+#events .events li {
+  min-height: 80px;
+}
 #jqt ul li a.current {
   background-color: #c7f464;
   color: #000000;
@@ -110,32 +113,37 @@
   color: #c7f464;
   text-shadow: none;
 }
-#jqt div.message {
-  margin: 15px;
-}
 #jqt p {
   margin: 0 10px;
 }
 #jqt h2 {
-  color: #c7f464;
+  margin: 5px;
+  color: #556270;
   text-shadow: none;
 }
 #jqt h3 {
   margin: 10px 0 5px 20px;
-  color: #c7f464;
+  color: #556270;
   font-weight: normal;
 }
 #jqt h3:before {
   content: ":: ";
 }
-#jqt ul.edgetoedge li.sep {
+#jqt .ui-listview h3 {
+  margin: 10px 0 5px 10px;
+  color: #c7f464;
+}
+#jqt .ui-listview h3:before {
+  content: "";
+}
+#jqt .ui-listview li.sep {
   color: #4ecdc4;
 }
-#jqt ul.edgetoedge li em {
+#jqt .ui-listview li em {
   font-size: 0.6em;
   margin-right: 10px;
 }
-#jqt ul.edgetoedge li em:before {
+#jqt .ui-listview li em:before {
   content: '\a';
   white-space: pre;
 }
@@ -148,16 +156,10 @@
   -webkit-border-image: url(jqtouch/themes/jqt/img/back_button.png) 0 8 0 14;
 }
 #dayschedule li .speakers {
-  color: #c7f464;
+  color: #4ecdc4;
 }
 #dayschedule li .room:before {
   content: "@ ";
-}
-#presentation p a {
-  color: white;
-}
-#presentation ul li {
-  color: white;
 }
 #presentation .slot,
 #presentation .room {
@@ -169,6 +171,7 @@
 #presentation h2 em {
   display: block;
   float: right;
+  font-size: 0.7em;
 }
 #presentation .joinroom {
   margin-top: 27px;
@@ -228,7 +231,6 @@
   padding: 0px;
   border: none;
   display: block;
-  color: #DDD;
   height: 60px;
 }
 #about ul li img {
@@ -240,6 +242,6 @@
   border: none;
   font: normal 1em "Helvetica Neue", Helvetica;
 }
-#about a {
-  color: white;
+#about ui-content a {
+  color: #556270;
 }

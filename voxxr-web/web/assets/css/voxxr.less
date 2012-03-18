@@ -129,6 +129,10 @@
     }
 }
 
+#events {
+    .events li { min-height: 80px; }
+}
+
 #jqt {
     ul li a.current {
         background-color: @color4;
@@ -138,26 +142,31 @@
         color: @color4;
         text-shadow: none;
     }
-    div.message {
-        margin: 15px;
-    }
     p {
         margin: 0 10px;
     }
     h2 {
-        color: @color4;
+        margin: 5px;
+        color: @color1;
         text-shadow: none;
     }
     h3 {
         margin: 10px 0 5px 20px;
-        color: @color4;
+        color: @color1;
         font-weight: normal;
     }
     h3:before {
         content: ":: ";
     }
 
-    ul.edgetoedge {
+    .ui-listview {
+        h3 {
+            margin: 10px 0 5px 10px;
+            color: @color4;
+        }
+        h3:before {
+            content: "";
+        }
         li.sep {
             color: @color2;
         }
@@ -183,7 +192,7 @@
 
 #dayschedule {
     li .speakers {
-        color: @color4;
+        color: @color2;
     }
     li .room:before {
         content: "@ ";
@@ -192,12 +201,6 @@
 
 
 #presentation {
-    p a {
-        color: white;
-    }
-    ul li {
-        color: white;
-    }
     .slot, .room {
         color: @color2;
     }
@@ -207,6 +210,7 @@
     h2 em {
         display: block;
         float: right;
+        font-size: 0.7em;
     }
     .joinroom {
         margin-top: 27px;
@@ -277,7 +281,6 @@
         padding:  0px;
         border: none;
         display: block;
-        color: #DDD;
         height: 60px;
     }
 
@@ -292,7 +295,7 @@
         font: normal 1em @about-font-family;
     }
 
-    a {
-        color: white;
+    ui-content a {
+        color: @color1;
     }
 }
