@@ -77,8 +77,8 @@ Route.start = function() {
     $.mobile.initializePage();
 }
 $(window).bind('hashchange', Route.hashChangeHandler);
-$(document).bind( "pagebeforechange", function( e, data ) {
-    if (typeof data.toPage === 'string') {
-        Route.goTo($.mobile.path.parseUrl(data.toPage).hash);
-    }
-});
+//$(document).bind( "pagebeforechange", function( e, data ) {
+//    if (typeof data.toPage === 'string') {
+//        Route.goTo($.mobile.path.parseUrl(data.toPage).hash);
+//    }
+//});

@@ -4,9 +4,6 @@
 /* don't use web font, too slow to load on phone connection
   @about-font-family: "Asap","Georgia",sans-serif; */
 /* FEEDBACK */
-#feedback {
-  height: 280px;
-}
 #feedback .rate {
   overflow: visible;
   padding: 10px;
@@ -100,10 +97,22 @@
   padding-left: 40px;
 }
 #roomRT #poll {
-  height: 280px;
+  margin-top: 15px;
 }
-#events .events li {
-  min-height: 80px;
+#roomRT #poll .nopoll {
+  padding: 15px;
+}
+#jqt .ui-content {
+  padding-top: 0px;
+}
+#jqt .ui-content .ui-listview {
+  margin-top: 0px;
+}
+#jqt .ui-content .ui-listview-filter {
+  margin: 0px -15px;
+}
+#jqt .ui-content .message {
+  padding: 15px;
 }
 #jqt ul li a.current {
   background-color: #c7f464;
@@ -155,11 +164,17 @@
   border-width: 0 8px 0 14px;
   -webkit-border-image: url(jqtouch/themes/jqt/img/back_button.png) 0 8 0 14;
 }
+#events .events li {
+  min-height: 80px;
+}
 #dayschedule li .speakers {
   color: #4ecdc4;
 }
 #dayschedule li .room:before {
   content: "@ ";
+}
+#nowplaying .ui-content {
+  padding-top: 15px;
 }
 #presentation .slot,
 #presentation .room {

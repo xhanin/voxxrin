@@ -24,7 +24,65 @@ if (ko) {
             $(element).attr('href', valueUnwrapped);
         }
     };
+
+ko.bindingHandlers['listview'] = {
+    makeTemplateValueAccessor: function(valueAccessor) {
+        return function() {
+            var bindingValue = ko.utils.unwrapObservable(valueAccessor());
+
+            // If bindingValue is the array, just pass it on its own
+            if ((!bindingValue) || typeof bindingValue.length == "number")
+                return {
+                    'foreach': bindingValue,
+                    'afterRender': function(nodes) {
+                        if (nodes.length) {
+                            var parent = $(nodes[0]).parent();
+                            if (parent.data('listview')) {
+                                parent.listview('refresh');
+                            }
+                        }
+                    },
+                    'templateEngine': ko.nativeTemplateEngine.instance };
+
+            // If bindingValue.data is the array, preserve all relevant options
+            return {
+                'foreach': bindingValue['data'],
+                'includeDestroyed': bindingValue['includeDestroyed'],
+                'afterAdd': bindingValue['afterAdd'],
+                'beforeRemove': bindingValue['beforeRemove'],
+                'afterRender': bindingValue['afterRender'],
+                'templateEngine': ko.nativeTemplateEngine.instance
+            };
+        };
+    },
+    'init': function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        return ko.bindingHandlers['template']['init'](element, ko.bindingHandlers['listview'].makeTemplateValueAccessor(valueAccessor));
+    },
+    'update': function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        return ko.bindingHandlers['template']['update'](element, ko.bindingHandlers['listview'].makeTemplateValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+    }
+};
+ko.jsonExpressionRewriting.bindingRewriteValidators['listview'] = false; // Can't rewrite control flow bindings
+//ko.virtualElements.allowedBindings['listview'] = true;
+
 }
+
+(function( $ ){
+    $.fn.highlight = function(count) {
+        var self = this;
+        count = count || 5;
+        var hide = function() {
+            if (count > 0) {
+                self.fadeTo('fast', 0.1, show);
+            }
+        };
+        var show = function() {
+            count--;
+            self.fadeTo('slow', 1, hide);
+        };
+        hide();
+    };
+})( jQuery );
 
 var urlParams = {};
 (function () {
@@ -50,7 +108,7 @@ function whenDeviceReady(callback) {
 
 function getJSON(uri, onSuccess) {
     var json = localStorage.getItem(uri);
-    if (json) {
+    if (false && json) {
         onSuccess(JSON.parse(json));
     }
     whenDeviceReady(function() {
@@ -72,33 +130,51 @@ function getJSON(uri, onSuccess) {
     });
 }
 
-function jqmClean(selector) {
-    $(selector).find('a').removeClass('ui-btn-text').data('button', null);
-    $(selector).find('ul').data('listview', null);
-    $(selector).find('ul li, ul li div').removeClass('ul-li ui-btn ui-li-static');
+function mergeData(data, self) {
+    if (data && data.id) {
+        if (self.data().id == data.id) {
+            self.data(_.extend(self.data(), data));
+        } else {
+            self.data(data);
+        }
+    } else {
+        self.data({});
+    }
+    return self.data();
 }
 
-function jqmCleanOrRefreshOn(observable, selector) {
-    observable.subscribe(function(newValue) {
-       if (!newValue) {
-           jqmClean(selector);
-       } else {
-           setTimeout(function() {
-               console.log('refreshing ' + selector);
-               jqmClean(selector);
-                $(selector).refreshPage();
-                $(selector).trigger('create');
-           }, 0);
-       }
-    });
-}
-function jqmRefreshOn(observable, selector) {
-    observable.subscribe(function() {
-       setTimeout(function() {
-           console.log('refreshing ' + selector);
-           jqmClean(selector);
-            $(selector).refreshPage();
-            $(selector).trigger('create');
-       }, 0);
+function currentModelObject(current, propsToSync) {
+    var subscriptions = [];
+    return ko.computed({
+        read: function(newObj) {
+            return current;
+        },
+        write: function(newObj) {
+            _(subscriptions).each(function(subscription) {
+                subscription.dispose();
+            })
+            subscriptions = [];
+            if (current.id()) {
+                current.quit();
+            }
+            if (newObj) {
+                current.load(newObj.data());
+                subscriptions.push(newObj.data.subscribe(function(newValue) {
+                    current.load(newValue);
+                }));
+                if (propsToSync) {
+                    _(propsToSync).each(function(propToSync) {
+                        subscriptions.push(newObj[propToSync].subscribe(function(newValue) {
+                            current[propToSync](newValue);
+                        }));
+                    });
+                }
+            } else {
+                current.load({});
+            }
+            if (current.id()) {
+                current.enter();
+            }
+        }
     });
 }

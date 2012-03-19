@@ -25,7 +25,7 @@
                   prez.playing(true);
                   models.Room.bcmode = "DASHBOARD";
                   models.Room.current(prez.room());
-                  prez.room().currentPresentation(prez);
+                  models.Presentation.current(prez);
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
                       console.log('EV', ev);
@@ -83,7 +83,7 @@
     <div id="conAndMean" data-bind="with: room">
         C <span class="connections" data-bind="text: connections">###</span>
         -
-        R <span class="rateMean" data-bind="text: currentPresentation().rate.avgDisplay">#.##</span>
+        R <span class="rateMean" data-bind="text: $root.prez.rate.avgDisplay">#.##</span>
     </div>
     <canvas id="rateDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
     <canvas id="feelingDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>

@@ -34,6 +34,7 @@ public class NowPlayingResources implements RestRouter.RequestHandler {
                         .asIterable(FetchOptions.Builder.withLimit(100));
                 memcache.put("nowplaying/" + eventId, new ArrayList(Lists.newArrayList(entities)));
             }
+            resp.addHeader("Cache-Control", "no-cache");
             Rests.sendAsJsonArray(entities, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             if (!Rests.isSecure(req)) {

@@ -58,6 +58,7 @@ public class RoomResource {
         MeanRating roomMeanRating = currentPres == null ? null : repo.getPresMeanRating(currentPres.getId());
 
         return Response.ok("{\"status\":\"ok\"" +
+                ",\"pres\":\"" + (currentPres == null ? "" : currentPres.getId()) + "\"" +
                 ",\"title\":\"" + (currentPres == null ? "" : currentPres.getTitle()) + "\"" +
                 ",\"connections\":\"" + connections + "\"" +
                 ",\"rate\":" + (roomMeanRating == null ? "0" : roomMeanRating.getRate()) +

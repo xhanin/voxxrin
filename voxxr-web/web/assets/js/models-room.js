@@ -1,42 +1,48 @@
 (function(exports) {
+    var DISCONNECTED = "disconnected";
+    var CONNECTED = "connected";
+    var CONNECTING = "connecting";
 
     var Room = function(data) {
         var self = this;
-        self.id = ko.observable(data.id);
-        self.uri = ko.observable(data.uri);
-        self.name = ko.observable(data.name);
-        self.rt = ko.observable(null);
+        self.id = ko.observable();
+        self.uri = ko.observable();
+        self.name = ko.observable();
+        self.rt = ko.observable();
+        self.data = ko.observable({});
 
         self.connections = ko.observable(0);
-        self.currentPresentation = ko.observable(null);
-        self.status = ko.observable(models.Room.DISCONNECTED);
+        self.status = ko.observable(DISCONNECTED);
         self.message = ko.observable(null);
         self.connected = ko.computed(function() {
-            return self.status() === models.Room.CONNECTED;
+            return self.status() === CONNECTED;
         });
         self.connecting = ko.computed(function() {
-            return self.status() === models.Room.CONNECTING;
+            return self.status() === CONNECTING;
         });
 
+        // enter and quit are automatically called when changing current
+        self.enter = function() {
+            self.connect();
+        }
+        self.quit = function() {
+            self.disconnect();
+        };
+
+        // API
         self.join = function() {
             Room.current(self);
-            self.connect();
         };
         self.leave = function() {
-            self.quit();
-            jQT.goBack();
-        };
-        self.quit = function() {
-            console.log("quitting room ", self.name());
-            self.disconnect();
             Room.current(null);
+            window.history.back();
         };
 
         self.connect = function() {
-            if (self.status() === models.Room.DISCONNECTED) {
+            if (self.status() === DISCONNECTED) {
                 console.log('joining room');
                 self.message("Connecting to room...");
-                self.status(models.Room.CONNECTING);
+                self.status(CONNECTING);
                 $.ajax({
                     type: "GET",
                     url: self.rt() + "/r/room",
@@ -44,22 +50,33 @@
                     success: function(resp) {
                         if (resp.status === 'ok') {
                             self.connections(resp.connections);
-                            self.currentPresentation().title(resp.title);
-                            self.currentPresentation().rate.nb(resp.ratings);
-                            self.currentPresentation().rate.avg(resp.rate * 100);
+                            var p;
+                            if (resp.pres) {
+                                p = ds.presentation({id: resp.pres, title: resp.title});
+                                p.rate.nb(resp.ratings);
+                                p.rate.avg(resp.rate * 100);
+                                p.load();
+                            } else {
+                                p = null;
+                            }
+                            models.Presentation.current(p);
                             self.message(null);
-                            self.status(models.Room.CONNECTED);
+                            self.status(CONNECTED);
                             console.log('ROOM CONNECTED');
+                            self.message("Connected...");
+                            setTimeout(function() {
+                                self.message("");
+                            }, 3000);
                             subscribe(self);
                         } else {
                             self.message(resp.message);
-                            self.status(models.Room.DISCONNECTED);
+                            self.status(DISCONNECTED);
                         }
                     },
                     error: function(xhr, type) {
                         console.log('-------------- CONNECTION ERROR', xhr);
                         self.message("Can't connect to room. Is it currently opened?");
-                        self.status(models.Room.DISCONNECTED);
+                        self.status(DISCONNECTED);
                     }
                 });
             }
@@ -71,11 +88,12 @@
         };
 
         self.disconnect = function() {
-            if (self.status() !== models.Room.DISCONNECTED) {
+            if (self.status() !== DISCONNECTED) {
+                console.log("<<< disconnecting from ", self.name());
                 $.atmosphere.closeSuspendedConnection();
             }
             self.message(null);
-            self.status(models.Room.DISCONNECTED);
+            self.status(DISCONNECTED);
         };
 
         var transport = "long-polling";
@@ -84,13 +102,13 @@
         }
         function subscribe(room) {
             var $room = room;
-            console.log('-------------- SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
+            console.log('>>> SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
             $.atmosphere.subscribe(
                 $room.rt() + '/r/room/rt?mode=' + Room.bcmode,
                 function(response) {
                     if (response.state == 'error' || response.state == 'closed') {
                         $room.message("Room connection lost");
-                        $room.status(models.Room.DISCONNECTED);
+                        $room.status(DISCONNECTED);
                         return;
                     }
                     if (response.transport != 'polling'
@@ -103,17 +121,17 @@
                                 if (ev.isConnection) {
                                     $room.connections(ev.connections);
                                 }
-                                var pres = $room.currentPresentation();
+                                var pres = models.Presentation.current();
                                 if (ev.isTitle) {
                                     pres.title(ev.title);
                                 }
                                 if (ev.isPollStart) {
-                                    pres.currentPoll(new models.PresentationPoll({
-                                        choices: _(ev.items).map(function(e,i) { return {title: e, index: i}; })
-                                    }));
+                                    pres.currentPoll.choices(
+                                        _(ev.items).map(function(e,i) { return {title: e, index: i}; })
+                                    );
                                 }
                                 if (ev.isPollEnd) {
-                                    pres.currentPoll(null);
+                                    pres.currentPoll.choices([]);
                                 }
                                 if (ev.isRate) {
                                     var rate = pres.rate;
@@ -144,7 +162,7 @@
                 onerror();
                 return;
             }
-            console.log('--------------  EV ', ev, ' ON ', self.rt(), "/r/feedback");
+            console.log('sending EV ', ev, ' ON ', self.rt(), "/r/feedback");
             $.ajax({
                 type: "POST",
                 url: self.rt() + "/r/feedback",
@@ -163,9 +181,17 @@
             });
         }
 
-
         function loadData(data) {
-            if (data.rt) self.rt(data.rt);
+            data = mergeData(data, self);
+            self.id(data.id);
+            self.uri(data.uri);
+            self.name(data.name);
+            self.rt(data.rt);
+            if (!data.id) {
+                self.connections(0);
+                self.status(DISCONNECTED);
+                self.message(null);
+            }
         }
         self.load = function(data) {
             if (data) {
@@ -177,10 +203,13 @@
         
         loadData(data);
     };
-    Room.DISCONNECTED = "disconnected";
-    Room.CONNECTED = "connected";
-    Room.CONNECTING = "connecting";
-    Room.current = ko.observable(null);
+    Room.DISCONNECTED = DISCONNECTED;
+    Room.CONNECTED = CONNECTED;
+    Room.CONNECTING = CONNECTING;
+
+    Room.current = currentModelObject(new Room({}),
+        ['message', 'status', 'connections']);
+
     Room.bcmode = "USER";
     Room.onEV = function(callback) {
         $("body").bind('EV', function(event, ev) {

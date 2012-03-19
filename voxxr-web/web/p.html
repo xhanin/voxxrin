@@ -28,7 +28,7 @@
                   prez.playing(true);
                   models.Room.bcmode = "DASHBOARD";
                   models.Room.current(prez.room());
-                  prez.room().currentPresentation(prez);
+                  models.Presentation.current(prez);
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
                       console.log('EV', ev);

@@ -1711,6 +1711,9 @@ ko.exportSymbol('ko.jsonExpressionRewriting.insertPropertyAccessorsIntoJson', ko
         'parseBindingsString': function(bindingsString, bindingContext) {
             try {
                 var viewModel = bindingContext['$data'];
+                if (viewModel === null) {
+                    return null; // don't throw exception in this case
+                }
                 var rewrittenBindings = " { " + ko.jsonExpressionRewriting.insertPropertyAccessorsIntoJson(bindingsString) + " } ";
                 return ko.utils.evalWithinScope(rewrittenBindings, viewModel === null ? window : viewModel, bindingContext);
             } catch (ex) {

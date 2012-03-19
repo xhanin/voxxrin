@@ -17,9 +17,9 @@
     var Presentation = function(data) {
         var self = this;
 
-        self.id = ko.observable(data.id);
-        self.eventId = ko.observable(data.eventId);
-        self.uri = ko.observable(data.uri || ('/events/' + data.eventId + '/presentations/' + data.id));
+        self.id = ko.observable();
+        self.eventId = ko.observable();
+        self.uri = ko.observable();
         self.title = ko.observable(null);
         self.speakers = ko.observableArray(null);
         self.slot = ko.observable(null);
@@ -28,8 +28,8 @@
         self.room = ko.observable({});
         self.summary = ko.observable(null);
         self.playing = ko.observable(false);
-        self.rate = new models.PresentationRate();
-        self.currentPoll = ko.observable(null);
+        self.rate = new PresentationRate();
+        self.currentPoll = new PresentationPoll({choices:[]});
         self.loading = ko.observable(false);
         self.state = ko.observable('STOPPED');
         self.startedAt = ko.observable(null);
@@ -37,6 +37,7 @@
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation>" + self.eventId() + ">" + self.id()});
+        self.data = ko.observable({});
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -71,13 +72,18 @@
         }
 
         function loadData(data) {
-            if (data.title) self.title(data.title);
-            if (data.speakers) self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
-            if (data.slot) self.slot(data.slot);
-            if (data.fromTime) self.fromTime(data.fromTime);
-            if (data.toTime) self.toTime(data.toTime);
-            if (data.room) self.room(ds.room(data.room));
-            if (data.summary)  self.summary(data.summary);
+            data = mergeData(data, self);
+            self.id(data.id);
+            self.eventId(data.eventId);
+            self.uri(data.id ? (data.uri || ('/events/' + data.eventId + '/presentations/' + data.id)) : '');
+            self.title(data.title);
+            self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
+            self.slot(data.slot);
+            self.fromTime(data.fromTime);
+            self.toTime(data.toTime);
+            self.room(ds.room(data.room ? data.room : {}));
+            self.summary(data.summary);
+            self.playing(data.playing ? true : false); // coalesce to boolean
             self.loading(false);
         }
 
@@ -103,6 +109,8 @@
         self.enter = function() {}
         self.quit = function() {}
     }
+
+    Presentation.current = currentModelObject(new Presentation({}));
 
     exports.models = exports.models || {};
     exports.models.Presentation = Presentation;

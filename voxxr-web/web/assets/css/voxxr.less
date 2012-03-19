@@ -10,8 +10,6 @@
 
 /* FEEDBACK */
 #feedback {
-    height: 280px;
-
     .rate {
         overflow:   visible;
         padding:    10px;
@@ -125,15 +123,28 @@
     }
 
     #poll {
-        height: 280px;
+        margin-top: 15px;
+        
+        .nopoll {
+            padding: 15px;
+        }
     }
 }
 
-#events {
-    .events li { min-height: 80px; }
-}
-
 #jqt {
+    .ui-content {
+        padding-top: 0px;
+
+        .ui-listview {
+            margin-top:0px;
+        }
+
+        .ui-listview-filter {
+            margin: 0px -15px;
+        }
+
+        .message { padding: 15px; }
+    }
     ul li a.current {
         background-color: @color4;
         color: #000000;
@@ -190,6 +201,10 @@
     }
 }
 
+#events {
+    .events li { min-height: 80px; }
+}
+
 #dayschedule {
     li .speakers {
         color: @color2;
@@ -199,6 +214,11 @@
     }
 }
 
+#nowplaying {
+    .ui-content {
+        padding-top: 15px;
+    }
+}
 
 #presentation {
     .slot, .room {

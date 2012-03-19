@@ -2,23 +2,20 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-    <script type="text/javascript" src="assets/js/libs/jquery.mobile-1.0.1.js"></script>
       <!--
       <script>window.WeinreServerId = "anonymous";</script>
       <script src="http://192.168.0.45:8080/target/target-script-min.js"></script>
         -->
-      <!--<script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>-->
-      <!--<script type="text/javascript" src="assets/js/libs/zepto-0.8.js"></script>-->
+      <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.mobile-1.1.0-rc.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
-      <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.js"></script>
+      <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.debug.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
-      <!--<script type="text/javascript" src="assets/js/libs/zepto-gfx.js"></script>-->
+      <script type="text/javascript" src="assets/js/libs/gfx.js"></script>
+      <script type="text/javascript" src="assets/js/libs/gfx.effects.js"></script>
+      <script type="text/javascript" src="assets/js/libs/gfx.flip.js"></script>
       <script type="text/javascript" src="assets/js/libs/remaining-1.1.js"></script>
-      <!--<script type="application/x-javascript" src="assets/js/libs/jqtouch.js" charset="utf-8"></script>-->
-      <!--<script type="application/x-javascript" src="assets/js/libs/jqtouch-jquery.js" charset="utf-8"></script>-->
       <script type="text/javascript" src="assets/js/libs/phonegap-1.4.1.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
@@ -42,6 +39,7 @@
 
       <!--<style type="text/css" media="screen">@import "assets/css/jqtouch/jqtouch.css";</style>-->
       <!--<style type="text/css" media="screen">@import "assets/css/jqtouch/themes/jqt/theme.css";</style>-->
+      <link rel="stylesheet" href="assets/css/jquery.mobile-1.1.0-rc.1.min.css" />
       <link rel="stylesheet" href="assets/css/voxxr.css" />
 </head>
 <body>
@@ -58,7 +56,7 @@
         <p data-bind="visible: events().length === 0 && !events.loading()">
             No upcoming event covered :(
         </p>
-        <ul class="events"  data-role="listview" data-bind="foreach: events">
+        <ul class="events"  data-role="listview" data-bind="listview: events">
             <li data-theme="a"><a data-bind='href: hash'>
                 <h3 data-bind="text: title">Devoxx France</h3>
                 <p><strong data-bind="text: subtitle"></strong></p>
@@ -119,7 +117,7 @@
                 <li class="nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <span class="ui-li-count" data-bind="text: nowplaying().length"></span></li>
             </ul>
             <h2>Schedule</h2>
-            <ul data-role="listview" data-inset="true" data-bind="foreach: days">
+            <ul class="days" data-role="listview" data-inset="true" data-bind="listview: days">
                 <li><a data-bind="href: hash"><span data-bind="text: name"> </span></a> <span class="ui-li-count" data-bind="text: nbPresentations"></span></li>
             </ul>
         </div>
@@ -133,7 +131,7 @@
             <div class="noplaying message" data-bind="visible: nowplaying().length === 0">
                 No presentations right now
             </div>
-            <ul data-role="listview" data-inset="true" data-bind="foreach: nowplaying">
+            <ul data-role="listview" data-inset="true" data-bind="listview: nowplaying">
                 <li><a data-bind="href: hash">
                     <h3 data-bind="text: title"> </h3>
                     <p><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></p>
@@ -148,13 +146,13 @@
             <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
         </div>
         <div data-role="content">
-        <p class="loading" data-bind="visible: slots.loading">
+        <div class="loading" data-bind="visible: slots.loading || loading">
 
-        </p>
-        <p data-bind="visible: slots().length === 0 && !slots.loading()">
+        </div>
+        <div data-bind="visible: slots().length === 0 && !slots.loading() && !loading()" class="message">
             Schedule not available yet.
-        </p>
-        <ul data-role="listview" data-bind="foreach: slots" data-filter="true" data-theme="a">
+        </div>
+        <ul data-role="listview" data-bind="listview: slots" data-filter="true" data-theme="a">
             <li data-role="list-divider" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
             <li><a data-bind="href: hash">
@@ -172,7 +170,7 @@
         </div>
         <div data-role="content">
         <h2><span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
-        <a href="#roomRT" class="joinroom flipleft greenButton"
+        <a href="#roomRT" class="joinroom" data-role="button" data-theme="e"
            data-bind="visible: playing, tap: room().join">
             Join room now</a>
         <h3>Abstract</h3>
@@ -184,31 +182,30 @@
             <a class="toggleDetails" data-bind="tap: toggleDetails, text: moreOrLess">[read more]</a>
         </p>
         <h3>Speaker(s)</h3>
-        <ul data-role="listview" data-inset="true" data-bind="foreach: speakers">
+        <ul data-role="listview" data-inset="true" data-bind="listview: speakers">
             <li><span data-bind="text: name"></span></li>
         </ul>
         </div>
     </div>
     <div id="roomRT" data-role="page" data-bind="with: currentRoom">
         <div data-role="header" data-position="fixed">
-        <h1 data-bind="text: currentPresentation().title"></h1>
+            <h1 data-bind="text: $root.chosenPresentation().title"></h1>
+            <div data-role="navbar" data-iconpos="left" class="tabs">
+                <ul>
+                    <li><a href="#" data-icon="star" class="rate ui-btn-active">RATE</a></li>
+                    <li><a href="#" data-icon="grid" class="poll">POLL</a></li>
+                </ul>
+            </div>
         </div>
         <div data-role="content">
-        <div class="message" data-bind="text: message, visible: message"> </div>
         <div class="content" data-bind="visible: connected">
-        <div class="tabs">
-            <ul class="individual">
-                <li><a href="#" class="rate current">RATE</a></li>
-                <li><a href="#" class="poll">POLL</a></li>
-            </ul>
-        </div>
         <div class="tabsContent">
             <div id="feedback">
                 <div class="dashboard">
                     C
                     <span class="connections" data-bind="text: connections">###</span>
                      - R
-                    <span class="rateMean" data-bind="text: currentPresentation().rate.avgDisplay">#.##</span>
+                    <span class="rateMean" data-bind="text: $root.chosenPresentation().rate.avgDisplay">#.##</span>
                 </div>
                 <label class="rate">How do you rate it right now?</label>
                 <div class="rate">
@@ -224,23 +221,26 @@
                     <a class="wonder" data-value="W" href="#"><img src="assets/img/interrogation.png" width="36px" height="36px"></a>
                 </div>
             </div>
-            <div id="poll" style="display:none;" data-bind="with: currentPresentation">
-                <div class="nopoll" data-bind="visible: currentPoll() === null">
+            <div id="poll" style="display:none;" data-bind="with: $root.chosenPresentation">
+                <div class="nopoll" data-bind="visible: currentPoll.choices().length === 0">
                     No current poll
                 </div>
-                <!-- ko if: currentPoll -->
-                <ul class="rounded" data-bind="foreach: currentPoll().choices">
-                    <li><a href="#" data-bind='text: title, attr: {"data-value": index}'> </a></li>
+                <ul data-role="listview" data-inset="true"
+                    data-bind="visible: currentPoll.choices().length !== 0, listview: currentPoll.choices">
+                    <li data-icon="false"><a href="#" data-bind='text: title, attr: {"data-value": index}'> </a></li>
                 </ul>
-                <!-- /ko -->
             </div>
         </div>
         </div>
-        <br/>
-        <div class="reconnect" data-bind="visible: !connecting">
-            <a href="#" data-bind="tap: reconnect" class="grayButton reconnect">Reconnect</a>
         </div>
-        <a href="#" data-bind="tap: leave" class="grayButton quit">Quit</a>
+        <div data-role="footer" data-position="fixed">
+            <div class="message" data-bind="text: message, visible: message"> </div>
+            <div data-role="navbar" data-iconpos="left">
+                <ul>
+                    <li><a href="#" data-icon="delete" class="quit">Quit</a></li>
+                    <li><a href="#" data-icon="refresh" data-theme="e" class="reconnect">Reconnect</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
