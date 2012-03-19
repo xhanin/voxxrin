@@ -2369,7 +2369,7 @@ $.mobile.transitionFallbacks = {};
 			},
 
             convertToPageId: function( dataUrl ) {
-                return dataUrl.split('>')[0];
+                return dataUrl.split('~')[0];
             },
 
 			//get path from current hash, or from a file path

@@ -23,7 +23,7 @@
         self.presentations = ko.observableArray([]);
         self.slots = ko.observableArray([]);
         self.slots.loading = ko.observable(false);
-        self.hash = ko.computed(function() {return "#dayschedule>" + self.eventId() + ">" + self.id()});
+        self.hash = ko.computed(function() {return "#dayschedule~" + self.eventId() + "~" + self.id()});
         self.data = ko.observable({});
 
         function load(data) {

@@ -13,8 +13,8 @@
         self.days = ko.observableArray([]);
         self.remaining = ko.observable();
         self.since = ko.observable();
-        self.hash = ko.computed(function() {return "#event>" + self.id()});
-        self.nowplaying.hash = ko.computed(function() {return "#nowplaying>" + self.id()});
+        self.hash = ko.computed(function() {return "#event~" + self.id()});
+        self.nowplaying.hash = ko.computed(function() {return "#nowplaying~" + self.id()});
         self.data = ko.observable({});
         self.loading = ko.observable(false);
         var crons = {};
