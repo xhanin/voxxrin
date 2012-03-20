@@ -32,7 +32,9 @@ public class EV {
                         ("W".equals(value) ? 3 :
                                 ("Y".equals(value) ? -5 : 0));
             }
-        }, CONNECTION("C", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        },
+        POKE("PK", 1,  RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        CONNECTION("C", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         TITLE("T", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         HOT_FACTOR("H"),
         POLL_START("PS", 10, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
