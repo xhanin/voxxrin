@@ -108,7 +108,7 @@ function whenDeviceReady(callback) {
 
 function getJSON(uri, onSuccess) {
     var json = localStorage.getItem(uri);
-    if (false && json) {
+    if (json) {
         onSuccess(JSON.parse(json));
     }
     whenDeviceReady(function() {
