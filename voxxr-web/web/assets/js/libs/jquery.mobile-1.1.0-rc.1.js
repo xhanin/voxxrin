@@ -3442,7 +3442,7 @@ $.mobile.transitionFallbacks = {};
 		});
 
 		// click routing - direct to HTTP or Ajax, accordingly
-		$( document ).bind( "click", function( event ) {
+		$( document ).bind( "vclick", function( event ) {
 			if( !$.mobile.linkBindingEnabled ){
 				return;
 			}
