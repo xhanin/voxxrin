@@ -265,23 +265,23 @@ $(function() {
     $("#roomRT a.reconnect").bind('vclick', function() {
         models.Room.current().reconnect();
         return false;
-    }).mousedown(function() {
+    }).on('vmousedown', function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
-    }).mouseup(function() {
+    }).on( 'vmouseup', function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
      $("#nowplaying a.refresh").bind('vclick', function() {
         models.Event.current().refreshNowPlaying();
-    }).mousedown(function() {
+    }).on('vmousedown', function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
-    }).mouseup(function() {
+     }).on( 'vmouseup', function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
     $("#presentation a.joinroom").bind('vclick', function() {
         models.Presentation.current().room().join();
-    }).mousedown(function() {
+    }).on('vmousedown', function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
-    }).mouseup(function() {
+    }).on( 'vmouseup', function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
 });
