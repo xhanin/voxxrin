@@ -106,6 +106,13 @@
             $.atmosphere.subscribe(
                 $room.rt() + '/r/room/rt?mode=' + Room.bcmode,
                 function(response) {
+                    if (!Room.current().id()) {
+                        // no current room, it seems that we didn't properly quit
+                        $room.status(CONNECTED); // set status to connected to make sure disconnect actually call suspend connection
+                        $room.disconnect();
+                        return;
+                    }
+
                     if (response.state == 'error' || response.state == 'closed') {
                         $room.message("Room connection lost");
                         $room.status(DISCONNECTED);
