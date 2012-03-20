@@ -277,5 +277,11 @@ $(function() {
     }).mouseup(function() {
         $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
-
+    $("#presentation a.joinroom").bind('vclick', function() {
+        models.Presentation.current().room().join();
+    }).mousedown(function() {
+        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
+    }).mouseup(function() {
+        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
+    });
 });
