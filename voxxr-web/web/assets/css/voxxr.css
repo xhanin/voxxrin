@@ -6,8 +6,8 @@
 /* FEEDBACK */
 #feedback .rate {
   overflow: visible;
-  padding: 10px;
-  margin: 5px auto;
+  padding: 5px;
+  margin: 2px auto;
   position: relative;
   width: 300px;
   height: 60px;
@@ -39,8 +39,8 @@
 }
 #feedback .feeling {
   overflow: visible;
-  padding: 10px;
-  margin: 5px auto;
+  padding: 5px;
+  margin: 2px auto;
   position: relative;
   width: 180px;
   height: 60px;
@@ -65,36 +65,22 @@
 #feedback .feeling .wonder {
   background: #4ecdc4;
 }
-/* DASHBOARD */
-#dashboard .rate {
-  padding: 20px;
-}
-#dashboard .rate .mean {
-  font-size: 48px;
-}
-#rateDrops {
-  width: 160px;
-  height: 60px;
-}
 /* PHONE */
 #roomRT h1 {
   color: #4ecdc4;
 }
 #roomRT #feedback .dashboard {
   width: 260px;
-  height: 52px;
-  margin: 5px auto;
+  margin: 4px auto;
   text-align: center;
-  font-size: 32px;
+  font-size: 24px;
   color: #4ecdc4;
 }
-#roomRT #feedback .rateMean,
-#roomRT #feedback .connections {
-  font-size: 44px;
-  color: #c7f464;
+#roomRT #feedback .dashboard .ui-btn {
+  margin: 4px 5px;
 }
-#roomRT #feedback label.rate {
-  padding-left: 40px;
+#roomRT #feedback .dashboard .sparks {
+  margin-top: 5px;
 }
 #roomRT #poll {
   margin-top: 15px;

@@ -124,6 +124,7 @@
 
         self.enter = function() {
             self.autorefresh(true);
+
         }
 
         self.quit = function() {
@@ -165,10 +166,11 @@
                 }
             }
         }
+
     }
     Event.current = currentModelObject(new Event({}));
-
 
     exports.models = exports.models || {};
     exports.models.Event = Event;
 })(window);
+

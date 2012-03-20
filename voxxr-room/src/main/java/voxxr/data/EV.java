@@ -36,7 +36,7 @@ public class EV {
         POKE("PK", 1,  RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         CONNECTION("C", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         TITLE("T", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
-        HOT_FACTOR("H"),
+        HOT_FACTOR("H", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         POLL_START("PS", 10, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         POLL_END("PE", 10, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         POLL_VOTE("PV", 4),

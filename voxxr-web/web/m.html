@@ -12,6 +12,7 @@
       <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.debug.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
+      <script type="text/javascript" src="assets/js/libs/jquery.sparkline.min.js"></script>
       <script type="text/javascript" src="assets/js/libs/gfx.js"></script>
       <script type="text/javascript" src="assets/js/libs/gfx.effects.js"></script>
       <script type="text/javascript" src="assets/js/libs/gfx.flip.js"></script>
@@ -191,7 +192,7 @@
             <h1 data-bind="text: $root.chosenPresentation().title"></h1>
             <div data-role="navbar" data-iconpos="left" class="tabs">
                 <ul>
-                    <li><a href="#" data-icon="star" class="rate ui-btn-active">RATE</a></li>
+                    <li><a href="#" data-icon="star" class="rate ui-btn-active">LIVE</a></li>
                     <li><a href="#" data-icon="grid" class="poll">POLL</a></li>
                 </ul>
             </div>
@@ -200,13 +201,6 @@
         <div class="content" data-bind="visible: connected">
         <div class="tabsContent">
             <div id="feedback">
-                <div class="dashboard">
-                    C
-                    <span class="connections" data-bind="text: connections">###</span>
-                     - R
-                    <span class="rateMean" data-bind="text: $root.chosenPresentation().rate.avgDisplay">#.##</span>
-                </div>
-                <label class="rate">How do you rate it right now?</label>
                 <div class="rate">
                     <a class="star" data-rate="1" href="#"></a>
                     <a class="star" data-rate="2" href="#"></a>
@@ -218,6 +212,19 @@
                     <a class="applause" data-value="A" href="#"><img src="assets/img/applaudire.png" width="36px" height="36px"></a>
                     <a class="yawn" data-value="Y" href="#"><img src="assets/img/ennui.png" width="36px" height="36px"></a>
                     <a class="wonder" data-value="W" href="#"><img src="assets/img/interrogation.png" width="36px" height="36px"></a>
+                </div>
+                <div class="dashboard">
+                    <div class="conAndRate">
+                    <a href="#" data-icon="grid" data-iconpos="notext" data-corners="true" data-role="button"
+                          data-shadow="true" data-iconshadow="true" data-inline="true" title="Connections number">Connections #</a>
+                    <span class="connections" data-bind="text: connections">###</span>
+                    <a href="#" data-icon="star" data-iconpos="notext" data-corners="true" data-role="button"
+                          data-shadow="true" data-iconshadow="true" data-inline="true" title="Mean Rate">Rate</a>
+                    <span class="rateMean" data-bind="text: $root.chosenPresentation().rate.avgDisplay">#.##</span>
+                    </div>
+                    <div class="sparks">
+                        <span class="spark">...</span>
+                    </div>
                 </div>
             </div>
             <div id="poll" style="display:none;" data-bind="with: $root.chosenPresentation">
