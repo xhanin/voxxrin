@@ -38,8 +38,23 @@
             window.history.back();
         };
 
+        var reconnectAttemptsDelay = 250;
+        var reconnectAttemptTimeout = null;
+        function attemptToReconnect() {
+            if (!Room.current().id()) {
+                return;
+            }
+            reconnectAttemptsDelay *= 2;
+            console.log('attempt to reconnect in ' + reconnectAttemptsDelay + 'ms');
+            reconnectAttemptTimeout = setTimeout(function() {self.connect();}, reconnectAttemptsDelay);
+        }
+
         self.connect = function() {
             if (self.status() === DISCONNECTED) {
+                if (reconnectAttemptTimeout) {
+                    clearTimeout(reconnectAttemptTimeout);
+                    reconnectAttemptTimeout = null;
+                }
                 console.log('joining room');
                 self.message("Connecting to room...");
                 self.status(CONNECTING);
@@ -49,6 +64,7 @@
                     dataType:"json",
                     success: function(resp) {
                         if (resp.status === 'ok') {
+                            reconnectAttemptsDelay = 250; // reset reconnect attempt delay
                             self.connections(resp.connections);
                             var p;
                             if (resp.pres) {
@@ -71,16 +87,19 @@
                         } else {
                             self.message(resp.message);
                             self.status(DISCONNECTED);
+                            attemptToReconnect();
                         }
                     },
                     error: function(xhr, type) {
                         console.log('-------------- CONNECTION ERROR', xhr);
                         self.message("Can't connect to room. Is it currently opened?");
                         self.status(DISCONNECTED);
+                        attemptToReconnect();
                     }
                 });
             }
         };
+
 
         self.reconnect = function() {
             self.disconnect();
@@ -88,6 +107,11 @@
         };
 
         self.disconnect = function() {
+            reconnectAttemptsDelay = 250; // reset
+            if (reconnectAttemptTimeout) {
+                clearTimeout(reconnectAttemptTimeout);
+                reconnectAttemptTimeout = null;
+            }
             if (self.status() !== DISCONNECTED) {
                 console.log("<<< disconnecting from ", self.name());
                 $.atmosphere.closeSuspendedConnection();
@@ -100,6 +124,7 @@
         if ('WebSocket' in window) {
             transport = "websocket";
         }
+
         function subscribe(room) {
             var $room = room;
             console.log('>>> SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
@@ -116,8 +141,10 @@
                     if (response.state == 'error' || response.state == 'closed') {
                         $room.message("Room connection lost");
                         $room.status(DISCONNECTED);
+                        attemptToReconnect();
                         return;
                     }
+
                     if (response.transport != 'polling'
                         && response.state != 'connected' && response.state != 'closed') {
                         if (response.status == 200) {
