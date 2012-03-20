@@ -174,7 +174,7 @@ $(function() {
         }
 
         function setVotes(rate, style) {
-            rate = rate || myRate.last;
+            rate = rate === 0 ? 0 : (rate || myRate.last);
             style = style || 'vote';
             for (var i = 1; i <= 5; i++) {
                 var v = $("#feedback .rate").find('[data-rate="' + i + '"]');
@@ -185,9 +185,20 @@ $(function() {
             }
         }
 
+        var voteFadeOutTimeout = null;
         function vote(r) {
+            if (voteFadeOutTimeout) {
+                clearTimeout(voteFadeOutTimeout);
+                voteFadeOutTimeout = null;
+            }
             setVotes(r, 'voting');
-            sendEV("R" + r, function() { myRate.last = r; setVotes();}, function() { setVotes(); });
+            sendEV("R" + r,
+                function() {
+                    myRate.last = r; setVotes();
+                    voteFadeOutTimeout = setTimeout(function() { setVotes(0); }, 4000);
+                }, function() {
+                    setVotes(0);
+                });
         }
 
         $("#feedback .feeling a").live('tap', function() {
