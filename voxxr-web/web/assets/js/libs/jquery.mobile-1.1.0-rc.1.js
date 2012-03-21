@@ -2160,9 +2160,9 @@ function outInTransitionHandler( name, reverse, $to, $from ) {
 
 			// Jump to top or prev scroll, sometimes on iOS the page has not rendered yet.
 			$to.height( screenHeight + toScroll );
-				
+
 			$.mobile.silentScroll( toScroll );
-			
+
 			$to.addClass( name + " in" + reverseClass );
 			
 			if( none ){
@@ -2186,9 +2186,6 @@ function outInTransitionHandler( name, reverse, $to, $from ) {
                     .removeClass( $.mobile.activePageClass + " out in reverse " + name )
                     .height( "" );
             }
-            // Jump to top or prev scroll, sometimes on iOS the page has not rendered yet.
-            $to.height( screenHeight + toScroll );
-            $.mobile.silentScroll( toScroll );
 			$to
 				.removeClass( "out in reverse " + name )
 				.height( "" )
@@ -2203,10 +2200,8 @@ function outInTransitionHandler( name, reverse, $to, $from ) {
 	if ( $from && !none ) {
         $to.addClass( $.mobile.activePageClass );
         $to.animationComplete( doneOutIn );
-
         // Send focus to page as it is now display: block
         $.mobile.focusPage( $to );
-
         $to.addClass( name + " in" + reverseClass );
 
 		$from
