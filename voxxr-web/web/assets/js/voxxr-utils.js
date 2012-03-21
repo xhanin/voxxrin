@@ -108,8 +108,10 @@ function whenDeviceReady(callback) {
 
 function getJSON(uri, onSuccess) {
     var json = localStorage.getItem(uri);
+    var localTimeout = null;
     if (json) {
-        onSuccess(JSON.parse(json));
+        // call success callback in a few ms to call it asynchronously in any case
+        localTimeout = setTimeout(function(){ onSuccess(JSON.parse(json)); localTimeout = null }, 50);
     }
     whenDeviceReady(function() {
         if (!models.Device.current().offline()) {
@@ -119,6 +121,10 @@ function getJSON(uri, onSuccess) {
                 dataType:"text",
                 type: "GET",
                 success: function(json) {
+                    if (localTimeout) {
+                        // if ever we reach that before the timeout expired, clear it
+                        clearTimeout(localTimeout);
+                    }
                     localStorage.setItem(uri, json);
                     onSuccess(JSON.parse(json));
                 },
