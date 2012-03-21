@@ -63,7 +63,45 @@ ko.bindingHandlers['listview'] = {
     }
 };
 ko.jsonExpressionRewriting.bindingRewriteValidators['listview'] = false; // Can't rewrite control flow bindings
-//ko.virtualElements.allowedBindings['listview'] = true;
+
+ko.bindingHandlers['jqmforeach'] = {
+    makeTemplateValueAccessor: function(valueAccessor) {
+        return function() {
+            var bindingValue = ko.utils.unwrapObservable(valueAccessor());
+
+            // If bindingValue is the array, just pass it on its own
+            if ((!bindingValue) || typeof bindingValue.length == "number")
+                return {
+                    'foreach': bindingValue,
+                    'afterRender': function(nodes) {
+                        if (nodes.length) {
+                            var parent = $(nodes[0]).parent();
+                            $.mobile.collapsible.prototype.enhanceWithin( parent );
+                            $.mobile.listview.prototype.enhanceWithin( parent );
+                        }
+                    },
+                    'templateEngine': ko.nativeTemplateEngine.instance };
+
+            // If bindingValue.data is the array, preserve all relevant options
+            return {
+                'foreach': bindingValue['data'],
+                'includeDestroyed': bindingValue['includeDestroyed'],
+                'afterAdd': bindingValue['afterAdd'],
+                'beforeRemove': bindingValue['beforeRemove'],
+                'afterRender': bindingValue['afterRender'],
+                'templateEngine': ko.nativeTemplateEngine.instance
+            };
+        };
+    },
+    'init': function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        return ko.bindingHandlers['template']['init'](element, ko.bindingHandlers['jqmforeach'].makeTemplateValueAccessor(valueAccessor));
+    },
+    'update': function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        return ko.bindingHandlers['template']['update'](element, ko.bindingHandlers['jqmforeach'].makeTemplateValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+    }
+};
+ko.jsonExpressionRewriting.bindingRewriteValidators['jqmforeach'] = false; // Can't rewrite control flow bindings
+ko.virtualElements.allowedBindings['jqmforeach'] = true;
 
 }
 
