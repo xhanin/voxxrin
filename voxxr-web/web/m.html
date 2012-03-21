@@ -58,7 +58,7 @@
             No upcoming event covered :(
         </p>
         <ul class="events"  data-role="listview" data-bind="listview: events">
-            <li data-theme="a"><a data-bind="href: hash" data-transition="slide">
+            <li data-theme="a"><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
                 <p><strong data-bind="text: subtitle"></strong> ~ <span data-bind="text: dates"></span></p>
             </a></li>
@@ -114,11 +114,11 @@
                 <span data-bind="text: since"></span>
             </div>
             <ul data-role="listview" data-inset="true">
-                <li class="nowplaying"><a data-bind="href: nowplaying.hash" data-transition="slide">Now playing</a> <span class="ui-li-count" data-bind="text: nowplaying().length"></span></li>
+                <li class="nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <span class="ui-li-count" data-bind="text: nowplaying().length"></span></li>
             </ul>
             <h2>Schedule</h2>
             <ul class="days" data-role="listview" data-inset="true" data-bind="listview: days">
-                <li><a data-bind="href: hash" data-transition="slide"><span data-bind="text: name"> </span></a> <span class="ui-li-count" data-bind="text: nbPresentations"></span></li>
+                <li><a data-bind="href: hash"><span data-bind="text: name"> </span></a> <span class="ui-li-count" data-bind="text: nbPresentations"></span></li>
             </ul>
         </div>
     </div>
@@ -132,12 +132,12 @@
                 No presentations right now
             </div>
             <ul data-role="listview" data-inset="true" data-bind="listview: nowplaying" data-theme="a">
-                <li><a data-bind="href: hash" data-transition="slide">
+                <li><a data-bind="href: hash">
                     <h3 data-bind="text: title"> </h3>
                     <p><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></p>
                 </a></li>
             </ul>
-            <a class="refresh" data-role="button" href="#">Refresh</a>
+            <a class="refresh" data-role="button" data-theme="e" href="#">Refresh</a>
         </div>
     </div>
     <div id="dayschedule" data-role="page" data-bind="with: chosenDay">
@@ -155,7 +155,7 @@
         <ul data-role="listview" data-bind="listview: slots" data-filter="true" data-theme="a">
             <li data-role="list-divider" data-bind="text: name"></li>
             <!-- ko foreach: presentations -->
-            <li><a data-bind="href: hash" data-transition="slide">
+            <li><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
                 <p><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></p>
             </a></li>
@@ -243,7 +243,7 @@
             <div class="message" data-bind="text: message, visible: message"> </div>
             <div data-role="navbar" data-iconpos="left">
                 <ul>
-                    <li><a href="#" data-icon="delete" class="quit">Quit</a></li>
+                    <li><a href="#" data-icon="delete"  data-theme="a" class="quit">Quit</a></li>
                     <li><a href="#" data-icon="refresh" data-theme="e" class="reconnect">Reconnect</a></li>
                 </ul>
             </div>

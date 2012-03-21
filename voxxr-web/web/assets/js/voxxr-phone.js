@@ -265,23 +265,15 @@ $(function() {
     $("#roomRT a.reconnect").bind('vclick', function() {
         models.Room.current().reconnect();
         return false;
-    }).on('vmousedown', function() {
-        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
-    }).on( 'vmouseup', function() {
-        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
      $("#nowplaying a.refresh").bind('vclick', function() {
         models.Event.current().refreshNowPlaying();
-    }).on('vmousedown', function() {
-        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
-     }).on( 'vmouseup', function() {
-        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
     $("#presentation a.joinroom").bind('vclick', function() {
         models.Presentation.current().room().join();
-    }).on('vmousedown', function() {
-        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
-    }).on( 'vmouseup', function() {
-        $(this).toggleClass('ui-btn-up-e').toggleClass('ui-btn-down-e');
     });
+
+    // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
+    var ua = navigator.userAgent;
+    $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'slide';
 });
