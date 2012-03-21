@@ -792,7 +792,7 @@ $.atmosphere = function() {
             };
 
             // Invoke global callbacks
-            $.atmosphere.log(logLevel, ["Invoking " + $.atmosphere.callbacks.length + " callbacks"]);
+            // $.atmosphere.log(logLevel, ["Invoking " + $.atmosphere.callbacks.length + " callbacks"]);
             if ($.atmosphere.callbacks.length > 0) {
                 $.each($.atmosphere.callbacks, call);
             }
