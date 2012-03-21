@@ -2178,14 +2178,38 @@ function outInTransitionHandler( name, reverse, $to, $from ) {
 				.parent().removeClass( viewportClass );
 
 			deferred.resolve( name, reverse, $to, $from, true );
+		},
+
+        doneOutIn = function() {
+            if ( $from ) {
+                $from
+                    .removeClass( $.mobile.activePageClass + " out in reverse " + name )
+                    .height( "" );
+            }
+            // Jump to top or prev scroll, sometimes on iOS the page has not rendered yet.
+            $to.height( screenHeight + toScroll );
+            $.mobile.silentScroll( toScroll );
+			$to
+				.removeClass( "out in reverse " + name )
+				.height( "" )
+				.parent().removeClass( viewportClass );
+
+			deferred.resolve( name, reverse, $to, $from, true );
 		};
 		
 	$to
 		.parent().addClass( viewportClass );
-	
+
 	if ( $from && !none ) {
+        $to.addClass( $.mobile.activePageClass );
+        $to.animationComplete( doneOutIn );
+
+        // Send focus to page as it is now display: block
+        $.mobile.focusPage( $to );
+
+        $to.addClass( name + " in" + reverseClass );
+
 		$from
-			.animationComplete( doneOut )
 			.height( screenHeight + $(window ).scrollTop() )
 			.addClass( name + " out" + reverseClass );
 	}
@@ -4257,7 +4281,7 @@ function closestEnabledButton( element ) {
 }
 
 var attachEvents = function() {
-	var hoverDelay = 200,
+	var hoverDelay = 100,
 		hov, foc;
 	$( document ).bind( {
 		"vmousedown": function( event ) {
