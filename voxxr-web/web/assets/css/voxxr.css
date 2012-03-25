@@ -257,10 +257,12 @@
 #presentation .joinroom {
   margin-top: 27px;
 }
-#presentation a.toggleDetails {
-  cursor: pointer;
-  padding: 0 5px;
-  color: #4ecdc4;
+#presentation div.summary {
+  overflow-y: hidden;
+  height: 5.5em;
+}
+#presentation div.summary.allDetails {
+  height: auto;
 }
 .feeling img {
   margin: 8px;

@@ -43,14 +43,6 @@
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
         }, self);
 
-        self.withDetails = ko.observable(false);
-        self.toggleDetails = function() { self.withDetails(!self.withDetails()) };
-        self.moreOrLess = ko.computed(function() { return self.withDetails() ? '<<less' : 'more>>'});
-        self.shortSummary = ko.computed(function() {
-           return self.withDetails() ? self.summary() : (self.summary() && self.summary().length > 200) ?
-               self.summary().substring(0, 197) + "..."
-               : self.summary();
-        });
 
         var cron = null;
         function updateTime() {

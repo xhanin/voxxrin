@@ -173,14 +173,14 @@
         <a href="#roomRT" class="joinroom" data-role="button" data-theme="e" data-transition="flip"
            data-bind="visible: playing">
             Join room now</a>
-        <h3>Abstract</h3>
-        <p class="loading" data-bind="visible: loading">
-
-        </p>
-        <p>
-            <span data-bind="text: shortSummary"> </span>
-            <a class="toggleDetails" data-bind="tap: toggleDetails, text: moreOrLess">[read more]</a>
-        </p>
+        <h3 class="summary">Abstract</h3>
+        <div class="summary">
+            <p class="loading" data-bind="visible: loading">
+            </p>
+            <p data-bind="text: summary">
+            </p>
+        </div>
+        <a data-role="button" data-theme="b" class="toggleDetails" data-icon="arrow-d"></a>
         <h3>Speaker(s)</h3>
         <ul data-role="listview" data-inset="true" data-bind="listview: speakers">
             <li><span data-bind="text: name"></span></li>

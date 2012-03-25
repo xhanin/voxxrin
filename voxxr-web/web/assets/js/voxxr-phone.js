@@ -273,6 +273,17 @@ $(function() {
         models.Presentation.current().room().join();
     });
 
+    $("#presentation .toggleDetails").bind('vclick', function() {
+        var summaryDiv = $(this).closest('#presentation').find('div.summary');
+        if (summaryDiv.hasClass('allDetails')) {
+            summaryDiv.removeClass('allDetails');
+            $(this).find('.ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
+        } else {
+            summaryDiv.addClass('allDetails');
+            $(this).find('.ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
+        }
+    });
+
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;
     $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'slide';
