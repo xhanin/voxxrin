@@ -13,7 +13,7 @@ Connection.NONE = "none";
         window.device = {};
         navigator.device = window.device;
         var e = document.createEvent('Events');
-        e.initEvent('deviceready');
+        e.initEvent('deviceready', true, false);
         document.dispatchEvent(e);
     }
 
