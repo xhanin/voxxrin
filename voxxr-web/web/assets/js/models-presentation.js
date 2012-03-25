@@ -37,6 +37,7 @@
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
+        self.my = ko.computed(function() { return models.User.current().my().presentation(self.eventId(), self.id())});
         self.data = ko.observable({});
 
         self.speakerNames = ko.computed(function() {

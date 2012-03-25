@@ -222,6 +222,25 @@
   content: '\a';
   white-space: pre;
 }
+#jqt .ui-listview .presentation.favorite {
+  border: 1px solid #F4C63F;
+  background: #FADB4E;
+  font-weight: bold;
+  color: #222;
+  text-shadow: 0 1px 0 white;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffefaa), to(#ffe155));
+  background-image: -webkit-linear-gradient(#ffefaa, #ffe155);
+  background-image: -moz-linear-gradient(#ffefaa, #ffe155);
+  background-image: -ms-linear-gradient(#ffefaa, #ffe155);
+  background-image: -o-linear-gradient(#ffefaa, #ffe155);
+  background-image: linear-gradient(#ffefaa, #ffe155);
+}
+#jqt .ui-listview .presentation.favorite h3 {
+  color: #222;
+}
+#jqt .ui-listview .presentation.favorite .speakers {
+  color: #aaa;
+}
 #jqt .backBtn {
   left: 6px;
   right: auto;
@@ -263,6 +282,17 @@
 }
 #presentation div.summary.allDetails {
   height: auto;
+}
+#presentation .toggleFavorite {
+  display: block;
+  float: right;
+  margin-top: 5px;
+  background: url('../img/favorite-no.png');
+  height: 16px;
+  width: 16px;
+}
+#presentation .toggleFavorite.favorite {
+  background: url('../img/favorite.png');
 }
 .feeling img {
   margin: 8px;

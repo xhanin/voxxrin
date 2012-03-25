@@ -143,6 +143,34 @@ function whenDeviceReady(callback) {
     }
 }
 
+function postJSON(uri, data, onSuccess) {
+    whenDeviceReady(function() {
+        if (!models.Device.current().offline()) {
+            // refresh
+            $.ajax({
+                url: models.baseUrl + uri,
+                data: JSON.stringify(data),
+                contentType:"json",
+                dataType:"json",
+                type: "POST",
+                beforeSend: function(xhr) {
+                    // BASIC authentication
+                    var username = models.User.current().name();
+                    var password = ''; // no password to authenticate ATM
+                    xhr.setRequestHeader("Authorization", username);
+                },
+                success: function(json) {
+                    if (onSuccess) {
+                        onSuccess(json);
+                    }
+                },
+                error: function() {
+                    console.log('error occured while posting ', uri);
+                }
+            });
+        }
+    });
+}
 
 function getJSON(uri, onSuccess) {
     var json = localStorage.getItem(uri);
@@ -158,6 +186,12 @@ function getJSON(uri, onSuccess) {
                 url: models.baseUrl + uri,
                 dataType:"text",
                 type: "GET",
+                beforeSend: function(xhr) {
+                    // BASIC authentication
+                    var username = models.User.current().name();
+                    var password = ''; // no password to authenticate ATM
+                    xhr.setRequestHeader("Authorization", username);
+                },
                 success: function(json) {
                     if (localTimeout) {
                         // if ever we reach that before the timeout expired, clear it

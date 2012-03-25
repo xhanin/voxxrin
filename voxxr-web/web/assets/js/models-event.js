@@ -1,4 +1,16 @@
 (function(exports) {
+    var MyEvent = function(data) {
+        var self = this;
+
+        function loadData(data) {
+            self.data = data;
+        }
+
+        self.isFavorite()
+
+        loadData(data);
+    }
+
     var Event = function(data) {
         var self = this;
         self.id = ko.observable();
@@ -17,6 +29,7 @@
         self.nowplaying.hash = ko.computed(function() {return "#nowplaying~" + self.id()});
         self.data = ko.observable({});
         self.loading = ko.observable(false);
+        self.my = null;
         var crons = {};
 
         function load(data) {

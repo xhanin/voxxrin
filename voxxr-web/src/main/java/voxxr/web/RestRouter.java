@@ -40,6 +40,7 @@ public class RestRouter extends HttpServlet {
         new Route(new EventsResources(), Pattern.compile("/r/events"), new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new EventResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").build()),
+        new Route(new MyResources(), Pattern.compile("/r/my"), new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new NowPlayingResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/nowplaying"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").build()),
         new Route(new DayScheduleResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/day/([a-z0-9\\-]+)"),
@@ -57,6 +58,13 @@ public class RestRouter extends HttpServlet {
         for (Route route : routes) {
             Matcher matcher = route.pattern.matcher(uri);
             if (matcher.matches()) {
+                if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+                    resp.addHeader("Access-Control-Allow-Origin", "*");
+                    resp.addHeader("Access-Control-Allow-Methods", "GET, POST");
+                    resp.addHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, Accept");
+                    return;
+                }
+
                 Map<String, String> params = Maps.newLinkedHashMap();
                 for (Map.Entry<Integer, String> param : route.paramNames.entrySet()) {
                     params.put(param.getValue(), matcher.group(param.getKey()));

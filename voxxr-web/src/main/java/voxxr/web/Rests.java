@@ -46,19 +46,23 @@ public class Rests {
     }
 
     public static void sendAsJsonObject(Key key, HttpServletResponse resp) throws IOException {
-        MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         try {
-            String cacheKey = KeyFactory.keyToString(key);
-            Entity entity = (Entity) memcache.get(cacheKey);
-            if (entity == null) {
-                DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-                entity = datastore.get(key);
-                memcache.put(cacheKey, entity);
-            }
-            sendAsJsonObject(entity, resp);
+            maybeSendAsJsonObject(key, resp);
         } catch (EntityNotFoundException e) {
             resp.sendError(404);
         }
+    }
+
+    public static void maybeSendAsJsonObject(Key key, HttpServletResponse resp) throws EntityNotFoundException, IOException {
+        MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
+        String cacheKey = KeyFactory.keyToString(key);
+        Entity entity = (Entity) memcache.get(cacheKey);
+        if (entity == null) {
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            entity = datastore.get(key);
+            memcache.put(cacheKey, entity);
+        }
+        sendAsJsonObject(entity, resp);
     }
 
     public static void sendAsJsonObject(Entity entity, HttpServletResponse resp) throws IOException {

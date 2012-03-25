@@ -229,6 +229,28 @@
             content: '\a';
             white-space: pre;
         }
+
+        .presentation.favorite {
+            border: 1px solid #F4C63F;
+            background: #FADB4E;
+            font-weight: bold;
+            color: #222;
+            text-shadow: 0 1px 0 white;
+            background-image: -webkit-gradient(linear,left top,left bottom,from(#FFEFAA),to(#FFE155));
+            background-image: -webkit-linear-gradient(#FFEFAA,#FFE155);
+            background-image: -moz-linear-gradient(#FFEFAA,#FFE155);
+            background-image: -ms-linear-gradient(#FFEFAA,#FFE155);
+            background-image: -o-linear-gradient(#FFEFAA,#FFE155);
+            background-image: linear-gradient(#FFEFAA,#FFE155);
+
+            h3 {
+                color: #222;
+            }
+
+            .speakers {
+                color: #aaa;
+            }
+        }
     }
 
     .backBtn {
@@ -282,7 +304,20 @@
     div.summary.allDetails {
         height: auto;
     }
+
+    .toggleFavorite {
+        display: block;
+        float: right;
+        margin-top: 5px;
+        background: url('../img/favorite-no.png');
+        height: 16px;
+        width: 16px;
+    }
+    .toggleFavorite.favorite {
+        background: url('../img/favorite.png');
+    }
 }
+
 
 
 .feeling img {
