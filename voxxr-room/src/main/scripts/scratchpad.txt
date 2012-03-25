@@ -1,4 +1,23 @@
-# get the script : 
+git push git@bitbucket.org:xhanin/voxxr.git dev
+
+src/main/scripts/deploy-cassandra-cluster.sh
+src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
+ovhcloud instance getInstances --projectName voxxr
+
+curl --request POST http://178.32.211.12:8076/r/room/presentation?id=1\&title=Test
+src/test/rest/post-start-pres-1-1.sh
+src/test/rest/post-stop-pres-1-1.sh
+
+
+ ovhcloud instance ssh 69446
+nodetool -h localhost -p 7199 snapshot Voxxr
+tar czvf c4.tgz /var/lib/cassandra/data/Voxxr/snapshots/xxx
+scp c4.tgz xavier@bordeaux.4sh.fr:~/
+
+#############
+
+
+# get the script :
 ~$ wget http://www.ovh.com/fr/cloud/api/ovhcloud
 
 
@@ -23,7 +42,7 @@
 
  # alldone, your project is up in the cloud
 # you can ssh ! (don't forget to change your password)  
-~$ ./ovhcloud instance ssh 65102
+~$ ovhcloud instance ssh 65102
 
 
 ovhcloud instance stopInstance --instanceId 65102
@@ -40,8 +59,9 @@ ovhcloud instance stopInstance --instanceId 69254
 
 git push git@bitbucket.org:xhanin/voxxr.git dev
 
-
+src/main/scripts/deploy-cassandra-cluster.sh
 src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
+ovhcloud instance getInstances --projectName voxxr
 
 
 
