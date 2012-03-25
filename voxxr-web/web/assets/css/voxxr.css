@@ -236,10 +236,13 @@
   background-image: linear-gradient(#ffefaa, #ffe155);
 }
 #jqt .ui-listview .presentation.favorite h3 {
-  color: #222;
+  color: #c44d58;
 }
 #jqt .ui-listview .presentation.favorite .speakers {
-  color: #aaa;
+  color: #777;
+}
+#jqt .ui-listview .presentation.favorite a span {
+  color: #222;
 }
 #jqt .ui-listview .presentation .favorites {
   display: block;
@@ -294,7 +297,7 @@
 #presentation .toggleFavorite {
   display: block;
   float: right;
-  margin-top: 5px;
+  margin: 3px 0 0 5px;
   background: url('../img/favorite-no.png');
   height: 16px;
   width: 16px;
