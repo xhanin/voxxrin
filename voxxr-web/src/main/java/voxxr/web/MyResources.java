@@ -40,16 +40,11 @@ public class MyResources implements RestRouter.RequestHandler {
                 }
             }
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
-            JSONObject json = null;
             try {
-                json = Rests.jsonObjectFromRequest(req);
-                if (json.get("id") == null) {
+                JSONObject json = Rests.jsonObjectFromRequest(req);
+                if (!json.has("id")) {
                     json.put("id", me);
                 }
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-            try {
                 Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
                     @Override
                     public Entity prepare(JSONObject json, Entity entity) throws JSONException {

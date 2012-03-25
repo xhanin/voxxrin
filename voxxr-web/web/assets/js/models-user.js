@@ -2,12 +2,15 @@
 
     var MyPresentation = function(my, data) {
         var self = this;
+        self.data = data;
 
-        self.favorite = ko.observable(data.favorite?true:false);
+        self.favorite = ko.observable(self.data.favorite?true:false);
 
         self.favorite.subscribe(function(newValue) {
-            data.favorite = newValue;
-            my.save();
+            self.data.favorite = newValue;
+            postJSON('/events/' + self.data.eventId + '/presentations/' + self.data.presId + '/my', self.data, function() {
+                my.store();
+            });
         });
     }
 
@@ -21,18 +24,23 @@
 
         function save() {
             postJSON('/my', self.data);
+            store();
+        }
+
+        function store() {
             localStorage.setItem('/my', JSON.stringify(self.data));
         }
 
         loadData(data);
 
         self.save = save;
+        self.store = store;
 
         self.presentations = {};
 
         self.presentation = function(eventId, presId) {
             if (!eventId || !presId) {
-                return new MyPresentation(self, {});
+                return new MyPresentation(self, {me: self.data.id, eventId: eventId, presId: presId});
             }
             if (!self.presentations[eventId + '/' + presId]) {
                 var event = self.data.events[eventId];
@@ -42,7 +50,7 @@
                 }
                 var pres = event.presentations[presId];
                 if (!pres) {
-                    pres = { id: presId, favorite: false };
+                    pres = {me: self.data.id,  eventId: eventId, presId: presId, favorite: false};
                     event.presentations[presId] = pres;
                 }
                 self.presentations[eventId + '/' + presId] = new MyPresentation(self, pres);
