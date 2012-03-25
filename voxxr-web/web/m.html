@@ -157,7 +157,7 @@
             <!-- ko foreach: presentations -->
             <li data-bind="css: { favorite: my().favorite }" class="presentation"><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
-                <p> <span class="favorites" data-bind="text: favorites"></span>
+                <p> <span class="favorites" data-bind="text: favorites, css: { favorite1: favorites() > 0, favorite10: favorites() >= 10, favorite100: favorites() >= 100 }"></span>
                     <span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span>
                 </p>
             </a></li>

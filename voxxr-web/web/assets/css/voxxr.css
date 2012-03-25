@@ -249,8 +249,17 @@
   float: left;
   padding-left: 20px;
   margin-right: 5px;
-  background: url('../img/favorite.png') no-repeat;
+  background: url('../img/favorite-no.png') no-repeat;
   height: 16px;
+}
+#jqt .ui-listview .presentation .favorites.favorite1 {
+  background: url('../img/favorite-1.png') no-repeat;
+}
+#jqt .ui-listview .presentation .favorites.favorite1.favorite10 {
+  background: url('../img/favorite-10.png') no-repeat;
+}
+#jqt .ui-listview .presentation .favorites.favorite1.favorite100 {
+  background: url('../img/favorite-100.png') no-repeat;
 }
 #jqt .backBtn {
   left: 6px;
