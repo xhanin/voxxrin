@@ -1,6 +1,6 @@
 package voxxr.web;
 
-import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,7 +19,17 @@ public class PresentationResources implements RestRouter.RequestHandler {
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
         String kind = "Presentation";
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            Rests.sendAsJsonObject(Rests.createKey(kind, params.get("presentationId")), resp);
+            try {
+                String presentationId = params.get("presentationId");
+                Entity pres = Rests.findEntityByKey(Rests.createKey(kind, presentationId));
+                JSONObject json = new JSONObject(((Text) pres.getProperty("json")).getValue());
+                json.put("favorites", countFavorites(presentationId));
+                Rests.sendJson(json.toString(), resp);
+            } catch (EntityNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             Rests.storeFromRequest(req, resp, kind, new PrepareEntityCallback() {
                 @Override
@@ -28,6 +38,14 @@ public class PresentationResources implements RestRouter.RequestHandler {
                 }
             });
         }
+    }
+
+    public static int countFavorites(String presentationId) {
+        return DatastoreServiceFactory.getDatastoreService().prepare(
+                            new Query("MyPresentation")
+                                    .addFilter("presId", Query.FilterOperator.EQUAL, presentationId)
+                                    .addFilter("favorite", Query.FilterOperator.EQUAL, true))
+                            .countEntities(FetchOptions.Builder.withDefaults());
     }
 }
 

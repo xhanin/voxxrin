@@ -54,23 +54,32 @@ public class Rests {
     }
 
     public static void maybeSendAsJsonObject(Key key, HttpServletResponse resp) throws EntityNotFoundException, IOException {
+        Entity entity = findEntityByKey(key);
+        sendAsJsonObject(entity, resp);
+    }
+
+    public static Entity findEntityByKey(Key key) throws EntityNotFoundException {
         MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         String cacheKey = KeyFactory.keyToString(key);
         Entity entity = (Entity) memcache.get(cacheKey);
         if (entity == null) {
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            entity = datastore.get(key);
-            memcache.put(cacheKey, entity);
-        }
-        sendAsJsonObject(entity, resp);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        entity = datastore.get(key);
+        memcache.put(cacheKey, entity);
+    }
+        return entity;
     }
 
     public static void sendAsJsonObject(Entity entity, HttpServletResponse resp) throws IOException {
+        sendJson(((Text) entity.getProperty("json")).getValue(), resp);
+    }
+
+    public static void sendJson(String json, HttpServletResponse resp) throws IOException {
         resp.addHeader("Content-Type", "application/json; charset=utf-8");
         resp.addHeader("Access-Control-Allow-Origin", "*");
 
         OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream(), "UTF8");
-        writer.append(((Text) entity.getProperty("json")).getValue());
+        writer.append(json);
         writer.flush();
         writer.close();
     }

@@ -8,6 +8,10 @@
 
         self.favorite.subscribe(function(newValue) {
             self.data.favorite = newValue;
+            var p = ds.presentation({id: self.data.presId, eventId:self.data.eventId});
+            if (p.title()) {
+                p.favorites(p.favorites() + 1);
+            }
             postJSON('/events/' + self.data.eventId + '/presentations/' + self.data.presId + '/my', self.data, function() {
                 my.store();
             });

@@ -34,6 +34,7 @@
         self.state = ko.observable('STOPPED');
         self.startedAt = ko.observable(null);
         self.timeElasped = ko.observable(0);
+        self.favorites = ko.observable(0);
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
@@ -72,6 +73,7 @@
             self.title(data.title);
             self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
             self.slot(data.slot);
+            self.favorites(data.favorites);
             self.fromTime(data.fromTime);
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));

@@ -241,6 +241,14 @@
 #jqt .ui-listview .presentation.favorite .speakers {
   color: #aaa;
 }
+#jqt .ui-listview .presentation .favorites {
+  display: block;
+  float: left;
+  padding-left: 20px;
+  margin-right: 5px;
+  background: url('../img/favorite.png') no-repeat;
+  height: 16px;
+}
 #jqt .backBtn {
   left: 6px;
   right: auto;
