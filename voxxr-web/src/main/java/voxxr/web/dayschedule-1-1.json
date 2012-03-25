@@ -1,7 +1,0 @@
-{"id":1, "schedule":[
-    {"id":"1", "title":"Ze Highly Interactive Talk", "type":"Talk", "kind":"Talk",
-        "uri":"/events/1/presentations/1",
-        "speakers": [{"id":1, "name":"Xavier Hanin", "uri":"/events/1/speakers/1"}],
-        "room": {"id":"1", "name": "Room 1", "uri": "/events/1/room/1"},
-        "slot": "7pm", "fromTime":"2012-04-12 19:15:00.0","toTime":"2012-04-12 20:15:00.0"}
-]}

@@ -1,7 +1,0 @@
-[
-    {"id":"1","title":"BordeauxJUG","subtitle":"Soiree Voxxr / Neo4j","description":"",
-        "dates":"Apr 12, 2012", "from":"2012-04-12 19:00", "to":"2012-04-12 22:00",
-        "location":"ENSEIRB-MATMECA", "nbPresentations":1,
-        "days":[{"id":"1", "name": "Apr 12", "uri": "/events/1/day/1", "nbPresentations":1}],
-        "enabled":true}
-]
