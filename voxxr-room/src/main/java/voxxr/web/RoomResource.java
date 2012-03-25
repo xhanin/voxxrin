@@ -6,6 +6,7 @@ import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.jersey.SuspendResponse;
 import org.slf4j.LoggerFactory;
+import voxxr.app.VoxxrinApp;
 import voxxr.data.*;
 
 import javax.ws.rs.*;
@@ -71,12 +72,18 @@ public class RoomResource {
 
     @POST
     @Path("/presentation")
-    public Response setCurrentPresentation(@QueryParam("id") String id,
-                                           @QueryParam("title") String title) {
+    public Response setCurrentPresentation(@QueryParam("id") String id) {
         Room room = Room.getCurrent();
-        if (id == null) {
+        String title;
+        if (id == null || id.toString().trim().length() == 0) {
+            Presentation currentPres = room.getCurrentPres();
+            if (currentPres != null && currentPres.getId() != null) {
+                VoxxrinApp.stopPres(currentPres.getId());
+            }
             room.setCurrentPres(null);
+            title = null;
         } else {
+            title = VoxxrinApp.startPres(id);
             room.setCurrentPres(new Presentation(id, title));
         }
         LoggerFactory.getLogger(RoomResource.class).info("current presentation changed to " + room.getCurrentPres());

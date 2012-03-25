@@ -25,7 +25,7 @@ ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/voxxr-room/src/main/scripts/vox
 ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/out/production/voxxr-room.tgz "voxxr-room.tgz"
 
 echo "executing remote install..."
-ovhcloud instance ssh $INSTANCE bash "./install.sh" $ROOM  $SEED_IP $HOST
+ovhcloud instance ssh $INSTANCE bash "./install.sh" $ROOM  $SEED_IP $HOST $ROOM_IP
 
 
 echo "ROOM $ROOM STARTED AT IP $ROOM_IP"

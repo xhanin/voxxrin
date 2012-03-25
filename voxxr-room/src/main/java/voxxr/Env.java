@@ -13,9 +13,12 @@ import java.util.Properties;
  */
 public class Env {
     private static String room;
+    private static String app;
+    private static String uri;
     private static Properties properties;
 
     static final Logger logger = LoggerFactory.getLogger(Env.class);
+
     static {
         properties = new Properties();
         try {
@@ -25,13 +28,23 @@ public class Env {
         }
         logger.info("voxxr-room properties: \n\n" + properties + "\n\n");
         room = properties.getProperty("room");
+        app = properties.getProperty("app.uri");
+        uri = properties.getProperty("uri");
     }
 
     public static String getRoom() {
         return room;
     }
 
+    public static String getApp() {
+        return app;
+    }
+
     public static Properties getProperties() {
         return properties;
+    }
+
+    public static String getURI() {
+        return uri;
     }
 }

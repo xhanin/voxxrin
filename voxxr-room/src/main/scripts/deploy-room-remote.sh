@@ -3,6 +3,7 @@
 ROOM=$1
 SEED_IP=$2
 HOST=$3
+ROOM_IP=$4
 
 
 # set host name, it happens from time to time that machine initialized by ovh has localhost.localdomain as hostname :(
@@ -21,6 +22,7 @@ tar xzvf voxxr-room.tgz
 echo "------- CONFIGURING -- ROOM => $ROOM -- SEED_IP => $SEED_IP"
 sed -i s/@ROOM@/$ROOM/g voxxr-room.properties
 sed -i s/@SEED_IP@/$SEED_IP/g voxxr-room.properties
+sed -i s/@ROOM_IP@/$ROOM_IP/g voxxr-room.properties
 
 cp -f voxxr-room.properties voxxr-room/src/main/java/
 
