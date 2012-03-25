@@ -24,16 +24,8 @@ public class MyResources implements RestRouter.RequestHandler {
             try {
                 Rests.maybeSendAsJsonObject(Rests.createKey(kind, me), resp);
             } catch (EntityNotFoundException e) {
-                JSONObject json = new JSONObject();
                 try {
-                    json.put("id", me);
-                    json.put("events", new JSONObject());
-                    Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
-                        @Override
-                        public Entity prepare(JSONObject json, Entity entity) throws JSONException {
-                            return entity;
-                        }
-                    });
+                    Entity entity = newMy(me);
                     Rests.sendAsJsonObject(entity, resp);
                 } catch (JSONException e1) {
                     throw new RuntimeException(e1);
@@ -56,5 +48,18 @@ public class MyResources implements RestRouter.RequestHandler {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static Entity newMy(String me) throws JSONException {
+        String kind = "My";
+        JSONObject json = new JSONObject();
+        json.put("id", me);
+        json.put("events", new JSONObject());
+        return Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
+            @Override
+            public Entity prepare(JSONObject json, Entity entity) throws JSONException {
+                return entity;
+            }
+        });
     }
 }

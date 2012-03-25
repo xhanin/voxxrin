@@ -63,27 +63,28 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                     }
                 });
 
+                // maybe this should go into MyResources
+                Entity my = null;
+                DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
                 try {
-                    // maybe this should go into MyResources
-                    DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-                    Entity my = ds.get(Rests.createKey("My", me));
-                    String myJsonStr = ((Text) my.getProperty("json")).getValue();
-                    JSONObject myJson = new JSONObject(myJsonStr);
-                    JSONObject events = myJson.getJSONObject("events");
-                    if (!events.has(eventId)) {
-                        JSONObject jsonEvent = new JSONObject();
-                        jsonEvent.put("presentations", new JSONObject());
-                        events.put(eventId, jsonEvent);
-                    }
-                    events.getJSONObject(eventId).getJSONObject("presentations").put(presId, json);
-                    my.setProperty("json", new Text(myJson.toString()));
-                    ds.put(my);
-                    MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
-                    String cacheKey = KeyFactory.keyToString(my.getKey());
-                    memcache.put(cacheKey, my);
+                    my = ds.get(Rests.createKey("My", me));
                 } catch (EntityNotFoundException e) {
-                    throw new RuntimeException(e);
+                    my = MyResources.newMy(me);
                 }
+                String myJsonStr = ((Text) my.getProperty("json")).getValue();
+                JSONObject myJson = new JSONObject(myJsonStr);
+                JSONObject events = myJson.getJSONObject("events");
+                if (!events.has(eventId)) {
+                    JSONObject jsonEvent = new JSONObject();
+                    jsonEvent.put("presentations", new JSONObject());
+                    events.put(eventId, jsonEvent);
+                }
+                events.getJSONObject(eventId).getJSONObject("presentations").put(presId, json);
+                my.setProperty("json", new Text(myJson.toString()));
+                ds.put(my);
+                MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
+                String cacheKey = KeyFactory.keyToString(my.getKey());
+                memcache.put(cacheKey, my);
 
                 Rests.sendAsJsonObject(entity, resp);
             } catch (JSONException e) {
