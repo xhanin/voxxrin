@@ -74,6 +74,8 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/com.google.guava/guava/jars/guava-r09.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/com.github.stephenc.eaio-uuid/uuid/jars/uuid-3.2.0.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/com.ecyrd.speed4j/speed4j/jars/speed4j-0.9.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/us.monoid.web/resty/jars/resty-0.3.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/net.java.dev.javacc/javacc/jars/javacc-4.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
@@ -88,6 +90,7 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/org.atmosphere/atmosphere-runtime/sources/atmosphere-runtime-0.8.1-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.atmosphere/atmosphere-jersey/sources/atmosphere-jersey-0.8.1-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/me.prettyprint/hector-core/sources/hector-core-1.0-3-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/us.monoid.web/resty/sources/resty-0.3.1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
