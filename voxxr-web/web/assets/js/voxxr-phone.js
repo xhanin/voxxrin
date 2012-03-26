@@ -289,6 +289,17 @@ $(function() {
         my.favorite(!my.favorite());
     });
 
+    $("#dayschedule .slotsNav a.slot").live('vclick', function() {
+        var slot = $(this).attr('href').substr(1);
+        var slotLi = $(this).closest('#dayschedule').find('ul.schedule li.slot[data-slot="' + slot + '"]');
+        $.mobile.silentScroll( slotLi.offset().top );
+        return false;
+    });
+    $("#dayschedule ul.schedule li.slot").live('vclick', function() {
+        $.mobile.silentScroll( );
+        return false;
+    });
+
 
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;

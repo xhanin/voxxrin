@@ -103,6 +103,17 @@ ko.bindingHandlers['jqmforeach'] = {
 ko.jsonExpressionRewriting.bindingRewriteValidators['jqmforeach'] = false; // Can't rewrite control flow bindings
 ko.virtualElements.allowedBindings['jqmforeach'] = true;
 
+ko.bindingHandlers['blockn'] = {
+    'update': function (element, valueAccessor) {
+        var value = ko.utils.unwrapObservable(valueAccessor() || {});
+        var count = ko.utils.unwrapObservable(value);
+        for (var i=1; i<=12; i++) {
+            ko.utils.toggleDomNodeCssClass(element, 'ui-block-' + i, false);
+        }
+        ko.utils.toggleDomNodeCssClass(element, 'ui-block-' + count, true);
+    }
+};
+
 }
 
 (function( $ ){

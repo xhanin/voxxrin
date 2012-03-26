@@ -180,6 +180,53 @@
 #jqt .ui-content .message {
   padding: 15px;
 }
+#jqt .ui-block-n {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  float: left;
+  min-height: 1px;
+}
+#jqt .ui-block-n .ui-btn-inner {
+  padding: .8em .5em .9em .5em;
+  text-overflow: clip;
+}
+#jqt .ui-block-1 {
+  width: 100%;
+}
+#jqt .ui-block-2 {
+  width: 50%;
+}
+#jqt .ui-block-3 {
+  width: 33.33%;
+}
+#jqt .ui-block-4 {
+  width: 25%;
+}
+#jqt .ui-block-5 {
+  width: 20%;
+}
+#jqt .ui-block-6 {
+  width: 16.66%;
+}
+#jqt .ui-block-7 {
+  width: 14.25%;
+}
+#jqt .ui-block-8 {
+  width: 12.25%;
+}
+#jqt .ui-block-9 {
+  width: 11.11%;
+}
+#jqt .ui-block-10 {
+  width: 10%;
+}
+#jqt .ui-block-11 {
+  width: 9.09%;
+}
+#jqt .ui-block-12 {
+  width: 8.33%;
+}
 #jqt ul li a.current {
   background-color: #c7f464;
   color: #000000;
@@ -277,6 +324,10 @@
 }
 #dayschedule li .room:before {
   content: "@ ";
+}
+#dayschedule .slot .ui-icon {
+  display: block;
+  float: right;
 }
 #nowplaying .ui-content {
   padding-top: 15px;

@@ -144,6 +144,15 @@
         <div data-role="header">
             <h1 data-bind="text: name"></h1>
             <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
+            <div class="slotsNav ui-navbar ui-navbar-noicons" role="navigation">
+                <ul class="ui-grid-a" data-bind="foreach: slots">
+                    <li class="ui-block-n" data-bind="blockn: $parent.slots().length">
+                        <a class="slot ui-btn ui-btn-up-a" data-bind="href: '#' + name()" data-corners="false" data-shadow="false" data-iconshadow="true" data-inline="false" data-wrapperels="span">
+                            <span class="ui-btn-inner"><span class="ui-btn-text" data-bind="text: name"></span></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div data-role="content">
         <div class="loading" data-bind="visible: slots.loading || loading">
@@ -152,8 +161,11 @@
         <div data-bind="visible: slots().length === 0 && !slots.loading() && !loading()" class="message">
             Schedule not available yet.
         </div>
-        <ul data-role="listview" data-bind="listview: slots" data-filter="true" data-theme="a">
-            <li data-role="list-divider" data-bind="text: name"></li>
+        <ul class="schedule" data-role="listview" data-bind="listview: slots" data-filter="true" data-theme="a">
+            <li class="slot" data-role="list-divider" data-bind="attr: {'data-slot': name}">
+                <span class="ui-icon ui-icon-arrow-u ui-icon-shadow"></span>
+                <span data-bind="text: name"></span>
+            </li>
             <!-- ko foreach: presentations -->
             <li data-bind="css: { favorite: my().favorite }" class="presentation"><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
