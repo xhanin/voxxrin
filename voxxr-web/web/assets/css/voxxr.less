@@ -309,6 +309,28 @@
         border-width: 0 8px 0 14px;
         -webkit-border-image: url(jqtouch/themes/jqt/img/back_button.png) 0 8 0 14;
     }
+
+    li.speaker {
+        padding: 5px 5px 5px 80px;
+        min-height: 70px;
+        img { 
+            max-height: 70px;
+            margin: 5px;
+        }
+        h4 {
+            margin: 0 0 .3em 0;
+        }
+        p {
+            white-space: pre-line;
+            height: 3.6em;
+            overflow-y: hidden;
+        }
+        p:after {content: '...'}
+        p.allDetails {
+            height: auto;
+        }
+        p.allDetails:after {content: ''}
+    }
 }
 
 #events {

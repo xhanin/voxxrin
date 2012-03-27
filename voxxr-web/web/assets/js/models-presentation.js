@@ -101,7 +101,9 @@
 
         loadData(data);
 
-        self.enter = function() {}
+        self.enter = function() {
+            _(self.speakers()).each(function(speaker) { speaker.load() });
+        }
         self.quit = function() {}
     }
 

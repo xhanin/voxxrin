@@ -197,7 +197,11 @@
         <a data-role="button" data-theme="b" class="toggleDetails" data-icon="arrow-d"></a>
         <h3>Speaker(s)</h3>
         <ul data-role="listview" data-inset="true" data-bind="listview: speakers">
-            <li><span data-bind="text: name"></span></li>
+            <li class="speaker"><img data-bind="visible: !loading(), attr: {src: pictureURL}">
+                <h4 data-bind="text: name"></h4>
+                <span class="loading" data-bind="visible: loading"></span>
+                <p data-bind="visible: !loading(), text: bio"></p>
+            </li>
         </ul>
         </div>
     </div>

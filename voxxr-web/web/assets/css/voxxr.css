@@ -316,6 +316,31 @@
   border-width: 0 8px 0 14px;
   -webkit-border-image: url(jqtouch/themes/jqt/img/back_button.png) 0 8 0 14;
 }
+#jqt li.speaker {
+  padding: 5px 5px 5px 80px;
+  min-height: 70px;
+}
+#jqt li.speaker img {
+  max-height: 70px;
+  margin: 5px;
+}
+#jqt li.speaker h4 {
+  margin: 0 0 .3em 0;
+}
+#jqt li.speaker p {
+  white-space: pre-line;
+  height: 3.6em;
+  overflow-y: hidden;
+}
+#jqt li.speaker p:after {
+  content: '...';
+}
+#jqt li.speaker p.allDetails {
+  height: auto;
+}
+#jqt li.speaker p.allDetails:after {
+  content: '';
+}
 #events .events li {
   min-height: 80px;
 }

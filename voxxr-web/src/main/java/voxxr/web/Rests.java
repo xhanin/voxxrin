@@ -63,11 +63,17 @@ public class Rests {
         String cacheKey = KeyFactory.keyToString(key);
         Entity entity = (Entity) memcache.get(cacheKey);
         if (entity == null) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        entity = datastore.get(key);
-        memcache.put(cacheKey, entity);
-    }
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            entity = datastore.get(key);
+            memcache.put(cacheKey, entity);
+        }
         return entity;
+    }
+
+    public static void clearEntityCache(Key key) {
+        MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
+        String cacheKey = KeyFactory.keyToString(key);
+        memcache.delete(cacheKey);
     }
 
     public static void sendAsJsonObject(Entity entity, HttpServletResponse resp) throws IOException {
@@ -82,6 +88,14 @@ public class Rests {
         writer.append(json);
         writer.flush();
         writer.close();
+    }
+
+    public static void sendImage(byte[] image, String format, HttpServletResponse resp) throws IOException {
+        resp.addHeader("Content-Type", "image/" + format);
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+
+        resp.getOutputStream().write(image);
+        resp.getOutputStream().close();
     }
 
     public static void storeFromRequest(HttpServletRequest req, HttpServletResponse resp, String kind, PrepareEntityCallback callback) throws IOException {

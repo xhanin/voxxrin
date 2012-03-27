@@ -3,12 +3,13 @@ var http = require("http"),
     _ = require('underscore'),
     dateformat = require('dateformat'),
     load = require("./load.js"),
-    send = require("./send.js")
+    send = require("./send.js"),
+    request = require('request')
     ;
 
 var prefix = 'dvx',
     eventId = 6,
-    baseUrl = 'http://2.latest.voxxr-web.appspot.com';
+    baseUrl = 'http://app.voxxr.in';
 
 var voxxrin = {
     event: {},
@@ -92,8 +93,28 @@ function crawl() {
 
 function toVoxxrinSpeaker(sp) {
     var id = sp.speakerUri.substring(sp.speakerUri.lastIndexOf('/') + 1);
-    return {"id":prefix + id, "name":sp.speaker,
-        "uri":"/events/" + voxxrin.event.id + "/speakers/" + prefix + id}
+    var voxxrinSpeakerHeader = {"id":prefix + id, "name":sp.speaker,
+        "uri":"/events/" + voxxrin.event.id + "/speakers/" + prefix + id
+    };
+    load(sp.speakerUri).then(function(speaker) {
+        var voxxrinSpeaker = _.extend(voxxrinSpeakerHeader, {
+            "firstName":speaker.firstName,
+            "lastName":speaker.lastName,
+            "pictureURI":"/events/" + voxxrin.event.id + "/speakers/" + prefix + id + "/picture" + (speaker.imageURI.substring(speaker.imageURI.lastIndexOf('.'))),
+            "bio":speaker.bio
+        });
+        send(baseUrl + '/r' + voxxrinSpeaker.uri,
+                voxxrinSpeaker)
+            .then(function() {console.log('SPEAKER: ', voxxrinSpeaker.id, voxxrinSpeaker.name)})
+            .fail(onFailure);
+        request.get(speaker.imageURI).pipe(request.put({
+            url: baseUrl + '/r' + voxxrinSpeaker.pictureURI,
+            headers: {
+                'Authorization':'Qh12EEHzVPn2AkKfihVs'
+            }
+        }));
+    }).fail(onFailure);
+    return voxxrinSpeakerHeader;
 }
 
 function formatDates(from, to) {

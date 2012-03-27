@@ -300,6 +300,8 @@ $(function() {
         return false;
     });
 
+    $("li.speaker").live('vclick', function() {$(this).find('p').toggleClass('allDetails')});
+
 
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;
