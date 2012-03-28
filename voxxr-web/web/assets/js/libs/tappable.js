@@ -31,7 +31,7 @@
     noop = function(){},
     defaults = {
       noScroll: false,
-      activeClass: 'tappable-active',
+      activeClass: 'ui-btn-active',
       onTap: noop,
       onStart: noop,
       onMove: noop,

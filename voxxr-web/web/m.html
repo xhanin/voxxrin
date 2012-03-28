@@ -18,6 +18,7 @@
       <script type="text/javascript" src="assets/js/libs/gfx.flip.js"></script>
       <script type="text/javascript" src="assets/js/libs/remaining-1.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/phonegap-1.4.1.js"></script>
+      <script type="text/javascript" src="assets/js/libs/tappable.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
       <script type="text/javascript" src="assets/js/voxxr-route.js"></script>
@@ -147,7 +148,7 @@
             <div class="slotsNav ui-navbar ui-navbar-noicons" role="navigation">
                 <ul class="ui-grid-a" data-bind="foreach: slots">
                     <li class="ui-block-n" data-bind="blockn: $parent.slots().length">
-                        <a class="slot ui-btn ui-btn-up-a" data-bind="href: '#' + name()" data-corners="false" data-shadow="false" data-iconshadow="true" data-inline="false" data-wrapperels="span">
+                        <a class="slot ui-btn ui-btn-up-a" data-bind="attr: {'data-slot': name}" data-corners="false" data-shadow="false" data-iconshadow="true" data-inline="false" data-wrapperels="span">
                             <span class="ui-btn-inner"><span class="ui-btn-text" data-bind="text: name"></span></span>
                         </a>
                     </li>

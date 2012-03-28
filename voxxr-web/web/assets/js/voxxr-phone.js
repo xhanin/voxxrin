@@ -259,51 +259,56 @@ $(function() {
     });
 
 
-    $("#roomRT a.quit").bind('vclick', function() {
+    tappable("#roomRT a.quit", function() {
         models.Room.current().leave();
     });
-    $("#roomRT a.reconnect").bind('vclick', function() {
+    tappable("#roomRT a.reconnect", function() {
         models.Room.current().reconnect();
-        return false;
     });
-     $("#nowplaying a.refresh").bind('vclick', function() {
+    tappable("#nowplaying a.refresh", function() {
         models.Event.current().refreshNowPlaying();
     });
-    $("#presentation a.joinroom").bind('vclick', function() {
+    tappable("#presentation a.joinroom", function() {
         models.Presentation.current().room().join();
     });
 
-    $("#presentation .toggleDetails").bind('vclick', function() {
-        var summaryDiv = $(this).closest('#presentation').find('div.summary');
+    tappable("#presentation .toggleDetails", function(e, target) {
+        var summaryDiv = $(target).closest('#presentation').find('div.summary');
         if (summaryDiv.hasClass('allDetails')) {
             summaryDiv.removeClass('allDetails');
-            $(this).find('.ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
+            $(target).find('.ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
         } else {
             summaryDiv.addClass('allDetails');
-            $(this).find('.ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
+            $(target).find('.ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
         }
     });
 
-    $("#presentation .toggleFavorite").bind('vclick', function() {
+    tappable("#presentation .toggleFavorite", function() {
         var my = voxxr.chosenPresentation().my();
         my.favorite(!my.favorite());
     });
 
-    $("#dayschedule .slotsNav a.slot").live('vclick', function() {
-        var slot = $(this).attr('href').substr(1);
-        var slotLi = $(this).closest('#dayschedule').find('ul.schedule li.slot[data-slot="' + slot + '"]');
+    tappable("#dayschedule .slotsNav a.slot", function(e, target) {
+        var slot = $(target).attr('data-slot');
+        var slotLi = $(target).closest('#dayschedule').find('ul.schedule li.slot[data-slot="' + slot + '"]');
         $.mobile.silentScroll( slotLi.offset().top );
-        return false;
     });
-    $("#dayschedule ul.schedule li.slot").live('vclick', function() {
+    $("#dayschedule ul.schedule li.slot").live('click', function() {
         $.mobile.silentScroll( );
-        return false;
     });
 
-    $("li.speaker").live('vclick', function() {$(this).find('p').toggleClass('allDetails')});
+    tappable("li.speaker", {activeClass:'ignored', onTap: function(e, target) {
+        $(target).find('p').toggleClass('allDetails');
+    }});
+
+    tappable("a", function(e, target) {
+       $.mobile.handleLink(target);
+    });
 
 
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;
     $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'slide';
+
+    $.mobile.linkBindingEnabled = false;
 });

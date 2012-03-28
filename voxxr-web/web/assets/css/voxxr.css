@@ -3,6 +3,9 @@
  */
 /* don't use web font, too slow to load on phone connection
   @about-font-family: "Asap","Georgia",sans-serif; */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
 /* FEEDBACK */
 #feedback .rate {
   overflow: visible;
