@@ -168,8 +168,8 @@ $(function() {
     (function() {
         var myRate = {avg: 0, last: 0};
 
-        $("#feedback .rate .star").live('tap', function() {
-            vote($(this).attr('data-rate'));
+        tappable("#feedback .rate .star", function(e, target) {
+            vote($(target).closest(".roomRT.page"), $(target).attr('data-rate'));
             return false;
         });
 
@@ -177,11 +177,11 @@ $(function() {
             voxxr.currentRoom().sendEV(ev, onsuccess, onerror);
         }
 
-        function setVotes(rate, style) {
+        function setVotes(roomRT, rate, style) {
             rate = rate === 0 ? 0 : (rate || myRate.last);
             style = style || 'vote';
             for (var i = 1; i <= 5; i++) {
-                var v = $("#feedback .rate").find('[data-rate="' + i + '"]');
+                var v = roomRT.find("#feedback .rate").find('[data-rate="' + i + '"]');
                 v.removeClass('vote').removeClass('voting');
                 if (i<=rate) {
                     v.addClass(style);
@@ -190,53 +190,56 @@ $(function() {
         }
 
         var voteFadeOutTimeout = null;
-        function vote(r) {
+        function vote(roomRT, r) {
             if (voteFadeOutTimeout) {
                 clearTimeout(voteFadeOutTimeout);
                 voteFadeOutTimeout = null;
             }
-            setVotes(r, 'voting');
+            setVotes(roomRT, r, 'voting');
             sendEV("R" + r,
                 function() {
-                    myRate.last = r; setVotes();
-                    voteFadeOutTimeout = setTimeout(function() { setVotes(0); }, 4000);
+                    myRate.last = r; setVotes(roomRT);
+                    voteFadeOutTimeout = setTimeout(function() { setVotes(roomRT, 0); }, 4000);
                 }, function() {
-                    setVotes(0);
+                    setVotes(roomRT, 0);
                 });
         }
 
-        $("#feedback .feeling a").live('tap', function() {
-            feeling($(this).attr('data-value'));
+        tappable("#feedback .feeling a", function(e, target) {
+            feeling($(target).closest(".roomRT.page"), $(target).attr('data-value'));
         });
 
-        function feeling(r) {
+        function feeling(roomRT, r) {
             sendEV("F" + r, function() {
-                $("#feedback .feeling a[data-value='" + r + "']").gfxFlipIn({});
+                roomRT.find("#feedback .feeling a[data-value='" + r + "']").gfxFlipIn({});
             });
         }
 
-        $(".roomRT.page #poll ul li a").live('tap', function() {
-            var r = $(this).attr('data-value');
+        tappable(".roomRT.page #poll ul li a", function(e, target) {
+            var r = $(target).attr('data-value');
             sendEV("PV" + r, function() {
-                $(".roomRT.page #poll ul li a").removeClass("current");
-                $(".roomRT.page #poll ul li a[data-value='" + r + "']").addClass("current");
+                var roomRT = $(target).closest(".roomRT.page");
+                roomRT.find("#poll ul li a").removeClass("current");
+                roomRT.find("#poll ul li a[data-value='" + r + "']").addClass("current");
             });
         });
     })();
 
     // tabs handling
-    $(".roomRT.page .tabs a.rate").bind('vclick', function() {
-        $(".roomRT.page .tabs a").removeClass("ui-btn-active");
-        $(this).addClass("ui-btn-active");
-        $(".roomRT.page div#poll").hide();
-        $(".roomRT.page #feedback").show();
+    tappable(".roomRT.page .tabs a.rate", function(e, target) {
+        var roomRT = $(target).closest(".roomRT.page");
+        roomRT.find(".tabs a").removeClass("ui-btn-active");
+        $(target).addClass("ui-btn-active");
+        roomRT.find("div#poll").hide();
+        roomRT.find("#feedback").show();
     });
 
-    $(".roomRT.page .tabs a.poll").bind('vclick', function() {
-        $(".roomRT.page .tabs a").removeClass("ui-btn-active");
-        $(this).addClass("ui-btn-active");
-        $(".roomRT.page #feedback").hide();
-        $(".roomRT.page div#poll").show();
+    tappable(".roomRT.page .tabs a.poll", function(e, target) {
+        var roomRT = $(target).closest(".roomRT.page");
+        roomRT.find(".tabs a").removeClass("ui-btn-active");
+        $(target).addClass("ui-btn-active");
+        roomRT.find("#feedback").hide();
+        roomRT.find("div#poll").show();
     });
 
 
