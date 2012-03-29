@@ -232,38 +232,17 @@ function mergeData(data, self) {
     return self.data();
 }
 
-function currentModelObject(current, propsToSync) {
-    var subscriptions = [];
-    return ko.computed({
-        read: function(newObj) {
-            return current;
-        },
-        write: function(newObj) {
-            _(subscriptions).each(function(subscription) {
-                subscription.dispose();
-            })
-            subscriptions = [];
-            if (current.id()) {
-                current.quit();
-            }
-            if (newObj) {
-                current.load(newObj.data());
-                subscriptions.push(newObj.data.subscribe(function(newValue) {
-                    current.load(newValue);
-                }));
-                if (propsToSync) {
-                    _(propsToSync).each(function(propToSync) {
-                        subscriptions.push(newObj[propToSync].subscribe(function(newValue) {
-                            current[propToSync](newValue);
-                        }));
-                    });
-                }
-            } else {
-                current.load({});
-            }
-            if (current.id()) {
-                current.enter();
-            }
+function currentModelObject() {
+    var current = ko.observable();
+    current.subscribe(function(value) {
+        if (value) {
+            value.quit();
+        }
+    }, null, "beforeChange");
+    current.subscribe(function(value) {
+        if (value) {
+            value.enter();
         }
     });
+    return current;
 }

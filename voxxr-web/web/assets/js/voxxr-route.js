@@ -40,13 +40,13 @@ function Route(path, callback, history) {
         });
     }
     // replace with the path replacement
-    var regexp = new RegExp(path.replace(PATH_NAME_MATCHER, PATH_REPLACER) + "$");
+    var regexp = new RegExp("^" + path.replace(PATH_NAME_MATCHER, PATH_REPLACER) + "$");
     this.match = function(hash) {
         return hash.match(regexp);
     }
     this.apply = function(hash) {
         console.log('routed to ' + hash)
-        callback.apply(parse(hash));
+        return callback.apply(parse(hash));
     }
 }
 Route.routes = [];
@@ -56,29 +56,18 @@ Route.add = function(path, callback, history) {
 }
 Route.goTo = function(hash) {
     var route = _(Route.routes).find(function(r) {return r.match(hash)});
-    if (route) {route.apply(hash)}
-}
-Route.hashChangeHandler = function() {
-    Route.goTo(location.hash)
+    if (route) {return route.apply(hash)}
 }
 Route.start = function() {
-    // we define jQT object because we rely on its API to push back history pages
-    // could easily be refactored out of there with an API to push back history pages
-    /* window.jQT = new $.jQTouch({
-        statusBar: 'black',
-        onInitHistoryFromHash: function(jQT, hash) {
-            var route = _(Route.routes).find(function(r) {return r.match(hash)});
-            if (route) {
-                route.pushHistory(jQT, hash);
-                jQT.goTo(hash);
-            }
+    var jqmLoadPageLocally = $.mobile.loadPageLocally;
+    $.mobile.loadPageLocally = function(dataUrl, settings) {
+        var page = Route.goTo(dataUrl);
+        if (!page) {
+            page = jqmLoadPageLocally(dataUrl, settings);
+        } else {
+            page.jqmData( "url", dataUrl );
         }
-    }); */
+        return page;
+    };
     $.mobile.initializePage();
 }
-$(window).bind('hashchange', Route.hashChangeHandler);
-//$(document).bind( "pagebeforechange", function( e, data ) {
-//    if (typeof data.toPage === 'string') {
-//        Route.goTo($.mobile.path.parseUrl(data.toPage).hash);
-//    }
-//});

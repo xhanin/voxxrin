@@ -2246,6 +2246,7 @@ $.mobile.transitionFallbacks = {};
 
 	//shared page enhancements
 	function enhancePage( $page, role ) {
+        if ($page.enhanced) return; // prevent double enhancement
 		// If a role was specified, make sure the data-role attribute
 		// on the page element is in sync.
 		if( role ) {
@@ -2254,6 +2255,7 @@ $.mobile.transitionFallbacks = {};
 
 		//run page plugin
 		$page.page();
+        $page.enhanced = true;
 	}
 
 /* exposed $.mobile methods	 */
@@ -2316,6 +2318,28 @@ $.mobile.transitionFallbacks = {};
 		}
 	};
 
+    $.mobile.enhancePage = enhancePage;
+    $.mobile.loadPageLocally = function(dataUrl, settings) {
+		// Check to see if the page already exists in the DOM.
+		var page = settings.pageContainer.children( ":jqmData(url='" + dataUrl + "')" );
+
+		// If we failed to find the page, check to see if the url is a
+		// reference to an embedded page. If so, it may have been dynamically
+		// injected by a developer, in which case it would be lacking a data-url
+		// attribute and in need of enhancement.
+		if ( page.length === 0 && dataUrl && !path.isPath( dataUrl ) ) {
+			page = settings.pageContainer.children( "#" + path.convertToPageId(dataUrl) )
+				.attr( "data-" + $.mobile.ns + "url", dataUrl )
+                .jqmData('url', dataUrl);
+		}
+
+        if (page.length && !settings.reloadPage) {
+            enhancePage( page, settings.role );
+        }
+
+        return page;
+    };
+
 	// Load a page into the DOM.
 	$.mobile.loadPage = function( url, options ) {
 		// This function uses deferred notifications to let callers
@@ -2372,18 +2396,7 @@ $.mobile.transitionFallbacks = {};
 		// Make sure we have a pageContainer to work with.
 		settings.pageContainer = settings.pageContainer || $.mobile.pageContainer;
 
-		// Check to see if the page already exists in the DOM.
-		page = settings.pageContainer.children( ":jqmData(url='" + dataUrl + "')" );
-
-		// If we failed to find the page, check to see if the url is a
-		// reference to an embedded page. If so, it may have been dynamically
-		// injected by a developer, in which case it would be lacking a data-url
-		// attribute and in need of enhancement.
-		if ( page.length === 0 && dataUrl && !path.isPath( dataUrl ) ) {
-			page = settings.pageContainer.children( "#" + path.convertToPageId(dataUrl) )
-				.attr( "data-" + $.mobile.ns + "url", dataUrl )
-                .jqmData('url', dataUrl);
-		}
+        page = $.mobile.loadPageLocally(dataUrl, settings);
 
 		// If we failed to find a page in the DOM, check the URL to see if it
 		// refers to the first page in the application. If it isn't a reference
@@ -2400,6 +2413,9 @@ $.mobile.transitionFallbacks = {};
 				// that it gets reloaded.
 				if ( $.mobile.firstPage.parent().length ) {
 					page = $( $.mobile.firstPage );
+                    if (page.length && !settings.reloadPage) {
+                        enhancePage( page, settings.role );
+                    }
 				}
 			} else if ( path.isEmbeddedPage( fileUrl )  ) {
 				deferred.reject( absUrl, options );
@@ -2418,7 +2434,6 @@ $.mobile.transitionFallbacks = {};
 		// existing page as a duplicated.
 		if ( page.length ) {
 			if ( !settings.reloadPage ) {
-				enhancePage( page, settings.role );
 				deferred.resolve( absUrl, options, page );
 				return deferred.promise();
 			}

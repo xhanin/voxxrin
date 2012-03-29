@@ -16,127 +16,108 @@ $(function() {
         self.user = models.User.current;
         self.device = models.Device.current;
 
-        self.chosenEventId.subscribe(onChosenEvent);
-
-        self.chosenDayId.subscribe(onChosenDay);
-        self.chosenEventId.subscribe(onChosenDay);
-
-        self.chosenPresentationId.subscribe(onChosenPresentation);
-        self.chosenEventId.subscribe(onChosenPresentation);
-
-        function syncById(chosenId, chosenObj, findById) {
-            var old = chosenObj();
-            findById(chosenId(), function(newObj) {
-                if (!newObj || old.id() !== newObj.id()) {
-                    chosenObj(newObj);
-                }
-            });
-        }
-        function findByIdIn(all, id, callback) {
-            var found = id ? _(all).find(function(obj) { return obj.id() === id}) : null;
-            callback(found);
-        }
-
-        function onChosenEvent() {
-            syncById(self.chosenEventId, self.chosenEvent, function(id, callback) {
-                if (!id) {
-                  callback(null);
-                } else {
-                    if (self.events().length) {
-                        findByIdIn(self.events(), id, callback);
-                    } else {
-                        var e = ds.event({id: id});
-                        if (e.title()) {
-                            callback(e);
-                        } else {
-                            e.load(null, callback);
-                        }
-                    }
-                }
-            });
-        }
-
-        function onChosenDay() {
-            syncById(self.chosenDayId, self.chosenDay, function(id, callback) {
-                if (!id) {
-                  callback(null);
-                } else {
-                    if (self.chosenEvent().days().length) {
-                        findByIdIn(self.chosenEvent().days(), id, callback);
-                    } else if (self.chosenEventId()) {
-                        var e = ds.scheduleDay({id: id, eventId: self.chosenEventId()});
-                        if (e.name()) {
-                            callback(e);
-                        } else {
-                            e.load(null, callback);
-                        }
-                    } else {
-                        callback(null);
-                    }
-                }
-                findByIdIn(self.chosenEvent().days(), id, callback);
-            });
-        }
-
-        function onChosenPresentation() {
-            syncById(self.chosenPresentationId, self.chosenPresentation, function(id, callback) {
-                if (!id) {
-                  callback(null);
-                } else {
-                    if (self.chosenEventId()) {
-                        var p = ds.presentation({id: id, eventId:self.chosenEventId()});
-                        if (p.title()) {
-                            // presentation header is already loaded, we can call the callback with it
-                            callback(p);
-                            // and ask it to do the full load when possible
-                            self.chosenPresentation().load();
-                        } else {
-                            // presentation header is not loaded yet, no need to call callback until we get it
-                            p.load(null, callback);
-                        }
-                    } else {
-                        callback(null);
-                    }
-                }
-            });
-        }
-
-        self.chosen = function(options) {
-            _(['chosenEventId', 'chosenDayId', 'chosenPresentationId']).each(function (k) {
-                if (options[k] != self[k]()) {
-                    console.log('changing chosen id for ' + k + ': ' + self[k]() + '=>' + options[k]);
-                    self[k](options[k]);
-                }
-            });
+        var eventsBound = false;
+        self.gotoEvents = function() {
+            if (!eventsBound) {
+                $.mobile.enhancePage($('#events'));
+                ko.applyBindings(self, $('#events').get(0));
+                eventsBound = true;
+            }
+            self.chosenEvent(null);
+            self.chosenDay(null);
+            self.chosenPresentation(null);
             self.currentRoom(null);
+            return $('#events');
+        }
+
+        self.pageTemplates = {};
+        self.goto = function(pageTplId, objOrObjType, objRef) {
+            var obj = typeof objOrObjType === "string" ? ds[objOrObjType](objRef) : objOrObjType;
+            obj.page = obj.page || {};
+            if (!obj.page[pageTplId]) {
+                if (!self.pageTemplates[pageTplId]) {
+                    self.pageTemplates[pageTplId] = $('#' + pageTplId).detach();
+                }
+                var page = obj.page[pageTplId] = self.pageTemplates[pageTplId].clone();
+                page.attr('id', pageTplId + '-' + obj.id());
+                $('#jqt').append(page);
+                $.mobile.enhancePage(page);
+                ko.applyBindings(obj, page.get(0));
+            }
+            return obj;
+        }
+
+        self.gotoEvent = function(id) {
+            var event = self.goto('event', 'event', {id: id});
+            self.chosenEvent(event);
+            self.chosenDay(null);
+            self.chosenPresentation(null);
+            self.currentRoom(null);
+            return event.page.event;
         };
+
+        self.gotoNowPlaying = function(id) {
+            var event = self.goto('nowplaying', 'event', {id: id});
+            self.chosenEvent(event);
+            self.chosenDay(null);
+            self.chosenPresentation(null);
+            self.currentRoom(null);
+            return event.page.nowplaying;
+        };
+
+        self.gotoDay = function(eventId, dayId) {
+            var day = self.goto('dayschedule', 'scheduleDay', {id: dayId, eventId: eventId});
+            self.chosenDay(day);
+            self.chosenPresentation(null);
+            self.currentRoom(null);
+            return day.page.dayschedule;
+        };
+
+        self.gotoPresentation = function(eventId, presentationId) {
+            var p = self.goto('presentation', 'presentation', {id: presentationId, eventId: eventId});
+            self.chosenPresentation(p);
+            self.currentRoom(null);
+            return p.page.presentation;
+        };
+
+        self.gotoRoom = function() {
+            var room = self.goto('roomRT', voxxr.currentRoom());
+            return room.page.roomRT;
+        }
 
         // load
         self.events.loading(true);
         getJSON("/events", function(data) {
             self.events.loading(false);
             self.events(_(data).map(function(event) { return ds.event(event); }));
-            onChosenEvent();
         });
     };
 
     var voxxr = new VoxxrViewModel();
-    ko.applyBindings(voxxr);
 
     Route
-        .add('#events', function() {voxxr.chosen({})}, [])
-        .add('#event~:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events"])
-        .add('#nowplaying~:event', function() { voxxr.chosen({chosenEventId: this.params.event}); }, ["#events", "#event~:event"])
-        .add('#dayschedule~:event~:day', function() { voxxr.chosen({chosenEventId: this.params.event, chosenDayId: this.params.day}); }, ["#events", "#event~:event"])
-        .add('#presentation~:event~:presentation', function() {
-            var options = {chosenEventId: this.params.event, chosenPresentationId: this.params.presentation};
-            if (voxxr.chosenDayId()) {
-                options.chosenDayId = voxxr.chosenDayId();
-            }
-            voxxr.chosen(options);
+        .add('events', function() {
+            return voxxr.gotoEvents();
+        }, [])
+        .add('event~:event', function() {
+            return voxxr.gotoEvent(this.params.event);
+        }, ["#events"])
+        .add('nowplaying~:event', function() {
+            return voxxr.gotoNowPlaying(this.params.event);
         }, ["#events", "#event~:event"])
-        .add('#roomRT', function() { if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0); })
-        .add('', function() {voxxr.chosen({})}, [])
+        .add('dayschedule~:event~:day', function() {
+            return voxxr.gotoDay(this.params.event, this.params.day);
+        }, ["#events", "#event~:event"])
+        .add('presentation~:event~:presentation', function() {
+            return voxxr.gotoPresentation(this.params.event, this.params.presentation);
+        }, ["#events", "#event~:event"])
+        .add('roomRT', function() {
+            if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
+            return voxxr.gotoRoom();
+        })
+        .add('', function() {
+            return voxxr.gotoEvents();
+        }, [])
         .start();
 
     var hfpoints = [];
@@ -147,16 +128,16 @@ $(function() {
     var pindex = 0;
     var hfsparkoptions = { width: 260, height: 50, defaultPixelsPerValue: 1, lineColor: '#C44D58', fillColor: '#FBD405', spotColor: false}
     var ratesparkoptions = { lineColor: '#556270', fillColor: false, composite: true, spotColor: false}
-    $("#roomRT .spark").sparkline(hfpoints, hfsparkoptions);
+    $(".roomRT.page .spark").sparkline(hfpoints, hfsparkoptions);
     models.Room.onEV(function(f) {
         if (f.isPollStart) {
             navigator.notification.vibrate(1000);
-            $("#roomRT .tabs a.poll .ui-btn-text").text('< POLL >');
-            $("#roomRT .tabs a.poll").gfxShake({distance: 5, duration: 100});
-            $("#roomRT .tabs a.poll .ui-icon").highlight();
+            $(".roomRT.page .tabs a.poll .ui-btn-text").text('< POLL >');
+            $(".roomRT.page .tabs a.poll").gfxShake({distance: 5, duration: 100});
+            $(".roomRT.page .tabs a.poll .ui-icon").highlight();
         }
         if (f.isPollEnd) {
-            $("#roomRT .tabs a.poll .ui-btn-text").text('POLL')
+            $(".roomRT.page .tabs a.poll .ui-btn-text").text('POLL')
                 .gfxShake({distance: 20, duration: 500});
         }
         if (f.isPoke && f.toUser === models.User.current().name()) {
@@ -178,8 +159,8 @@ $(function() {
                 rpoints.splice(0,1);
                 rpoints.push(null);
             }
-            $("#roomRT .spark").sparkline(hfpoints, hfsparkoptions);
-            $("#roomRT .spark").sparkline(rpoints, ratesparkoptions);
+            $(".roomRT.page .spark").sparkline(hfpoints, hfsparkoptions);
+            $(".roomRT.page .spark").sparkline(rpoints, ratesparkoptions);
         }
     });
 
@@ -234,46 +215,46 @@ $(function() {
             });
         }
 
-        $("#roomRT #poll ul li a").live('tap', function() {
+        $(".roomRT.page #poll ul li a").live('tap', function() {
             var r = $(this).attr('data-value');
             sendEV("PV" + r, function() {
-                $("#roomRT #poll ul li a").removeClass("current");
-                $("#roomRT #poll ul li a[data-value='" + r + "']").addClass("current");
+                $(".roomRT.page #poll ul li a").removeClass("current");
+                $(".roomRT.page #poll ul li a[data-value='" + r + "']").addClass("current");
             });
         });
     })();
 
     // tabs handling
-    $("#roomRT .tabs a.rate").bind('vclick', function() {
-        $("#roomRT .tabs a").removeClass("ui-btn-active");
+    $(".roomRT.page .tabs a.rate").bind('vclick', function() {
+        $(".roomRT.page .tabs a").removeClass("ui-btn-active");
         $(this).addClass("ui-btn-active");
-        $("#roomRT div#poll").hide();
-        $("#roomRT #feedback").show();
+        $(".roomRT.page div#poll").hide();
+        $(".roomRT.page #feedback").show();
     });
 
-    $("#roomRT .tabs a.poll").bind('vclick', function() {
-        $("#roomRT .tabs a").removeClass("ui-btn-active");
+    $(".roomRT.page .tabs a.poll").bind('vclick', function() {
+        $(".roomRT.page .tabs a").removeClass("ui-btn-active");
         $(this).addClass("ui-btn-active");
-        $("#roomRT #feedback").hide();
-        $("#roomRT div#poll").show();
+        $(".roomRT.page #feedback").hide();
+        $(".roomRT.page div#poll").show();
     });
 
 
-    tappable("#roomRT a.quit", function() {
+    tappable(".roomRT.page a.quit", function() {
         models.Room.current().leave();
     });
-    tappable("#roomRT a.reconnect", function() {
+    tappable(".roomRT.page a.reconnect", function() {
         models.Room.current().reconnect();
     });
     tappable("#nowplaying a.refresh", function() {
         models.Event.current().refreshNowPlaying();
     });
-    tappable("#presentation a.joinroom", function() {
+    tappable(".presentation.page a.joinroom", function() {
         models.Presentation.current().room().join();
     });
 
-    tappable("#presentation .toggleDetails", function(e, target) {
-        var summaryDiv = $(target).closest('#presentation').find('div.summary');
+    tappable(".presentation.page .toggleDetails", function(e, target) {
+        var summaryDiv = $(target).closest('.presentation.page').find('div.summary');
         if (summaryDiv.hasClass('allDetails')) {
             summaryDiv.removeClass('allDetails');
             $(target).find('.ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
@@ -283,17 +264,17 @@ $(function() {
         }
     });
 
-    tappable("#presentation .toggleFavorite", function() {
+    tappable(".presentation.page .toggleFavorite", function() {
         var my = voxxr.chosenPresentation().my();
         my.favorite(!my.favorite());
     });
 
-    tappable("#dayschedule .slotsNav a.slot", function(e, target) {
+    tappable(".dayschedule.page .slotsNav a.slot", function(e, target) {
         var slot = $(target).attr('data-slot');
-        var slotLi = $(target).closest('#dayschedule').find('ul.schedule li.slot[data-slot="' + slot + '"]');
+        var slotLi = $(target).closest('.dayschedule.page').find('ul.schedule li.slot[data-slot="' + slot + '"]');
         $.mobile.silentScroll( slotLi.offset().top );
     });
-    $("#dayschedule ul.schedule li.slot").live('click', function() {
+    $(".dayschedule.page ul.schedule li.slot").live('click', function() {
         $.mobile.silentScroll( );
     });
 

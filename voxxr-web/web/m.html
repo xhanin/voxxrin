@@ -46,7 +46,7 @@
 </head>
 <body>
 <div id="jqt">
-    <div id="events" data-role="page">
+    <div id="events" class="events page" data-role="page">
         <div data-role="header" >
             <h1>Voxxrin</h1>
             <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
@@ -66,7 +66,7 @@
         </ul>
         </div>
      </div>
-    <div id="about" data-role="page">
+    <div id="about" class="about page" data-role="page">
         <div data-role="header">
             <a href="#events" data-icon="delete" data-rel="back">Close</a>
             <h1>Voxxrin</h1>
@@ -102,7 +102,7 @@
             <p><br /><br /><a href="#events" data-icon="delete" data-role="button" data-rel="back">Close</a></p>
         </div>
     </div>
-    <div id="event" data-role="page" data-bind="with: chosenEvent">
+    <div id="event" class="event page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: title"></h1>
             <a href="#events" data-rel="back" data-icon="arrow-l">Back</a>
@@ -123,7 +123,7 @@
             </ul>
         </div>
     </div>
-    <div id="nowplaying" data-role="page" data-bind="with: chosenEvent">
+    <div id="nowplaying" class="nowplaying page" data-role="page">
         <div data-role="header">
             <h1>Now playing</h1>
             <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
@@ -141,7 +141,7 @@
             <a class="refresh" data-role="button" data-theme="e" href="#">Refresh</a>
         </div>
     </div>
-    <div id="dayschedule" data-role="page" data-bind="with: chosenDay">
+    <div id="dayschedule" class="dayschedule page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: name"></h1>
             <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
@@ -178,7 +178,7 @@
         </ul>
         </div>
     </div>
-    <div id="presentation" data-role="page" data-bind="with: chosenPresentation">
+    <div id="presentation" class="presentation page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: title"> </h1>
             <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
@@ -206,9 +206,9 @@
         </ul>
         </div>
     </div>
-    <div id="roomRT" data-role="page" data-bind="with: currentRoom">
+    <div id="roomRT" class="roomRT page" data-role="page">
         <div data-role="header" data-position="fixed">
-            <h1 data-bind="text: $root.chosenPresentation().title"></h1>
+            <h1 data-bind="text: presentation().title"></h1>
             <div data-role="navbar" data-iconpos="left" class="tabs">
                 <ul>
                     <li><a href="#" data-icon="star" class="rate ui-btn-active">LIVE</a></li>
@@ -239,14 +239,14 @@
                     <span class="connections" data-bind="text: connections">###</span>
                     <a href="#" data-icon="star" data-iconpos="notext" data-corners="true" data-role="button"
                           data-shadow="true" data-iconshadow="true" data-inline="true" title="Mean Rate">Rate</a>
-                    <span class="rateMean" data-bind="text: $root.chosenPresentation().rate.avgDisplay">#.##</span>
+                    <span class="rateMean" data-bind="text: presentation().rate.avgDisplay">#.##</span>
                     </div>
                     <div class="sparks">
                         <span class="spark">...</span>
                     </div>
                 </div>
             </div>
-            <div id="poll" style="display:none;" data-bind="with: $root.chosenPresentation">
+            <div id="poll" style="display:none;" data-bind="with: presentation">
                 <div class="nopoll" data-bind="visible: currentPoll.choices().length === 0">
                     No current poll
                 </div>

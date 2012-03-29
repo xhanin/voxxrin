@@ -61,6 +61,11 @@
         load(data);
 
         function updateRemaining() {
+            if (!self.from()) {
+                self.remaining("");
+                crons.remaining = setTimeout(updateRemaining, 1000);
+                return;
+            }
             var remainingSeconds = remaining.getSeconds(self.from());
             if (remainingSeconds > 0) {
                 self.remaining(remaining.getString(remainingSeconds) + " remaining");
@@ -71,6 +76,11 @@
             }
         }
         function updateSince() {
+            if (!self.to()) {
+                self.since("");
+                crons.since = setTimeout(updateSince, 1000);
+                return;
+            }
             var sinceSeconds = -remaining.getSeconds(self.to());
             if (sinceSeconds > 0) {
                 self.since(remaining.getString(sinceSeconds) + " ago");
@@ -91,14 +101,16 @@
 
                     self.nowplaying(_(data).map(function(presentation) {
                         var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
-                        p.load({id: p.id(), playing: true});
+                        p.room().presentation(p);
+                        p.playing(true);
                         wasplaying = _(wasplaying).reject(function(e) { return e.id() === p.id() });
                         return p;
                     }));
 
                     // reset playing status for old nowplaying presentations
                     _(wasplaying).each(function(p) {
-                        p.load({id: p.id(), playing: false});
+                        p.room().presentation(null);
+                        p.playing(false);
                     });
 
                     // auto update

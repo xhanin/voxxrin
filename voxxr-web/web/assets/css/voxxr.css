@@ -69,26 +69,26 @@
   background: #4ecdc4;
 }
 /* PHONE */
-#roomRT h1 {
+.roomRT.page h1 {
   color: #4ecdc4;
 }
-#roomRT #feedback .dashboard {
+.roomRT.page #feedback .dashboard {
   width: 260px;
   margin: 4px auto;
   text-align: center;
   font-size: 24px;
   color: #4ecdc4;
 }
-#roomRT #feedback .dashboard .ui-btn {
+.roomRT.page #feedback .dashboard .ui-btn {
   margin: 4px 5px;
 }
-#roomRT #feedback .dashboard .sparks {
+.roomRT.page #feedback .dashboard .sparks {
   margin-top: 5px;
 }
-#roomRT #poll {
+.roomRT.page #poll {
   margin-top: 15px;
 }
-#roomRT #poll .nopoll {
+.roomRT.page #poll .nopoll {
   padding: 15px;
 }
 #jqt .slide.out {
@@ -344,45 +344,45 @@
 #jqt li.speaker p.allDetails:after {
   content: '';
 }
-#events .events li {
+.events.page .events li {
   min-height: 80px;
 }
-#dayschedule li .speakers {
+.dayschedule.page li .speakers {
   color: #4ecdc4;
 }
-#dayschedule li .room:before {
+.dayschedule.page li .room:before {
   content: "@ ";
 }
-#dayschedule .slot .ui-icon {
+.dayschedule.page .slot .ui-icon {
   display: block;
   float: right;
 }
-#nowplaying .ui-content {
+.nowplaying.page .ui-content {
   padding-top: 15px;
 }
-#presentation .slot,
-#presentation .room {
+.presentation.page .slot,
+.presentation.page .room {
   color: #4ecdc4;
 }
-#presentation .room:before {
+.presentation.page .room:before {
   content: "@ ";
 }
-#presentation h2 em {
+.presentation.page h2 em {
   display: block;
   float: right;
   font-size: 0.7em;
 }
-#presentation .joinroom {
+.presentation.page .joinroom {
   margin-top: 27px;
 }
-#presentation div.summary {
+.presentation.page div.summary {
   overflow-y: hidden;
   height: 5.5em;
 }
-#presentation div.summary.allDetails {
+.presentation.page div.summary.allDetails {
   height: auto;
 }
-#presentation .toggleFavorite {
+.presentation.page .toggleFavorite {
   display: block;
   float: right;
   margin: 3px 0 0 5px;
@@ -390,7 +390,7 @@
   height: 16px;
   width: 16px;
 }
-#presentation .toggleFavorite.favorite {
+.presentation.page .toggleFavorite.favorite {
   background: url('../img/favorite.png');
 }
 .feeling img {
@@ -403,12 +403,12 @@
   background: url('../img/ajax-loader.gif') no-repeat center center;
   content: "";
 }
-#about h2 {
+.about.page h2 {
   font-size: 1.8em;
   font-family: "Helvetica Neue", Helvetica;
   color: #c7f464;
 }
-#about .subtitle {
+.about.page .subtitle {
   font-size: 1.2em;
   font-family: "Helvetica Neue", Helvetica;
   color: #4ecdc4;
@@ -417,20 +417,20 @@
   padding-bottom: 0.5em;
   padding-left: 40px;
 }
-#about p {
+.about.page p {
   margin: 10px 15px 5px;
   font-family: "Helvetica Neue", Helvetica;
 }
-#about p span,
-#about li span {
+.about.page p span,
+.about.page li span {
   color: #c44d58;
   font-style: italic;
 }
-#about p span.voxxr {
+.about.page p span.voxxr {
   color: #AAA;
   font-style: italic;
 }
-#about .version {
+.about.page .version {
   font-style: italic;
   font-size: 0.8em;
   color: #4ecdc4;
@@ -438,22 +438,22 @@
   padding: 5px 10px 5px 40px;
   letter-spacing: 0.1em;
 }
-#about ul li {
+.about.page ul li {
   background-image: none;
   padding: 0px;
   border: none;
   display: block;
   height: 60px;
 }
-#about ul li img {
+.about.page ul li img {
   float: left;
   display: block;
   margin-right: 5px;
 }
-#about ul {
+.about.page ul {
   border: none;
   font: normal 1em "Helvetica Neue", Helvetica;
 }
-#about ui-content a {
+.about.page ui-content a {
   color: #556270;
 }

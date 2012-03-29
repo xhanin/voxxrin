@@ -9,6 +9,7 @@
         self.uri = ko.observable();
         self.name = ko.observable();
         self.rt = ko.observable();
+        self.presentation = ko.observable();
         self.data = ko.observable({});
 
         self.connections = ko.observable(0);
