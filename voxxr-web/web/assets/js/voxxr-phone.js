@@ -36,13 +36,20 @@ $(function() {
             obj.page = obj.page || {};
             if (!obj.page[pageTplId]) {
                 if (!self.pageTemplates[pageTplId]) {
+                    console.log('detaching template ' + pageTplId);
                     self.pageTemplates[pageTplId] = $('#' + pageTplId).detach();
                 }
+                console.log('creating page ' + pageTplId + '-' + obj.id());
                 var page = obj.page[pageTplId] = self.pageTemplates[pageTplId].clone();
                 page.attr('id', pageTplId + '-' + obj.id());
                 $('#jqt').append(page);
+                console.log('enhancing page ' + pageTplId + '-' + obj.id());
                 $.mobile.enhancePage(page);
+                console.log('binding page ' + pageTplId + '-' + obj.id());
                 ko.applyBindings(obj, page.get(0));
+                console.log('DONE creating page ' + pageTplId + '-' + obj.id());
+            } else {
+                console.log('reusing page ' + pageTplId + '-' + obj.id());
             }
             return obj;
         }
