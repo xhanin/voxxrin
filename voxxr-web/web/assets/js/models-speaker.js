@@ -7,7 +7,7 @@
         self.name = ko.observable();
         self.pictureURI = ko.observable();
         self.pictureURL = ko.computed(function() {
-            return models.baseUrl + self.pictureURI();
+            return self.pictureURI() ? (models.baseUrl + self.pictureURI()) : "";
         });
         self.firstName = ko.observable();
         self.lastName = ko.observable();
