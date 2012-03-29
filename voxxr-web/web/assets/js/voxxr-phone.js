@@ -118,7 +118,7 @@ $(function() {
         .add('', function() {
             return voxxr.gotoEvents();
         }, [])
-        .start();
+        .start('events');
 
     var hfpoints = [];
     var rpoints = [];

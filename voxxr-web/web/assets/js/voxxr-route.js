@@ -58,7 +58,7 @@ Route.goTo = function(hash) {
     var route = _(Route.routes).find(function(r) {return r.match(hash)});
     if (route) {return route.apply(hash)}
 }
-Route.start = function() {
+Route.start = function(defaultHash) {
     var jqmLoadPageLocally = $.mobile.loadPageLocally;
     $.mobile.loadPageLocally = function(dataUrl, settings) {
         var page = Route.goTo(dataUrl);
@@ -70,4 +70,7 @@ Route.start = function() {
         return page;
     };
     $.mobile.initializePage();
+    if (!location.hash) {
+        location.hash = defaultHash;
+    }
 }
