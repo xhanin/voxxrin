@@ -3313,8 +3313,10 @@ $.mobile.transitionFallbacks = {};
 				// enable hash handling for the the _handleHashChange call
 				self.nextHashChangePrevented( false );
 
-				// change the page based on the hash
-				$.mobile._handleHashChange( poppedState.hash );
+                // mark to ignore next hash change, we already handle the page change based on popped state
+                $.mobile.urlHistory.ignoreNextHashChange = true;
+                // change the page based on the hash
+                $.mobile._handleHashChange( poppedState.hash );
 
 				// only prevent another hash change handling if a hash change will be fired
 				// by the browser
