@@ -13,7 +13,8 @@
     factory( root, root.document );
   }
 }(this, function ( w, d ) {
-
+  // disable logs
+  var console = { log: function() {} };
   var matchesSelector = function(node, selector){
       var root = d.documentElement,
         matches = root.matchesSelector || root.mozMatchesSelector || root.webkitMatchesSelector || root.msMatchesSelector;
@@ -57,10 +58,12 @@
       return el;
     },
     getTarget = function(e){
-      var el = e.target;
-      if (el) return el;
-      var touch = e.targetTouches[0];
-      return getTargetByCoords(touch.clientX, touch.clientY);
+        if(e.touches && e.touches.length >= 1){
+            var touch = e.touches[0];
+            return getTargetByCoords(touch.clientX, touch.clientY);
+        } else {
+            return e.target;
+        }
     },
     clean = function(str){
       return str.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
@@ -105,6 +108,7 @@
 
     el.addEventListener(events.start, function(e){
       var target = closest(getTarget(e), selector);
+      console.log('tap start @ ' + getTarget(e) + ' closest ' + selector + ' is ' + target);
       if (!target) return;
 
       if (activeClassDelay){
@@ -171,6 +175,7 @@
     }, false);
 
     el.addEventListener(events.end, function(e){
+      console.log('tap end @ ' + getTarget(e) + ' startTarget for ' + selector + ' is ' + startTarget);
       if (!startTarget) return;
 
       clearTimeout(activeClassTimeout);
@@ -189,6 +194,7 @@
       var rightClick = e.which == 3 || e.button == 2;
       if (!cancel && !moveOut && !rightClick){
         var target = startTarget;
+        console.log('tap onTap @ ' + target + ' for ' + selector);
         setTimeout(function(){
           options.onTap.call(el, e, target);
         }, 1);
@@ -206,6 +212,7 @@
 
     if (!options.allowClick) el.addEventListener('click', function(e){
       var target = closest(e.target, selector);
+      console.log('tap may swallow click @ ' + e.target + ' with closest target for ' + selector + ' being ' + target);
       if (target) e.preventDefault();
     }, false);
   };
