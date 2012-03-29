@@ -27,6 +27,13 @@
         self.data = ko.observable({});
 
         function load(data) {
+            if (self.data() && self.data().lastmodified
+                    && self.data().lastmodified == data.lastmodified) {
+                self.slots.loading(false);
+                self.loading(false);
+                console.log('data for day schedule is up to date ' + self.id());
+                return;
+            }
             data = mergeData(data, self);
             self.id(data.id);
             self.eventId(data.eventId);

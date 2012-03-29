@@ -24,7 +24,7 @@ public class PresentationResources implements RestRouter.RequestHandler {
                 Entity pres = Rests.findEntityByKey(Rests.createKey(kind, presentationId));
                 JSONObject json = new JSONObject(((Text) pres.getProperty("json")).getValue());
                 json.put("favorites", countFavorites(presentationId));
-                Rests.sendJson(json.toString(), resp);
+                Rests.sendJson(json, req, resp);
             } catch (EntityNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (JSONException e) {

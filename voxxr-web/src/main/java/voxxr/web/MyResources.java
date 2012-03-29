@@ -22,11 +22,11 @@ public class MyResources implements RestRouter.RequestHandler {
         String me = req.getHeader("Authorization");
         if ("GET".equalsIgnoreCase(req.getMethod())) {
             try {
-                Rests.maybeSendAsJsonObject(Rests.createKey(kind, me), resp);
+                Rests.maybeSendAsJsonObject(Rests.createKey(kind, me), req, resp);
             } catch (EntityNotFoundException e) {
                 try {
                     Entity entity = newMy(me);
-                    Rests.sendAsJsonObject(entity, resp);
+                    Rests.sendAsJsonObject(entity, req, resp);
                 } catch (JSONException e1) {
                     throw new RuntimeException(e1);
                 }
@@ -43,7 +43,7 @@ public class MyResources implements RestRouter.RequestHandler {
                         return entity;
                     }
                 });
-                Rests.sendAsJsonObject(entity, resp);
+                Rests.sendAsJsonObject(entity, req, resp);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

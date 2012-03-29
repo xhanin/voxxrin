@@ -16,7 +16,7 @@ public class EventResources implements RestRouter.RequestHandler {
         String kind = "Event";
         if ("GET".equalsIgnoreCase(req.getMethod())) {
             final String eventId = params.get("eventId");
-            Rests.sendAsJsonObject(Rests.createKey(kind, eventId), resp);
+            Rests.sendAsJsonObject(Rests.createKey(kind, eventId), req, resp);
         }
     }
 }

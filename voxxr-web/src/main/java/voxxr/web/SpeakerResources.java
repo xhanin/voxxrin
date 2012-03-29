@@ -18,7 +18,7 @@ public class SpeakerResources implements RestRouter.RequestHandler {
         final String eventId = params.get("eventId");
         final String speakerId = params.get("speakerId");
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            Rests.sendAsJsonObject(Rests.createKey(kind, speakerId), resp);
+            Rests.sendAsJsonObject(Rests.createKey(kind, speakerId), req, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             Rests.storeFromRequest(req, resp, kind, new PrepareEntityCallback() {
                 @Override

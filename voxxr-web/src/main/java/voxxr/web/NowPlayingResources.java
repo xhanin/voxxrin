@@ -64,7 +64,7 @@ public class NowPlayingResources implements RestRouter.RequestHandler {
                     datastore.put(entity);
                     memcache.delete("nowplaying/" + eventId);
                     memcache.put(KeyFactory.keyToString(entity.getKey()), entity);
-                    Rests.sendAsJsonObject(entity, resp);
+                    Rests.sendAsJsonObject(entity, req, resp);
                 } catch (EntityNotFoundException e) {
                     resp.sendError(400, "Unknown presentation to " + action);
                 }

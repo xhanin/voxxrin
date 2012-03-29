@@ -45,7 +45,7 @@ public class SpeakerPictureResources implements RestRouter.RequestHandler {
                 datastore.put(entity);
                 Rests.clearEntityCache(entity.getKey());
                 images.delete(KeyFactory.keyToString(entity.getKey()));
-                Rests.sendJson("{\"status\":\"ok\"}", resp);
+                Rests.sendJson("{\"status\":\"ok\"}", req, resp);
             } catch (EntityNotFoundException e) {
                 resp.sendError(404);
             }

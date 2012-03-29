@@ -45,17 +45,17 @@ public class Rests {
         writer.close();
     }
 
-    public static void sendAsJsonObject(Key key, HttpServletResponse resp) throws IOException {
+    public static void sendAsJsonObject(Key key, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
-            maybeSendAsJsonObject(key, resp);
+            maybeSendAsJsonObject(key, req, resp);
         } catch (EntityNotFoundException e) {
             resp.sendError(404);
         }
     }
 
-    public static void maybeSendAsJsonObject(Key key, HttpServletResponse resp) throws EntityNotFoundException, IOException {
+    public static void maybeSendAsJsonObject(Key key, HttpServletRequest req, HttpServletResponse resp) throws EntityNotFoundException, IOException {
         Entity entity = findEntityByKey(key);
-        sendAsJsonObject(entity, resp);
+        sendAsJsonObject(entity, req, resp);
     }
 
     public static Entity findEntityByKey(Key key) throws EntityNotFoundException {
@@ -76,18 +76,45 @@ public class Rests {
         memcache.delete(cacheKey);
     }
 
-    public static void sendAsJsonObject(Entity entity, HttpServletResponse resp) throws IOException {
-        sendJson(((Text) entity.getProperty("json")).getValue(), resp);
+    public static void sendAsJsonObject(Entity entity, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        sendJson(((Text) entity.getProperty("json")).getValue(), req, resp);
     }
 
-    public static void sendJson(String json, HttpServletResponse resp) throws IOException {
+    public static void sendJson(JSONObject json, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.addHeader("Content-Type", "application/json; charset=utf-8");
+        if (json.has("lastmodified")) {
+            try {
+                // we don't use Last-Modified because browsers behave inconsistently with it
+                // and have their own heuristics to use their cache depending on the date
+                // we prefer to issue the request an reply with a 304
+//                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+//                resp.addHeader("Last-Modified", format.format(new Date(json.getLong("lastmodified"))));
+
+                String etag = String.valueOf(json.getLong("lastmodified"));
+                if (etag.equals(req.getHeader("If-None-Match"))) {
+                    resp.setStatus(304);
+                    resp.getOutputStream().close();
+                    return;
+                }
+                resp.addHeader("ETag", etag);
+            } catch (JSONException e) {
+                // ignore
+            }
+        }
         resp.addHeader("Access-Control-Allow-Origin", "*");
 
         OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream(), "UTF8");
-        writer.append(json);
+        writer.append(json.toString());
         writer.flush();
         writer.close();
+    }
+
+    public static void sendJson(String json, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            sendJson(new JSONObject(json), req, resp);
+        } catch (JSONException e) {
+            resp.sendError(500);
+        }
     }
 
     public static void sendImage(byte[] image, String format, HttpServletResponse resp) throws IOException {
@@ -146,6 +173,9 @@ public class Rests {
                 datastore.put(entity);
             }
         }
+        long now = System.currentTimeMillis();
+        json.put("lastmodified", now);
+        entity.setProperty("lastmodified", now);
         entity.setProperty("json", new Text(json.toString()));
         Key key = datastore.put(callback.prepare(json, entity));
 

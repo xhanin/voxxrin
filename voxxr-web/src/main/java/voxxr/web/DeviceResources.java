@@ -20,7 +20,7 @@ public class DeviceResources implements RestRouter.RequestHandler {
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
         String kind = "Device";
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            Rests.sendAsJsonObject(Rests.createKey(kind, params.get("deviceId")), resp);
+            Rests.sendAsJsonObject(Rests.createKey(kind, params.get("deviceId")), req, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             Entity entity = Rests.insecureStoreFromRequest(req, resp, kind, new PrepareEntityCallback() {
                 @Override
@@ -30,7 +30,7 @@ public class DeviceResources implements RestRouter.RequestHandler {
             });
             if (entity != null) {
                 System.out.println("registered device " + ((Text) entity.getProperty("json")).getValue());
-                Rests.sendAsJsonObject(entity, resp);
+                Rests.sendAsJsonObject(entity, req, resp);
             }
         }
     }

@@ -185,10 +185,15 @@ function postJSON(uri, data, onSuccess) {
 
 function getJSON(uri, onSuccess) {
     var json = localStorage.getItem(uri);
+    var obj = json ? JSON.parse(json) : null;
     var localTimeout = null;
     if (json) {
         // call success callback in a few ms to call it asynchronously in any case
-        localTimeout = setTimeout(function(){ onSuccess(JSON.parse(json)); localTimeout = null }, 50);
+        localTimeout = setTimeout(function(){
+            console.log('trigger success load from local storage for ' + uri);
+            onSuccess(obj);
+            localTimeout = null
+        }, 50);
     }
     whenDeviceReady(function() {
         if (!models.Device.current().offline()) {
@@ -203,13 +208,19 @@ function getJSON(uri, onSuccess) {
                     var password = ''; // no password to authenticate ATM
                     xhr.setRequestHeader("Authorization", username);
                 },
-                success: function(json) {
+                success: function(jsonFromServer) {
+                    var objFromServer = JSON.parse(jsonFromServer);
+                    if (obj && obj.lastmodified && obj.lastmodified == objFromServer.lastmodified) {
+                        console.log('got un modified data from server for ' + uri);
+                        return; // success callback is / will be called from local data which is the same
+                    }
+                    console.log('trigger success load from server for ' + uri);
                     if (localTimeout) {
                         // if ever we reach that before the timeout expired, clear it
                         clearTimeout(localTimeout);
                     }
-                    localStorage.setItem(uri, json);
-                    onSuccess(JSON.parse(json));
+                    localStorage.setItem(uri, jsonFromServer);
+                    onSuccess(objFromServer);
                 },
                 error: function() {
                     console.log('error occured while loading ', uri);

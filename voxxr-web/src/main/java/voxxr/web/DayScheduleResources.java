@@ -32,7 +32,7 @@ public class DayScheduleResources implements RestRouter.RequestHandler {
                 String cacheKey = kind + "/" + dayId;
                 String dayJsonStr = (String) memcacheService.get(cacheKey);
                 if (dayJsonStr != null) {
-                    Rests.sendJson(dayJsonStr, resp);
+                    Rests.sendJson(dayJsonStr, req, resp);
                     return;
                 }
                 Entity day = Rests.findEntityByKey(Rests.createKey(kind, dayId));
@@ -44,7 +44,7 @@ public class DayScheduleResources implements RestRouter.RequestHandler {
                 }
                 dayJsonStr = json.toString();
                 memcacheService.put(cacheKey, dayJsonStr, Expiration.byDeltaSeconds(15));
-                Rests.sendJson(dayJsonStr, resp);
+                Rests.sendJson(json, req, resp);
             } catch (EntityNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (JSONException e) {

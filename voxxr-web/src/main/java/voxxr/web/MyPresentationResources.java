@@ -26,7 +26,7 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
         String id = me + "/" + eventId + "/" + presId;
         if ("GET".equalsIgnoreCase(req.getMethod())) {
             try {
-                Rests.maybeSendAsJsonObject(Rests.createKey(kind, id), resp);
+                Rests.maybeSendAsJsonObject(Rests.createKey(kind, id), req, resp);
             } catch (EntityNotFoundException e) {
                 JSONObject json = new JSONObject();
                 try {
@@ -41,7 +41,7 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                             return entity;
                         }
                     });
-                    Rests.sendAsJsonObject(entity, resp);
+                    Rests.sendAsJsonObject(entity, req, resp);
                 } catch (JSONException e1) {
                     throw new RuntimeException(e1);
                 }
@@ -86,7 +86,7 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                 String cacheKey = KeyFactory.keyToString(my.getKey());
                 memcache.put(cacheKey, my);
 
-                Rests.sendAsJsonObject(entity, resp);
+                Rests.sendAsJsonObject(entity, null, resp);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
