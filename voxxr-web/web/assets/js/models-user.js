@@ -70,7 +70,11 @@
     var User = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
-        self.name = ko.observable(data.name);
+        self.name = ko.computed(function() {
+            var name = (self.id() || 'a') + "@" + models.Device.current().id();
+            console.log('User is ' + name);
+            return name;
+        });
 
         self.my = ko.observable(new My({events: {}}));
 
@@ -78,11 +82,7 @@
             self.my(new My(data))
         });
     }
-    User.current = ko.observable(new User({name: 'a@' + models.Device.current().id()}));
-    models.Device.current().id.subscribe(function(newValue) {
-        User.current().name('a@' + newValue);
-        console.log('User is ' + User.current().name());
-    });
+    User.current = ko.observable(new User({id: ''}));
     console.log('User is ' + User.current().name());
 
     exports.models = exports.models || {};

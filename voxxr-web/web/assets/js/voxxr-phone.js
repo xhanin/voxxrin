@@ -15,6 +15,9 @@ $(function() {
         self.currentRoom = models.Room.current;
         self.user = models.User.current;
         self.device = models.Device.current;
+        self.loginBtn = ko.computed(function() {
+            return self.user().id() || 'Login';
+        });
 
         var eventsBound = false;
         self.gotoEvents = function() {
@@ -126,6 +129,8 @@ $(function() {
             return voxxr.gotoEvents();
         }, [])
         .start('events');
+
+    ko.applyBindings(voxxr.user(), $('#signin').get(0));
 
     var hfpoints = [];
     var rpoints = [];

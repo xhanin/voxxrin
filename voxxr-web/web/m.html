@@ -48,6 +48,7 @@
 <div id="jqt">
     <div id="events" class="events page" data-role="page">
         <div data-role="header" >
+            <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" class="ui-btn-left">Login</a>
             <h1>Voxxrin</h1>
             <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
         </div>
@@ -66,6 +67,19 @@
         </ul>
         </div>
      </div>
+    <div id="signin" class="signin page" data-role="page">
+        <div data-role="header" >
+            <a href="#events" data-icon="delete" data-rel="back">Close</a>
+            <h1>Voxxrin</h1>
+        </div>
+        <div data-role="content">
+            <br />
+            <label for="userid">User name:</label>
+            <input id="userid" type="text" data-bind="value: id">
+            <br />
+            <a href="#" data-role="button" data-rel="back" data-theme="d">Signin</a>
+        </div>
+    </div>
     <div id="about" class="about page" data-role="page">
         <div data-role="header">
             <a href="#events" data-icon="delete" data-rel="back">Close</a>
