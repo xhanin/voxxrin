@@ -208,7 +208,7 @@
     </div>
     <div id="roomRT" class="roomRT page" data-role="page">
         <div data-role="header" data-position="fixed">
-            <h1 data-bind="text: presentation().title"></h1>
+            <h1 data-bind="text: presentation() ? presentation().title : 'No current presentation'"></h1>
             <div data-role="navbar" data-iconpos="left" class="tabs">
                 <ul>
                     <li><a href="#" data-icon="star" class="rate ui-btn-active">LIVE</a></li>
@@ -239,7 +239,7 @@
                     <span class="connections" data-bind="text: connections">###</span>
                     <a href="#" data-icon="star" data-iconpos="notext" data-corners="true" data-role="button"
                           data-shadow="true" data-iconshadow="true" data-inline="true" title="Mean Rate">Rate</a>
-                    <span class="rateMean" data-bind="text: presentation().rate.avgDisplay">#.##</span>
+                    <span class="rateMean" data-bind="text: presentation() ? presentation().rate.avgDisplay : ''">#.##</span>
                     </div>
                     <div class="sparks">
                         <span class="spark">...</span>

@@ -25,9 +25,11 @@
         self.slot = ko.observable(null);
         self.fromTime = ko.observable(null);
         self.toTime = ko.observable(null);
-        self.room = ko.observable({});
+        self.room = ko.observable();
         self.summary = ko.observable(null);
-        self.playing = ko.observable(false);
+        self.playing = ko.computed(function() {
+            return self.room() && self.room().presentation() && self.room().presentation().id() == self.id();
+        });
         self.rate = new PresentationRate();
         self.currentPoll = new PresentationPoll({choices:[]});
         self.loading = ko.observable(false);
@@ -78,7 +80,6 @@
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
-            self.playing(data.playing ? true : false); // coalesce to boolean
             self.loading(false);
         }
 

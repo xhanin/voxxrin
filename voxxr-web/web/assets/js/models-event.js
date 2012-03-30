@@ -50,7 +50,7 @@
             if (data.nowplaying) {
                 self.nowplaying(_(data.nowplaying).map(function(presentation) {
                     var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
-                    p.playing(true);
+                    p.room().presentation(p);
                     return p;
                 }));
             }
@@ -102,15 +102,15 @@
                     self.nowplaying(_(data).map(function(presentation) {
                         var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
                         p.room().presentation(p);
-                        p.playing(true);
                         wasplaying = _(wasplaying).reject(function(e) { return e.id() === p.id() });
                         return p;
                     }));
 
                     // reset playing status for old nowplaying presentations
                     _(wasplaying).each(function(p) {
-                        p.room().presentation(null);
-                        p.playing(false);
+                        if (p.playing()) {
+                            p.room().presentation(null);
+                        }
                     });
 
                     // auto update
