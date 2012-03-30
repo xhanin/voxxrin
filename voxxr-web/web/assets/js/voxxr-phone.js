@@ -284,7 +284,7 @@ $(function() {
         var slotLi = $(target).closest('.dayschedule.page').find('ul.schedule li.slot[data-slot="' + slot + '"]');
         $.mobile.silentScroll( slotLi.offset().top );
     });
-    $(".dayschedule.page ul.schedule li.slot").live('click', function() {
+    tappable(".dayschedule.page ul.schedule li.slot", function() {
         $.mobile.silentScroll( );
     });
 
