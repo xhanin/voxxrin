@@ -6,13 +6,17 @@ import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -46,8 +50,27 @@ public class DayScheduleStatsResources implements RestRouter.RequestHandler {
                     JSONObject pres = (JSONObject) schedule.get(i);
                     JSONObject presStat = new JSONObject();
                     presStat.put("id", pres.get("id"));
-                    presStat.put("favorites", PresentationResources.countFavorites((String) pres.get("id")));
-                    presentationsJson.put((String) pres.get("id"), presStat);
+                    String presId = (String) pres.get("id");
+                    presStat.put("favorites", PresentationResources.countFavorites(presId));
+                    Collection<User> favoritedBy = PresentationResources.favoritedBy(presId);
+                    presStat.put("favoritedBy", new JSONArray(Collections2.transform(favoritedBy, new Function<User, JSONObject>() {
+                        @Override
+                        public JSONObject apply(@Nullable User input) {
+                            if (input == null) {
+                                return null;
+                            }
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("id", input.getId());
+                                jsonObject.put("twitterid", input.getTwitterid());
+                                jsonObject.put("deviceid", input.getDeviceid());
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return jsonObject;
+                        }
+                    })));
+                    presentationsJson.put(presId, presStat);
                 }
                 dayStatsJsonStr = dayStatsJson.toString();
                 memcacheService.put(cacheKey, dayStatsJsonStr, Expiration.byDeltaSeconds(15));

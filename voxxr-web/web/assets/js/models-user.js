@@ -67,24 +67,106 @@
         }
     }
 
+    var TwUser = function(data, options) {
+        var self = this;
+        data = data || {};
+        options = options || {};
+        self.id = ko.observable(data.id || 0);
+        self.screenname = ko.observable(data.screen_name || '');
+        self.name = ko.observable();
+        self.pictureURL = ko.observable();
+        self.location = ko.observable();
+        self.followers = ko.observableArray([]);
+        self.friends = ko.observableArray([]);
+        self.ready = ko.observable(false);
+        self.loading = ko.observable(false);
+
+        function loadData(data) {
+            self.id(data.id);
+            self.screenname(data.screen_name);
+            self.name(data.name);
+            self.pictureURL(data.profile_image_url);
+            self.location(data.location);
+            self.loading(false);
+            self.ready(true);
+        }
+        
+        function load() {
+            if (self.screenname() || self.id()) {
+                self.loading(true);
+
+                var param = self.id() ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
+                $.getJSON(
+                    'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
+                    {},
+                    function(data) {
+                        loadData(data[0]);
+                        if (options.autoLoadFollowers) {
+                            self.loadFollowers();
+                        }
+                    });
+
+            } else {
+                loadData({});
+            }
+        }
+
+        if (self.screenname() || self.id()) {
+            if (options.autoLoad) {
+                load();
+            }
+        }
+
+        self.loadFollowers = function() {
+            $.getJSON(
+                'https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
+                {},
+                function(data) {
+                    self.followers(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
+                });
+        }
+
+        self.loadDetails = load;
+
+        if (options.autoLoad) {
+            self.screenname.subscribe(load);
+            self.id.subscribe(load);
+        }
+    }
+
     var User = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
+        self.twuser = ko.observable(new TwUser({screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true}));
         self.name = ko.computed(function() {
-            var name = (self.id() || 'a') + "@" + models.Device.current().id();
+            var name = (self.id() || 'a')
+                + (self.twuser().id() ? '(' + self.twuser().id() + ')' : '')
+                + "@" + models.Device.current().id()
+                ;
             console.log('User is ' + name);
             return name;
+        });
+        self.id.subscribe(function(newValue) {
+            localStorage.setItem('userId', newValue);
+            loadMy();
+            self.twuser().screenname(newValue);
         });
 
         self.my = ko.observable(new My({events: {}}));
 
-        getJSON('/my', function(data) {
-            self.my(new My(data))
-        });
+        function loadMy() {
+            getJSON('/my', function(data) {
+                self.my(new My(data))
+            });
+        }
+
+        loadMy();
     }
-    User.current = ko.observable(new User({id: ''}));
+    var userId = localStorage.getItem('userId') || '';
+    User.current = ko.observable(new User({id: userId}));
     console.log('User is ' + User.current().name());
 
     exports.models = exports.models || {};
     exports.models.User = User;
+    exports.models.TwUser = TwUser;
 })(window);

@@ -344,6 +344,13 @@
 #jqt li.speaker p.allDetails:after {
   content: '';
 }
+.page li.twuser {
+  min-height: 40px;
+  padding-left: 60px;
+}
+.page li.twuser .picture {
+  margin: 5px 10px 5px 5px;
+}
 .events.page .events li {
   min-height: 80px;
 }
@@ -392,6 +399,11 @@
 }
 .presentation.page .toggleFavorite.favorite {
   background: url('../img/favorite.png') no-repeat 8px 8px;
+}
+.twuser .picture {
+  display: block;
+  float: left;
+  margin: 5px;
 }
 .feeling img {
   margin: 8px;

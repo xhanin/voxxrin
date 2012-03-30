@@ -3,6 +3,7 @@
     <configurations>
         <conf name="default" />
         <conf name="provided" />
+        <conf name="test" />
         <conf name="sources" />
     </configurations>
     <dependencies defaultconf="default,sources->@">
@@ -10,5 +11,8 @@
         <dependency org="com.google.guava" name="guava" rev="11.0.1" />
         <dependency org="org.json" name="json" rev="20090211" />
         <dependency org="javax.servlet" name="servlet-api" rev="2.5" conf="provided->default" />
+
+        <dependency org="junit" name="junit" rev="4.10" conf="test->default" />
+
     </dependencies>
 </ivy-module>

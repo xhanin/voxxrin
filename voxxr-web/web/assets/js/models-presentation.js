@@ -37,6 +37,13 @@
         self.startedAt = ko.observable(null);
         self.timeElasped = ko.observable(0);
         self.favorites = ko.observable(0);
+        self.favoritedBy = ko.observableArray([]);
+        self.favoritedBy.followers = ko.computed(function() {
+            var followerIds = _(models.User.current().twuser().followers()).map(function(twuser) { return twuser.id() });
+            var favFol = _(self.favoritedBy()).filter(function(usr) { return followerIds.indexOf(usr.id()) >= 0 });
+            _(favFol).invoke('loadDetails');
+            return favFol;
+        });
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
@@ -80,6 +87,7 @@
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
+            self.favoritedBy(_(data.favoritedBy).map(function(usr) { return ds.twUser({id: usr.twitterid}) }));
             self.loading(false);
         }
 

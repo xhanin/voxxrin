@@ -20,10 +20,10 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
         String kind = "MyPresentation";
-        final String me = req.getHeader("Authorization");
+        final User me = User.authenticate(req.getHeader("Authorization"));
         final String eventId = params.get("eventId");
         final String presId = params.get("presentationId");
-        String id = me + "/" + eventId + "/" + presId;
+        String id = me.getId() + "/" + eventId + "/" + presId;
         if ("GET".equalsIgnoreCase(req.getMethod())) {
             try {
                 Rests.maybeSendAsJsonObject(Rests.createKey(kind, id), req, resp);
@@ -33,7 +33,7 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                     json.put("id", id);
                     json.put("eventId", eventId);
                     json.put("presId", presId);
-                    json.put("me", me);
+                    json.put("me", me.getId());
                     json.put("favorite", false);
                     Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
                         @Override
@@ -57,7 +57,9 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                     public Entity prepare(JSONObject json, Entity entity) throws JSONException {
                         entity.setProperty("eventId", eventId);
                         entity.setProperty("presId", presId);
-                        entity.setProperty("me", me);
+                        entity.setProperty("me", me.getId());
+                        entity.setProperty("device", me.getDeviceid());
+                        entity.setProperty("twitterid", me.getTwitterid());
                         entity.setProperty("favorite", json.get("favorite"));
                         return entity;
                     }
@@ -67,9 +69,9 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                 Entity my = null;
                 DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
                 try {
-                    my = ds.get(Rests.createKey("My", me));
+                    my = ds.get(Rests.createKey("My", me.getId()));
                 } catch (EntityNotFoundException e) {
-                    my = MyResources.newMy(me);
+                    my = MyResources.newMy(me.getId());
                 }
                 String myJsonStr = ((Text) my.getProperty("json")).getValue();
                 JSONObject myJson = new JSONObject(myJsonStr);
@@ -86,7 +88,7 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                 String cacheKey = KeyFactory.keyToString(my.getKey());
                 memcache.put(cacheKey, my);
 
-                Rests.sendAsJsonObject(entity, null, resp);
+                Rests.sendAsJsonObject(entity, req, resp);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

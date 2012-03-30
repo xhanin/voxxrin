@@ -48,7 +48,7 @@
 <div id="jqt">
     <div id="events" class="events page" data-role="page">
         <div data-role="header" >
-            <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" class="ui-btn-left">Login</a>
+            <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">Login</a>
             <h1>Voxxrin</h1>
             <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
         </div>
@@ -74,10 +74,28 @@
         </div>
         <div data-role="content">
             <br />
-            <label for="userid">User name:</label>
+            <label for="userid">Twitter account:</label>
             <input id="userid" type="text" data-bind="value: id">
             <br />
-            <a href="#" data-role="button" data-rel="back" data-theme="d">Signin</a>
+            <a href="#" data-role="button" data-theme="e">Signin</a>
+            <p class="loading" data-bind="visible: twuser().loading">
+            </p>
+            <p data-bind="visible: twuser().ready()">
+                <div class="twuser" data-bind="with: twuser">
+                    <img class="picture" data-bind="attr: {src: pictureURL}">
+                    <div class="details">
+                        <h3 data-bind="text: name"></h3>
+                        <p data-bind="text: location"></p>
+                    </div>
+                </div>
+            </p>
+            <p class="help" data-bind="visible: !twuser().ready()">
+                Associate your twitter account to voxxrin to get twitter integration!
+                <br><br>
+                <em>Note: we do not ask for your password at the moment because we use only public data. This means that
+                    anybody can associate your twitter account to voxxrin, so don't trust voxxrin twitter data like
+                    favorites too much, and be gentle, it's still a beta :-)</em>
+            </p>
         </div>
     </div>
     <div id="about" class="about page" data-role="page">
@@ -218,6 +236,14 @@
                 <p data-bind="visible: !loading(), text: bio"></p>
             </li>
         </ul>
+        <h3>Followers who favorited it</h3>
+            <ul data-role="listview" data-inset="true" data-bind="listview: favoritedBy.followers">
+                <li class="twuser"><img data-bind="visible: !loading(), attr: {src: pictureURL}" class="picture">
+                    <span class="loading" data-bind="visible: loading"></span>
+                    <p data-bind="visible: !loading()"><strong data-bind="text: name"></strong> <span data-bind="text: '@' + screenname()"></span></p>
+                    <p data-bind="visible: !loading(), text: location"></p>
+                </li>
+            </ul>
         </div>
     </div>
     <div id="roomRT" class="roomRT page" data-role="page">

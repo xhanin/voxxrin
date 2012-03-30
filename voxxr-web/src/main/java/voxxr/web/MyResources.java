@@ -19,13 +19,13 @@ public class MyResources implements RestRouter.RequestHandler {
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
         String kind = "My";
-        String me = req.getHeader("Authorization");
+        User me = User.authenticate(req.getHeader("Authorization"));
         if ("GET".equalsIgnoreCase(req.getMethod())) {
             try {
-                Rests.maybeSendAsJsonObject(Rests.createKey(kind, me), req, resp);
+                Rests.maybeSendAsJsonObject(Rests.createKey(kind, me.getId()), req, resp);
             } catch (EntityNotFoundException e) {
                 try {
-                    Entity entity = newMy(me);
+                    Entity entity = newMy(me.getId());
                     Rests.sendAsJsonObject(entity, req, resp);
                 } catch (JSONException e1) {
                     throw new RuntimeException(e1);
@@ -35,7 +35,7 @@ public class MyResources implements RestRouter.RequestHandler {
             try {
                 JSONObject json = Rests.jsonObjectFromRequest(req);
                 if (!json.has("id")) {
-                    json.put("id", me);
+                    json.put("id", me.getId());
                 }
                 Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
                     @Override
