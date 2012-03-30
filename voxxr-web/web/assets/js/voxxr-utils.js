@@ -24,6 +24,13 @@ if (ko) {
             $(element).attr('href', valueUnwrapped);
         }
     };
+    ko.bindingHandlers.btntext = {
+        update: function(element, valueAccessor, allBindingsAccessor) {
+            var value = valueAccessor();
+            var valueUnwrapped = ko.utils.unwrapObservable(value);
+            $(element).find('.ui-btn-text').text(valueUnwrapped);
+        }
+    };
 
 ko.bindingHandlers['listview'] = {
     makeTemplateValueAccessor: function(valueAccessor) {
