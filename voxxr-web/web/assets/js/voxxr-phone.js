@@ -299,7 +299,7 @@ $(function() {
 
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;
-    $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'slide';
+    $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'none';
 
     $.mobile.linkBindingEnabled = false;
 });
