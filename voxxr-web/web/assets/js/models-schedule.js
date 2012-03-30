@@ -58,7 +58,9 @@
         load(data);
 
         self.refreshPresentations = function() {
-            self.slots.loading(true);
+            if (!self.slots().length) {
+                self.slots.loading(true);
+            }
             getJSON(self.uri(), load);
         }
 
