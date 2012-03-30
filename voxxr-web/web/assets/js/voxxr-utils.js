@@ -184,50 +184,54 @@ function postJSON(uri, data, onSuccess) {
 }
 
 function getJSON(uri, onSuccess) {
-    var json = localStorage.getItem(uri);
-    var obj = json ? JSON.parse(json) : null;
-    var localTimeout = null;
-    if (json) {
-        // call success callback in a few ms to call it asynchronously in any case
-        localTimeout = setTimeout(function(){
-            console.log('trigger success load from local storage for ' + uri);
-            onSuccess(obj);
-            localTimeout = null
-        }, 50);
-    }
-    whenDeviceReady(function() {
-        if (!models.Device.current().offline()) {
-            // refresh
-            $.ajax({
-                url: models.baseUrl + uri,
-                dataType:"text",
-                type: "GET",
-                beforeSend: function(xhr) {
-                    // BASIC authentication
-                    var username = models.User.current().name();
-                    var password = ''; // no password to authenticate ATM
-                    xhr.setRequestHeader("Authorization", username);
-                },
-                success: function(jsonFromServer) {
-                    var objFromServer = JSON.parse(jsonFromServer);
-                    if (obj && obj.lastmodified && obj.lastmodified == objFromServer.lastmodified) {
-                        console.log('got un modified data from server for ' + uri);
-                        return; // success callback is / will be called from local data which is the same
-                    }
-                    console.log('trigger success load from server for ' + uri);
-                    if (localTimeout) {
-                        // if ever we reach that before the timeout expired, clear it
-                        clearTimeout(localTimeout);
-                    }
-                    localStorage.setItem(uri, jsonFromServer);
-                    onSuccess(objFromServer);
-                },
-                error: function() {
-                    console.log('error occured while loading ', uri);
-                }
-            });
+    setTimeout(function(){
+        console.log('getting data for ' + uri);
+        var json = localStorage.getItem(uri);
+        console.log('parsing data for ' + uri);
+        var obj = json ? JSON.parse(json) : null;
+        var localTimeout = null;
+        if (json) {
+            // call success callback in a few ms to call it asynchronously in any case
+            localTimeout = setTimeout(function(){
+                console.log('trigger success load from local storage for ' + uri);
+                onSuccess(obj);
+                localTimeout = null
+            }, 50);
         }
-    });
+        whenDeviceReady(function() {
+            if (!models.Device.current().offline()) {
+                // refresh
+                $.ajax({
+                    url: models.baseUrl + uri,
+                    dataType:"text",
+                    type: "GET",
+                    beforeSend: function(xhr) {
+                        // BASIC authentication
+                        var username = models.User.current().name();
+                        var password = ''; // no password to authenticate ATM
+                        xhr.setRequestHeader("Authorization", username);
+                    },
+                    success: function(jsonFromServer) {
+                        var objFromServer = JSON.parse(jsonFromServer);
+                        if (obj && obj.lastmodified && obj.lastmodified == objFromServer.lastmodified) {
+                            console.log('got un modified data from server for ' + uri);
+                            return; // success callback is / will be called from local data which is the same
+                        }
+                        console.log('trigger success load from server for ' + uri);
+                        if (localTimeout) {
+                            // if ever we reach that before the timeout expired, clear it
+                            clearTimeout(localTimeout);
+                        }
+                        localStorage.setItem(uri, jsonFromServer);
+                        onSuccess(objFromServer);
+                    },
+                    error: function() {
+                        console.log('error occured while loading ', uri);
+                    }
+                });
+            }
+        });
+    }, 0);
 }
 
 function mergeData(data, self) {
