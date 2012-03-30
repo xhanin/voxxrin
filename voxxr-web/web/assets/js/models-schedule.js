@@ -42,7 +42,7 @@
             var schedule = data.schedule;
             if (schedule) {
                 self.presentations(_(schedule).map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); }));
-                self.slots(_.chain(schedule).groupBy('slot').map(function(pres, slot) {
+                self.slots(_.chain(schedule).sortBy(function(p) { return p.fromTime; }).groupBy('slot').map(function(pres, slot) {
                     return ds.scheduleSlot({id: self.id() + '/' + slot, eventId: self.eventId(), name: slot, presentations: pres});
                 }).value());
                 self.nbPresentations(schedule.length);
