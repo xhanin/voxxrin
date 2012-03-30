@@ -5099,12 +5099,6 @@ $.widget( "mobile.textinput", $.mobile.widget, {
 
 			focusedEl = input.wrap( "<div class='ui-input-search ui-shadow-inset ui-btn-corner-all ui-btn-shadow ui-icon-searchfield" + themeclass + miniclass + "'></div>" ).parent();
 			clearbtn = $( "<a href='#' class='ui-input-clear' title='clear text'>clear text</a>" )
-				.tap(function( event ) {
-					input.val( "" ).focus();
-					input.trigger( "change" );
-					clearbtn.addClass( "ui-input-clear-hidden" );
-					event.preventDefault();
-				})
 				.appendTo( focusedEl )
 				.buttonMarkup({
 					icon: "delete",
@@ -5192,6 +5186,15 @@ $.widget( "mobile.textinput", $.mobile.widget, {
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
 	$.mobile.textinput.prototype.enhanceWithin( e.target, true );
+    tappable('.ui-input-clear', function( event, target ) {
+        var clearbtn = $(target),
+            input = clearbtn.siblings('input');
+        
+        input.val( "" ).focus();
+        input.trigger( "change" );
+        clearbtn.addClass( "ui-input-clear-hidden" );
+        event.preventDefault();
+    });
 });
 
 })( jQuery );
