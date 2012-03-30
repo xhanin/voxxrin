@@ -55,13 +55,26 @@
             self.loading(false);
         }
 
+        function loadStats(data) {
+            _(self.presentations()).each(function(p) {
+                var stats = data.presStats[p.id()];
+                if (stats) {
+                    p.load(stats);
+                }
+            });
+        }
+
         load(data);
 
         self.refreshPresentations = function() {
             if (!self.slots().length) {
                 self.slots.loading(true);
             }
-            getJSON(self.uri(), load);
+            getJSON(self.uri(), function(data) {
+                load(data);
+                getJSON(self.uri() + '/stats', loadStats);
+            });
+
         }
 
         self.enter = function() {
