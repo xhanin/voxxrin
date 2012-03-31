@@ -1,12 +1,13 @@
 package voxxr.web;
 
-import com.google.appengine.api.datastore.*;
-import com.google.common.base.Function;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.Collections2;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -48,17 +49,7 @@ public class PresentationResources implements RestRouter.RequestHandler {
                         .addFilter("presId", Query.FilterOperator.EQUAL, presentationId)
                         .addFilter("twitterid", Query.FilterOperator.GREATER_THAN, 0)) // want only favorited by with a twitter id associated ATM
                 .asList(FetchOptions.Builder.withDefaults()),
-                new Function<Entity, MyPresentation>() {
-                    @Override
-                    public MyPresentation apply(@Nullable Entity input) {
-                        return new MyPresentation(presentationId,
-                            new User(
-                                (String) input.getProperty("me"),
-                                (Long) input.getProperty("twitterid"),
-                                (String) input.getProperty("device")))
-                                .setFavorite((Boolean) input.getProperty("favorite"));
-                    }
-                });
+                MyPresentation.FROM_ENTITY);
     }
 }
 

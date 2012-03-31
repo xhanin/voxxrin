@@ -28,13 +28,8 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
             try {
                 Rests.maybeSendAsJsonObject(Rests.createKey(kind, id), req, resp);
             } catch (EntityNotFoundException e) {
-                JSONObject json = new JSONObject();
                 try {
-                    json.put("id", id);
-                    json.put("eventId", eventId);
-                    json.put("presId", presId);
-                    json.put("me", me.getId());
-                    json.put("favorite", false);
+                    JSONObject json = MyPresentation.TO_JSON.apply(new MyPresentation(eventId, presId, me));
                     Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
                         @Override
                         public Entity prepare(JSONObject json, Entity entity) throws JSONException {
@@ -55,12 +50,8 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
                 Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
                     @Override
                     public Entity prepare(JSONObject json, Entity entity) throws JSONException {
-                        entity.setProperty("eventId", eventId);
-                        entity.setProperty("presId", presId);
-                        entity.setProperty("me", me.getId());
-                        entity.setProperty("device", me.getDeviceid());
-                        entity.setProperty("twitterid", me.getTwitterid());
-                        entity.setProperty("favorite", json.get("favorite"));
+                        entity.setPropertiesFrom(MyPresentation.TO_ENTITY.apply(
+                                new MyPresentation(eventId, presId, me).setFavorite((Boolean) json.get("favorite"))));
                         return entity;
                     }
                 });

@@ -96,7 +96,7 @@
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
             self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
-                return ds.myPresentation(_.extend({id: myPres.presId + '/' + myPres.userid}, myPres))
+                return ds.myPresentation(_.extend({id: myPres.id || (myPres.userid + '/' + myPres.eventId + '/' + myPres.presId)}, myPres))
             }));
             self.loading(false);
         }

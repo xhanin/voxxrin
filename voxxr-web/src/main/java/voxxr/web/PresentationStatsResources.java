@@ -3,13 +3,11 @@ package voxxr.web;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -40,25 +38,7 @@ public class PresentationStatsResources implements RestRouter.RequestHandler {
                 presStat.put("id", presentationId);
                 presStat.put("favorites", PresentationResources.countFavorites(presentationId));
                 Collection<MyPresentation> favoritedBy = PresentationResources.involvedUsers(presentationId);
-                presStat.put("involvedUsers", new JSONArray(Collections2.transform(favoritedBy, new Function<MyPresentation, JSONObject>() {
-                    @Override
-                    public JSONObject apply(@Nullable MyPresentation input) {
-                        if (input == null) {
-                            return null;
-                        }
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("presId", input.getPresentationId());
-                            jsonObject.put("userid", input.getUser().getId());
-                            jsonObject.put("twitterid", input.getUser().getTwitterid());
-                            jsonObject.put("deviceid", input.getUser().getDeviceid());
-                            jsonObject.put("favorite", input.isFavorite());
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                        return jsonObject;
-                    }
-                })));
+                presStat.put("involvedUsers", new JSONArray(Collections2.transform(favoritedBy, MyPresentation.TO_JSON)));
                 prezStatsJsonStr = presStat.toString();
                 memcacheService.put(cacheKey, prezStatsJsonStr, Expiration.byDeltaSeconds(15));
                 Rests.sendJson(prezStatsJsonStr, req, resp);
