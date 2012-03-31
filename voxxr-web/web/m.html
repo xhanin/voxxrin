@@ -236,6 +236,14 @@
                 <p data-bind="visible: !loading(), text: bio"></p>
             </li>
         </ul>
+        <h3>Friends who favorited it</h3>
+            <ul data-role="listview" data-inset="true" data-bind="listview: favoritedBy.friends">
+                <li class="twuser"><img data-bind="visible: !loading(), attr: {src: pictureURL}" class="picture">
+                    <span class="loading" data-bind="visible: loading"></span>
+                    <p data-bind="visible: !loading()"><strong data-bind="text: name"></strong> <span data-bind="text: '@' + screenname()"></span></p>
+                    <p data-bind="visible: !loading(), text: location"></p>
+                </li>
+            </ul>
         <h3>Followers who favorited it</h3>
             <ul data-role="listview" data-inset="true" data-bind="listview: favoritedBy.followers">
                 <li class="twuser"><img data-bind="visible: !loading(), attr: {src: pictureURL}" class="picture">

@@ -104,6 +104,9 @@
                         if (options.autoLoadFollowers) {
                             self.loadFollowers();
                         }
+                        if (options.autoLoadFriends) {
+                            self.loadFriends();
+                        }
                     });
 
             } else {
@@ -125,8 +128,20 @@
                     self.followers(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
                 });
         }
+        self.loadFriends = function() {
+            $.getJSON(
+                'https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
+                {},
+                function(data) {
+                    self.friends(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
+                });
+        }
 
-        self.loadDetails = load;
+        self.loadDetails = function() {
+            if (!self.pictureURL()) {
+                load();
+            }
+        };
 
         if (options.autoLoad) {
             self.screenname.subscribe(load);
@@ -137,7 +152,7 @@
     var User = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
-        self.twuser = ko.observable(new TwUser({screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true}));
+        self.twuser = ko.observable(new TwUser({screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true, autoLoadFriends: true}));
         self.name = ko.computed(function() {
             var name = (self.id() || 'a')
                 + (self.twuser().id() ? '(' + self.twuser().id() + ')' : '')

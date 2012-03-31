@@ -40,7 +40,17 @@
         self.favoritedBy = ko.observableArray([]);
         self.favoritedBy.followers = ko.computed(function() {
             var followerIds = _(models.User.current().twuser().followers()).map(function(twuser) { return twuser.id() });
-            var favFol = _(self.favoritedBy()).filter(function(usr) { return followerIds.indexOf(usr.id()) >= 0 });
+            var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
+            var favFol = _(self.favoritedBy()).filter(function(usr) {
+                return followerIds.indexOf(usr.id()) >= 0
+                    && friendsIds.indexOf(usr.id()) === -1 // do not display friends in followers
+            });
+            _(favFol).invoke('loadDetails');
+            return favFol;
+        });
+        self.favoritedBy.friends = ko.computed(function() {
+            var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
+            var favFol = _(self.favoritedBy()).filter(function(usr) { return friendsIds.indexOf(usr.id()) >= 0 });
             _(favFol).invoke('loadDetails');
             return favFol;
         });
