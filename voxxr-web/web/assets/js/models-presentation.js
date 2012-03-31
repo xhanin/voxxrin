@@ -112,6 +112,7 @@
                         function(data) {
                             loadData(data); if (onloaded) onloaded(self);
                         });
+                    getJSON(self.uri() + '/stats', loadData);
                 } else {
                      if (onloaded) onloaded(self);
                 }

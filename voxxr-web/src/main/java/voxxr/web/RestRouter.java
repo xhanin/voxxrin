@@ -50,6 +50,8 @@ public class RestRouter extends HttpServlet {
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "dayId").build()),
         new Route(new PresentationResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/presentations/([a-z0-9\\-]+)"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "presentationId").build()),
+        new Route(new PresentationStatsResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/presentations/([a-z0-9\\-]+)/stats"),
+                new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "presentationId").build()),
         new Route(new SpeakerResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/speakers/([a-z0-9\\-]+)"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "speakerId").build()),
         new Route(new SpeakerPictureResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/speakers/([a-z0-9\\-]+)/picture\\.([a-z]+)"),

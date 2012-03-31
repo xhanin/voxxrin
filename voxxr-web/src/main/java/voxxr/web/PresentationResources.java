@@ -23,17 +23,7 @@ public class PresentationResources implements RestRouter.RequestHandler {
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
         String kind = "Presentation";
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-            try {
-                String presentationId = params.get("presentationId");
-                Entity pres = Rests.findEntityByKey(Rests.createKey(kind, presentationId));
-                JSONObject json = new JSONObject(((Text) pres.getProperty("json")).getValue());
-                json.put("favorites", countFavorites(presentationId));
-                Rests.sendJson(json, req, resp);
-            } catch (EntityNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            Rests.sendAsJsonObject(Rests.createKey(kind, params.get("presentationId")), req, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             Rests.storeFromRequest(req, resp, kind, new PrepareEntityCallback() {
                 @Override
