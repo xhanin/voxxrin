@@ -42,20 +42,21 @@ public class PresentationResources implements RestRouter.RequestHandler {
                             .countEntities(FetchOptions.Builder.withDefaults());
     }
 
-    public static Collection<User> favoritedBy(String presentationId) {
+    public static Collection<MyPresentation> involvedUsers(final String presentationId) {
         return Collections2.transform(DatastoreServiceFactory.getDatastoreService().prepare(
                 new Query("MyPresentation")
                         .addFilter("presId", Query.FilterOperator.EQUAL, presentationId)
-                        .addFilter("favorite", Query.FilterOperator.EQUAL, true)
                         .addFilter("twitterid", Query.FilterOperator.GREATER_THAN, 0)) // want only favorited by with a twitter id associated ATM
                 .asList(FetchOptions.Builder.withDefaults()),
-                new Function<Entity, User>() {
+                new Function<Entity, MyPresentation>() {
                     @Override
-                    public User apply(@Nullable Entity input) {
-                        return new User(
+                    public MyPresentation apply(@Nullable Entity input) {
+                        return new MyPresentation(presentationId,
+                            new User(
                                 (String) input.getProperty("me"),
                                 (Long) input.getProperty("twitterid"),
-                                (String) input.getProperty("device"));
+                                (String) input.getProperty("device")))
+                                .setFavorite((Boolean) input.getProperty("favorite"));
                     }
                 });
     }

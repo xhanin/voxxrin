@@ -37,21 +37,19 @@
         self.startedAt = ko.observable(null);
         self.timeElasped = ko.observable(0);
         self.favorites = ko.observable(0);
-        self.favoritedBy = ko.observableArray([]);
-        self.favoritedBy.followers = ko.computed(function() {
+        self.involvedUsers = ko.observableArray([]);
+        self.involvedUsers.followers = ko.computed(function() {
             var followerIds = _(models.User.current().twuser().followers()).map(function(twuser) { return twuser.id() });
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
-            var favFol = _(self.favoritedBy()).filter(function(usr) {
-                return followerIds.indexOf(usr.id()) >= 0
-                    && friendsIds.indexOf(usr.id()) === -1 // do not display friends in followers
+            var favFol = _(self.involvedUsers()).filter(function(myPres) {
+                return followerIds.indexOf(myPres.twuser().id()) >= 0
+                    && friendsIds.indexOf(myPres.twuser().id()) === -1 // do not display friends in followers
             });
-            _(favFol).invoke('loadDetails');
             return favFol;
         });
-        self.favoritedBy.friends = ko.computed(function() {
+        self.involvedUsers.friends = ko.computed(function() {
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
-            var favFol = _(self.favoritedBy()).filter(function(usr) { return friendsIds.indexOf(usr.id()) >= 0 });
-            _(favFol).invoke('loadDetails');
+            var favFol = _(self.involvedUsers()).filter(function(myPres) { return friendsIds.indexOf(myPres.twuser().id()) >= 0 });
             return favFol;
         });
         self.time = ko.observable('');
@@ -97,7 +95,9 @@
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
-            self.favoritedBy(_(data.favoritedBy).map(function(usr) { return ds.twUser({id: usr.twitterid}) }));
+            self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
+                return ds.myPresentation(_.extend({id: myPres.presId + '/' + myPres.userid}, myPres))
+            }));
             self.loading(false);
         }
 

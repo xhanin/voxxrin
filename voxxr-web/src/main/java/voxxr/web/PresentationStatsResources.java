@@ -39,18 +39,20 @@ public class PresentationStatsResources implements RestRouter.RequestHandler {
                 JSONObject presStat = new JSONObject();
                 presStat.put("id", presentationId);
                 presStat.put("favorites", PresentationResources.countFavorites(presentationId));
-                Collection<User> favoritedBy = PresentationResources.favoritedBy(presentationId);
-                presStat.put("favoritedBy", new JSONArray(Collections2.transform(favoritedBy, new Function<User, JSONObject>() {
+                Collection<MyPresentation> favoritedBy = PresentationResources.involvedUsers(presentationId);
+                presStat.put("involvedUsers", new JSONArray(Collections2.transform(favoritedBy, new Function<MyPresentation, JSONObject>() {
                     @Override
-                    public JSONObject apply(@Nullable User input) {
+                    public JSONObject apply(@Nullable MyPresentation input) {
                         if (input == null) {
                             return null;
                         }
                         JSONObject jsonObject = new JSONObject();
                         try {
-                            jsonObject.put("id", input.getId());
-                            jsonObject.put("twitterid", input.getTwitterid());
-                            jsonObject.put("deviceid", input.getDeviceid());
+                            jsonObject.put("presId", input.getPresentationId());
+                            jsonObject.put("userid", input.getUser().getId());
+                            jsonObject.put("twitterid", input.getUser().getTwitterid());
+                            jsonObject.put("deviceid", input.getUser().getDeviceid());
+                            jsonObject.put("favorite", input.isFavorite());
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

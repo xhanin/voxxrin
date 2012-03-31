@@ -1,7 +1,7 @@
 (function(exports) {
     var ds = {};
     // factories / data storage
-    _(['event', 'scheduleDay', 'scheduleSlot', 'presentation', 'speaker', 'room', 'twUser'])
+    _(['event', 'scheduleDay', 'scheduleSlot', 'presentation', 'speaker', 'room', 'twUser', 'myPresentation'])
         .each(function(type) {
             ds[type + 'Cache'] = {};
             ds[type] = function(data) {

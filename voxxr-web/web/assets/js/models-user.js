@@ -1,25 +1,34 @@
 (function(exports) {
 
-    var MyPresentation = function(my, data) {
+    var MyPresentation = function(data, my) {
         var self = this;
-        self.data = data;
+        self.data = ko.observable(data);
 
-        self.favorite = ko.observable(self.data.favorite?true:false);
+        self.id = ko.observable(self.data().id);
+        self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}).loadDetails() : null);
+        self.favorite = ko.observable();
 
-        self.favorite.subscribe(function(newValue) {
-            self.data.favorite = newValue;
-            var p = ds.presentation({id: self.data.presId, eventId:self.data.eventId});
-            if (p.title()) {
-                if (newValue) {
-                    p.favorites(p.favorites() + 1);
-                } else {
-                    p.favorites(p.favorites() - 1);
+        self.load = function(data) {
+            mergeData(data, self);
+            self.favorite(self.data().favorite?true:false);
+        }
+
+        if (my) {
+            self.favorite.subscribe(function(newValue) {
+                self.data().favorite = newValue;
+                var p = ds.presentation({id: self.data().presId, eventId:self.data().eventId});
+                if (p.title()) {
+                    if (newValue) {
+                        p.favorites(p.favorites() + 1);
+                    } else {
+                        p.favorites(p.favorites() - 1);
+                    }
                 }
-            }
-            postJSON('/events/' + self.data.eventId + '/presentations/' + self.data.presId + '/my', self.data, function() {
-                my.store();
+                postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(), function() {
+                    my.store();
+                });
             });
-        });
+        }
     }
 
     var My = function(data) {
@@ -48,7 +57,7 @@
 
         self.presentation = function(eventId, presId) {
             if (!eventId || !presId) {
-                return new MyPresentation(self, {me: self.data.id, eventId: eventId, presId: presId});
+                return new MyPresentation({me: self.data.id, eventId: eventId, presId: presId}, self);
             }
             if (!self.presentations[eventId + '/' + presId]) {
                 var event = self.data.events[eventId];
@@ -61,7 +70,7 @@
                     pres = {me: self.data.id,  eventId: eventId, presId: presId, favorite: false};
                     event.presentations[presId] = pres;
                 }
-                self.presentations[eventId + '/' + presId] = new MyPresentation(self, pres);
+                self.presentations[eventId + '/' + presId] = new MyPresentation(pres, self);
             }
             return self.presentations[eventId + '/' + presId];
         }
@@ -141,6 +150,7 @@
             if (!self.pictureURL()) {
                 load();
             }
+            return self;
         };
 
         if (options.autoLoad) {
@@ -184,4 +194,5 @@
     exports.models = exports.models || {};
     exports.models.User = User;
     exports.models.TwUser = TwUser;
+    exports.models.MyPresentation = MyPresentation;
 })(window);
