@@ -58,13 +58,17 @@ function crawl() {
                 voxxrin.event.nbPresentations++;
                 var fromTime = new Date(Date.parse(s.fromTime)),
                     daySchedule = voxxrin.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
-                voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
 
                 var voxxrinPres = {"id":prefix + s.id, "title":s.title, "type":s.type, "kind":s.kind,
                         "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
                         "speakers": _(s.speakers).map(toVoxxrinSpeaker),
                         "room": voxxrin.rooms[s.room],
                         "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
+                if (_(daySchedule.schedule).find(function(p) { return p.id === voxxrinPres.id })) {
+                    // workaround bug in CFP API having multiple times the same pres
+                    return;
+                }
+                voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
                 daySchedule.schedule.push(voxxrinPres);
                 load(s.presentationUri).then(function(p) {
                     send(baseUrl + '/r' + voxxrinPres.uri,
