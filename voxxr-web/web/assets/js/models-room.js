@@ -27,6 +27,15 @@
             return Room.current() && Room.current().id() === self.id();
         }
 
+        function notifyJoined() {
+            if (self.presentation()) {
+                self.presentation().my().joined(self.joined());
+            }
+        }
+
+        self.presentation.subscribe(notifyJoined);
+        self.joined.subscribe(notifyJoined);
+
         // enter and quit are automatically called when changing current
         self.enter = function() {
             self.connect();

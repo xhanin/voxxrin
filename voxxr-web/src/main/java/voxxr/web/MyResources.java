@@ -1,7 +1,8 @@
 package voxxr.web;
 
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +26,7 @@ public class MyResources implements RestRouter.RequestHandler {
                 Rests.maybeSendAsJsonObject(Rests.createKey(kind, me.getId()), req, resp);
             } catch (EntityNotFoundException e) {
                 try {
-                    Entity entity = newMy(me.getId());
+                    Entity entity = newMy(me);
                     Rests.sendAsJsonObject(entity, req, resp);
                 } catch (JSONException e1) {
                     throw new RuntimeException(e1);
@@ -50,10 +51,12 @@ public class MyResources implements RestRouter.RequestHandler {
         }
     }
 
-    public static Entity newMy(String me) throws JSONException {
+    public static Entity newMy(User me) throws JSONException {
         String kind = "My";
         JSONObject json = new JSONObject();
-        json.put("id", me);
+        json.put("id", me.getId());
+        json.put("twitterid", me.getTwitterid());
+        json.put("deviceid", me.getDeviceid());
         json.put("events", new JSONObject());
         return Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
             @Override
@@ -61,5 +64,32 @@ public class MyResources implements RestRouter.RequestHandler {
                 return entity;
             }
         });
+    }
+
+    public static void updateMyPresentation(MyPresentation myPresentation) throws JSONException {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        User me = myPresentation.getUser();
+        String eventId = myPresentation.getEventId();
+        Entity my = null;
+        try {
+            my = ds.get(Rests.createKey("My", me.getId()));
+        } catch (EntityNotFoundException e) {
+            my = MyResources.newMy(me);
+        }
+        String myJsonStr = ((Text) my.getProperty("json")).getValue();
+        JSONObject myJson = new JSONObject(myJsonStr);
+        JSONObject events = myJson.getJSONObject("events");
+        if (!events.has(eventId)) {
+            JSONObject jsonEvent = new JSONObject();
+            jsonEvent.put("presentations", new JSONObject());
+            events.put(eventId, jsonEvent);
+        }
+        events.getJSONObject(eventId).getJSONObject("presentations").put(
+                myPresentation.getPresentationId(), MyPresentation.TO_JSON.apply(myPresentation));
+        my.setProperty("json", new Text(myJson.toString()));
+        ds.put(my);
+        MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
+        String cacheKey = KeyFactory.keyToString(my.getKey());
+        memcache.put(cacheKey, my);
     }
 }

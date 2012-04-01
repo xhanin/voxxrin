@@ -154,13 +154,24 @@ public class Rests {
     }
 
     public static Entity storeFromJSON(JSONObject json, String kind, PrepareEntityCallback callback) throws JSONException {
+        String id = json.has("id") ? json.getString("id") : null;
+        Entity entity = getOrCreateEntityForUpdate(kind, id);
+        if (id == null) {
+            json.put("id", String.valueOf(entity.getKey().getId()));
+        }
+        json.put("lastmodified", (Long) entity.getProperty("lastmodified"));
+        entity.setProperty("json", new Text(json.toString()));
+
+        DatastoreServiceFactory.getDatastoreService().put(callback.prepare(json, entity));
+        return entity;
+    }
+
+    public static Entity getOrCreateEntityForUpdate(String kind, String id) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity entity = null;
-        String id = json.has("id") ? json.getString("id") : null;
         if (id == null) {
             entity = new Entity(kind);
-            Key key = datastore.put(entity);
-            json.put("id", String.valueOf(key.getId()));
+            datastore.put(entity); // put it now to generate its key
         } else {
             try {
                 entity = datastore.get(createKey(kind, id));
@@ -174,12 +185,8 @@ public class Rests {
             }
         }
         long now = System.currentTimeMillis();
-        json.put("lastmodified", now);
         entity.setProperty("lastmodified", now);
-        entity.setProperty("json", new Text(json.toString()));
-        Key key = datastore.put(callback.prepare(json, entity));
-
-        MemcacheServiceFactory.getMemcacheService("entities").delete(KeyFactory.keyToString(key));
+        MemcacheServiceFactory.getMemcacheService("entities").delete(KeyFactory.keyToString(entity.getKey()));
         return entity;
     }
 

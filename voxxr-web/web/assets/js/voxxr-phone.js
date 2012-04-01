@@ -243,6 +243,7 @@ $(function() {
         roomRT.find(".tabs a").removeClass("ui-btn-active");
         $(target).addClass("ui-btn-active");
         roomRT.find("div#poll").hide();
+        roomRT.find("div.network").hide();
         roomRT.find("#feedback").show();
     });
 
@@ -251,7 +252,17 @@ $(function() {
         roomRT.find(".tabs a").removeClass("ui-btn-active");
         $(target).addClass("ui-btn-active");
         roomRT.find("#feedback").hide();
+        roomRT.find("div.network").hide();
         roomRT.find("div#poll").show();
+    });
+
+    tappable(".roomRT.page .tabs a.network", function(e, target) {
+        var roomRT = $(target).closest(".roomRT.page");
+        roomRT.find(".tabs a").removeClass("ui-btn-active");
+        $(target).addClass("ui-btn-active");
+        roomRT.find("#feedback").hide();
+        roomRT.find("div#poll").hide();
+        roomRT.find("div.network").show();
     });
 
 

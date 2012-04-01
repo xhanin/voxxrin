@@ -128,7 +128,7 @@
         self.quit = function() {}
     }
 
-    Presentation.current = currentModelObject(new Presentation({}));
+    Presentation.current = currentModelObject();
 
     exports.models = exports.models || {};
     exports.models.Presentation = Presentation;

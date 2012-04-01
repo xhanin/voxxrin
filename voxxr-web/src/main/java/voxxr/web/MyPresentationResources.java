@@ -1,8 +1,8 @@
 package voxxr.web;
 
-import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.memcache.MemcacheService;
-import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,61 +25,25 @@ public class MyPresentationResources implements RestRouter.RequestHandler {
         final String presId = params.get("presentationId");
         String id = me.getId() + "/" + eventId + "/" + presId;
         if ("GET".equalsIgnoreCase(req.getMethod())) {
+            Entity entity;
             try {
-                Rests.maybeSendAsJsonObject(Rests.createKey(kind, id), req, resp);
+                entity = Rests.findEntityByKey(Rests.createKey(kind, id));
             } catch (EntityNotFoundException e) {
-                try {
-                    JSONObject json = MyPresentation.TO_JSON.apply(new MyPresentation(eventId, presId, me));
-                    Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
-                        @Override
-                        public Entity prepare(JSONObject json, Entity entity) throws JSONException {
-                            return entity;
-                        }
-                    });
-                    Rests.sendAsJsonObject(entity, req, resp);
-                } catch (JSONException e1) {
-                    throw new RuntimeException(e1);
-                }
+                entity = Rests.getOrCreateEntityForUpdate(kind, id);
+                entity.setPropertiesFrom(MyPresentation.TO_ENTITY.apply(new MyPresentation(eventId, presId, me)));
+                DatastoreServiceFactory.getDatastoreService().put(entity);
             }
+            Rests.sendJson(MyPresentation.TO_JSON.apply(MyPresentation.FROM_ENTITY.apply(entity)), req, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             try {
                 JSONObject json = Rests.jsonObjectFromRequest(req);
-                if (!json.has("id")) {
-                    json.put("id", id);
-                }
-                Entity entity = Rests.storeFromJSON(json, kind, new PrepareEntityCallback() {
-                    @Override
-                    public Entity prepare(JSONObject json, Entity entity) throws JSONException {
-                        entity.setPropertiesFrom(MyPresentation.TO_ENTITY.apply(
-                                new MyPresentation(eventId, presId, me).setFavorite((Boolean) json.get("favorite"))));
-                        return entity;
-                    }
-                });
+                Entity entity = Rests.getOrCreateEntityForUpdate(kind, id);
+                MyPresentation.mergeEntityFromJson(json, entity);
+                DatastoreServiceFactory.getDatastoreService().put(entity);
+                MyPresentation myPresentation = MyPresentation.FROM_ENTITY.apply(entity);
 
-                // maybe this should go into MyResources
-                Entity my = null;
-                DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-                try {
-                    my = ds.get(Rests.createKey("My", me.getId()));
-                } catch (EntityNotFoundException e) {
-                    my = MyResources.newMy(me.getId());
-                }
-                String myJsonStr = ((Text) my.getProperty("json")).getValue();
-                JSONObject myJson = new JSONObject(myJsonStr);
-                JSONObject events = myJson.getJSONObject("events");
-                if (!events.has(eventId)) {
-                    JSONObject jsonEvent = new JSONObject();
-                    jsonEvent.put("presentations", new JSONObject());
-                    events.put(eventId, jsonEvent);
-                }
-                events.getJSONObject(eventId).getJSONObject("presentations").put(presId, json);
-                my.setProperty("json", new Text(myJson.toString()));
-                ds.put(my);
-                MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
-                String cacheKey = KeyFactory.keyToString(my.getKey());
-                memcache.put(cacheKey, my);
-
-                Rests.sendAsJsonObject(entity, req, resp);
+                MyResources.updateMyPresentation(myPresentation);
+                Rests.sendJson(MyPresentation.TO_JSON.apply(myPresentation), req, resp);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

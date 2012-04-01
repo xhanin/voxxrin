@@ -1,5 +1,5 @@
 (function(exports) {
-
+    var Presences = {NO:'NO', IN:'IN', WAS:'WAS'}
     var MyPresentation = function(data, my) {
         var self = this;
         self.data = ko.observable(data);
@@ -7,13 +7,37 @@
         self.id = ko.observable(self.data().id);
         self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}).loadDetails() : null);
         self.favorite = ko.observable();
+        self.presence = ko.observable(Presences.NO);
 
         self.load = function(data) {
             mergeData(data, self);
             self.favorite(self.data().favorite?true:false);
+            self.presence(self.data().presence);
         }
 
         if (my) {
+            function sendToServer() {
+                postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
+                    function() {
+                        my.store();
+                    });
+            }
+            self.joined = function(joined) {
+                var prevPresence = self.presence();
+                if (!joined) {
+                    if (self.presence() == Presences.IN) {
+                        self.presence(Presences.WAS);
+                    }
+                } else {
+                    if (self.presence() == Presences.NO || self.presence() == Presences.WAS) {
+                        self.presence(Presences.IN);
+                    }
+                }
+                if (prevPresence !== self.presence()) {
+                    self.data().presence = self.presence();
+                    sendToServer();
+                }
+            }
             self.favorite.subscribe(function(newValue) {
                 self.data().favorite = newValue;
                 var p = ds.presentation({id: self.data().presId, eventId:self.data().eventId});
@@ -24,9 +48,7 @@
                         p.favorites(p.favorites() - 1);
                     }
                 }
-                postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(), function() {
-                    my.store();
-                });
+                sendToServer();
             });
         }
     }
@@ -57,7 +79,8 @@
 
         self.presentation = function(eventId, presId) {
             if (!eventId || !presId) {
-                return new MyPresentation({me: self.data.id, eventId: eventId, presId: presId}, self);
+                return new MyPresentation({userid: self.data.id, twitterid: self.data.twitterid, deviceid: self.data.deviceid,
+                    eventId: eventId, presId: presId}, self);
             }
             if (!self.presentations[eventId + '/' + presId]) {
                 var event = self.data.events[eventId];
@@ -67,7 +90,8 @@
                 }
                 var pres = event.presentations[presId];
                 if (!pres) {
-                    pres = {me: self.data.id,  eventId: eventId, presId: presId, favorite: false};
+                    pres = {userid: self.data.id, twitterid: self.data.twitterid, deviceid: self.data.deviceid,
+                        eventId: eventId, presId: presId, favorite: false};
                     event.presentations[presId] = pres;
                 }
                 self.presentations[eventId + '/' + presId] = new MyPresentation(pres, self);
@@ -103,7 +127,7 @@
         function load() {
             if (self.screenname() || self.id()) {
                 self.loading(true);
-
+                loadData({id: self.id(), screen_name: self.screenname()}); // reset
                 var param = self.id() ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
                 $.getJSON(
                     'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
@@ -154,15 +178,15 @@
         };
 
         if (options.autoLoad) {
-            self.screenname.subscribe(load);
-            self.id.subscribe(load);
+            self.screenname.subscribe(load, {throttle: 1});
+            self.id.subscribe(load, {throttle: 1});
         }
     }
 
     var User = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
-        self.twuser = ko.observable(new TwUser({screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true, autoLoadFriends: true}));
+        self.twuser = ko.observable(new TwUser({id: data.twitterid, screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true, autoLoadFriends: true}));
         self.name = ko.computed(function() {
             var name = (self.id() || 'a')
                 + (self.twuser().id() ? '(' + self.twuser().id() + ')' : '')
@@ -172,24 +196,35 @@
             return name;
         });
         self.id.subscribe(function(newValue) {
-            localStorage.setItem('userId', newValue);
-            loadMy();
+            self.twuser().id(null);
             self.twuser().screenname(newValue);
+        });
+        self.name.subscribe(function() {
+            localStorage.setItem('userId', self.id());
+            localStorage.setItem('twitterid', self.twuser().id());
+            loadMy();
         });
 
         self.my = ko.observable(new My({events: {}}));
 
         function loadMy() {
             getJSON('/my', function(data) {
+                if (self.twuser().screenname() == data.id) {
+                    data.twitterid = self.twuser().id();
+                }
+                data.deviceid = models.Device.current().id();
                 self.my(new My(data))
             });
         }
 
         loadMy();
     }
-    var userId = localStorage.getItem('userId') || '';
-    User.current = ko.observable(new User({id: userId}));
-    console.log('User is ' + User.current().name());
+    whenDeviceReady(function() {
+        var userId = localStorage.getItem('userId') || '';
+        var twitterid = localStorage.getItem('twitterid') || '';
+        User.current = ko.observable(new User({id: userId, twitterid: twitterid}));
+        console.log('User is ' + User.current().name());
+    });
 
     exports.models = exports.models || {};
     exports.models.User = User;

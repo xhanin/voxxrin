@@ -261,6 +261,7 @@
                     <p data-bind="visible: !twuser().loading()">
                         <span class="thispres">This presentation: </span>
                         <a href="#" class="isFavorite" data-bind="css: { favorite: favorite }"></a>
+                        <a href="#" class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></a>
                     </p>
                 </li>
             </ul>
@@ -272,7 +273,8 @@
             <div data-role="navbar" data-iconpos="left" class="tabs">
                 <ul>
                     <li><a href="#" data-icon="star" class="rate ui-btn-active">LIVE</a></li>
-                    <li data-bind="if: joined"><a href="#" data-icon="grid" class="poll">POLL</a></li>
+                    <li><a href="#" data-icon="grid" class="poll">POLL</a></li>
+                    <li><a href="#" data-icon="network" class="network">NET</a></li>
                 </ul>
             </div>
         </div>
@@ -310,12 +312,31 @@
                 </div>
             </div>
             <div id="poll" style="display:none;" data-bind="with: presentation">
-                <div class="nopoll" data-bind="visible: currentPoll.choices().length === 0">
+                <div data-bind="visible: !$root.joined()">
+                    You need to join the room to participate to polls
+                </div>
+                <div class="nopoll" data-bind="visible: $root.joined() && currentPoll.choices().length === 0">
                     No current poll
                 </div>
                 <ul data-role="listview" data-inset="true"
-                    data-bind="visible: $root.joined && currentPoll.choices().length !== 0, listview: currentPoll.choices">
+                    data-bind="visible: $root.joined() && currentPoll.choices().length !== 0, listview: currentPoll.choices">
                     <li data-icon="false"><a href="#" data-bind='text: title, attr: {"data-value": index}'> </a></li>
+                </ul>
+            </div>
+            <div class="network" style="display:none;" data-bind="with: presentation">
+                <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers">
+                    <li class="twuser"><img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture">
+                        <span class="loading" data-bind="visible: twuser().loading"></span>
+                        <p data-bind="visible: !twuser().loading()"><strong data-bind="text: twuser().name"></strong> <span data-bind="text: '@' + twuser().screenname()"></span></p>
+                        <p data-bind="visible: !twuser().loading()">
+                            <span class="location" data-bind="text: twuser().location"></span>
+                        </p>
+                        <p data-bind="visible: !twuser().loading()">
+                            <span class="thispres">This presentation: </span>
+                            <a href="#" class="isFavorite" data-bind="css: { favorite: favorite }"></a>
+                            <a href="#" class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></a>
+                        </p>
+                    </li>
                 </ul>
             </div>
         </div>

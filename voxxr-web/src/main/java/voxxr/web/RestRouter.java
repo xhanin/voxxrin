@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,8 +85,10 @@ public class RestRouter extends HttpServlet {
                 try {
                     route.handler.handle(req, resp, params);
                 } catch(Exception ex) {
-                    Logger.getLogger("RestRouter").throwing("error in request handling with " + route.handler.getClass().getSimpleName(),
-                            "", ex);
+                    Logger.getLogger("RestRouter").log(
+                            Level.SEVERE,
+                            "error in request handling with " + route.handler.getClass().getSimpleName(),
+                            ex);
                 }
 
                 return;

@@ -351,6 +351,38 @@
 .page li.twuser .picture {
   margin: 5px 10px 5px 5px;
 }
+.page li.twuser .isFavorite {
+  display: block;
+  float: left;
+  margin: 3px;
+  background: url('../img/favorite-no.png');
+  height: 16px;
+  width: 16px;
+}
+.page li.twuser .isFavorite.favorite {
+  background: url('../img/favorite.png');
+}
+.page li.twuser .presence {
+  display: block;
+  float: left;
+  margin: 3px;
+  background: url('../img/presence-NO.png');
+  height: 16px;
+  width: 16px;
+}
+.page li.twuser .presence.in {
+  background: url('../img/presence-IN.png');
+}
+.page li.twuser .presence.was {
+  background: url('../img/presence-WAS.png');
+}
+.page li.twuser .thispres {
+  display: block;
+  float: left;
+  margin: 3px 0;
+  height: 16px;
+  font-style: italic;
+}
 .events.page .events li {
   min-height: 80px;
 }
@@ -399,25 +431,6 @@
 }
 .presentation.page .toggleFavorite.favorite {
   background: url('../img/favorite.png') no-repeat 8px 8px;
-}
-.presentation.page .isFavorite {
-  display: block;
-  float: left;
-  margin: 3px;
-  background: url('../img/favorite-no.png');
-  height: 16px;
-  width: 16px;
-}
-.presentation.page .isFavorite.favorite {
-  background: url('../img/favorite.png');
-}
-.presentation.page .friends .thispres,
-.presentation.page .followers .thispres {
-  display: block;
-  float: left;
-  margin: 3px 0;
-  height: 16px;
-  font-style: italic;
 }
 .twuser .picture {
   display: block;
@@ -487,4 +500,7 @@
 }
 .about.page ui-content a {
   color: #556270;
+}
+.ui-icon-network {
+  background-image: url("../img/network.png");
 }
