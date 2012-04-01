@@ -23,6 +23,10 @@
             return self.status() === CONNECTING;
         });
 
+        self.isCurrent = function() {
+            return Room.current() && Room.current().id() === self.id();
+        }
+
         // enter and quit are automatically called when changing current
         self.enter = function() {
             self.connect();
@@ -48,7 +52,7 @@
         var reconnectAttemptsDelay = 250;
         var reconnectAttemptTimeout = null;
         function attemptToReconnect() {
-            if (!Room.current().id()) {
+            if (!self.isCurrent()) {
                 return;
             }
             reconnectAttemptsDelay *= 2;
@@ -138,8 +142,8 @@
             $.atmosphere.subscribe(
                 $room.rt() + '/r/room/rt?mode=' + Room.bcmode,
                 function(response) {
-                    if (!Room.current().id()) {
-                        // no current room, it seems that we didn't properly quit
+                    if (!$room.isCurrent()) {
+                        // not current room, it seems that we didn't properly quit
                         $room.status(CONNECTED); // set status to connected to make sure disconnect actually call suspend connection
                         $room.disconnect();
                         return;
