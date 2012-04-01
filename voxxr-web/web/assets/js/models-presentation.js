@@ -115,11 +115,15 @@
                         function(data) {
                             loadData(data); if (onloaded) onloaded(self);
                         });
-                    getJSON(self.uri() + '/stats', loadData);
+                    self.loadStats();
                 } else {
                      if (onloaded) onloaded(self);
                 }
             }
+        }
+
+        self.loadStats = function() {
+            getJSON(self.uri() + '/stats', loadData);
         }
 
         loadData(data);

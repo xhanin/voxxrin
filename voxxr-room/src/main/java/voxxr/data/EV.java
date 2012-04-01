@@ -34,6 +34,8 @@ public class EV {
             }
         },
         POKE("PK", 1,  RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        IN("IN", 1,  RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
+        OUT("OUT", -1,  RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         CONNECTION("C", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         TITLE("T", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),
         HOT_FACTOR("H", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER),

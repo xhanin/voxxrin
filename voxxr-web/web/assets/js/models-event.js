@@ -100,8 +100,10 @@
                     self.data(_.extend(self.data(), {nowplaying: data}));
 
                     self.nowplaying(_(data).map(function(presentation) {
-                        var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
-                        p.room().presentation(p);
+                        var p = ds.presentation.find(presentation.id);
+                        if (p.room().presentation() && p.room().presentation().id() !== p.id()) {
+                            p.room().presentation(p);
+                        }
                         wasplaying = _(wasplaying).reject(function(e) { return e.id() === p.id() });
                         return p;
                     }));

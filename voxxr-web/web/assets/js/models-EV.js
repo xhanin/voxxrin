@@ -60,6 +60,15 @@
             ev.msg = parts[1];
         }
 
+        ev.isIn = ev.value.substr(0,2) === 'IN';
+        if (ev.isIn) {
+            ev.myPres = JSON.parse(ev.value.substr(2));
+        }
+        ev.isOut = ev.value.substr(0,3) === 'OUT';
+        if (ev.isOut) {
+            ev.userid = ev.value.substr(3);
+        }
+
         return ev;
     }
 

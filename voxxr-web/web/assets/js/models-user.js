@@ -3,6 +3,7 @@
     var MyPresentation = function(data, my) {
         var self = this;
         self.data = ko.observable(data);
+        self.data().id = data.id || (data.userid + '/' + data.eventId + '/' + data.presId);
 
         self.id = ko.observable(self.data().id);
         self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}).loadDetails() : null);
@@ -10,7 +11,7 @@
         self.presence = ko.observable(Presences.NO);
 
         self.load = function(data) {
-            mergeData(data, self);
+            self.data(_.extend(self.data(), data));
             self.favorite(self.data().favorite?true:false);
             self.presence(self.data().presence);
         }

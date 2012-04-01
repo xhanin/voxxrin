@@ -5,8 +5,11 @@
         .each(function(type) {
             ds[type + 'Cache'] = {};
             ds[type] = function(data) {
-            return factory(ds[type + 'Cache'], type, data);
-        }
+                return factory(ds[type + 'Cache'], type, data);
+            };
+            ds[type].find = function(id) {
+              return ds[type + 'Cache'][id];
+            };
     });
 
     function factory(cache, type, data) {

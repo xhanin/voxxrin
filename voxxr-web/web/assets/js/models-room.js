@@ -30,10 +30,20 @@
         function notifyJoined() {
             if (self.presentation()) {
                 self.presentation().my().joined(self.joined());
+                if (self.joined()) {
+                    self.sendEV('IN' + JSON.stringify(self.presentation().my().data()));
+                } else {
+                    self.sendEV('OUT' + models.User.current().id());
+                }
             }
         }
 
-        self.presentation.subscribe(notifyJoined);
+        self.presentation.subscribe(function(newValue) {
+            notifyJoined();
+            if (newValue && self.isCurrent()) {
+                newValue.loadStats();
+            }
+        });
         self.joined.subscribe(notifyJoined);
 
         // enter and quit are automatically called when changing current
@@ -200,6 +210,24 @@
                                 }
                                 if (ev.isPrezEnd) {
                                     pres.stop();
+                                }
+                                if (ev.isIn) {
+                                    var found = _(pres.involvedUsers()).find(function(myPres) {
+                                        return myPres.data().userid === ev.myPres.userid
+                                    });
+                                    if (found) {
+                                        found.load(ev.myPres);
+                                    } else {
+                                        pres.involvedUsers().push(ds.myPresentation(ev.myPres));
+                                    }
+                                }
+                                if (ev.isOut) {
+                                    var found = _(pres.involvedUsers()).find(function(myPres) {
+                                        return myPres.data().userid === ev.userid
+                                    });
+                                    if (found) {
+                                        found.load({presence: 'WAS'});
+                                    }
                                 }
 
                                 $("body").trigger('EV', ev);

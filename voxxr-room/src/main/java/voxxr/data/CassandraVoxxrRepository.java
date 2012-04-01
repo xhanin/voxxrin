@@ -62,7 +62,7 @@ public class CassandraVoxxrRepository implements VoxxrRepository {
         mutator.addInsertion(ev.getKey(), "EV", HFactory.createStringColumn("value", ev.getValue()));
 
         MutationResult mr = mutator.execute();
-        logger.debug("inserted EV {} in {}us", ev.getKey(), mr.getExecutionTimeMicro());
+        logger.debug("inserted EV {} in {}us", ev, mr.getExecutionTimeMicro());
     }
 
     public MeanRating getPresMeanRating(String pres) {
