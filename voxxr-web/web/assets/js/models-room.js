@@ -10,6 +10,7 @@
         self.name = ko.observable();
         self.rt = ko.observable();
         self.presentation = ko.observable();
+        self.joined = ko.observable(false)
         self.data = ko.observable({});
 
         self.connections = ko.observable(0);
@@ -27,14 +28,19 @@
             self.connect();
         }
         self.quit = function() {
+            self.joined(false);
             self.disconnect();
         };
 
         // API
-        self.join = function() {
+        self.show = function() {
             Room.current(self);
         };
+        self.join = function() {
+            self.joined(true);
+        };
         self.leave = function() {
+            self.joined(false);
             Room.current(null);
             window.history.back();
         };

@@ -264,8 +264,11 @@ $(function() {
     tappable("#nowplaying a.refresh", function() {
         models.Event.current().refreshNowPlaying();
     });
-    tappable(".presentation.page a.joinroom", function() {
-        models.Presentation.current().room().join();
+    tappable(".presentation.page a.showroom", function() {
+        models.Presentation.current().room().show();
+    });
+    tappable("a.joinroom", function() {
+        models.Room.current().join();
     });
 
     tappable(".presentation.page .toggleDetails", function(e, target) {
