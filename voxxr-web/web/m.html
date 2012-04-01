@@ -324,7 +324,7 @@
                 </ul>
             </div>
             <div class="network" style="display:none;" data-bind="with: presentation">
-                <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers">
+                <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.inroom">
                     <li class="twuser"><img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture">
                         <span class="loading" data-bind="visible: twuser().loading"></span>
                         <p data-bind="visible: !twuser().loading()"><strong data-bind="text: twuser().name"></strong> <span data-bind="text: '@' + twuser().screenname()"></span></p>

@@ -52,6 +52,9 @@
             var favFol = _(self.involvedUsers()).filter(function(myPres) { return friendsIds.indexOf(myPres.twuser().id()) >= 0 });
             return favFol;
         });
+        self.involvedUsers.inroom = ko.computed(function() {
+            return _(self.involvedUsers()).filter(function(myPres) { return myPres.presence() == 'IN' });
+        });
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
