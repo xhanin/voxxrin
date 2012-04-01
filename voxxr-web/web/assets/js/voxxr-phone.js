@@ -261,7 +261,7 @@ $(function() {
     tappable(".roomRT.page a.reconnect", function() {
         models.Room.current().reconnect();
     });
-    tappable("#nowplaying a.refresh", function() {
+    tappable(".nowplaying.page a.refresh", function() {
         models.Event.current().refreshNowPlaying();
     });
     tappable(".presentation.page a.showroom", function() {
