@@ -91,6 +91,9 @@
 .roomRT.page #poll .nopoll {
   padding: 15px;
 }
+.roomRT.page .content div.network {
+  padding: 10px 0;
+}
 #jqt .slide.out {
   -webkit-transform: translatex(-100%);
   -webkit-animation-name: slideouttoleft;
@@ -344,44 +347,47 @@
 #jqt li.speaker p.allDetails:after {
   content: '';
 }
-.page li.twuser {
+#jqt .page li.twuser {
   min-height: 40px;
   padding-left: 60px;
 }
-.page li.twuser .picture {
+#jqt .page li.twuser .picture {
   margin: 5px 10px 5px 5px;
 }
-.page li.twuser .isFavorite {
+#jqt .page li.twuser p.thispres {
+  margin: 3px 10px;
+}
+#jqt .page li.twuser p.thispres > * {
   display: block;
   float: left;
   margin: 3px;
+}
+#jqt .page li.twuser p.thispres .label {
+  margin: 3px 0;
+  height: 16px;
+  font-style: italic;
+}
+#jqt .page li.twuser .isFavorite {
   background: url('../img/favorite-no.png');
   height: 16px;
   width: 16px;
 }
-.page li.twuser .isFavorite.favorite {
+#jqt .page li.twuser .isFavorite.favorite {
   background: url('../img/favorite.png');
 }
-.page li.twuser .presence {
-  display: block;
-  float: left;
-  margin: 3px;
+#jqt .page li.twuser .presence {
   background: url('../img/presence-NO.png');
   height: 16px;
   width: 16px;
 }
-.page li.twuser .presence.in {
+#jqt .page li.twuser .presence.in {
   background: url('../img/presence-IN.png');
 }
-.page li.twuser .presence.was {
+#jqt .page li.twuser .presence.was {
   background: url('../img/presence-WAS.png');
 }
-.page li.twuser .thispres {
-  display: block;
-  float: left;
-  margin: 3px 0;
-  height: 16px;
-  font-style: italic;
+#jqt .page li.twuser .rateMeanIcon {
+  margin: 2px 0 0 0;
 }
 .events.page .events li {
   min-height: 80px;

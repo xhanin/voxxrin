@@ -33,6 +33,7 @@
         var crons = {};
 
         function load(data) {
+            var has = {nowplaying: data.nowplaying, days: data.days}
             data = mergeData(data, self);
             if (!data.id) {
                 self.remaining("");
@@ -47,14 +48,18 @@
             self.to(data.to);
             self.nbPresentations(data.nbPresentations);
             self.dates(data.dates);
-            if (data.nowplaying) {
+            if (has.nowplaying) {
                 self.nowplaying(_(data.nowplaying).map(function(presentation) {
                     var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
                     p.room().presentation(p);
                     return p;
                 }));
             }
-            self.days(_(data.days).map(function(day) { return ds.scheduleDay(_.extend(day, {eventId: self.id()}));}));
+            if (has.days) {
+                self.days(_(data.days).map(function(day) {
+                    return ds.scheduleDay(_.extend(day, {eventId: self.id()}));
+                }));
+            }
             self.loading(false);
         }
 
@@ -101,7 +106,10 @@
 
                     self.nowplaying(_(data).map(function(presentation) {
                         var p = ds.presentation.find(presentation.id);
-                        if (p.room().presentation() && p.room().presentation().id() !== p.id()) {
+                        if (!p) {
+                            p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
+                        }
+                        if (!p.room().presentation() || (p.room().presentation().id() !== p.id())) {
                             p.room().presentation(p);
                         }
                         wasplaying = _(wasplaying).reject(function(e) { return e.id() === p.id() });

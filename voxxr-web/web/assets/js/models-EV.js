@@ -1,5 +1,6 @@
 (function(exports) {
     var EV = {};
+    var USER_PATTERN = /([^@\(]+)(?:\((.+)\))?@(.+)/;
 
     EV.toBC = function(user, v) {
         return user + '|' + v;
@@ -17,6 +18,12 @@
             ev.user = parts[0];
             ev.value = parts[1];
         }
+
+        var m = USER_PATTERN.exec(ev.user);
+
+        ev.userid = (m && m[1]) || ev.user;
+        ev.twitterid = (m && m[2]) || '';
+        ev.deviceid = (m && m[3]) || '';
 
         ev.isRate = ev.value.substr(0,1) === 'R' && !isNaN(Number(ev.value.substr(1)));
         if (ev.isRate) {

@@ -7,6 +7,11 @@
         self.avgDisplay = ko.computed(function() {
             return (self.avg() / 100).toFixed(2);
         });
+        self.updateRate = function(rateValue) {
+            var rate = self;
+            rate.avg(((rate.avg() * rate.nb()) + (rateValue * 100)) / (rate.nb() + 1));
+            rate.nb(rate.nb() + 1);
+        }
     }
 
     var PresentationPoll = function(data) {
@@ -55,6 +60,11 @@
         self.involvedUsers.inroom = ko.computed(function() {
             return _(self.involvedUsers()).filter(function(myPres) { return myPres.presence() == 'IN' });
         });
+        self.involvedUsers.findByUserid = function(userid) {
+            return _(self.involvedUsers()).find(function(myPres) {
+                return myPres.data().userid === userid
+            });
+        }
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
@@ -86,6 +96,7 @@
         }
 
         function loadData(data) {
+            var hasInvolvedUsers = data.involvedUsers;
             data = mergeData(data, self);
             self.id(data.id);
             self.eventId(data.eventId);
@@ -98,9 +109,12 @@
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
-            self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
-                return ds.myPresentation(_.extend({id: myPres.id || (myPres.userid + '/' + myPres.eventId + '/' + myPres.presId)}, myPres))
-            }));
+            if (hasInvolvedUsers) {
+                self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
+                    return ds.myPresentation(_.extend({id: myPres.id
+                        || (myPres.userid + '/' + myPres.eventId + '/' + myPres.presId)}, myPres))
+                }));
+            }
             self.loading(false);
         }
 

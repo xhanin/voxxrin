@@ -238,30 +238,55 @@
         </ul>
         <h3>Friends related</h3>
             <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.friends" class="friends">
-                <li class="twuser"><img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture">
+                <li class="twuser">
+                    <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
                     <span class="loading" data-bind="visible: twuser().loading"></span>
-                    <p data-bind="visible: !twuser().loading()"><strong data-bind="text: twuser().name"></strong> <span data-bind="text: '@' + twuser().screenname()"></span></p>
                     <p data-bind="visible: !twuser().loading()">
-                        <span class="location" data-bind="text: twuser().location"></span>
+                        <strong data-bind="text: twuser().name"></strong>
+                        <span data-bind="text: '@' + twuser().screenname()"></span>
+                        <span class="location" data-bind="text: '(' + twuser().location() + ')'"></span>
                     </p>
-                    <p data-bind="visible: !twuser().loading()">
-                        <span class="thispres">This presentation: </span>
-                        <a href="#" class="isFavorite" data-bind="css: { favorite: favorite }"></a>
+                    <p class="thispres" data-bind="visible: !twuser().loading()">
+                        <span class="label">Info: </span>
+                        <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
+                        <span class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></span>
+                        <!-- ko if: presence() == 'IN' || presence() == 'WAS' -->
+                        <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>
+                        <span class="rateMean" data-bind="text: rate.avgDisplay">#</span>
+                        <img src="assets/img/applaudire.png" width="18px" height="18px">
+                        <span class="applause" data-bind="text: feelings.applause">#</span>
+                        <img src="assets/img/ennui.png" width="18px" height="18px">
+                        <span class="yawn" data-bind="text: feelings.yawn">#</span>
+                        <img src="assets/img/interrogation.png" width="18px" height="18px">
+                        <span class="wonder" data-bind="text: feelings.wonder">#</span>
+                        <!-- /ko -->
                     </p>
                 </li>
             </ul>
         <h3>Followers related</h3>
             <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.followers" class="followers">
-                <li class="twuser"><img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture">
+                <li class="twuser">
+                    <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
                     <span class="loading" data-bind="visible: twuser().loading"></span>
-                    <p data-bind="visible: !twuser().loading()"><strong data-bind="text: twuser().name"></strong> <span data-bind="text: '@' + twuser().screenname()"></span></p>
                     <p data-bind="visible: !twuser().loading()">
-                        <span class="location" data-bind="text: twuser().location"></span>
+                        <strong data-bind="text: twuser().name"></strong>
+                        <span data-bind="text: '@' + twuser().screenname()"></span>
+                        <span class="location" data-bind="text: '(' + twuser().location() + ')'"></span>
                     </p>
-                    <p data-bind="visible: !twuser().loading()">
-                        <span class="thispres">This presentation: </span>
-                        <a href="#" class="isFavorite" data-bind="css: { favorite: favorite }"></a>
-                        <a href="#" class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></a>
+                    <p class="thispres" data-bind="visible: !twuser().loading()">
+                        <span class="label">Info: </span>
+                        <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
+                        <span class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></span>
+                        <!-- ko if: presence() == 'IN' || presence() == 'WAS' -->
+                        <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>
+                        <span class="rateMean" data-bind="text: rate.avgDisplay">#</span>
+                        <img src="assets/img/applaudire.png" width="18px" height="18px">
+                        <span class="applause" data-bind="text: feelings.applause">#</span>
+                        <img src="assets/img/ennui.png" width="18px" height="18px">
+                        <span class="yawn" data-bind="text: feelings.yawn">#</span>
+                        <img src="assets/img/interrogation.png" width="18px" height="18px">
+                        <span class="wonder" data-bind="text: feelings.wonder">#</span>
+                        <!-- /ko -->
                     </p>
                 </li>
             </ul>
@@ -325,16 +350,26 @@
             </div>
             <div class="network" style="display:none;" data-bind="with: presentation">
                 <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.inroom">
-                    <li class="twuser"><img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture">
+                    <li class="twuser">
+                        <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
                         <span class="loading" data-bind="visible: twuser().loading"></span>
-                        <p data-bind="visible: !twuser().loading()"><strong data-bind="text: twuser().name"></strong> <span data-bind="text: '@' + twuser().screenname()"></span></p>
                         <p data-bind="visible: !twuser().loading()">
-                            <span class="location" data-bind="text: twuser().location"></span>
+                            <strong data-bind="text: twuser().name"></strong>
+                            <span data-bind="text: '@' + twuser().screenname()"></span>
+                            <span class="location" data-bind="text: '(' + twuser().location() + ')'"></span>
                         </p>
-                        <p data-bind="visible: !twuser().loading()">
-                            <span class="thispres">This presentation: </span>
-                            <a href="#" class="isFavorite" data-bind="css: { favorite: favorite }"></a>
-                            <a href="#" class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></a>
+                        <p class="thispres" data-bind="visible: !twuser().loading()">
+                            <span class="label">Info: </span>
+                            <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
+                            <span class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></span>
+                            <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>
+                            <span class="rateMean" data-bind="text: rate.avgDisplay">#</span>
+                            <img src="assets/img/applaudire.png" width="18px" height="18px">
+                            <span class="applause" data-bind="text: feelings.applause">#</span>
+                            <img src="assets/img/ennui.png" width="18px" height="18px">
+                            <span class="yawn" data-bind="text: feelings.yawn">#</span>
+                            <img src="assets/img/interrogation.png" width="18px" height="18px">
+                            <span class="wonder" data-bind="text: feelings.wonder">#</span>
                         </p>
                     </li>
                 </ul>

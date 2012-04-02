@@ -211,6 +211,7 @@ $(function() {
             sendEV("R" + r,
                 function() {
                     myRate.last = r; setVotes(roomRT);
+                    voxxr.currentRoom().presentation().my().
                     voteFadeOutTimeout = setTimeout(function() { setVotes(roomRT, 0); }, 4000);
                 }, function() {
                     setVotes(roomRT, 0);

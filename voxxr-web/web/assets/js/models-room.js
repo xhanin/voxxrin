@@ -198,9 +198,25 @@
                                     pres.currentPoll.choices([]);
                                 }
                                 if (ev.isRate) {
-                                    var rate = pres.rate;
-                                    rate.avg(((rate.avg() * rate.nb()) + (ev.rateValue * 100)) / (rate.nb() + 1));
-                                    rate.nb(rate.nb() + 1);
+                                    pres.rate.updateRate(ev.rateValue);
+                                    if (ev.userid === models.User.current().id()) {
+                                        models.User.current().my().presentation(pres.eventId(), pres.id())
+                                            .rate.updateRate(ev.rateValue);
+                                    }
+                                    var found = pres.involvedUsers.findByUserid(ev.userid);
+                                    if (found) {
+                                        found.rate.updateRate(ev.rateValue);
+                                    }
+                                }
+                                if (ev.isFeeling) {
+                                    var found = pres.involvedUsers.findByUserid(ev.userid);
+                                    if (ev.userid === models.User.current().id()) {
+                                        models.User.current().my().presentation(pres.eventId(), pres.id())
+                                            .feelings.byCode[ev.feelingValue].inc();
+                                    }
+                                    if (found) {
+                                        found.feelings.byCode[ev.feelingValue].inc();
+                                    }
                                 }
                                 if (ev.isHotFactor) {
                                     pres.hotFactor(ev.hotFactorValue);
@@ -212,9 +228,7 @@
                                     pres.stop();
                                 }
                                 if (ev.isIn) {
-                                    var found = _(pres.involvedUsers()).find(function(myPres) {
-                                        return myPres.data().userid === ev.myPres.userid
-                                    });
+                                    var found = pres.involvedUsers.findByUserid(ev.myPres.userid);
                                     if (found) {
                                         found.load(ev.myPres);
                                     } else {
@@ -222,9 +236,7 @@
                                     }
                                 }
                                 if (ev.isOut) {
-                                    var found = _(pres.involvedUsers()).find(function(myPres) {
-                                        return myPres.data().userid === ev.userid
-                                    });
+                                    var found = pres.involvedUsers.findByUserid(ev.userid);
                                     if (found) {
                                         found.load({presence: 'WAS'});
                                     }

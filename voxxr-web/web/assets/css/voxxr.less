@@ -111,6 +111,10 @@
             padding: 15px;
         }
     }
+
+    .content div.network {
+        padding: 10px 0;
+    }
 }
 
 #jqt {
@@ -332,47 +336,52 @@
         }
         p.allDetails:after {content: ''}
     }
-}
 
-.page li.twuser {
-    min-height: 40px;
-    padding-left: 60px;
+    .page li.twuser {
+        min-height: 40px;
+        padding-left: 60px;
 
-    .picture {
-        margin: 5px 10px 5px 5px;
-    }
+        .picture {
+            margin: 5px 10px 5px 5px;
+        }
 
-    .isFavorite {
-        display: block;
-        float: left;
-        margin: 3px;
-        background: url('../img/favorite-no.png');
-        height: 16px;
-        width: 16px;
-    }
-    .isFavorite.favorite {
-        background: url('../img/favorite.png');
-    }
-    .presence {
-        display: block;
-        float: left;
-        margin: 3px;
-        background: url('../img/presence-NO.png');
-        height: 16px;
-        width: 16px;
-    }
-    .presence.in {
-        background: url('../img/presence-IN.png');
-    }
-    .presence.was {
-        background: url('../img/presence-WAS.png');
-    }
-    .thispres {
-        display: block;
-        float: left;
-        margin: 3px 0;
-        height: 16px;
-        font-style: italic;
+        p.thispres {
+            margin: 3px 10px;
+        }
+
+        p.thispres > * {
+            display: block;
+            float: left;
+            margin: 3px;
+        }
+
+        p.thispres .label {
+            margin: 3px 0;
+            height: 16px;
+            font-style: italic;
+        }
+        .isFavorite {
+            background: url('../img/favorite-no.png');
+            height: 16px;
+            width: 16px;
+        }
+        .isFavorite.favorite {
+            background: url('../img/favorite.png');
+        }
+        .presence {
+            background: url('../img/presence-NO.png');
+            height: 16px;
+            width: 16px;
+        }
+        .presence.in {
+            background: url('../img/presence-IN.png');
+        }
+        .presence.was {
+            background: url('../img/presence-WAS.png');
+        }
+        .rateMeanIcon {
+            margin: 2px 0 0 0;
+        }
     }
 }
 

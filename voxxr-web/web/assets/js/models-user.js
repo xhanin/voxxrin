@@ -9,15 +9,39 @@
         self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}).loadDetails() : null);
         self.favorite = ko.observable();
         self.presence = ko.observable(Presences.NO);
+        self.feelings = {
+            applause: ko.observable(0),
+            yawn: ko.observable(0),
+            wonder: ko.observable(0)
+        };
+        _(self.feelings).each(function(feeling, k) {
+            feeling.inc = function() { feeling(feeling() + 1) };
+            feeling.subscribe(function(newValue) { self.data()[k + 'Count'] = newValue });
+        } );
+
+        self.feelings.byCode = {
+            A: self.feelings.applause,
+            Y: self.feelings.yawn,
+            W: self.feelings.wonder
+        };
+        self.rate = new models.PresentationRate();
+        self.rate.nb.subscribe(function(newValue) {self.data().rateCount = newValue});
+        self.rate.avg.subscribe(function(newValue) {self.data().rateAvg = newValue});
 
         self.load = function(data) {
             self.data(_.extend(self.data(), data));
             self.favorite(self.data().favorite?true:false);
             self.presence(self.data().presence);
+            self.feelings.applause(self.data().applauseCount || 0);
+            self.feelings.yawn(self.data().yawnCount || 0);
+            self.feelings.wonder(self.data().wonderCount || 0);
+            self.rate.nb(self.data().rateCount || 0);
+            self.rate.avg(self.data().rateAvg || 0);
         }
 
         if (my) {
             function sendToServer() {
+                if (!self.data().eventId || !self.data().presId || !self.data().userid) return;
                 postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
                     function() {
                         my.store();
@@ -51,6 +75,13 @@
                 }
                 sendToServer();
             });
+            // register on rate and feelings change to notify the server, with a throttle of 5s
+            ko.computed(function() {
+                self.rate.nb() + self.rate.avg();
+                _(self.feelings.byCode).each(function(feeling) { feeling() });
+
+                sendToServer();
+            }, this).extend({ throttle: 5000 });
         }
     }
 
@@ -80,8 +111,7 @@
 
         self.presentation = function(eventId, presId) {
             if (!eventId || !presId) {
-                return new MyPresentation({userid: self.data.id, twitterid: self.data.twitterid, deviceid: self.data.deviceid,
-                    eventId: eventId, presId: presId}, self);
+                return null;
             }
             if (!self.presentations[eventId + '/' + presId]) {
                 var event = self.data.events[eventId];
@@ -179,8 +209,10 @@
         };
 
         if (options.autoLoad) {
-            self.screenname.subscribe(load, {throttle: 1});
-            self.id.subscribe(load, {throttle: 1});
+            ko.computed(function() {
+                self.screenname() + self.id(); // register on these values
+                load();
+            }, this).extend({ throttle: 1 });
         }
     }
 
@@ -224,7 +256,6 @@
         var userId = localStorage.getItem('userId') || '';
         var twitterid = localStorage.getItem('twitterid') || '';
         User.current = ko.observable(new User({id: userId, twitterid: twitterid}));
-        console.log('User is ' + User.current().name());
     });
 
     exports.models = exports.models || {};

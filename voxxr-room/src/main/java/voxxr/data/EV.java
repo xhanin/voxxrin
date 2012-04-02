@@ -25,7 +25,7 @@ public class EV {
                 return Integer.parseInt(value);
             }
         },
-        FEELING("F") {
+        FEELING("F", 0, RoomResource.BroadcastMode.DASHBOARD, RoomResource.BroadcastMode.USER) {
             @Override
             public int getHotFactorPoints(String value) {
                 return "A".equals(value) ? 8 :
