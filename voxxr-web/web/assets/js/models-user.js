@@ -28,8 +28,7 @@
         self.rate.nb.subscribe(function(newValue) {self.data().rateCount = newValue});
         self.rate.avg.subscribe(function(newValue) {self.data().rateAvg = newValue});
 
-        self.load = function(data) {
-            self.data(_.extend(self.data(), data));
+        function loadFromData() {
             self.favorite(self.data().favorite?true:false);
             self.presence(self.data().presence);
             self.feelings.applause(self.data().applauseCount || 0);
@@ -38,6 +37,13 @@
             self.rate.nb(self.data().rateCount || 0);
             self.rate.avg(self.data().rateAvg || 0);
         }
+
+        self.load = function(data) {
+            self.data(_.extend(self.data(), data));
+            loadFromData();
+        }
+
+        loadFromData();
 
         if (my) {
             function sendToServer() {
