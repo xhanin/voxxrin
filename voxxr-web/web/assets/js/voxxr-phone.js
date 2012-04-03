@@ -16,7 +16,8 @@ $(function() {
         self.user = models.User.current;
         self.device = models.Device.current;
         self.loginBtn = ko.computed(function() {
-            return self.user().id() || 'Login';
+            var u = self.user();
+            return (u && u.id()) || 'Login';
         });
 
         var eventsBound = false;
@@ -26,6 +27,7 @@ $(function() {
                 ko.applyBindings(self, $('#events').get(0));
                 eventsBound = true;
             }
+
             self.chosenEvent(null);
             self.chosenDay(null);
             self.chosenPresentation(null);
@@ -91,46 +93,49 @@ $(function() {
         };
 
         self.gotoRoom = function() {
-            var room = self.goto('roomRT', voxxr.currentRoom());
+            var room = self.goto('roomRT', self.currentRoom());
             return room.page.roomRT;
-        }
+        };
 
-        // load
-        self.events.loading(true);
-        getJSON("/events", function(data) {
-            self.events.loading(false);
-            self.events(_(data).map(function(event) { return ds.event(event); }));
-        });
+        self.load = function() {
+            self.events.loading(true);
+            getJSON("/events", function(data) {
+                self.events.loading(false);
+                self.events(_(data).map(function(event) { return ds.event(event); }));
+            });
+        };
     };
 
     var voxxr = new VoxxrViewModel();
+    whenDeviceReady(function() {
+        voxxr.load();
+        Route
+            .add('events', function() {
+                return voxxr.gotoEvents();
+            }, [])
+            .add('event~:event', function() {
+                return voxxr.gotoEvent(this.params.event);
+            }, ["#events"])
+            .add('nowplaying~:event', function() {
+                return voxxr.gotoNowPlaying(this.params.event);
+            }, ["#events", "#event~:event"])
+            .add('dayschedule~:event~:day', function() {
+                return voxxr.gotoDay(this.params.event, this.params.day);
+            }, ["#events", "#event~:event"])
+            .add('presentation~:event~:presentation', function() {
+                return voxxr.gotoPresentation(this.params.event, this.params.presentation);
+            }, ["#events", "#event~:event"])
+            .add('roomRT', function() {
+                if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
+                return voxxr.gotoRoom();
+            })
+            .add('', function() {
+                return voxxr.gotoEvents();
+            }, [])
+            .start('events');
 
-    Route
-        .add('events', function() {
-            return voxxr.gotoEvents();
-        }, [])
-        .add('event~:event', function() {
-            return voxxr.gotoEvent(this.params.event);
-        }, ["#events"])
-        .add('nowplaying~:event', function() {
-            return voxxr.gotoNowPlaying(this.params.event);
-        }, ["#events", "#event~:event"])
-        .add('dayschedule~:event~:day', function() {
-            return voxxr.gotoDay(this.params.event, this.params.day);
-        }, ["#events", "#event~:event"])
-        .add('presentation~:event~:presentation', function() {
-            return voxxr.gotoPresentation(this.params.event, this.params.presentation);
-        }, ["#events", "#event~:event"])
-        .add('roomRT', function() {
-            if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
-            return voxxr.gotoRoom();
-        })
-        .add('', function() {
-            return voxxr.gotoEvents();
-        }, [])
-        .start('events');
-
-    ko.applyBindings(voxxr.user(), $('#signin').get(0));
+        ko.applyBindings(voxxr.user(), $('#signin').get(0));
+    });
 
     var hfpoints = [];
     var rpoints = [];
@@ -316,6 +321,10 @@ $(function() {
        $.mobile.handleLink(target);
     });
 
+    tappable("#signin a.signin", function(e, target) {
+        console.log('signing in ' + $('#userid').val());
+        models.User.current().id($('#userid').val());
+    });
 
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;

@@ -158,14 +158,15 @@
             self.pictureURL(data.profile_image_url);
             self.location(data.location);
             self.loading(false);
-            self.ready(true);
+            self.ready(data.profile_image_url ? true : false);
         }
         
         function load() {
             if (self.screenname() || self.id()) {
-                self.loading(true);
                 loadData({id: self.id(), screen_name: self.screenname()}); // reset
+                self.loading(true);
                 var param = self.id() ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
+                console.log('loading twitter account details with param' + param);
                 $.getJSON(
                     'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
                     {},
@@ -178,7 +179,6 @@
                             self.loadFriends();
                         }
                     });
-
             } else {
                 loadData({});
             }
@@ -239,8 +239,8 @@
             self.twuser().screenname(newValue);
         });
         self.name.subscribe(function() {
-            localStorage.setItem('userId', self.id());
-            localStorage.setItem('twitterid', self.twuser().id());
+            localStorage.setItem('userId', self.id() || null);
+            localStorage.setItem('twitterid', self.twuser().id() || null);
             loadMy();
         });
 
@@ -261,8 +261,10 @@
     whenDeviceReady(function() {
         var userId = localStorage.getItem('userId') || '';
         var twitterid = localStorage.getItem('twitterid') || '';
-        User.current = ko.observable(new User({id: userId, twitterid: twitterid}));
+        twitterid = twitterid == 'undefined' ? '' : twitterid; // in case we badly stored it as a string
+        User.current(new User({id: userId, twitterid: twitterid}));
     });
+    User.current = ko.observable();
 
     exports.models = exports.models || {};
     exports.models.User = User;

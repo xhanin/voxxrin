@@ -71,6 +71,9 @@ Route.start = function(defaultHash) {
     };
     $.mobile.initializePage();
     if (!location.hash) {
+        console.log('setting default hash to ' + defaultHash);
         location.hash = defaultHash;
+    } else {
+        console.log('startup hash is ' + location.hash);
     }
 }

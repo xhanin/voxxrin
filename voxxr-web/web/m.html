@@ -77,8 +77,8 @@
             <label for="userid">Twitter account:</label>
             <input id="userid" type="text" data-bind="value: id">
             <br />
-            <a href="#" data-role="button" data-theme="e">Signin</a>
-            <p class="loading" data-bind="visible: twuser().loading">
+            <a href="#" class="signin" data-role="button" data-theme="e">Signin</a>
+            <p class="loading" data-bind="visible: twuser().loading()">
             </p>
             <p data-bind="visible: twuser().ready()">
                 <div class="twuser" data-bind="with: twuser">
