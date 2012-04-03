@@ -43,8 +43,8 @@
       allowClick: false,
       boundMargin: 50,
       noScrollDelay: 0,
-      activeClassDelay: 0,
-      inactiveClassDelay: 0
+      activeClassDelay: 50,
+      inactiveClassDelay: 100
     },
     supportTouch = 'ontouchend' in document,
     events = {
