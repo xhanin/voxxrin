@@ -136,7 +136,9 @@
             return self.presentations[eventId + '/' + presId];
         }
     }
-
+    function isNonNull(a) {
+            return a && a !== "null" && a !== "undefined";
+    }
     var TwUser = function(data, options) {
         var self = this;
         data = data || {};
@@ -151,6 +153,10 @@
         self.ready = ko.observable(false);
         self.loading = ko.observable(false);
 
+        function isAuthenticated() {
+            return isNonNull(self.id()) || isNonNull(self.screenname());
+        }
+
         function loadData(data) {
             self.id(data.id);
             self.screenname(data.screen_name);
@@ -162,10 +168,10 @@
         }
         
         function load() {
-            if (self.screenname() || self.id()) {
+            if (isAuthenticated()) {
                 loadData({id: self.id(), screen_name: self.screenname()}); // reset
                 self.loading(true);
-                var param = self.id() ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
+                var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
                 console.log('loading twitter account details with param' + param);
                 $.getJSON(
                     'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
@@ -184,7 +190,7 @@
             }
         }
 
-        if (self.screenname() || self.id()) {
+        if (isAuthenticated()) {
             if (options.autoLoad) {
                 load();
             }
@@ -227,8 +233,8 @@
         self.id = ko.observable(data.id);
         self.twuser = ko.observable(new TwUser({id: data.twitterid, screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true, autoLoadFriends: true}));
         self.name = ko.computed(function() {
-            var name = (self.id() || 'a')
-                + (self.twuser().id() ? '(' + self.twuser().id() + ')' : '')
+            var name = (isNonNull(self.id()) ? self.id() : 'a')
+                + (isNonNull(self.twuser().id()) ? '(' + self.twuser().id() + ')' : '')
                 + "@" + models.Device.current().id()
                 ;
             console.log('User is ' + name);
@@ -239,8 +245,8 @@
             self.twuser().screenname(newValue);
         });
         self.name.subscribe(function() {
-            localStorage.setItem('userId', self.id() || null);
-            localStorage.setItem('twitterid', self.twuser().id() || null);
+            localStorage.setItem('userId', isNonNull(self.id()) ? self.id() : null);
+            localStorage.setItem('twitterid', isNonNull(self.twuser().id()) ? self.twuser().id() : null);
             loadMy();
         });
 
@@ -260,8 +266,9 @@
     }
     whenDeviceReady(function() {
         var userId = localStorage.getItem('userId') || '';
-        var twitterid = localStorage.getItem('twitterid') || '';
-        twitterid = twitterid == 'undefined' ? '' : twitterid; // in case we badly stored it as a string
+        userId = isNonNull(userId) ? userId : '';
+        var twitterid = urlParams['twitterid'] || localStorage.getItem('twitterid') || '';
+        twitterid = isNonNull(twitterid) ? twitterid : '';
         User.current(new User({id: userId, twitterid: twitterid}));
     });
     User.current = ko.observable();
