@@ -1,17 +1,15 @@
 package voxxr.web.twitter;
 
-import java.io.IOException;
-import java.util.Map;
+import com.google.appengine.api.datastore.*;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.auth.RequestToken;
+import voxxr.web.RestRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.ConfigurationBuilder;
-import voxxr.web.RestRouter;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * User: sebastiendescamps
@@ -22,28 +20,28 @@ public class SignInTwitter implements RestRouter.RequestHandler {
 
 	@Override
 	public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
-		ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true).setOAuthConsumerKey("NZQ97JHZ7Ho6XRUTppuQ").setOAuthConsumerSecret("Fl12lMSNRh7gAufW9jX32uQy2GFkPaTQOeaQUDrk78");
-
-		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-		req.getSession().setAttribute("twitter", twitter);
+		Twitter twitter = TwitterHelper.getTwitter();
 		try {
-
-			RequestToken requestToken = twitter.getOAuthRequestToken(buildCallBackURL(req));
-
-			req.getSession().setAttribute("requestToken", requestToken);
+            String backTo = req.getParameter("back_to");
+            Entity token = new Entity("RequestToken");
+            token.setProperty("backTo", backTo);
+            DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+            Key key = ds.put(token);
+            RequestToken requestToken = twitter.getOAuthRequestToken(buildCallBackURL(req, key));
+            token.setProperty("token", requestToken.getToken());
+            token.setProperty("tokenSecret", requestToken.getTokenSecret());
+            ds.put(token);
 			resp.sendRedirect(requestToken.getAuthenticationURL());
-
 		} catch (TwitterException e) {
 			resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
 	}
 
-	private String buildCallBackURL(HttpServletRequest request) {
+	private String buildCallBackURL(HttpServletRequest request, Key key) {
 		StringBuffer callbackURL = request.getRequestURL();
 		int index = callbackURL.lastIndexOf("/");
-		callbackURL.replace(index, callbackURL.length(), "").append("/callback");
+		callbackURL.replace(index, callbackURL.length(), "").append("/authentified/" + KeyFactory.keyToString(key));
 		return callbackURL.toString();
 	}
 

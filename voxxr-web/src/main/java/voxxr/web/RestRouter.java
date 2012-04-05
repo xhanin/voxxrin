@@ -2,6 +2,8 @@ package voxxr.web;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import voxxr.web.twitter.CallbackTwitter;
+import voxxr.web.twitter.SignInTwitter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -60,7 +62,11 @@ public class RestRouter extends HttpServlet {
         new Route(new MyPresentationResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/presentations/([a-z0-9\\-]+)/my"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "presentationId").build()),
         new Route(new DeviceResources(), Pattern.compile("/r/devices/([a-z0-9\\-]+)?"),
-                new ImmutableMap.Builder<Integer, String>().put(1, "deviceId").build())
+                new ImmutableMap.Builder<Integer, String>().put(1, "deviceId").build()),
+        new Route(new SignInTwitter(), Pattern.compile("/r/twitter/signin"),
+                new ImmutableMap.Builder<Integer, String>().build()),
+        new Route(new CallbackTwitter(), Pattern.compile("/r/twitter/authentified/(.+)"),
+                new ImmutableMap.Builder<Integer, String>().put(1, "requestTokenKeyString").build())
     );
 
     @Override

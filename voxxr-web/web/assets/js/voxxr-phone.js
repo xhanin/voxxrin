@@ -98,6 +98,7 @@ $(function() {
         };
 
         self.load = function() {
+//            $.mobile.enhancePage($('#twitterSignin'));
             self.events.loading(true);
             getJSON("/events", function(data) {
                 self.events.loading(false);
@@ -128,6 +129,10 @@ $(function() {
             .add('roomRT', function() {
                 if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
                 return voxxr.gotoRoom();
+            })
+            .add('twitterSignin', function() {
+                window.location.href = models.baseUrl + '/twitter/signin?back_to=' + encodeURIComponent(document.URL);
+                return $('#twitterSignin');
             })
             .add('', function() {
                 return voxxr.gotoEvents();
@@ -317,13 +322,24 @@ $(function() {
         $(target).find('p').toggleClass('allDetails');
     }});
 
+    tappable("a.signout", function() {
+       models.User.current().id(null);
+       models.User.current().twuser().id(null);
+    });
+
     tappable("a", function(e, target) {
        $.mobile.handleLink(target);
     });
 
-    tappable("#signin a.signin", function(e, target) {
-        console.log('signing in ' + $('#userid').val());
-        models.User.current().id($('#userid').val());
+    window.addEventListener("message", function(event) {
+        if (event.data.match(/^twitter:/)) {
+            var twitterid = event.data.substr('twitter:'.length);
+            models.User.current().twuser().id(twitterid);
+            $.mobile.changePage('signin');
+        }
+        if (event.data.match(/^unauthorized/)) {
+            $.mobile.changePage('signin');
+        }
     });
 
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.

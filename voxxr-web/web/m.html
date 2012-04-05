@@ -51,7 +51,6 @@
             <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">Login</a>
             <h1>Voxxrin</h1>
             <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
-            <a href="signin" data-transition="slidedown" class="ui-btn-left">SignIn Twitter</a>
         </div>
         <div data-role="content">
         <p class="loading" data-bind="visible: events.loading">
@@ -74,14 +73,16 @@
             <h1>Voxxrin</h1>
         </div>
         <div data-role="content">
-            <br />
-            <label for="userid">Twitter account:</label>
-            <input id="userid" type="text" data-bind="value: id">
-            <br />
-            <a href="#" class="signin" data-role="button" data-theme="e">Signin</a>
+            <br>
+            <div data-bind="visible: twuser().ready()">
+                <label for="userid">Twitter account:</label>
+                <span type="text" data-bind="text: id"></span>
+            </div>
+            <a href="#twitterSignin" class="signin" data-role="button" data-theme="e" data-bind="visible: !twuser().ready()">Signin</a>
+            <a href="#" class="signout" data-role="button" data-theme="e" data-bind="visible: twuser().ready()">Signout</a>
             <p class="loading" data-bind="visible: twuser().loading()">
             </p>
-            <p data-bind="visible: twuser().ready()">
+            <div data-bind="visible: twuser().ready()">
                 <div class="twuser" data-bind="with: twuser">
                     <img class="picture" data-bind="attr: {src: pictureURL}">
                     <div class="details">
@@ -89,15 +90,21 @@
                         <p data-bind="text: location"></p>
                     </div>
                 </div>
-            </p>
-            <p class="help" data-bind="visible: !twuser().ready()">
+            </div>
+            <hr>
+            <div class="help" data-bind="visible: !twuser().ready()">
                 Associate your twitter account to voxxrin to get twitter integration!
-                <br><br>
-                <em>Note: we do not ask for your password at the moment because we use only public data. This means that
-                    anybody can associate your twitter account to voxxrin, so don't trust voxxrin twitter data like
-                    favorites too much, and be gentle, it's still a beta :-)</em>
-            </p>
+            </div>
+            <div class="help" data-bind="visible: twuser().ready()">
+                Voxxrin is associated with your twitter account.<br>
+                You can see what people in your network are thinking of the conference talks,
+                and get your preferences (favorites, ...) on any device as soon as you login with
+                twitter there too.
+            </div>
         </div>
+    </div>
+    <div id="twitterSignin" class="twitterSignin page" data-role="page">
+        <h2>Redirecting to Twitter.com...</h2>
     </div>
     <div id="about" class="about page" data-role="page">
         <div data-role="header">
@@ -122,7 +129,7 @@
             </p>
             <p>
                 What's interesting is that this feedback is provided in <span>real time</span>, and you can get a sense of what
-                others in the same room are feeling. A good speaker can use that to react and adjust is talk. And this
+                others in the same room are feeling. A good speaker can use that to react and adjust his talk. And this
                 is also used to provide a <span>hot factor</span> in real time for all the presentations going on, so that you know
                 where to go if you keep using the <span>yawn</span> button in the presentation you're currently following :)
             </p>

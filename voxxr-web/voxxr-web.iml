@@ -47,10 +47,14 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/org.json/json/jars/json-20090211.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/junit/junit/jars/junit-4.10.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.twitter4j/twitter4j-core/jars/twitter4j-core-2.2.5.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.twitter4j/twitter4j-appengine/jars/twitter4j-appengine-2.2.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
           <root url="jar://$USER_HOME$/.ivy2/cache/com.google.guava/guava/sources/guava-11.0.1-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.twitter4j/twitter4j-core/sources/twitter4j-core-2.2.5-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.twitter4j/twitter4j-appengine/sources/twitter4j-appengine-2.2.5-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
