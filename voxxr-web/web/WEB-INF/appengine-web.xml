@@ -5,6 +5,8 @@
     <static-files>
         <include path="/assets/**" />
         <include path="/m.html" />
+        <include path="/signedin.html" />
+        <include path="/notsignedin.html" />
         <include path="/d.html" />
         <include path="/p.html" />
     </static-files>

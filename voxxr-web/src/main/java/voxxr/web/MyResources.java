@@ -5,11 +5,13 @@ import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import voxxr.web.twitter.CallbackTwitter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User: xavierhanin
@@ -22,6 +24,13 @@ public class MyResources implements RestRouter.RequestHandler {
         String kind = "My";
         User me = User.authenticate(req.getHeader("Authorization"));
         if ("GET".equalsIgnoreCase(req.getMethod())) {
+            if (me.isAnonymous()) {
+                User user = CallbackTwitter.authenticatedFromTwitter(me.getDeviceid());
+                if (user != null) {
+                    Logger.getLogger("My").info("twitter authentication associated to My for " + user);
+                    me = user;
+                }
+            }
             try {
                 Rests.maybeSendAsJsonObject(Rests.createKey(kind, me.getId()), req, resp);
             } catch (EntityNotFoundException e) {

@@ -130,10 +130,6 @@ $(function() {
                 if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
                 return voxxr.gotoRoom();
             })
-            .add('twitterSignin', function() {
-                window.location.href = models.baseUrl + '/twitter/signin?back_to=' + encodeURIComponent(document.URL);
-                return $('#twitterSignin');
-            })
             .add('', function() {
                 return voxxr.gotoEvents();
             }, [])
@@ -322,9 +318,64 @@ $(function() {
         $(target).find('p').toggleClass('allDetails');
     }});
 
-    tappable("a.signout", function() {
-       models.User.current().id(null);
-       models.User.current().twuser().id(null);
+    whenDeviceReady(function() {
+        var client_browser = null;
+        if (window.plugins && window.plugins.childBrowser) {
+            client_browser = window.plugins.childBrowser;
+        } else if (typeof ChildBrowser !== 'undefined') {
+            client_browser = ChildBrowser.install();
+        }
+        tappable("a.signin", function() {
+            if (client_browser != null) {
+                console.log('registering onLocationChange');
+                var onLocationChange = function(loc) {
+                    console.log('locationChanged to ' + loc);
+                    if (loc.indexOf('/signedin.html') !== -1 || loc.indexOf('/notsignedin.html') !== -1) {
+                        client_browser.onLocationChange = null;
+                        if (loc.indexOf('/notsignedin.html') !== -1) {
+                            models.User.current().authenticationInProgress(false);
+                            setTimeout(function() {client_browser.close()}, 3000);
+                        } else {
+                            client_browser.close();
+                            models.User.current().loadMy();
+                        }
+                    }
+                }
+                client_browser.onLocationChange = onLocationChange
+            } else {
+                console.log('no client browser detected ~ web app mode');
+            }
+
+            function twitterSignin(deviceId) {
+                var url = models.baseUrl + '/twitter/signin?deviceid=' + deviceId;
+                if (client_browser) {
+                    console.log('opening child web page ' + url);
+                    window.plugins.childBrowser.showWebPage(url);
+                } else {
+                    window.location.href = url;
+                }
+            }
+
+            var deviceId = models.Device.current().id();
+            if (!deviceId) {
+                var onDeviceId;
+                onDeviceId = function(newValue) {
+                    models.Device.current().id.unsubscribe(onDeviceId);
+                    twitterSignin(newValue);
+                }
+                models.Device.current().id.subscribe(onDeviceId);
+            } else {
+                twitterSignin(deviceId);
+            }
+            models.User.current().authenticationInProgress(true);
+        });
+        tappable("a.signout", function() {
+           models.User.current().id(null);
+           models.User.current().twuser().id(null);
+        });
+        tappable("a.refreshMy", function() {
+           models.User.current().loadMy();
+        });
     });
 
     tappable("a", function(e, target) {

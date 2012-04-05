@@ -190,21 +190,26 @@ function postJSON(uri, data, onSuccess) {
     });
 }
 
-function getJSON(uri, onSuccess) {
+function getJSON(uri, onSuccess, options) {
+    options = _.extend(options || {}, {uselocal: true, usenetwork: true});
     setTimeout(function(){
         console.log('getting data for ' + uri);
-        var json = localStorage.getItem(uri);
-        console.log('parsing data for ' + uri);
-        var obj = json ? JSON.parse(json) : null;
+        var obj = null;
         var localTimeout = null;
-        if (json) {
-            // call success callback in a few ms to call it asynchronously in any case
-            localTimeout = setTimeout(function(){
-                console.log('trigger success load from local storage for ' + uri);
-                onSuccess(obj);
-                localTimeout = null
-            }, 50);
+        if (options.uselocal) {
+            var json = localStorage.getItem(uri);
+            console.log('parsing data for ' + uri);
+            obj = json ? JSON.parse(json) : null;
+            if (json) {
+                // call success callback in a few ms to call it asynchronously in any case
+                localTimeout = setTimeout(function(){
+                    console.log('trigger success load from local storage for ' + uri);
+                    onSuccess(obj);
+                    localTimeout = null
+                }, 50);
+            }
         }
+        if (!options.usenetwork) return;
         whenDeviceReady(function() {
             if (!models.Device.current().offline()) {
                 // refresh

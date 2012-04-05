@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		DC0D08EC1503978300C76706 /* www in Resources */ = {isa = PBXBuildFile; fileRef = DC0D08EB1503978300C76706 /* www */; };
+		DC91B1A1152E385F009D3846 /* ChildBrowserCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = DC91B19D152E385F009D3846 /* ChildBrowserCommand.m */; };
+		DC91B1A2152E385F009D3846 /* ChildBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC91B19F152E385F009D3846 /* ChildBrowserViewController.m */; };
+		DC91B1A3152E385F009D3846 /* ChildBrowserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC91B1A0152E385F009D3846 /* ChildBrowserViewController.xib */; };
+		DC91B1A6152E3886009D3846 /* ChildBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DC91B1A5152E3886009D3846 /* ChildBrowser.bundle */; };
 		DCBF861914EF9C17003410CC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCBF861814EF9C17003410CC /* Foundation.framework */; };
 		DCBF861B14EF9C17003410CC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCBF861A14EF9C17003410CC /* UIKit.framework */; };
 		DCBF861D14EF9C17003410CC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCBF861C14EF9C17003410CC /* CoreGraphics.framework */; };
@@ -40,6 +44,12 @@
 
 /* Begin PBXFileReference section */
 		DC0D08EB1503978300C76706 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
+		DC91B19C152E385F009D3846 /* ChildBrowserCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildBrowserCommand.h; sourceTree = "<group>"; };
+		DC91B19D152E385F009D3846 /* ChildBrowserCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChildBrowserCommand.m; sourceTree = "<group>"; };
+		DC91B19E152E385F009D3846 /* ChildBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildBrowserViewController.h; sourceTree = "<group>"; };
+		DC91B19F152E385F009D3846 /* ChildBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChildBrowserViewController.m; sourceTree = "<group>"; };
+		DC91B1A0152E385F009D3846 /* ChildBrowserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChildBrowserViewController.xib; sourceTree = "<group>"; };
+		DC91B1A5152E3886009D3846 /* ChildBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ChildBrowser.bundle; sourceTree = "<group>"; };
 		DCBF861414EF9C17003410CC /* Voxxrin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Voxxrin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCBF861814EF9C17003410CC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DCBF861A14EF9C17003410CC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -174,6 +184,7 @@
 		DCBF863D14EF9C17003410CC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DC91B1A5152E3886009D3846 /* ChildBrowser.bundle */,
 				DCBF865214EF9C17003410CC /* Capture.bundle */,
 				DCBF863E14EF9C17003410CC /* en.lproj */,
 				DCBF864214EF9C17003410CC /* es.lproj */,
@@ -232,6 +243,11 @@
 		DCBF865F14EF9C17003410CC /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				DC91B19C152E385F009D3846 /* ChildBrowserCommand.h */,
+				DC91B19D152E385F009D3846 /* ChildBrowserCommand.m */,
+				DC91B19E152E385F009D3846 /* ChildBrowserViewController.h */,
+				DC91B19F152E385F009D3846 /* ChildBrowserViewController.m */,
+				DC91B1A0152E385F009D3846 /* ChildBrowserViewController.xib */,
 				DCBF866014EF9C17003410CC /* README */,
 			);
 			name = Plugins;
@@ -304,6 +320,8 @@
 				DCBF867314EFACCB003410CC /* icon-72.png in Resources */,
 				DCBF867414EFACCB003410CC /* icon@2x.png in Resources */,
 				DC0D08EC1503978300C76706 /* www in Resources */,
+				DC91B1A3152E385F009D3846 /* ChildBrowserViewController.xib in Resources */,
+				DC91B1A6152E3886009D3846 /* ChildBrowser.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,6 +351,8 @@
 				DCBF863914EF9C17003410CC /* main.m in Sources */,
 				DCBF865914EF9C17003410CC /* AppDelegate.m in Sources */,
 				DCBF865C14EF9C17003410CC /* MainViewController.m in Sources */,
+				DC91B1A1152E385F009D3846 /* ChildBrowserCommand.m in Sources */,
+				DC91B1A2152E385F009D3846 /* ChildBrowserViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

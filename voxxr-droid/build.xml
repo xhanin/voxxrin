@@ -88,5 +88,11 @@
         </copy>
         <copy file="${basedir}/libs/phonegap-1.4.1.js" overwrite="true"
               todir="${basedir}/assets/www/assets/js/libs" />
+        <copy file="${basedir}/libs/ChildBrowser.js" overwrite="true"
+              todir="${basedir}/assets/www/assets/js/libs" />
+        <copy overwrite="true"
+              todir="${basedir}/assets/www/childbrowser" >
+                <fileset dir="${basedir}/libs/childbrowser" includes="*.png" />
+        </copy>
     </target>
 </project>

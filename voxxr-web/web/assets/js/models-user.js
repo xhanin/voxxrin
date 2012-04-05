@@ -249,20 +249,28 @@
             localStorage.setItem('twitterid', isNonNull(self.twuser().id()) ? self.twuser().id() : null);
             loadMy();
         });
+        self.authenticationInProgress = ko.observable(false);
 
         self.my = ko.observable(new My({events: {}}));
 
         function loadMy() {
             getJSON('/my', function(data) {
-                if (self.twuser().screenname() == data.id) {
+                if (!self.id() && data.twitterid) {
+                    // twitter authentication performed
+                    self.id(data.id);
+                    self.twuser().id(data.twitterid);
+                    self.authenticationInProgress(false);
+                } else if (self.twuser().screenname() == data.id) {
                     data.twitterid = self.twuser().id();
                 }
                 data.deviceid = models.Device.current().id();
                 self.my(new My(data))
-            });
+            }, {uselocal: false});
         }
 
         loadMy();
+
+        self.loadMy = loadMy;
     }
     whenDeviceReady(function() {
         var userId = localStorage.getItem('userId') || '';

@@ -18,6 +18,7 @@
       <script type="text/javascript" src="assets/js/libs/gfx.flip.js"></script>
       <script type="text/javascript" src="assets/js/libs/remaining-1.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/phonegap-1.4.1.js"></script>
+      <script type="text/javascript" src="assets/js/libs/ChildBrowser.js"></script>
       <script type="text/javascript" src="assets/js/libs/tappable.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
@@ -78,7 +79,14 @@
                 <label for="userid">Twitter account:</label>
                 <span type="text" data-bind="text: id"></span>
             </div>
-            <a href="#twitterSignin" class="signin" data-role="button" data-theme="e" data-bind="visible: !twuser().ready()">Signin</a>
+            <div class="help" data-bind="visible: !twuser().ready()">
+                Pair your twitter account with voxxrin to get twitter integration!<br>
+                You will then be able to see what your followers / friends think of the talks (favorited or not,
+                attending talk, real time feelings and so on). <br>
+                Note that once paired with your twitter account your ratings and favorites will also be public.
+            </div>
+            <a href="#" class="refreshMy" data-role="button" data-theme="e" data-bind="visible: authenticationInProgress">Refresh</a>
+            <a href="#" class="signin" data-role="button" data-theme="e" data-bind="visible: !twuser().ready() && !authenticationInProgress()">Signin</a>
             <a href="#" class="signout" data-role="button" data-theme="e" data-bind="visible: twuser().ready()">Signout</a>
             <p class="loading" data-bind="visible: twuser().loading()">
             </p>
@@ -92,14 +100,12 @@
                 </div>
             </div>
             <hr>
-            <div class="help" data-bind="visible: !twuser().ready()">
-                Associate your twitter account to voxxrin to get twitter integration!
-            </div>
             <div class="help" data-bind="visible: twuser().ready()">
-                Voxxrin is associated with your twitter account.<br>
+                Voxxrin is paired with your twitter account.<br>
                 You can see what people in your network are thinking of the conference talks,
                 and get your preferences (favorites, ...) on any device as soon as you login with
                 twitter there too.
+                Note that voxxrin is paired with your twitter account your ratings and favorites will also be public.
             </div>
         </div>
     </div>
