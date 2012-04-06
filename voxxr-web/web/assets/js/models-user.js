@@ -82,11 +82,16 @@
                 sendToServer();
             });
             // register on rate and feelings change to notify the server, with a throttle of 5s
+            var initialize = true;
             ko.computed(function() {
                 self.rate.nb() + self.rate.avg();
                 _(self.feelings.byCode).each(function(feeling) { feeling() });
 
-                sendToServer();
+                if (initialize) { // prevent sending data to server on first evaluation
+                    initialize = false;
+                } else {
+                    sendToServer();
+                }
             }, this).extend({ throttle: 5000 });
         }
     }
@@ -187,12 +192,6 @@
                     });
             } else {
                 loadData({});
-            }
-        }
-
-        if (isAuthenticated()) {
-            if (options.autoLoad) {
-                load();
             }
         }
 
