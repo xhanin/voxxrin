@@ -173,14 +173,14 @@
         }
         
         function load() {
+            if (self.loading()) return;
             if (isAuthenticated()) {
                 loadData({id: self.id(), screen_name: self.screenname()}); // reset
                 self.loading(true);
                 var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
-                console.log('loading twitter account details with param' + param);
-                $.getJSON(
+                console.log('loading twitter account details with param ' + param);
+                getJSON(
                     'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
-                    {},
                     function(data) {
                         loadData(data[0]);
                         if (options.autoLoadFollowers) {
@@ -189,27 +189,31 @@
                         if (options.autoLoadFriends) {
                             self.loadFriends();
                         }
-                    });
+                    },
+                    { authenticate: false, usenetwork: '+1d' }
+                ).always(function() {self.loading(false);});
             } else {
                 loadData({});
             }
         }
 
         self.loadFollowers = function() {
-            $.getJSON(
+            getJSON(
                 'https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
-                {},
                 function(data) {
                     self.followers(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
-                });
+                },
+                { authenticate: false, uselocal: 'whenoffline' }
+            );
         }
         self.loadFriends = function() {
-            $.getJSON(
+            getJSON(
                 'https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
-                {},
                 function(data) {
                     self.friends(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
-                });
+                },
+                { authenticate: false, uselocal: 'whenoffline' }
+            );
         }
 
         self.loadDetails = function() {
@@ -220,10 +224,9 @@
         };
 
         if (options.autoLoad) {
-            ko.computed(function() {
-                self.screenname() + self.id(); // register on these values
-                load();
-            }, this).extend({ throttle: 1 });
+            self.screenname.subscribe(load);
+            self.id.subscribe(load);
+            load();
         }
     }
 

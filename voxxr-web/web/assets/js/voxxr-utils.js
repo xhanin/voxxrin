@@ -191,59 +191,104 @@ function postJSON(uri, data, onSuccess) {
 }
 
 function getJSON(uri, onSuccess, options) {
-    options = _.extend(options || {}, {uselocal: true, usenetwork: true});
+    options = _.defaults({}, options, {uselocal: true, usenetwork: true, authenticate: true});
+    var dfd = new $.Deferred();
+
     setTimeout(function(){
         console.log('getting data for ' + uri);
         var obj = null;
         var localTimeout = null;
-        if (options.uselocal) {
+        var networkDone = false;
+        var localDone = false;
+        if (options.uselocal === true
+            || (options.uselocal === 'whenoffline' && models.Device.current().offline())) {
             var json = localStorage.getItem(uri);
             console.log('parsing data for ' + uri);
             obj = json ? JSON.parse(json) : null;
             if (json) {
                 // call success callback in a few ms to call it asynchronously in any case
                 localTimeout = setTimeout(function(){
+                    localDone = true;
                     console.log('trigger success load from local storage for ' + uri);
-                    onSuccess(obj);
-                    localTimeout = null
+                    if (!networkDone) {
+                        onSuccess(obj);
+
+                        if (typeof options.usenetwork === 'string') {
+                            // TODO: should check the string to see how old we keep the data
+                            var cacheDelay = 1000 * 60 * 60 * 24;
+                            var cachedTimestamp = localStorage.getItem(uri + '//cachedTimestamp');
+                            if (!cachedTimestamp || (new Date().getTime() - cachedTimestamp > cacheDelay)) {
+                                console.log('local data expired for ' + uri);
+                                loadFromNetwork();
+                            } else {
+                                console.log('local data up to date for ' + uri);
+                                dfd.resolve(obj);
+                            }
+                        } else if (options.usenetwork === false) {
+                            dfd.resolve(obj);
+                        }
+                    }
+                    localTimeout = null;
                 }, 50);
+            } else {
+                if (options.usenetwork === false) {
+                    dfd.resolve(null);
+                } else if (typeof options.usenetwork === 'string') {
+                    loadFromNetwork();
+                }
             }
         }
-        if (!options.usenetwork) return;
-        whenDeviceReady(function() {
-            if (!models.Device.current().offline()) {
-                // refresh
-                $.ajax({
-                    url: models.baseUrl + uri,
-                    dataType:"text",
-                    type: "GET",
-                    beforeSend: function(xhr) {
-                        // BASIC authentication
-                        var username = models.User.current().name();
-                        var password = ''; // no password to authenticate ATM
-                        xhr.setRequestHeader("Authorization", username);
-                    },
-                    success: function(jsonFromServer) {
-                        var objFromServer = JSON.parse(jsonFromServer);
-                        if (obj && obj.lastmodified && obj.lastmodified == objFromServer.lastmodified) {
-                            console.log('got un modified data from server for ' + uri);
-                            return; // success callback is / will be called from local data which is the same
+        function loadFromNetwork() {
+            whenDeviceReady(function() {
+                if (!models.Device.current().offline()) {
+                    // refresh
+                    $.ajax({
+                        url: uri.substring(0,4) == 'http' ? uri : (models.baseUrl + uri),
+                        dataType:"json",
+                        type: "GET",
+                        data: {},
+                        beforeSend: function(xhr) {
+                            // BASIC authentication
+                            if (options.authenticate) {
+                                var username = models.User.current().name();
+                                var password = ''; // no password to authenticate ATM
+                                xhr.setRequestHeader("Authorization", username);
+                            }
+                        },
+                        success: function(objFromServer) {
+                            var jsonFromServer = JSON.stringify(objFromServer);
+                            networkDone = true;
+                            if (obj && obj.lastmodified && obj.lastmodified == objFromServer.lastmodified) {
+                                console.log('got un modified data from server for ' + uri);
+                                dfd.resolve(obj);
+                                return; // success callback is / will be called from local data which is the same
+                            }
+                            console.log('trigger success load from server for ' + uri);
+                            if (localTimeout) {
+                                // if ever we reach that before the timeout expired, clear it
+                                clearTimeout(localTimeout);
+                            }
+                            localStorage.setItem(uri, jsonFromServer);
+                            localStorage.setItem(uri + '//cachedTimestamp', new Date().getTime());
+                            onSuccess(objFromServer);
+                            dfd.resolve(objFromServer);
+                        },
+                        error: function() {
+                            console.log('error occured while loading ', uri);
+                            dfd.fail();
                         }
-                        console.log('trigger success load from server for ' + uri);
-                        if (localTimeout) {
-                            // if ever we reach that before the timeout expired, clear it
-                            clearTimeout(localTimeout);
-                        }
-                        localStorage.setItem(uri, jsonFromServer);
-                        onSuccess(objFromServer);
-                    },
-                    error: function() {
-                        console.log('error occured while loading ', uri);
+                    });
+                } else {
+                    networkDone = true;
+                    if (localDone) {
+                        dfd.resolve(obj);
                     }
-                });
-            }
-        });
+                }
+            });
+        }
+        if (options.usenetwork == true) loadFromNetwork();
     }, 0);
+    return dfd.promise();
 }
 
 function mergeData(data, self) {
