@@ -27,13 +27,37 @@
             return Room.current() && Room.current().id() === self.id();
         }
 
+        var lastJoined = null;
         function notifyJoined() {
-            if (self.presentation()) {
-                self.presentation().my().joined(self.joined());
+            var presentation = self.presentation();
+            if (presentation) {
+                presentation.my().joined(self.joined());
                 if (self.joined()) {
-                    self.sendEV('IN' + JSON.stringify(self.presentation().my().data()));
+                    if (lastJoined) {
+                        if (lastJoined.id() !== presentation.id()) {
+                            lastJoined.my().joined(false);
+                            self.sendEV('OUT' + models.User.current().id());
+                            self.sendEV('IN' + JSON.stringify(presentation.my().data()));
+                            lastJoined = presentation;
+                        } else {
+                            // we were already joined to this presentation
+                        }
+                    } else {
+                        self.sendEV('IN' + JSON.stringify(presentation.my().data()));
+                        lastJoined = presentation;
+                    }
                 } else {
+                    if (lastJoined) {
+                        lastJoined.my().joined(false);
+                        self.sendEV('OUT' + models.User.current().id());
+                        lastJoined = null;
+                    }
+                }
+            } else {
+                if (lastJoined) {
+                    lastJoined.my().joined(false);
                     self.sendEV('OUT' + models.User.current().id());
+                    lastJoined = null;
                 }
             }
         }
