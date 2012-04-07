@@ -209,29 +209,25 @@
 #jqt .ui-block-4 {
   width: 25%;
 }
-#jqt .ui-block-5 {
+#jqt .ui-block-5,
+#jqt .ui-block-9,
+#jqt .ui-block-10 {
   width: 20%;
 }
-#jqt .ui-block-6 {
+#jqt .ui-block-6,
+#jqt .ui-block-11,
+#jqt .ui-block-12 {
   width: 16.66%;
 }
-#jqt .ui-block-7 {
+#jqt .ui-block-7,
+#jqt .ui-block-13,
+#jqt .ui-block-14 {
   width: 14.25%;
 }
-#jqt .ui-block-8 {
+#jqt .ui-block-8,
+#jqt .ui-block-15,
+#jqt .ui-block-16 {
   width: 12.25%;
-}
-#jqt .ui-block-9 {
-  width: 11.11%;
-}
-#jqt .ui-block-10 {
-  width: 10%;
-}
-#jqt .ui-block-11 {
-  width: 9.09%;
-}
-#jqt .ui-block-12 {
-  width: 8.33%;
 }
 #jqt ul li a.current {
   background-color: #c7f464;
