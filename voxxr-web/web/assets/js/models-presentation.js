@@ -130,7 +130,6 @@
                         function(data) {
                             loadData(data); if (onloaded) onloaded(self);
                         });
-                    self.loadStats();
                 } else {
                      if (onloaded) onloaded(self);
                 }
@@ -145,6 +144,7 @@
 
         self.enter = function() {
             self.load();
+            self.loadStats();
             _(self.speakers()).each(function(speaker) { speaker.load() });
         }
         self.quit = function() {}
