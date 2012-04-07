@@ -44,6 +44,7 @@
         self.favorites = ko.observable(0);
         self.involvedUsers = ko.observableArray([]);
         self.involvedUsers.followers = ko.computed(function() {
+            if (!models.User.current()) return []; // for dashboard and poll
             var followerIds = _(models.User.current().twuser().followers()).map(function(twuser) { return twuser.id() });
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
             var favFol = _(self.involvedUsers()).filter(function(myPres) {
@@ -53,11 +54,13 @@
             return favFol;
         });
         self.involvedUsers.friends = ko.computed(function() {
+            if (!models.User.current()) return []; // for dashboard and poll
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
             var favFol = _(self.involvedUsers()).filter(function(myPres) { return friendsIds.indexOf(myPres.twuser().id()) >= 0 });
             return favFol;
         });
         self.involvedUsers.inroom = ko.computed(function() {
+            if (models.User.current()) return []; // for dashboard and poll
             return _(self.involvedUsers()).filter(function(myPres) { return myPres.presence() == 'IN' });
         });
         self.involvedUsers.findByUserid = function(userid) {
@@ -68,7 +71,10 @@
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
         self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
-        self.my = ko.computed(function() { return models.User.current().my() ? models.User.current().my().presentation(self.eventId(), self.id()) : null});
+        self.my = ko.computed(function() {
+            if (!models.User.current()) return null; // for dashboard and poll
+            return models.User.current().my() ? models.User.current().my().presentation(self.eventId(), self.id()) : null
+        });
         self.favorite = ko.computed(function() { return self.my() && self.my().favorite() });
         self.user = models.User.current;
         self.data = ko.observable({});

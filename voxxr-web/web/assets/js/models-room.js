@@ -63,7 +63,9 @@
         }
 
         self.presentation.subscribe(function(newValue) {
-            notifyJoined();
+            if (models.User.current()) { // tested for dashboard and poll
+                notifyJoined();
+            }
             if (newValue && self.isCurrent()) {
                 newValue.loadStats();
             }
@@ -220,7 +222,7 @@
                         }
                         if (ev.isRate) {
                             pres.rate.updateRate(ev.rateValue);
-                            if (ev.userid === models.User.current().id()) {
+                            if (models.User.current() && (ev.userid === models.User.current().id())) {
                                 models.User.current().my().presentation(pres.eventId(), pres.id())
                                     .rate.updateRate(ev.rateValue);
                             }
@@ -231,7 +233,7 @@
                         }
                         if (ev.isFeeling) {
                             var found = pres.involvedUsers.findByUserid(ev.userid);
-                            if (ev.userid === models.User.current().id()) {
+                            if (models.User.current() && (ev.userid === models.User.current().id())) {
                                 models.User.current().my().presentation(pres.eventId(), pres.id())
                                     .feelings.byCode[ev.feelingValue].inc();
                             }
@@ -288,7 +290,7 @@
             $.ajax({
                 type: "POST",
                 url: self.rt() + "/r/feedback",
-                data: models.EV.toBC(models.User.current().name(), ev),
+                data: models.EV.toBC(models.User.current() ? models.User.current().name() : '-', ev),
                 dataType:"json",
                 success: function( resp ) {
                     if (resp.status === 'ok') {

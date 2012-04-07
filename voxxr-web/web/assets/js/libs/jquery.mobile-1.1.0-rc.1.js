@@ -6817,8 +6817,7 @@ $( document ).bind( "pagecreate create", function( e ){
 	function fakeFixLoader(){
 		$loader
 			.css({
-				top: $.support.scrollTop && $window.scrollTop() + $window.height() / 2 ||
-				activeBtn.length && activeBtn.offset().top || 100
+				top: $.support.scrollTop && $window.scrollTop() + $window.height() / 2 || 100
 			});		
 	}
 	
