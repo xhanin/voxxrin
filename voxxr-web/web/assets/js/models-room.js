@@ -169,6 +169,7 @@
             if (self.status() !== DISCONNECTED) {
                 console.log("<<< disconnecting from ", self.name());
                 $.atmosphere.closeSuspendedConnection();
+                $.atmosphere.removeCallback(rtCallback);
             }
             self.message(null);
             self.status(DISCONNECTED);
@@ -179,98 +180,101 @@
             transport = "websocket";
         }
 
+        function rtCallback(response) {
+            var $room = self;
+            if (!$room.isCurrent()) {
+                // not current room, it seems that we didn't properly quit
+                $room.status(CONNECTED); // set status to connected to make sure disconnect actually call suspend connection
+                $room.disconnect();
+                return;
+            }
+
+            if (response.state == 'error' || response.state == 'closed') {
+                $room.message("Room connection lost");
+                $room.status(DISCONNECTED);
+                attemptToReconnect();
+                return;
+            }
+
+            if (response.transport != 'polling'
+                && response.state != 'connected' && response.state != 'closed') {
+                if (response.status == 200) {
+                    var data = response.responseBody;
+                    if (data.length > 0) {
+                        var ev = exports.models.EV.fromBC(data, $room.id());
+
+                        if (ev.isConnection) {
+                            $room.connections(ev.connections);
+                        }
+                        var pres = models.Presentation.current();
+                        if (ev.isTitle) {
+                            pres.title(ev.title);
+                        }
+                        if (ev.isPollStart) {
+                            pres.currentPoll.choices(
+                                _(ev.items).map(function(e,i) { return {title: e, index: i}; })
+                            );
+                        }
+                        if (ev.isPollEnd) {
+                            pres.currentPoll.choices([]);
+                        }
+                        if (ev.isRate) {
+                            pres.rate.updateRate(ev.rateValue);
+                            if (ev.userid === models.User.current().id()) {
+                                models.User.current().my().presentation(pres.eventId(), pres.id())
+                                    .rate.updateRate(ev.rateValue);
+                            }
+                            var found = pres.involvedUsers.findByUserid(ev.userid);
+                            if (found) {
+                                found.rate.updateRate(ev.rateValue);
+                            }
+                        }
+                        if (ev.isFeeling) {
+                            var found = pres.involvedUsers.findByUserid(ev.userid);
+                            if (ev.userid === models.User.current().id()) {
+                                models.User.current().my().presentation(pres.eventId(), pres.id())
+                                    .feelings.byCode[ev.feelingValue].inc();
+                            }
+                            if (found) {
+                                found.feelings.byCode[ev.feelingValue].inc();
+                            }
+                        }
+                        if (ev.isHotFactor) {
+                            pres.hotFactor(ev.hotFactorValue);
+                        }
+                        if (ev.isPrezStart) {
+                            pres.start();
+                        }
+                        if (ev.isPrezEnd) {
+                            pres.stop();
+                        }
+                        if (ev.isIn) {
+                            var found = pres.involvedUsers.findByUserid(ev.myPres.userid);
+                            if (found) {
+                                found.load(ev.myPres);
+                            } else {
+                                pres.involvedUsers().push(ds.myPresentation(ev.myPres));
+                            }
+                        }
+                        if (ev.isOut) {
+                            var found = pres.involvedUsers.findByUserid(ev.userid);
+                            if (found) {
+                                found.load({presence: 'WAS'});
+                            }
+                        }
+
+                        $("body").trigger('EV', ev);
+                    }
+                }
+            }
+        };
+
         function subscribe(room) {
             var $room = room;
             console.log('>>> SUBSCRIBING TO ', $room.rt(), '/r/room/rt', ' with transport ', transport);
             $.atmosphere.subscribe(
                 $room.rt() + '/r/room/rt?mode=' + Room.bcmode,
-                function(response) {
-                    if (!$room.isCurrent()) {
-                        // not current room, it seems that we didn't properly quit
-                        $room.status(CONNECTED); // set status to connected to make sure disconnect actually call suspend connection
-                        $room.disconnect();
-                        return;
-                    }
-
-                    if (response.state == 'error' || response.state == 'closed') {
-                        $room.message("Room connection lost");
-                        $room.status(DISCONNECTED);
-                        attemptToReconnect();
-                        return;
-                    }
-
-                    if (response.transport != 'polling'
-                        && response.state != 'connected' && response.state != 'closed') {
-                        if (response.status == 200) {
-                            var data = response.responseBody;
-                            if (data.length > 0) {
-                                var ev = exports.models.EV.fromBC(data, $room.id());
-
-                                if (ev.isConnection) {
-                                    $room.connections(ev.connections);
-                                }
-                                var pres = models.Presentation.current();
-                                if (ev.isTitle) {
-                                    pres.title(ev.title);
-                                }
-                                if (ev.isPollStart) {
-                                    pres.currentPoll.choices(
-                                        _(ev.items).map(function(e,i) { return {title: e, index: i}; })
-                                    );
-                                }
-                                if (ev.isPollEnd) {
-                                    pres.currentPoll.choices([]);
-                                }
-                                if (ev.isRate) {
-                                    pres.rate.updateRate(ev.rateValue);
-                                    if (ev.userid === models.User.current().id()) {
-                                        models.User.current().my().presentation(pres.eventId(), pres.id())
-                                            .rate.updateRate(ev.rateValue);
-                                    }
-                                    var found = pres.involvedUsers.findByUserid(ev.userid);
-                                    if (found) {
-                                        found.rate.updateRate(ev.rateValue);
-                                    }
-                                }
-                                if (ev.isFeeling) {
-                                    var found = pres.involvedUsers.findByUserid(ev.userid);
-                                    if (ev.userid === models.User.current().id()) {
-                                        models.User.current().my().presentation(pres.eventId(), pres.id())
-                                            .feelings.byCode[ev.feelingValue].inc();
-                                    }
-                                    if (found) {
-                                        found.feelings.byCode[ev.feelingValue].inc();
-                                    }
-                                }
-                                if (ev.isHotFactor) {
-                                    pres.hotFactor(ev.hotFactorValue);
-                                }
-                                if (ev.isPrezStart) {
-                                    pres.start();
-                                }
-                                if (ev.isPrezEnd) {
-                                    pres.stop();
-                                }
-                                if (ev.isIn) {
-                                    var found = pres.involvedUsers.findByUserid(ev.myPres.userid);
-                                    if (found) {
-                                        found.load(ev.myPres);
-                                    } else {
-                                        pres.involvedUsers().push(ds.myPresentation(ev.myPres));
-                                    }
-                                }
-                                if (ev.isOut) {
-                                    var found = pres.involvedUsers.findByUserid(ev.userid);
-                                    if (found) {
-                                        found.load({presence: 'WAS'});
-                                    }
-                                }
-
-                                $("body").trigger('EV', ev);
-                            }
-                        }
-                    }
-                },
+                rtCallback,
                 $.atmosphere.request = { transport: transport, maxRequest : 100000 });
         }
 
