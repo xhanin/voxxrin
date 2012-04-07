@@ -243,15 +243,15 @@
         </div>
         <a data-role="button" data-theme="b" class="toggleDetails" data-icon="arrow-d"></a>
         <h3>Speaker(s)</h3>
-        <ul data-role="listview" data-inset="true" data-bind="listview: speakers">
+        <ul data-role="listview" data-inset="false" data-bind="listview: speakers">
             <li class="speaker"><img data-bind="visible: !loading(), attr: {src: pictureURL}">
                 <h4 data-bind="text: name"></h4>
                 <span class="loading" data-bind="visible: loading"></span>
                 <p data-bind="visible: !loading(), text: bio"></p>
             </li>
         </ul>
-        <h3>Friends related</h3>
-            <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.friends" class="friends">
+        <h3>Following related</h3>
+            <ul data-role="listview" data-inset="false" data-bind="listview: involvedUsers.friends" class="friends">
                 <li class="twuser">
                     <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
                     <span class="loading" data-bind="visible: twuser().loading"></span>
@@ -261,7 +261,7 @@
                         <span class="location" data-bind="text: '(' + twuser().location() + ')'"></span>
                     </p>
                     <p class="thispres" data-bind="visible: !twuser().loading()">
-                        <span class="label">Info: </span>
+                        <span class="label" data-bind="if: presence() == 'NO'">Info: </span>
                         <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
                         <span class="presence" data-bind="css: { 'in': presence() == 'IN', 'was': presence() == 'WAS' }"></span>
                         <!-- ko if: presence() == 'IN' || presence() == 'WAS' -->
@@ -278,7 +278,7 @@
                 </li>
             </ul>
         <h3>Followers related</h3>
-            <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.followers" class="followers">
+            <ul data-role="listview" data-inset="false" data-bind="listview: involvedUsers.followers" class="followers">
                 <li class="twuser">
                     <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
                     <span class="loading" data-bind="visible: twuser().loading"></span>
@@ -288,7 +288,7 @@
                         <span class="location" data-bind="text: '(' + twuser().location() + ')'"></span>
                     </p>
                     <p class="thispres" data-bind="visible: !twuser().loading()">
-                        <span class="label">Info: </span>
+                        <span class="label" data-bind="if: presence() == 'NO'">Info: </span>
                         <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
                         <span class="presence" data-bind="css: { 'in': presence() == 'IN', 'was': presence() == 'WAS' }"></span>
                         <!-- ko if: presence() == 'IN' || presence() == 'WAS' -->
@@ -373,7 +373,6 @@
                             <span class="location" data-bind="text: '(' + twuser().location() + ')'"></span>
                         </p>
                         <p class="thispres" data-bind="visible: !twuser().loading()">
-                            <span class="label">Info: </span>
                             <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
                             <span class="presence" data-bind="css: { 'in': presence() == 'IN', 'was': presence() == 'WAS' }"></span>
                             <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>

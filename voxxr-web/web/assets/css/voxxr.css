@@ -401,6 +401,9 @@
 #jqt .nowplaying.page .ui-content {
   padding-top: 15px;
 }
+#jqt .presentation.page .ui-listview {
+  margin-bottom: 0px;
+}
 #jqt .presentation.page .slot,
 #jqt .presentation.page .room {
   color: #4ecdc4;
