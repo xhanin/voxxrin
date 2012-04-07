@@ -79,6 +79,10 @@
                 <label for="userid">Twitter account:</label>
                 <span type="text" data-bind="text: id"></span>
             </div>
+            <div class="help" data-bind="visible: false">
+                WARNING: with Chrome Web Store in the end of signin process you will be redirected to the online app.
+                Simply close it and reopen the chrome web store app and you're done!
+            </div>
             <div class="help" data-bind="visible: !twuser().ready()">
                 Pair your twitter account with voxxrin to get twitter integration!<br>
                 You will then be able to see what your followers / friends think of the talks (favorited or not,
