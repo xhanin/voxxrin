@@ -162,9 +162,9 @@ function whenDeviceReady(callback) {
 }
 
 function postJSON(uri, data, onSuccess) {
+    var dfd = new $.Deferred();
     whenDeviceReady(function() {
         if (!models.Device.current().offline()) {
-            // refresh
             $.ajax({
                 url: models.baseUrl + uri,
                 data: JSON.stringify(data),
@@ -181,13 +181,18 @@ function postJSON(uri, data, onSuccess) {
                     if (onSuccess) {
                         onSuccess(json);
                     }
+                    dfd.resolve(json);
                 },
                 error: function() {
                     console.log('error occured while posting ', uri);
+                    dfd.reject();
                 }
             });
+        } else {
+            dfd.reject('offline');
         }
     });
+    return dfd.promise();
 }
 
 function getJSON(uri, onSuccess, options) {
@@ -195,7 +200,6 @@ function getJSON(uri, onSuccess, options) {
     var dfd = new $.Deferred();
 
     setTimeout(function(){
-        console.log('getting data for ' + uri);
         var obj = null;
         var localTimeout = null;
         var networkDone = false;
@@ -203,14 +207,14 @@ function getJSON(uri, onSuccess, options) {
         if (options.uselocal === true
             || (options.uselocal === 'whenoffline' && models.Device.current().offline())) {
             var json = localStorage.getItem(uri);
-            console.log('parsing data for ' + uri);
-            obj = json ? JSON.parse(json) : null;
             if (json) {
+                console.log('parsing local data for ' + uri);
+                obj = JSON.parse(json);
                 // call success callback in a few ms to call it asynchronously in any case
                 localTimeout = setTimeout(function(){
                     localDone = true;
-                    console.log('trigger success load from local storage for ' + uri);
                     if (!networkDone) {
+                        console.log('trigger success load from local storage for ' + uri);
                         onSuccess(obj);
 
                         if (typeof options.usenetwork === 'string') {
@@ -258,24 +262,33 @@ function getJSON(uri, onSuccess, options) {
                         success: function(objFromServer) {
                             var jsonFromServer = JSON.stringify(objFromServer);
                             networkDone = true;
-                            if (obj && obj.lastmodified && obj.lastmodified == objFromServer.lastmodified) {
-                                console.log('got un modified data from server for ' + uri);
-                                dfd.resolve(obj);
-                                return; // success callback is / will be called from local data which is the same
+                            if (obj && obj.lastmodified) {
+                                if (obj.lastmodified === objFromServer.lastmodified) {
+                                    console.log('got un modified data from server for ' + uri);
+                                    if (!localDone) {
+                                        console.log('trigger success load from server for ' + uri);
+                                        onSuccess(objFromServer);
+                                    }
+                                    dfd.resolve(obj);
+                                    return;
+                                } else if (obj.lastmodified < objFromServer.lastmodified) {
+                                    console.log('data from server is more recent than local data for ' + uri);
+                                } else {
+                                    console.log('!!! local data is more recent than remote data for ' + uri);
+                                }
                             }
-                            console.log('trigger success load from server for ' + uri);
                             if (localTimeout) {
                                 // if ever we reach that before the timeout expired, clear it
                                 clearTimeout(localTimeout);
                             }
-                            localStorage.setItem(uri, jsonFromServer);
-                            localStorage.setItem(uri + '//cachedTimestamp', new Date().getTime());
+                            getJSON.updateLocalCache(uri, jsonFromServer);
+                            console.log('trigger success load from server for ' + uri);
                             onSuccess(objFromServer);
                             dfd.resolve(objFromServer);
                         },
                         error: function() {
                             console.log('error occured while loading ', uri);
-                            dfd.fail();
+                            dfd.reject();
                         }
                     });
                 } else {
@@ -289,6 +302,16 @@ function getJSON(uri, onSuccess, options) {
         if (options.usenetwork == true) loadFromNetwork();
     }, 0);
     return dfd.promise();
+}
+
+getJSON.updateLocalCache = function(uri, val) {
+    localStorage.setItem(uri, val);
+    localStorage.setItem(uri + '//cachedTimestamp', new Date().getTime());
+}
+
+getJSON.clearLocalCache = function(uri) {
+    localStorage.removeItem(uri);
+    localStorage.removeItem(uri + '//cachedTimestamp');
 }
 
 function mergeData(data, self) {

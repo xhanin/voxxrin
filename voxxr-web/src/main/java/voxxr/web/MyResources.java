@@ -87,6 +87,7 @@ public class MyResources implements RestRouter.RequestHandler {
         }
         String myJsonStr = ((Text) my.getProperty("json")).getValue();
         JSONObject myJson = new JSONObject(myJsonStr);
+        myJson.put("lastmodified", myPresentation.getLastModified());
         JSONObject events = myJson.getJSONObject("events");
         if (!events.has(eventId)) {
             JSONObject jsonEvent = new JSONObject();
@@ -96,6 +97,7 @@ public class MyResources implements RestRouter.RequestHandler {
         events.getJSONObject(eventId).getJSONObject("presentations").put(
                 myPresentation.getPresentationId(), MyPresentation.TO_JSON.apply(myPresentation));
         my.setProperty("json", new Text(myJson.toString()));
+        my.setProperty("lastmodified", myPresentation.getLastModified());
         ds.put(my);
         MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         String cacheKey = KeyFactory.keyToString(my.getKey());

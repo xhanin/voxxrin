@@ -1,7 +1,4 @@
-
-
-$(function() {
-
+$(function() { whenDeviceReady(function() {
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
@@ -217,7 +214,6 @@ $(function() {
             sendEV("R" + r,
                 function() {
                     myRate.last = r; setVotes(roomRT);
-                    voxxr.currentRoom().presentation().my().
                     voteFadeOutTimeout = setTimeout(function() { setVotes(roomRT, 0); }, 4000);
                 }, function() {
                     setVotes(roomRT, 0);
@@ -337,7 +333,7 @@ $(function() {
                             setTimeout(function() {client_browser.close()}, 3000);
                         } else {
                             client_browser.close();
-                            models.User.current().loadMy();
+                            models.User.current().reloadMy();
                         }
                     }
                 }
@@ -370,11 +366,10 @@ $(function() {
             models.User.current().authenticationInProgress(true);
         });
         tappable("a.signout", function() {
-           models.User.current().id(null);
-           models.User.current().twuser().id(null);
+           models.User.current().signedOut();
         });
         tappable("a.refreshMy", function() {
-           models.User.current().loadMy();
+           models.User.current().reloadMy();
         });
     });
 
@@ -398,4 +393,5 @@ $(function() {
     $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'none';
 
     $.mobile.linkBindingEnabled = false;
+})
 });

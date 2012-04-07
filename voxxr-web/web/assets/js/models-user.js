@@ -49,7 +49,10 @@
             function sendToServer() {
                 if (!self.data().eventId || !self.data().presId || !self.data().userid) return;
                 postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
-                    function() {
+                    function(data) {
+                        self.data().lastmodified = data.lastmodified;
+                        my.store(data.lastmodified);
+                    }).fail(function() {
                         my.store();
                     });
             }
@@ -105,12 +108,14 @@
 
 
         function save() {
-            postJSON('/my', self.data);
-            store();
+            postJSON('/my', self.data, function(data) {
+                store(data.lastmodified);
+            }).fail(function() { store(); });
         }
 
-        function store() {
-            localStorage.setItem('/my', JSON.stringify(self.data));
+        function store(lastmodified) {
+            self.data.lastmodified = lastmodified || new Date().getTime();
+            getJSON.updateLocalCache('/my', JSON.stringify(self.data));
         }
 
         loadData(data);
@@ -140,7 +145,35 @@
             }
             return self.presentations[eventId + '/' + presId];
         }
+
+        self.clearLocal = function() {
+            getJSON.clearLocalCache('/my');
+        }
+    };
+    My.load = function(user, options) {
+        getJSON('/my', function(data) {
+            if (user.my() && user.my().data // user my already loaded
+                && user.my().data.id === data.id // for the same user as the current one
+                && user.my().data.lastmodified // and we have lastmodified info (stored after lastmodified feature was implemented)
+                ) {
+                if (user.my().data.lastmodified > data.lastmodified) {
+                    console.log('current My version is more recent than server one, sending...');
+                    user.my().save();
+                    return;
+                }
+            }
+
+            if (!user.id() && data.twitterid) {
+                // twitter authentication performed
+                user.signedIn(data.id, data.twitterid)
+            } else if (user.twuser().screenname() == data.id) {
+                data.twitterid = user.twuser().id();
+            }
+            data.deviceid = models.Device.current().id();
+            user.my(new My(data))
+        }, options);
     }
+
     function isNonNull(a) {
             return a && a !== "null" && a !== "undefined";
     }
@@ -178,7 +211,6 @@
                 loadData({id: self.id(), screen_name: self.screenname()}); // reset
                 self.loading(true);
                 var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
-                console.log('loading twitter account details with param ' + param);
                 getJSON(
                     'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
                     function(data) {
@@ -193,7 +225,7 @@
                     { authenticate: false, usenetwork: '+1d' }
                 ).always(function() {self.loading(false);});
             } else {
-                loadData({});
+                self.clear();
             }
         }
 
@@ -223,9 +255,11 @@
             return self;
         };
 
+        self.clear = function() {
+            loadData({});
+        };
+
         if (options.autoLoad) {
-            self.screenname.subscribe(load);
-            self.id.subscribe(load);
             load();
         }
     }
@@ -239,40 +273,41 @@
                 + (isNonNull(self.twuser().id()) ? '(' + self.twuser().id() + ')' : '')
                 + "@" + models.Device.current().id()
                 ;
-            console.log('User is ' + name);
             return name;
-        });
-        self.id.subscribe(function(newValue) {
-            self.twuser().id(null);
-            self.twuser().screenname(newValue);
-        });
-        self.name.subscribe(function() {
-            localStorage.setItem('userId', isNonNull(self.id()) ? self.id() : null);
-            localStorage.setItem('twitterid', isNonNull(self.twuser().id()) ? self.twuser().id() : null);
-            loadMy();
         });
         self.authenticationInProgress = ko.observable(false);
 
-        self.my = ko.observable(new My({events: {}}));
+        self.my = ko.observable();
+        My.load(self);
 
-        function loadMy() {
-            getJSON('/my', function(data) {
-                if (!self.id() && data.twitterid) {
-                    // twitter authentication performed
-                    self.id(data.id);
-                    self.twuser().id(data.twitterid);
-                    self.authenticationInProgress(false);
-                } else if (self.twuser().screenname() == data.id) {
-                    data.twitterid = self.twuser().id();
-                }
-                data.deviceid = models.Device.current().id();
-                self.my(new My(data))
-            }, {uselocal: false});
+        self.reloadMy = function() {
+            My.load(self, {uselocal: false});
+        };
+
+        self.signedIn = function(id, twitterid) {
+            self.id(id);
+            self.twuser().id(twitterid);
+            self.twuser().screenname(id);
+            self.twuser().loadDetails();
+            self.authenticationInProgress(false);
+            localStorage.setItem('userId', id);
+            localStorage.setItem('twitterid', twitterid);
+
+            console.log('User is ' + self.name() + ' [SIGNED IN]');
         }
 
-        loadMy();
+        self.signedOut = function() {
+            self.id(null);
+            self.twuser().clear();
+            localStorage.removeItem('userId');
+            localStorage.removeItem('twitterid');
+            self.my().clearLocal();
+            self.reloadMy();
 
-        self.loadMy = loadMy;
+            console.log('User is ' + self.name() + ' [SIGNED OUT]');
+        }
+
+        console.log('User is ' + self.name());
     }
     whenDeviceReady(function() {
         var userId = localStorage.getItem('userId') || '';

@@ -20,6 +20,7 @@ public class MyPresentation {
     public static Function<Entity, MyPresentation> FROM_ENTITY = new Function<Entity, MyPresentation>() {
         @Override
         public MyPresentation apply(@Nullable Entity input) {
+            Long modified = (Long) input.getProperty("lastmodified");
             return new MyPresentation(
                 (String) input.getProperty("eventId"),
                 (String) input.getProperty("presId"),
@@ -34,6 +35,7 @@ public class MyPresentation {
                     .setWonderCount(toInt(input.getProperty("wonderCount")))
                     .setRateCount(toInt(input.getProperty("rateCount")))
                     .setRateAvg(toInt(input.getProperty("rateAvg")))
+                    .setLastModified(modified == null ? 0 : modified)
                     ;
         }
     };
@@ -47,6 +49,7 @@ public class MyPresentation {
             entity.setProperty("userid", user.getId());
             entity.setProperty("deviceid", user.getDeviceid());
             entity.setProperty("twitterid", user.getTwitterid());
+            entity.setProperty("lastmodified", input.getLastModified());
             entity.setProperty("favorite", input.isFavorite());
             entity.setProperty("presence", input.getPresence());
             entity.setProperty("applauseCount", input.getApplauseCount());
@@ -68,6 +71,9 @@ public class MyPresentation {
                         json.getString("userid"),
                         json.has("twitterid") ? json.getLong("twitterid") : 0,
                         json.getString("deviceid")));
+                if (json.has("lastmodified")) {
+                    myPres.setLastModified(json.getLong("lastmodified"));
+                }
                 if (json.has("favorite")) {
                     myPres.setFavorite(json.getBoolean("favorite"));
                 }
@@ -104,6 +110,7 @@ public class MyPresentation {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("id", input.getUser().getId() + "/" + input.getEventId() + "/" + input.getPresentationId());
+                jsonObject.put("lastmodified", input.getLastModified());
                 jsonObject.put("eventId", input.getEventId());
                 jsonObject.put("presId", input.getPresentationId());
                 jsonObject.put("userid", input.getUser().getId());
@@ -124,6 +131,7 @@ public class MyPresentation {
     };
     public static Entity mergeEntityFromJson(JSONObject json, Entity entity) {
         try {
+            Entity original = entity.clone();
             if (entity.getProperty("eventId") == null) {
                 entity.setProperty("eventId", json.getString("eventId"));
                 entity.setProperty("presId", json.getString("presId"));
@@ -147,6 +155,9 @@ public class MyPresentation {
                     entity.setProperty(p, json.getInt(p));
                 }
             }
+            if (!original.getProperties().equals(entity.getProperties())) {
+                entity.setProperty("lastmodified", System.currentTimeMillis());
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -156,6 +167,7 @@ public class MyPresentation {
     private final String eventId;
     private final String presentationId;
     private final User user;
+    private long lastmodified;
     private boolean favorite;
     private String presence;
     private int applauseCount;
@@ -244,5 +256,14 @@ public class MyPresentation {
 
     public int getRateAvg() {
         return this.rateAvg;
+    }
+
+    public MyPresentation setLastModified(long lastmodified) {
+        this.lastmodified = lastmodified;
+        return this;
+    }
+
+    public long getLastModified() {
+        return this.lastmodified;
     }
 }

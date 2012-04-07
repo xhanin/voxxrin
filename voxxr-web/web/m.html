@@ -179,7 +179,7 @@
                 No presentations right now
             </div>
             <ul data-role="listview" data-inset="true" data-bind="listview: nowplaying" data-theme="a">
-                <li data-bind="css: { favorite: my().favorite }" class="presentation"><a data-bind="href: hash">
+                <li data-bind="css: { favorite: favorite }" class="presentation"><a data-bind="href: hash">
                     <h3 data-bind="text: title"> </h3>
                     <p><span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span></p>
                 </a></li>
@@ -214,7 +214,7 @@
                 <span data-bind="text: name"></span>
             </li>
             <!-- ko foreach: presentations -->
-            <li data-bind="css: { favorite: my().favorite }" class="presentation"><a data-bind="href: hash">
+            <li data-bind="css: { favorite: favorite }" class="presentation"><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
                 <p> <span class="favorites" data-bind="text: favorites, css: { favorite1: favorites() > 0, favorite10: favorites() >= 10, favorite100: favorites() >= 100 }"></span>
                     <span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span>
@@ -230,7 +230,7 @@
             <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
         </div>
         <div data-role="content">
-        <h2><a class="toggleFavorite" data-bind="css: { favorite: my().favorite }"></a> <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
+        <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="showroom" data-role="button" data-theme="e" data-transition="flip"
            data-bind="visible: playing">
             Show room now</a>
