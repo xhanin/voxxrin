@@ -6,4 +6,6 @@
     if (urlParams['mode'] === 'dev') {
         exports.models.baseUrl = "http://localhost:8080/r";
     }
+
+    exports.models.version = '0.3.0';
 })(window)

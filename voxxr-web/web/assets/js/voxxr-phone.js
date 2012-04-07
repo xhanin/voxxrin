@@ -377,21 +377,20 @@ $(function() { whenDeviceReady(function() {
        $.mobile.handleLink(target);
     });
 
-    window.addEventListener("message", function(event) {
-        if (event.data.match(/^twitter:/)) {
-            var twitterid = event.data.substr('twitter:'.length);
-            models.User.current().twuser().id(twitterid);
-            $.mobile.changePage('signin');
-        }
-        if (event.data.match(/^unauthorized/)) {
-            $.mobile.changePage('signin');
-        }
-    });
-
     // use no transition by default on android ATM, browser is too slow, and this is hard to feature detect.
     var ua = navigator.userAgent;
     $.mobile.defaultPageTransition = (ua.indexOf( "Android" ) > -1) ? 'none' : 'none';
 
     $.mobile.linkBindingEnabled = false;
+
+    var storedVersion = localStorage.getItem('version');
+    if (storedVersion !== models.version) {
+        localStorage.setItem('version', models.version);
+        if (storedVersion) {
+            $.mobile.changePage('#' + models.version);
+        } else {
+            $.mobile.changePage('#about');
+        }
+    }
 })
 });
