@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="voxxr-crx" default="assets">
+
+    <target name="assets" description="--> init assets from voxxr-web module">
+        <delete dir="${basedir}/assets"/>
+        <copy todir="${basedir}" overwrite="true">
+            <fileset dir="${basedir}/../voxxr-web/web" includes="m.html, assets/**"/>
+        </copy>
+    </target>
+
+    <target name="zip" description="--> prepare for upload (run assets target before)">
+        <zip basedir="." excludes="build.xml, voxxr-crx.zip, voxxr-crx.zip" destfile="voxxr-crx.zip" />
+    </target>
+</project>

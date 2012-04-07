@@ -1,6 +1,10 @@
+*~
 out
 .idea/workspace.xml
 .DS_Store
+voxxr-crx/assets/
+voxxr-crx/m.html
+voxxr-crx/voxxr-crx.zip
 voxxr-droid/bin
 voxxr-droid/gen
 voxxr-droid/assets

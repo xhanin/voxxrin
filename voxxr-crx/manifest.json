@@ -1,0 +1,14 @@
+{
+  "name": "Voxxrin",
+  "description": "Voxxrin, your conference companion",
+  "version": "0.3.0",
+  "app": {
+    "launch": {
+      "local_path": "m.html"
+    }
+  },
+  "icons": {
+    "16": "icon-16.png",
+    "128": "icon-128.png"
+  }
+}
