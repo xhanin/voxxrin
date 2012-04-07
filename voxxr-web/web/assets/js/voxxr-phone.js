@@ -354,8 +354,8 @@ $(function() { whenDeviceReady(function() {
 
             var deviceId = models.Device.current().id();
             if (!deviceId) {
-                var onDeviceId;
-                onDeviceId = function(newValue) {
+                console.log('no device id available yet, waiting for it to display signin with twitter');
+                var onDeviceId = function(newValue) {
                     models.Device.current().id.unsubscribe(onDeviceId);
                     twitterSignin(newValue);
                 }

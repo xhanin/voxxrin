@@ -16,10 +16,10 @@
 
         whenDeviceReady(function() {
             var devicedata = localStorage.getItem('deviceinfo');
-            if (devicedata) {
+            if (devicedata && devicedata.id) {
+                console.log('device (from ls) ' + devicedata);
                 devicedata = JSON.parse(devicedata);
                 load(devicedata);
-                console.log('device (from ls)', devicedata);
             } else {
                 var deviceinfo = _.extend(
                     {userAgent: navigator.userAgent, userLanguage: navigator.userLanguage},
@@ -32,7 +32,7 @@
                     success: function(data) {
                         localStorage.setItem('deviceinfo', JSON.stringify(data));
                         load(data);
-                        console.log('device (from server)', data);
+                        console.log('device (from server) ' + JSON.stringify(data));
                     }
                 });
             }
