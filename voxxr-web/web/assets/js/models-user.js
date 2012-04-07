@@ -190,11 +190,12 @@
         self.location = ko.observable();
         self.followers = ko.observableArray([]);
         self.friends = ko.observableArray([]);
+        self.authenticated = ko.computed(function() { return isNonNull(self.id()) || isNonNull(self.screenname()) });
         self.ready = ko.observable(false);
         self.loading = ko.observable(false);
 
         function isAuthenticated() {
-            return isNonNull(self.id()) || isNonNull(self.screenname());
+            return self.authenticated();
         }
 
         function loadData(data) {

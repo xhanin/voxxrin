@@ -404,6 +404,13 @@
 #jqt .presentation.page .ui-listview {
   margin-bottom: 0px;
 }
+#jqt .presentation.page .signinPrompt {
+  margin-top: 10px;
+  font-style: italic;
+}
+#jqt .presentation.page .nobody {
+  font-style: italic;
+}
 #jqt .presentation.page .slot,
 #jqt .presentation.page .room {
   color: #4ecdc4;

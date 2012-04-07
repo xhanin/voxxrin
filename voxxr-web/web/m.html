@@ -250,7 +250,15 @@
                 <p data-bind="visible: !loading(), text: bio"></p>
             </li>
         </ul>
-        <h3>Following related</h3>
+        <p class="signinPrompt" data-bind="visible: !user().twuser().authenticated()">
+            By signing in with your twitter account you could see what your network think of this talk.
+            <a href="#signin" data-transition="slidedown" data-theme="e" data-role="button">Login</a>
+        </p>
+        <div data-bind="visible: user().twuser().authenticated()">
+            <h3 >Following related</h3>
+            <p class="nobody" data-bind="visible: involvedUsers.friends().length === 0">
+                Nobody you're following has favorited this talk yet.
+            </p>
             <ul data-role="listview" data-inset="false" data-bind="listview: involvedUsers.friends" class="friends">
                 <li class="twuser">
                     <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
@@ -277,7 +285,10 @@
                     </p>
                 </li>
             </ul>
-        <h3>Followers related</h3>
+            <h3>Followers related</h3>
+            <p class="nobody" data-bind="visible: involvedUsers.followers().length === 0">
+                None of your followers has favorited this talk yet. 
+            </p>
             <ul data-role="listview" data-inset="false" data-bind="listview: involvedUsers.followers" class="followers">
                 <li class="twuser">
                     <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
@@ -304,6 +315,7 @@
                     </p>
                 </li>
             </ul>
+        </div>
         </div>
     </div>
     <div id="roomRT" class="roomRT page" data-role="page">
