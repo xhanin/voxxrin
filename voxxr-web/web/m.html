@@ -263,7 +263,7 @@
                     <p class="thispres" data-bind="visible: !twuser().loading()">
                         <span class="label">Info: </span>
                         <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
-                        <span class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></span>
+                        <span class="presence" data-bind="css: { 'in': presence() == 'IN', 'was': presence() == 'WAS' }"></span>
                         <!-- ko if: presence() == 'IN' || presence() == 'WAS' -->
                         <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>
                         <span class="rateMean" data-bind="text: rate.avgDisplay">#</span>
@@ -290,7 +290,7 @@
                     <p class="thispres" data-bind="visible: !twuser().loading()">
                         <span class="label">Info: </span>
                         <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
-                        <span class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></span>
+                        <span class="presence" data-bind="css: { 'in': presence() == 'IN', 'was': presence() == 'WAS' }"></span>
                         <!-- ko if: presence() == 'IN' || presence() == 'WAS' -->
                         <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>
                         <span class="rateMean" data-bind="text: rate.avgDisplay">#</span>
@@ -363,7 +363,7 @@
                 </ul>
             </div>
             <div class="network" style="display:none;" data-bind="with: presentation">
-                <ul data-role="listview" data-inset="true" data-bind="listview: involvedUsers.inroom">
+                <ul data-role="listview" data-inset="false" data-bind="listview: involvedUsers.inroom">
                     <li class="twuser">
                         <img data-bind="visible: !twuser().loading(), attr: {src: twuser().pictureURL}" class="picture ul-li-thumb">
                         <span class="loading" data-bind="visible: twuser().loading"></span>
@@ -375,7 +375,7 @@
                         <p class="thispres" data-bind="visible: !twuser().loading()">
                             <span class="label">Info: </span>
                             <span class="isFavorite" data-bind="css: { favorite: favorite }"></span>
-                            <span class="presence" data-bind="css: { in: presence() == 'IN', was: presence() == 'WAS' }"></span>
+                            <span class="presence" data-bind="css: { 'in': presence() == 'IN', 'was': presence() == 'WAS' }"></span>
                             <span class="rateMeanIcon ui-icon ui-icon-star ui-icon-shadow"></span>
                             <span class="rateMean" data-bind="text: rate.avgDisplay">#</span>
                             <img src="assets/img/applaudire.png" width="18px" height="18px">
