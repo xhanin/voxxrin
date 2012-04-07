@@ -30,7 +30,9 @@
 
         function loadFromData() {
             self.favorite(self.data().favorite?true:false);
-            self.presence(self.data().presence);
+            if (self.data().presence) {
+                self.presence(self.data().presence);
+            }
             self.feelings.applause(self.data().applauseCount || 0);
             self.feelings.yawn(self.data().yawnCount || 0);
             self.feelings.wonder(self.data().wonderCount || 0);
