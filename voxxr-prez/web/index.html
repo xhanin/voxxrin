@@ -8,26 +8,49 @@
         window.addEventListener("message", function(event) {
             if (event.data.match(/^hash:/)) {
                 window.location.hash = event.data.substr('hash:'.length)
-            }
-            if (event.data.match(/^poll:/)) {
+            } else if (event.data.match(/^poll:/)) {
                 var poll = event.data.substr('poll:'.length);
-                $('div.prez').fadeOut();
-                $('div.poll').fadeIn();
-            }
-            if (event.data.match(/^layout:/)) {
+                // TODO: init poll
+                gotoFrame('poll');
+            } else if (event.data.match(/^goto:/)) {
+                var goto = event.data.substr('goto:'.length);
+                gotoFrame(goto);
+            } else if (event.data.match(/^layout:/)) {
                 var layout = event.data.substr('layout:'.length);
-                $('div.prez, div.poll, div.dashboard')
-                        .removeClass('full')
-                        .removeClass('classic')
-                        .addClass(layout);
+                setLayout(layout);
             }
         }, false);
         $(function() {
-            var prez = $('.prez iframe');
             if (window.location.hash) {
-                prez.attr('src', prez.attr('src') + window.location.hash);
+                var intro = $('.intro iframe');
+                intro.attr('src', intro.attr('src') + window.location.hash);
             }
+
+            $('#header-right').click(function(e) {
+                $('.top.menu').toggleClass('active');
+            });
+
+            $('.menu a').click(function() {
+                if ($(this).attr('data-goto')) {
+                    gotoFrame($(this).attr('data-goto'));
+                }
+                if ($(this).attr('data-layout')) {
+                    setLayout($(this).attr('data-layout'));
+                }
+                $('.top.menu').removeClass('active');
+            });
         });
+        function gotoFrame(frame) {
+            $('.content.active').removeClass('active');
+            $('.' + frame).addClass('active');
+        }
+        function setLayout(layout) {
+            $('.content, .side')
+                    .removeClass('full')
+                    .removeClass('fullSide')
+                    .removeClass('classic')
+                    .addClass(layout);
+        }
     </script>
      <style type="text/css">
          body {overflow:hidden}
@@ -35,24 +58,50 @@
          #header {position:absolute; top: 0px; left:0px; width: 100%;height:36px;z-index: 2000;background: url('img/devoxx-header-repeat.png') repeat-x;}
          #header-left {position:absolute; top: 0px; left:0px;}
          #header-right {position:absolute; top: 0px; right:0px;}
-         .prez, .poll {
-             position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%;
-            -webkit-transition-property: width;
+         .menu { position: absolute; right: 0; top: 36px; width: 200px; z-index: 10000; margin-right: -200px;
+             background: white; opacity: 0.8;
+             -webkit-transition-property: margin;
+             -webkit-transition-duration: 0.25s;
+             -webkit-transition-timing-function: ease-out;
+         }
+         .menu.active { margin-right: 0; }
+         .menu li {
+              padding: 4px 4px 4px 14px;
+              list-style: none;
+              color: #08C;
+         }
+         .menu li.separator { color: white; background-color: #08C; }
+         .menu li a { width: 100%; cursor: pointer; }
+         .menu li:hover { color: white; background-color: #08C; }
+
+         .content {
+             position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%; margin-left: -1400px;
+            -webkit-transition-property: width, margin;
             -webkit-transition-duration: 1s;
             -webkit-transition-timing-function: ease-out;
          }
-         .prez.full, .poll.full {position:absolute; top: 34px; bottom: 13px; left:0px; width: 100%;}
-         .prez iframe, .poll iframe {width: 100%; height: 100%}
-         div.poll {display: none;}
-         .dashboard {
+         .content.full {width: 100%; }
+         .content.fullSide {width: 0;}
+         .content.active {margin-left: 0px;}
+         .content iframe, .side iframe {width: 100%; height: 100%}
+         .side {
              position:absolute; top: 34px; bottom: 13px; right:0px; width: 20%;
              overflow-x: hidden;
              -webkit-transition-property: width;
              -webkit-transition-duration: 1s;
              -webkit-transition-timing-function: ease-out;
          }
-         .dashboard.full {width: 0px;}
-         .dashboard iframe { width: 100%; height: 100%}
+         .side.full {width: 0px;}
+         .side.fullSide {width: 100%;}
+
+         .app iframe {
+             position: absolute; width: 320px; height: 480px; left: 50%; top: 50%; margin-top: -240px; margin-left: -160px;
+
+             -webkit-box-shadow:  2px 2px 3px 2px rgba(0, 0, 0, 0.3);
+             -moz-box-shadow:  2px 2px 3px 2px rgba(0, 0, 0, 0.3);
+             box-shadow:  2px 2px 3px 2px rgba(0, 0, 0, 0.3);
+         }
+
          #footer {position:absolute; bottom: 0px; left:0px; width: 100%;}
          #footer-right {position:absolute; bottom: 0px; right:20%;}
          #footer-main {position:absolute; bottom: 0px; left:0px; width: 100%; height: 13px; background-color: black;}
@@ -66,13 +115,27 @@
         <img id="header-left" src="img/devoxx-header-left.png">
         <img id="header-right" src="img/devoxx-header-right.png">
     </div>
-    <div class="prez full">
+    <div class="top menu">
+        <ul>
+            <li class="separator">Plan</li>
+            <li><a data-goto="intro">Introduction</a></li>
+            <li><a data-goto="app">App</a></li>
+            <li><a data-goto="poll">Poll</a></li>
+            <li class="separator">Layout</li>
+            <li><a data-layout="classic">Classic</a></li>
+            <li><a data-layout="full">Full</a></li>
+        </ul>
+    </div>
+    <div class="intro full content active">
         <iframe id="prezframe" src="prez.html"></iframe>
     </div>
-    <div class="poll full">
+    <div class="poll full content">
         <iframe id="pollframe" src="http://localhost:8080/p.html?event=1&prez=1"></iframe>
     </div>
-    <div class="dashboard full">
+    <div class="app full content">
+        <iframe id="app" src="http://localhost:8080/m.html"></iframe>
+    </div>
+    <div class="dashboard full side">
         <iframe id="dashboardframe" src="http://localhost:8080/d.html?event=1&prez=1"></iframe>
     </div>
     <div id="footer">

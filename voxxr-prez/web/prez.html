@@ -98,18 +98,27 @@
     </div>
     <div id="with-app" class="step center" data-x="0" data-y="-2500" data-z="-2500" data-rotate-x="60" data-scale="2">
         <h2>With this App</h2>
-    </div>
-    <div id="dashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="2">
-        <h2>Dashboard</h2>
-        <!-- TODO display full dashboard there -->
-    </div>
-    <div id="sideDashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="1">
         <script>
-        function dashboardEnter() {
+        window['with-appEnter'] = function() {
+            // used when going back from next slide
             if (window.parent) {
                 window.parent.postMessage("layout:full", "*");
             }
         }
+        </script>
+    </div>
+    <div id="dashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="2">
+        <h2>Dashboard</h2>
+        <script>
+        function dashboardEnter() {
+            if (window.parent) {
+                window.parent.postMessage("layout:fullSide", "*");
+            }
+        }
+        </script>
+    </div>
+    <div id="sideDashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="1">
+        <script>
         function sideDashboardEnter() {
             if (window.parent) {
                 window.parent.postMessage("layout:classic", "*");
@@ -120,8 +129,27 @@
     <div id="demoEffect1" class="step image" data-x="0" data-y="-3000" data-z="-4000" data-rotate-x="60" data-scale="1">
         <img src="img/fail-1.jpg" width="800" >
     </div>
-    <div id="demoApp" class="step image" data-x="0" data-y="-3000" data-z="-5000" data-rotate-x="60" data-scale="1">
-        <iframe id="voxxrappframe" src="http://voxxr-web.appspot.com/m.html" width="320" height="480"></iframe>
+    <div id="demoApp" class="step center" data-x="0" data-y="-3000" data-z="-5000" data-rotate-x="60" data-scale="1">
+        <h2>Late Developed Application</h2>
+        <script>
+            var gotoAppTimeout;
+            function demoAppEnter() {
+                gotoAppTimeout = setTimeout(function() {
+                    if (window.parent) {
+                        window.parent.postMessage("goto:app", "*");
+                    }
+                }, 2000);
+            }
+            function demoAppLeave() {
+                if (gotoAppTimeout) {
+                    clearTimeout(gotoAppTimeout);
+                }
+                if (window.parent) {
+                    window.parent.postMessage("goto:intro", "*");
+                }
+            }
+        </script>
+
     </div>
     <div id="demoEffect2" class="step image" data-x="0" data-y="-3000" data-z="-6000" data-rotate-x="60" data-scale="1">
         <img src="img/fail-2.jpg" width="800" >
