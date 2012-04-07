@@ -1,4 +1,4 @@
-$(function() { whenDeviceReady(function() {
+$(function() { models.Device.current().whenReady(function() {
     function VoxxrViewModel() {
         var self = this;
         self.events = ko.observableArray([]);
@@ -105,35 +105,33 @@ $(function() { whenDeviceReady(function() {
     };
 
     var voxxr = new VoxxrViewModel();
-    whenDeviceReady(function() {
-        voxxr.load();
-        Route
-            .add('events', function() {
-                return voxxr.gotoEvents();
-            }, [])
-            .add('event~:event', function() {
-                return voxxr.gotoEvent(this.params.event);
-            }, ["#events"])
-            .add('nowplaying~:event', function() {
-                return voxxr.gotoNowPlaying(this.params.event);
-            }, ["#events", "#event~:event"])
-            .add('dayschedule~:event~:day', function() {
-                return voxxr.gotoDay(this.params.event, this.params.day);
-            }, ["#events", "#event~:event"])
-            .add('presentation~:event~:presentation', function() {
-                return voxxr.gotoPresentation(this.params.event, this.params.presentation);
-            }, ["#events", "#event~:event"])
-            .add('roomRT', function() {
-                if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
-                return voxxr.gotoRoom();
-            })
-            .add('', function() {
-                return voxxr.gotoEvents();
-            }, [])
-            .start('events');
+    voxxr.load();
+    Route
+        .add('events', function() {
+            return voxxr.gotoEvents();
+        }, [])
+        .add('event~:event', function() {
+            return voxxr.gotoEvent(this.params.event);
+        }, ["#events"])
+        .add('nowplaying~:event', function() {
+            return voxxr.gotoNowPlaying(this.params.event);
+        }, ["#events", "#event~:event"])
+        .add('dayschedule~:event~:day', function() {
+            return voxxr.gotoDay(this.params.event, this.params.day);
+        }, ["#events", "#event~:event"])
+        .add('presentation~:event~:presentation', function() {
+            return voxxr.gotoPresentation(this.params.event, this.params.presentation);
+        }, ["#events", "#event~:event"])
+        .add('roomRT', function() {
+            if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
+            return voxxr.gotoRoom();
+        })
+        .add('', function() {
+            return voxxr.gotoEvents();
+        }, [])
+        .start('events');
 
-        ko.applyBindings(voxxr.user(), $('#signin').get(0));
-    });
+    ko.applyBindings(voxxr.user(), $('#signin').get(0));
 
     var hfpoints = [];
     var rpoints = [];
@@ -314,63 +312,61 @@ $(function() { whenDeviceReady(function() {
         $(target).find('p').toggleClass('allDetails');
     }});
 
-    whenDeviceReady(function() {
-        var client_browser = null;
-        if (window.plugins && window.plugins.childBrowser) {
-            client_browser = window.plugins.childBrowser;
-        } else if (typeof ChildBrowser !== 'undefined') {
-            client_browser = ChildBrowser.install();
-        }
-        tappable("a.signin", function() {
-            if (client_browser != null) {
-                console.log('registering onLocationChange');
-                var onLocationChange = function(loc) {
-                    console.log('locationChanged to ' + loc);
-                    if (loc.indexOf('/signedin.html') !== -1 || loc.indexOf('/notsignedin.html') !== -1) {
-                        client_browser.onLocationChange = null;
-                        if (loc.indexOf('/notsignedin.html') !== -1) {
-                            models.User.current().authenticationInProgress(false);
-                            setTimeout(function() {client_browser.close()}, 3000);
-                        } else {
-                            client_browser.close();
-                            models.User.current().reloadMy();
-                        }
+    var client_browser = null;
+    if (window.plugins && window.plugins.childBrowser) {
+        client_browser = window.plugins.childBrowser;
+    } else if (typeof ChildBrowser !== 'undefined') {
+        client_browser = ChildBrowser.install();
+    }
+    tappable("a.signin", function() {
+        if (client_browser != null) {
+            console.log('registering onLocationChange');
+            var onLocationChange = function(loc) {
+                console.log('locationChanged to ' + loc);
+                if (loc.indexOf('/signedin.html') !== -1 || loc.indexOf('/notsignedin.html') !== -1) {
+                    client_browser.onLocationChange = null;
+                    if (loc.indexOf('/notsignedin.html') !== -1) {
+                        models.User.current().authenticationInProgress(false);
+                        setTimeout(function() {client_browser.close()}, 3000);
+                    } else {
+                        client_browser.close();
+                        models.User.current().reloadMy();
                     }
                 }
-                client_browser.onLocationChange = onLocationChange
-            } else {
-                console.log('no client browser detected ~ web app mode');
             }
+            client_browser.onLocationChange = onLocationChange
+        } else {
+            console.log('no client browser detected ~ web app mode');
+        }
 
-            function twitterSignin(deviceId) {
-                var url = models.baseUrl + '/twitter/signin?deviceid=' + deviceId;
-                if (client_browser) {
-                    console.log('opening child web page ' + url);
-                    window.plugins.childBrowser.showWebPage(url);
-                } else {
-                    window.location.href = url;
-                }
-            }
-
-            var deviceId = models.Device.current().id();
-            if (!deviceId) {
-                console.log('no device id available yet, waiting for it to display signin with twitter');
-                var onDeviceId = function(newValue) {
-                    models.Device.current().id.unsubscribe(onDeviceId);
-                    twitterSignin(newValue);
-                }
-                models.Device.current().id.subscribe(onDeviceId);
+        function twitterSignin(deviceId) {
+            var url = models.baseUrl + '/twitter/signin?deviceid=' + deviceId;
+            if (client_browser) {
+                console.log('opening child web page ' + url);
+                window.plugins.childBrowser.showWebPage(url);
             } else {
-                twitterSignin(deviceId);
+                window.location.href = url;
             }
-            models.User.current().authenticationInProgress(true);
-        });
-        tappable("a.signout", function() {
-           models.User.current().signedOut();
-        });
-        tappable("a.refreshMy", function() {
-           models.User.current().reloadMy();
-        });
+        }
+
+        var deviceId = models.Device.current().id();
+        if (!deviceId) {
+            console.log('no device id available yet, waiting for it to display signin with twitter');
+            var onDeviceId = function(newValue) {
+                models.Device.current().id.unsubscribe(onDeviceId);
+                twitterSignin(newValue);
+            }
+            models.Device.current().id.subscribe(onDeviceId);
+        } else {
+            twitterSignin(deviceId);
+        }
+        models.User.current().authenticationInProgress(true);
+    });
+    tappable("a.signout", function() {
+       models.User.current().signedOut();
+    });
+    tappable("a.refreshMy", function() {
+       models.User.current().reloadMy();
     });
 
     tappable("a", function(e, target) {

@@ -163,7 +163,7 @@ function whenDeviceReady(callback) {
 
 function postJSON(uri, data, onSuccess) {
     var dfd = new $.Deferred();
-    whenDeviceReady(function() {
+    models.Device.current().whenReady(function() {
         if (!models.Device.current().offline()) {
             $.ajax({
                 url: models.baseUrl + uri,
@@ -243,7 +243,7 @@ function getJSON(uri, onSuccess, options) {
             }
         }
         function loadFromNetwork() {
-            whenDeviceReady(function() {
+            models.Device.current().whenReady(function() {
                 if (!models.Device.current().offline()) {
                     // refresh
                     $.ajax({

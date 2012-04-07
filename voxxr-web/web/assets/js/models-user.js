@@ -154,6 +154,10 @@
     };
     My.load = function(user, options) {
         getJSON('/my', function(data) {
+            console.log('loaded My: user.id()=' + user.id()
+                + '; user.twuser().id()=' + user.twuser().id()
+                + '; user.my().data=' + ((typeof(user.my()) !== 'undefined') ? user.my().data : null)
+                + '; data.twitterid=' + data.twitterid);
             if (user.my() && user.my().data // user my already loaded
                 && user.my().data.id === data.id // for the same user as the current one
                 && user.my().data.lastmodified // and we have lastmodified info (stored after lastmodified feature was implemented)
@@ -165,7 +169,7 @@
                 }
             }
 
-            if (!user.id() && data.twitterid) {
+            if ((!user.id() && data.twitterid) || user.twuser().id() !== data.twitterid) {
                 // twitter authentication performed
                 user.signedIn(data.id, data.twitterid)
             } else if (user.twuser().screenname() == data.id) {
@@ -312,7 +316,7 @@
 
         console.log('User is ' + self.name());
     }
-    whenDeviceReady(function() {
+    models.Device.current().whenReady(function() {
         var userId = localStorage.getItem('userId') || '';
         userId = isNonNull(userId) ? userId : '';
         var twitterid = urlParams['twitterid'] || localStorage.getItem('twitterid') || '';

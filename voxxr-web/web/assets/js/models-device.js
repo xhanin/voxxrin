@@ -12,31 +12,64 @@
 
         function load(data) {
             self.id(data.id);
+            ready();
+        }
+
+        var whenReadyCallbacks = [];
+        var isReady = false;
+        function ready() {
+            isReady = true;
+            _(whenReadyCallbacks).each(function(c) { c(self); });
         }
 
         whenDeviceReady(function() {
             var devicedata = localStorage.getItem('deviceinfo');
-            if (devicedata && devicedata.id) {
-                console.log('device (from ls) ' + devicedata);
-                devicedata = JSON.parse(devicedata);
-                load(devicedata);
+            if (devicedata) {
+                var deviceinfo = JSON.parse(devicedata);
+                if (deviceinfo.id) {
+                    console.log('device (from ls) ' + devicedata);
+                    load(deviceinfo);
+                    return;
+                }
+            }
+            var deviceinfo = _.extend(
+                {userAgent: navigator.userAgent, userLanguage: navigator.userLanguage},
+                navigator.device);
+            if (self.offline()) {
+                // offline for the first device startup :(
+                deviceinfo.id = new Date().getTime();
+                localStorage.setItem('deviceinfo', deviceinfo);
+                load(deviceinfo);
+                console.log('device (guessed) ' + JSON.stringify(deviceinfo));
             } else {
-                var deviceinfo = _.extend(
-                    {userAgent: navigator.userAgent, userLanguage: navigator.userLanguage},
-                    navigator.device);
-                $.ajax({
-                    url: models.baseUrl + "/devices/",
-                    dataType:"json",
-                    type: "POST",
-                    data: JSON.stringify(deviceinfo),
-                    success: function(data) {
-                        localStorage.setItem('deviceinfo', JSON.stringify(data));
-                        load(data);
-                        console.log('device (from server) ' + JSON.stringify(data));
-                    }
-                });
+                var loadFromServer = function(){
+                    $.ajax({
+                        url: models.baseUrl + "/devices/",
+                        dataType:"json",
+                        type: "POST",
+                        data: JSON.stringify(deviceinfo),
+                        success: function(data) {
+                            localStorage.setItem('deviceinfo', JSON.stringify(data));
+                            load(data);
+                            console.log('device (from server) ' + JSON.stringify(data));
+                        },
+                        error: function() {
+                            console.log("couldn't get device info from server, retrying in a few moment");
+                            setTimeout(loadFromServer, 300);
+                        }
+                    });
+                }
+                loadFromServer();
             }
         });
+
+        self.whenReady = function(callback) {
+            if (isReady) {
+                callback(self);
+            } else {
+                whenReadyCallbacks.push(callback);
+            }
+        };
     }
     Device.current = ko.observable(new Device());
 
