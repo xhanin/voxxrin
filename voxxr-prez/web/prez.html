@@ -16,6 +16,23 @@
     <link href="css/voxxr-prez.css" rel="stylesheet" />
 
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script>
+        function ppm(msg) {
+            if (window.parent) {
+                window.parent.postMessage(msg, "*");
+            }
+        }
+        function fppm(msg) {
+            return function() { ppm(msg) }
+        }
+        function onEnterIn(slide, callback) {
+            window[slide + 'Enter'] = callback;
+        }
+        function onLeaveFrom(slide, callback) {
+            window[slide + 'Leave'] = callback;
+        }
+        </script>
 </head>
 <body>
 
@@ -98,33 +115,14 @@
     </div>
     <div id="with-app" class="step center" data-x="0" data-y="-2500" data-z="-2500" data-rotate-x="60" data-scale="2">
         <h2>With this App</h2>
-        <script>
-        window['with-appEnter'] = function() {
-            // used when going back from next slide
-            if (window.parent) {
-                window.parent.postMessage("layout:full", "*");
-            }
-        }
-        </script>
+        <script> onEnterIn('with-app', fppm("layout:full")); // used when going back from next slide </script>
     </div>
     <div id="dashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="2">
         <h2>Dashboard</h2>
-        <script>
-        function dashboardEnter() {
-            if (window.parent) {
-                window.parent.postMessage("layout:fullSide", "*");
-            }
-        }
-        </script>
+        <script> onEnterIn('dashboard', fppm("layout:fullSide")); </script>
     </div>
     <div id="sideDashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="1">
-        <script>
-        function sideDashboardEnter() {
-            if (window.parent) {
-                window.parent.postMessage("layout:classic", "*");
-            }
-        }
-        </script>
+        <script> onEnterIn('sideDashboard', fppm("layout:classic")); </script>
     </div>
     <div id="demoEffect1" class="step image" data-x="0" data-y="-3000" data-z="-4000" data-rotate-x="60" data-scale="1">
         <img src="img/fail-1.jpg" width="800" >
@@ -133,21 +131,8 @@
         <h2>Late Developed Application</h2>
         <script>
             var gotoAppTimeout;
-            function demoAppEnter() {
-                gotoAppTimeout = setTimeout(function() {
-                    if (window.parent) {
-                        window.parent.postMessage("goto:app", "*");
-                    }
-                }, 2000);
-            }
-            function demoAppLeave() {
-                if (gotoAppTimeout) {
-                    clearTimeout(gotoAppTimeout);
-                }
-                if (window.parent) {
-                    window.parent.postMessage("goto:intro", "*");
-                }
-            }
+            onEnterIn('demoApp', function() { gotoAppTimeout = setTimeout(function() { ppm("goto:app"); }, 2000);});
+            onLeaveFrom('demoApp', function() {  if (gotoAppTimeout) { clearTimeout(gotoAppTimeout); } ; ppm("goto:intro"); });
         </script>
 
     </div>
@@ -168,13 +153,7 @@
         <img src="img/livre-dont-vous-etes-le-heros.jpg" height="600" >
     </div>
     <div id="poll" class="step" data-x="0" data-y="0" data-scale="50">
-        <script>
-        function pollEnter() {
-            if (window.parent) {
-                window.parent.postMessage("poll:menu", "*");
-            }
-        }
-        </script>
+        <script> onEnterIn('poll', fppm("poll:menu")); </script>
     </div>
 </div>
 
@@ -183,15 +162,5 @@
 <script src="js/impress.js"></script>
 <script src="js/jquery-1.7.1.js"></script>
 <script>impress();</script>
-<script>
-$(function(){
-    $('#startPoll').on('click', function() {
-        if (window.parent) {
-            window.parent.postMessage("poll:test", "*");
-        }
-    });
-});
-</script>
-
 </body>
 </html>
