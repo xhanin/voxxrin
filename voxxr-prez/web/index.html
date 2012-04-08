@@ -5,26 +5,68 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <script src="js/jquery-1.7.1.js"></script>
     <script>
-        window.addEventListener("message", function(event) {
-            if (event.data.match(/^hash:/)) {
-                window.location.hash = event.data.substr('hash:'.length)
-            } else if (event.data.match(/^poll:/)) {
-                var poll = event.data.substr('poll:'.length);
-                // TODO: init poll
-                gotoFrame('poll');
-            } else if (event.data.match(/^goto:/)) {
-                var goto = event.data.substr('goto:'.length);
-                gotoFrame(goto);
-            } else if (event.data.match(/^layout:/)) {
-                var layout = event.data.substr('layout:'.length);
-                setLayout(layout);
-            }
-        }, false);
+        var urlParams = {};
+        (function () {
+            var e,
+                a = /\+/g,  // Regex for replacing addition symbol with a space
+                r = /([^&=]+)=?([^&]*)/g,
+                d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                q = window.location.search.substring(1);
+
+            while (e = r.exec(q))
+               urlParams[d(e[1])] = d(e[2]);
+        })();
+
         $(function() {
-            if (window.location.hash) {
-                var intro = $('.intro iframe');
-                intro.attr('src', intro.attr('src') + window.location.hash);
+            var mode = urlParams['mode'] || 'prod';
+            var baseUrl = mode === 'dev' ?  'http://localhost:8080' : 'http://app.voxxr.in';
+
+            function loadIframe(iframe) {
+                if (iframe.attr('src') === 'about:blank') {
+                    var src = iframe.attr('data-src');
+                    iframe.attr('src', src[0] == '/' ? (baseUrl + src + '&mode=' + mode) : src);
+                }
             }
+            function unloadIframe(iframe) {
+                iframe.attr('src', 'about:blank');
+            }
+            function loadIFrameOnEnter(el) {
+                el
+                        .on('enter', function(e, from) {
+                            loadIframe(el.find('iframe'));
+                            setTimeout(function() { el.find('iframe')[0].contentWindow.focus(); }, 100);
+                        })
+                        .on('leave', function(e, to) { if (!$('#' + to).data('keep-previous-on-leave')) unloadIframe(el.find('iframe'));})
+            }
+
+            window.addEventListener("message", function(event) {
+                if (event.data.match(/^hash:/)) {
+                    window.location.hash = event.data.substr('hash:'.length)
+                } else if (event.data.match(/^poll:/)) {
+                    var poll = event.data.substr('poll:'.length);
+                    // TODO: init poll
+                    gotoFrame('poll');
+                } else if (event.data.match(/^goto:/)) {
+                    var goto = event.data.substr('goto:'.length);
+                    gotoFrame(goto);
+                } else if (event.data.match(/^layout:/)) {
+                    var layout = event.data.substr('layout:'.length);
+                    setLayout(layout);
+                }
+            }, false);
+
+            loadIframe($('#dashboard iframe'));
+            loadIFrameOnEnter($('#intro'));
+            loadIFrameOnEnter($('#app').data('keep-previous-on-leave', true));
+            loadIFrameOnEnter($('#poll'));
+            $('#intro').on('enter', function() {
+                if (window.location.hash) {
+                    var intro = $('.intro iframe');
+                    intro.attr('src', intro.attr('src') + window.location.hash);
+                }
+            });
+
+            gotoFrame('intro');
 
             $('#header-right').click(function(e) {
                 $('.top.menu').toggleClass('active');
@@ -41,8 +83,9 @@
             });
         });
         function gotoFrame(frame) {
-            $('.content.active').removeClass('active');
-            $('.' + frame).addClass('active');
+            var from = $('.content.active').attr('id');
+            $('.content.active').trigger('leave', [frame]).removeClass('active');
+            $('#' + frame).trigger('enter', [from]).addClass('active');
         }
         function setLayout(layout) {
             $('.content, .side')
@@ -126,17 +169,17 @@
             <li><a data-layout="full">Full</a></li>
         </ul>
     </div>
-    <div class="intro full content active">
-        <iframe id="prezframe" src="prez.html"></iframe>
+    <div id="intro" class="intro full content active">
+        <iframe id="prezframe" data-src="prez.html" src="about:blank"></iframe>
     </div>
-    <div class="poll full content">
-        <iframe id="pollframe" src="http://localhost:8080/p.html?event=1&prez=1"></iframe>
+    <div id="poll" class="poll full content">
+        <iframe id="pollframe" data-src="/p.html?event=1&prez=1" src="about:blank"></iframe>
     </div>
-    <div class="app full content">
-        <iframe id="app" src="http://localhost:8080/m.html"></iframe>
+    <div id="app" class="app full content">
+        <iframe id="appframe" data-src="/m.html?x=1" src="about:blank"></iframe>
     </div>
-    <div class="dashboard full side">
-        <iframe id="dashboardframe" src="http://localhost:8080/d.html?event=1&prez=1"></iframe>
+    <div id="dashboard" class="dashboard full side">
+        <iframe id="dashboardframe" data-src="/d.html?event=1&prez=1" src="about:blank"></iframe>
     </div>
     <div id="footer">
         <div id="footer-main"></div>

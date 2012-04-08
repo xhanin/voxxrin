@@ -193,8 +193,9 @@
         <h2>Late Developed Application</h2>
         <script>
             var gotoAppTimeout;
-            onEnterIn('demoApp', function() { gotoAppTimeout = setTimeout(function() { ppm("goto:app"); }, 2000);});
-            onLeaveFrom('demoApp', function() {  if (gotoAppTimeout) { clearTimeout(gotoAppTimeout); } ; ppm("goto:intro"); });
+            onEnterIn('demoApp', function() {
+                gotoAppTimeout = setTimeout(function() { ppm("goto:app"); }, 2000);});
+            onLeaveFrom('demoApp', function() {  if (gotoAppTimeout) { clearTimeout(gotoAppTimeout); } ; });
         </script>
     </div>
     <div id="demoEffect2" class="step image" data-x="0" data-y="-3000" data-z="-6000" data-rotate-x="60" data-scale="1">
