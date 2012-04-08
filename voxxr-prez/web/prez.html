@@ -105,16 +105,76 @@
     </div>
 
 
-    <!-- TODO archi slides -->
-    <div id="archi" class="step center" data-x="-3500" data-y="0" data-scale="5">
+    <!-- archi slides -->
+    <div id="archi" class="step center" data-x="-4500" data-y="0" data-scale="5"  data-rotate="-90">
         <h2>Architecture</h2>
     </div>
-    
+    <div id="client" class="step center" data-x="-4500" data-y="-2250" data-scale="3">
+        <h2 class="title">Client(s)</h2>
+    </div>
+    <div id="ios" class="step image" data-x="-5200" data-y="-1500" data-rotate="-90">
+        <img src="img/iphone-ipad.png" >
+    </div>
+    <div id="android" class="step image" data-x="-5200" data-y="-2000" data-rotate="-90">
+        <img src="img/android-phone.png" >
+    </div>
+    <div id="phonegap" class="step image" data-x="-4750" data-y="-1750" data-rotate="-90">
+        <img src="img/phonegap.png" width="512" >
+    </div>
+    <div id="chrome" class="step image" data-x="-4350" data-y="-1600" data-rotate="-90" data-scale="0.5">
+        <img src="img/chrome.png" width="512" >
+    </div>
+    <div id="firefox" class="step image" data-x="-4350" data-y="-1900" data-rotate="-90" data-scale="0.5">
+        <img src="img/firefox.png" width="512" >
+    </div>
+    <div id="html5" class="step image" data-x="-3750" data-y="-1500" data-rotate="-90">
+        <img src="img/HTML5.png" width="256" >
+    </div>
+    <div id="jquerymobile" class="step image" data-x="-4000" data-y="-1750" data-rotate="-90">
+        <img src="img/jquery-logo.png" >
+    </div>
+    <div id="knockoutjs" class="step image" data-x="-3750" data-y="-2000" data-rotate="-90">
+        <img src="img/knockoutjs.png" >
+    </div>
+    <div id="agenda-service" class="step center" data-x="-5650" data-y="0" data-rotate="-90" data-scale="3">
+        <h2 class="title">Agenda Service</h2>
+    </div>
+    <div id="gae" class="step image" data-x="-5250" data-y="0" data-rotate="-90">
+        <img src="img/gae.png" >
+    </div>
+    <div id="rt-service" class="step center" data-x="-3450" data-y="0" data-rotate="-90" data-scale="3">
+        <h2 class="title">Real Time Service</h2>
+    </div>
+    <div id="atmosphere" class="step center" data-x="-4000" data-y="0" data-rotate="-90">
+        <h2>Atmosphere</h2>
+        <p class="medium"><a href="https://github.com/Atmosphere/atmosphere">https://github.com/Atmosphere/atmosphere</a></p>
+    </div>
+    <div id="jetty" class="step image" data-x="-3750" data-y="0" data-rotate="-90">
+        <img src="img/jetty.png" >
+    </div>
+    <div id="cassandra" class="step image" data-x="-3750" data-y="-500" data-rotate="-90">
+        <img src="img/cassandra.png" >
+    </div>
+    <div id="ovhpc" class="step image" data-x="-3750" data-y="500" data-rotate="-90">
+        <img src="img/cloud-public-ovh.png" >
+    </div>
+    <div id="crawler" class="step center" data-x="-4800" data-y="2200" data-rotate="-180" data-scale="3">
+        <h2 class="title">Crawler</h2>
+    </div>
+    <div id="nodejs" class="step image" data-x="-5000" data-y="1750" data-rotate="-90">
+        <img src="img/nodejs.png" >
+    </div>
+    <div id="heroku" class="step image" data-x="-4600" data-y="1750" data-rotate="-90" data-scale="1.5">
+        <img src="img/heroku.png" >
+    </div>
+
+    <!-- archi slides -->
     <div id="app-talk" class="step center" data-x="0" data-y="-2000" data-z="-2000" data-rotate-x="60" data-scale="5">
         <h2>Talk about this App</h2>
     </div>
     <div id="with-app" class="step center" data-x="0" data-y="-2500" data-z="-2500" data-rotate-x="60" data-scale="2">
-        <h2>With this App</h2>
+        <img src="img/voxxr-app.png" style="display: block; float: right;">
+        <h2 style="margin-top: 160px;">With this App</h2>
         <script> onEnterIn('with-app', fppm("layout:full")); // used when going back from next slide </script>
     </div>
     <div id="dashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="2">
@@ -124,8 +184,10 @@
     <div id="sideDashboard" class="step center" data-x="0" data-y="-3000" data-z="-3000" data-rotate-x="60" data-scale="1">
         <script> onEnterIn('sideDashboard', fppm("layout:classic")); </script>
     </div>
+
+
     <div id="demoEffect1" class="step image" data-x="0" data-y="-3000" data-z="-4000" data-rotate-x="60" data-scale="1">
-        <img src="img/fail-1.jpg" width="800" >
+        <img src="img/fail-car-4.jpg" >
     </div>
     <div id="demoApp" class="step center" data-x="0" data-y="-3000" data-z="-5000" data-rotate-x="60" data-scale="1">
         <h2>Late Developed Application</h2>
@@ -134,21 +196,23 @@
             onEnterIn('demoApp', function() { gotoAppTimeout = setTimeout(function() { ppm("goto:app"); }, 2000);});
             onLeaveFrom('demoApp', function() {  if (gotoAppTimeout) { clearTimeout(gotoAppTimeout); } ; ppm("goto:intro"); });
         </script>
-
     </div>
     <div id="demoEffect2" class="step image" data-x="0" data-y="-3000" data-z="-6000" data-rotate-x="60" data-scale="1">
-        <img src="img/fail-2.jpg" width="800" >
+        <img src="img/fail-car-crash-5.jpg" >
     </div>
     <div id="html5-prez" class="step center" data-x="0" data-y="-300" data-z="-7000" data-rotate-x="60" data-scale="2">
         <h2>HTML5 Presentation</h2>
     </div>
     <div id="demoEffect3" class="step image" data-x="0" data-y="-3000" data-z="-8000" data-rotate-x="60" data-scale="1">
-        <img src="img/fail-3.jpg" width="800" >
+        <img src="img/fail-car-crash-6.jpg" >
     </div>
 
-    <div id="overview" class="step" data-x="0" data-y="0" data-scale="15">
+
+
+    <div id="overview" class="step" data-x="0" data-y="0" data-scale="12">
     </div>
 
+    
     <div id="ldvelh" class="step image" data-x="0" data-y="2000" data-z="-3000" data-rotate-y="70" data-scale="1">
         <img src="img/livre-dont-vous-etes-le-heros.jpg" height="600" >
     </div>
