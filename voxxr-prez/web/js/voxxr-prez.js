@@ -16,7 +16,7 @@ function onLeaveFrom(slide, callback) {
 $(function() {
     $("textarea.code").each(function() {
         CodeMirror.fromTextArea(this, {
-          lineNumbers: true, theme: 'cobalt'
+          lineNumbers: true, theme: 'lesser-dark'
         });
     });
 });

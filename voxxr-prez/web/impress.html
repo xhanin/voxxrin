@@ -15,7 +15,7 @@
     <link href="css/impress-demo.css" rel="stylesheet" />
     <link href="css/voxxr-prez.css" rel="stylesheet" />
     <link href="css/codemirror.css" rel="stylesheet">
-    <link href="css/cm-theme/cobalt.css" rel="stylesheet">
+    <link href="css/cm-theme/lesser-dark.css" rel="stylesheet">
 
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
@@ -137,10 +137,40 @@ window.addEventListener("message", function(event) {
     function loadIframe(iframe) {
         if (iframe.attr('src') === 'about:blank') {
             var src = iframe.attr('data-src');
-            iframe.attr('src', src[0] == '/' ? (baseUrl + src + '&mode=' + mode) : src);
+            iframe.attr('src', src[0] == '/' ?
+                    (baseUrl + src + '&mode=' + mode) : src);
         }
     }
 </script>
+        </textarea>
+    </div>
+
+    <div id="css3" class="step quiet" data-x="800" data-y="-600" data-z="-900" data-rotate="45" data-rotate-x="90" data-scale="0.5" >
+        <textarea class="code">
+.content {
+    /* absolute positionning at top (below header)
+                                bottom (above footer)
+                                left */
+    position:absolute; top: 34px; bottom: 13px; left:0px;
+    /* classic layout, let 20% for dashboard */
+    width:          80%;
+    /* hidden on the left by default */
+    margin-left:    -1400px;
+
+    /* changes to width and margin are animated */
+    -webkit-transition-property:        width, margin;
+    -webkit-transition-duration:        1s;
+    -webkit-transition-timing-function: ease-out;
+}
+            
+/* in layout 'full' we use the full width */
+.content.full     { width: 100%;      }
+/* in layout 'fullSide' the dashboard use
+   the full space, our width is 0 */
+.content.fullSide { width: 0;         }
+/* when active, the margin left is 0
+   (transitionning from -1400px when hidden) */
+.content.active   { margin-left: 0px; }
         </textarea>
     </div>
 
