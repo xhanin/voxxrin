@@ -39,6 +39,12 @@
                         .on('leave', function(e, to) { if (!$('#' + to).data('keep-previous-on-leave')) unloadIframe(el.find('iframe'));})
             }
 
+            $.fn['loadIFrameOnEnter'] = function ( ) {
+                return this.each(function () {
+                    loadIFrameOnEnter($(this));
+                });
+            }
+
             window.addEventListener("message", function(event) {
                 if (event.data.match(/^hash:/)) {
                     window.location.hash = event.data.substr('hash:'.length)
@@ -56,17 +62,22 @@
             }, false);
 
             loadIframe($('#dashboard iframe'));
-            loadIFrameOnEnter($('#intro'));
-            loadIFrameOnEnter($('#app').data('keep-previous-on-leave', true));
-            loadIFrameOnEnter($('#poll'));
-            $('#intro').on('enter', function() {
-                if (window.location.hash) {
-                    var intro = $('.intro iframe');
-                    intro.attr('src', intro.attr('src') + window.location.hash);
+            $('.content.prez, #poll').loadIFrameOnEnter();
+            $('#app').data('keep-previous-on-leave', true).loadIFrameOnEnter();
+            $('.content.prez').on('enter', function() {
+                var id = $(this).attr('id');
+                if (window.location.hash
+                        && (window.location.hash.substring(1, id.length + 1) === id)) {
+                    var frame = $('#' + id + ' iframe');
+                    frame.attr('src', frame.attr('src') + '#' + window.location.hash.substring(id.length + 1));
                 }
             });
 
-            gotoFrame('intro');
+            var initialPrez = 'intro';
+            if (window.location.hash) {
+                initialPrez = window.location.hash.substring(1, window.location.hash.indexOf('/'));
+            }
+            gotoFrame(initialPrez);
 
             $('#header-right').click(function(e) {
                 $('.top.menu').toggleClass('active');
@@ -161,16 +172,17 @@
     <div class="top menu">
         <ul>
             <li class="separator">Plan</li>
-            <li><a data-goto="intro">Introduction</a></li>
             <li><a data-goto="app">App</a></li>
             <li><a data-goto="poll">Poll</a></li>
+            <li><a data-goto="intro">Introduction</a></li>
+            <li><a data-goto="archi">Architecture</a></li>
             <li class="separator">Layout</li>
             <li><a data-layout="classic">Classic</a></li>
             <li><a data-layout="full">Full</a></li>
         </ul>
     </div>
-    <div id="intro" class="intro full content active">
-        <iframe id="prezframe" data-src="prez.html" src="about:blank"></iframe>
+    <div id="intro" class="intro full content prez active">
+        <iframe id="prezframe" data-src="intro.html" src="about:blank"></iframe>
     </div>
     <div id="poll" class="poll full content">
         <iframe id="pollframe" data-src="/p.html?event=1&prez=1" src="about:blank"></iframe>
@@ -181,6 +193,10 @@
     <div id="dashboard" class="dashboard full side">
         <iframe id="dashboardframe" data-src="/d.html?event=1&prez=1" src="about:blank"></iframe>
     </div>
+    <div id="archi" class="archi full content prez">
+        <iframe data-src="archi.html" src="about:blank"></iframe>
+    </div>
+
     <div id="footer">
         <div id="footer-main"></div>
         <img id="footer-right" src="img/devoxx-footer-right.png">

@@ -1,0 +1,156 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Architecture :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Architecture :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet),
+        #impress.step-archi .step:not(.quiet),
+        #impress.step-client .step.client,
+        #impress.step-agenda-service .step.agenda-service,
+        #impress.step-rt-service .step.rt-service,
+        #impress.step-crawler .step.crawler
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="archi" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="archi" class="step center" data-x="-4500" data-y="0" data-scale="5"  data-rotate="-90">
+        <h2>Architecture</h2>
+    </div>
+    <div id="agenda-service" class="step center agenda-service" data-x="-5650" data-y="0" data-rotate="-90" data-scale="3">
+        <h2 class="title">Agenda Service</h2>
+    </div>
+    <div id="gae" class="step image agenda-service" data-x="-5250" data-y="0" data-rotate="-90">
+        <img src="img/gae.png" >
+    </div>
+    <div id="twitter4j" class="step image agenda-service" data-x="-5250" data-y="400" data-rotate="-180">
+        <img src="img/twitter4j.png" >
+    </div>
+
+    <div id="crawler" class="step center crawler" data-x="-4800" data-y="2200" data-rotate="-180" data-scale="3">
+        <h2 class="title">Crawler</h2>
+    </div>
+    <div id="nodejs" class="step image crawler" data-x="-5000" data-y="1750" data-rotate="-90">
+        <img src="img/nodejs.png" >
+    </div>
+    <div id="heroku" class="step image crawler" data-x="-4600" data-y="1750" data-rotate="-90" data-scale="1.5">
+        <img src="img/heroku.png" >
+    </div>
+
+    <div id="rt-service" class="step center rt-service" data-x="-3450" data-y="0" data-rotate="-90" data-scale="3">
+        <h2 class="title">Real Time Service</h2>
+    </div>
+    <div id="pusher" class="step image rt-service" data-x="-4500" data-y="0" data-z="1000" data-rotate-x="90">
+        <img src="img/pusher.png" >
+    </div>
+    <div id="pubnub" class="step image rt-service" data-x="-4000" data-y="0" data-z="1000" data-rotate-x="90">
+        <img src="img/pubnub.png" >
+    </div>
+    <div id="spireio" class="step image rt-service" data-x="-3500" data-y="0" data-z="1000" data-rotate-x="90">
+        <img src="img/spireio.png" >
+    </div>
+    <div id="gae-channels" class="step image rt-service" data-x="-3000" data-y="0" data-z="1000" data-rotate-x="90">
+        <img src="img/gae.png" width="400" >
+    </div>
+    <div id="atmosphere" class="step center rt-service" data-x="-4000" data-y="0" data-rotate="-90">
+        <h2>Atmosphere</h2>
+        <p class="medium"><a href="https://github.com/Atmosphere/atmosphere">https://github.com/Atmosphere/atmosphere</a></p>
+    </div>
+    <div id="jquery-atmosphere" class="step center rt-service" data-x="-3850" data-y="-1300" data-rotate="-180">
+        <h2>jquery.atmosphere.js</h2>
+    </div>
+    <div id="jetty" class="step image rt-service" data-x="-3750" data-y="0" data-rotate="-90">
+        <img src="img/jetty.png" >
+    </div>
+    <div id="cassandra" class="step image rt-service" data-x="-3750" data-y="-500" data-rotate="-90">
+        <img src="img/cassandra.png" >
+    </div>
+    <div id="ovhpc" class="step image rt-service" data-x="-3750" data-y="500" data-rotate="-90">
+        <img src="img/cloud-public-ovh.png" >
+    </div>
+
+    <div id="client" class="step center client" data-x="-4500" data-y="-2250" data-scale="3">
+        <h2 class="title">Client(s)</h2>
+    </div>
+    <div id="ios" class="step image client" data-x="-5200" data-y="-1500" data-rotate="-90">
+        <img src="img/iphone-ipad.png" >
+    </div>
+    <div id="android" class="step image client" data-x="-5200" data-y="-2000" data-rotate="-90">
+        <img src="img/android-phone.png" >
+    </div>
+    <div id="phonegap" class="step image client" data-x="-4750" data-y="-1750" data-rotate="-90">
+        <img src="img/phonegap.png" width="512" >
+    </div>
+    <div id="chrome" class="step image client" data-x="-4350" data-y="-1600" data-rotate="-90" data-scale="0.5">
+        <img src="img/chrome.png" width="512" >
+    </div>
+    <div id="firefox" class="step image client" data-x="-4350" data-y="-1900" data-rotate="-90" data-scale="0.5">
+        <img src="img/firefox.png" width="512" >
+    </div>
+    <div id="html5" class="step image client" data-x="-3750" data-y="-1500" data-rotate="-90">
+        <img src="img/HTML5.png" width="256" >
+    </div>
+    <div id="jqtouch" class="step image quiet" data-x="-4000" data-y="-1750" data-z="-250" data-rotate-x="-90">
+        <img src="img/jqtouch.jpg" >
+    </div>
+    <div id="jqtouch-vs-jquerymobile" class="step image quiet" data-x="-4000" data-y="-1750" data-z="-250" data-rotate-x="-90" data-rotate-y="-45">
+        <img src="img/jqtouch-vs-jquerymobile.png" >
+    </div>
+    <div id="zepto" class="step image quiet" data-x="-4000" data-y="-2000" data-z="-250" data-rotate-x="-90">
+        <img src="img/zepto.png" >
+    </div>
+    <div id="zepto-vs-jquery" class="step image quiet" data-x="-4000" data-y="-2000" data-z="-250" data-rotate-x="-90" data-rotate-y="-45">
+        <img src="img/zepto-vs-jquery.jpg" >
+    </div>
+    <div id="android-ics-bug" class="step image quiet" data-x="-4000" data-y="-2250" data-z="-250" data-rotate-x="-90">
+        <img src="img/android-ics-bug.png" width="600" >
+    </div>
+    <div id="jquerymobile" class="step image client" data-x="-4000" data-y="-1750" data-rotate="-90">
+        <img src="img/jquery-logo.png" >
+    </div>
+    <div id="knockoutjs" class="step image client" data-x="-3750" data-y="-2000" data-rotate="-90">
+        <img src="img/knockoutjs.png" >
+    </div>
+
+    <div id="overview" class="step" data-x="-4500" data-y="0" data-scale="5"  data-rotate="-90">
+    </div>
+
+    <div id="end" class="step" data-x="-4500" data-y="0" data-scale="12"  data-rotate="-90">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script src="js/jquery-1.7.1.js"></script>
+<script>impress();</script>
+</body>
+</html>

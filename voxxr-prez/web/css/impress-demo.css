@@ -133,6 +133,11 @@ body     { pointer-events: none; }
     opacity: 0.3;
 }
 
+.step.quiet:not(.active) {
+    opacity: 0;
+}
+
+
 /* STEP SPECIFIC STYLES */
 
 /* hint on the first slide */
@@ -425,7 +430,7 @@ body     { pointer-events: none; }
 
 /* on overview step everything is visible */
 
-#impress.step-overview .step {
+#impress.step-overview .step:not(.quiet) {
     opacity: 1;
     cursor: pointer;
 }

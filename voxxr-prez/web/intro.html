@@ -17,27 +17,12 @@
 
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-    <script>
-        function ppm(msg) {
-            if (window.parent) {
-                window.parent.postMessage(msg, "*");
-            }
-        }
-        function fppm(msg) {
-            return function() { ppm(msg) }
-        }
-        function onEnterIn(slide, callback) {
-            window[slide + 'Enter'] = callback;
-        }
-        function onLeaveFrom(slide, callback) {
-            window[slide + 'Leave'] = callback;
-        }
-        </script>
+    <script src="js/voxxr-prez.js"></script>
 </head>
 <body>
 
 
-<div id="impress" class="impress-not-supported">
+<div id="impress" data-prez-id="intro" class="impress-not-supported">
 
     <div class="fallback-message">
         <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
@@ -168,7 +153,6 @@
         <img src="img/heroku.png" >
     </div>
 
-    <!-- archi slides -->
     <div id="app-talk" class="step center" data-x="0" data-y="-2000" data-z="-2000" data-rotate-x="60" data-scale="5">
         <h2>Talk about this App</h2>
     </div>

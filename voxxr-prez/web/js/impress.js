@@ -129,6 +129,8 @@
         } else {
             root.className = "";
         }
+        var prezId = root.dataset.prezId || '';
+
         
         // viewport updates for iPad
         var meta = $("meta[name='viewport']") || document.createElement("meta");
@@ -264,7 +266,7 @@
             hashTimeout = window.setTimeout(function () {
                 window.location.hash = "#/" + el.id;
                 if (window.parent) {
-                    window.parent.postMessage("hash:" + "#/" + el.id, "*");
+                    window.parent.postMessage("hash:#" + prezId + "/" + el.id, "*");
                 }
             }, 1000);
             
