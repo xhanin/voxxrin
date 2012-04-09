@@ -85,7 +85,7 @@
     </div>
 
     <div id="codemirror" class="step image" data-x="0" data-y="450">
-        <img src="img/codemirror.png" >
+        <img src="img/codemirror.png" width="800">
     </div>
 
     <div id="codemirror-example" class="step" data-x="800" data-y="440" data-scale="0.5" >
@@ -102,17 +102,45 @@ $(function() {
         </textarea>
     </div>
 
-    <div id="codemirror-example" class="step" data-x="800" data-y="440" data-scale="0.5" >
+    <div id="frames-archi" class="step image" data-x="700" data-y="-500" data-rotate="45" data-scale="0.5">
+        <img src="img/presentation-internals.png" width="800" >
+    </div>
+
+    <div id="frames-archi-example1" class="step quiet" data-x="800" data-y="-600" data-z="-500" data-rotate="45" data-rotate-x="30" data-scale="0.5" >
         <textarea class="code">
-&lt;textarea class="code">
-$(function() {
-    $("textarea.code").each(function() {
-        CodeMirror.fromTextArea(this, {
-          lineNumbers: true, theme: 'cobalt'
-        });
-    });
-});
-&lt;/textarea>
+window.addEventListener("message", function(event) {
+    if (event.data.match(/^hash:/)) {
+        window.location.hash = event.data.substr('hash:'.length)
+    } else if (event.data.match(/^poll:/)) {
+        var poll = event.data.substr('poll:'.length);
+        initPoll(poll);
+    } else if (event.data.match(/^goto:/)) {
+        var goto = event.data.substr('goto:'.length);
+        gotoFrame(goto);
+    } else if (event.data.match(/^layout:/)) {
+        var layout = event.data.substr('layout:'.length);
+        setLayout(layout);
+    }
+}, false);
+        </textarea>
+    </div>
+
+    <div id="frames-archi-example2" class="step quiet" data-x="800" data-y="-600" data-z="-700" data-rotate="45" data-rotate-x="60" data-scale="0.5" >
+        <textarea class="code">
+<div id="intro" class="full content prez active">
+    <iframe data-src="intro.html" src="about:blank"></iframe>
+</div>
+<div id="archi" class="full content prez">
+    <iframe data-src="archi.html" src="about:blank"></iframe>
+</div>
+<script>
+    function loadIframe(iframe) {
+        if (iframe.attr('src') === 'about:blank') {
+            var src = iframe.attr('data-src');
+            iframe.attr('src', src[0] == '/' ? (baseUrl + src + '&mode=' + mode) : src);
+        }
+    }
+</script>
         </textarea>
     </div>
 
