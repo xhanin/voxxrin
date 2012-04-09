@@ -1,0 +1,247 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>RT Service :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="RT Service :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+    <link href="css/cm-theme/lesser-dark.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/cm-mode/clike/clike.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet)
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="rtservice" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="rtservice" class="step center" data-x="-850" data-y="-100" data-rotate="-90" data-scale="1.4">
+        <h2 class="title">Real Time Service</h2>
+    </div>
+
+    <div id="atmosphere" class="step center" data-x="0" data-y="-350" data-scale="1.5">
+        <h2>Atmosphere</h2>
+        <p class="medium"><a href="https://github.com/Atmosphere/atmosphere">
+            https://github.com/Atmosphere/atmosphere</a></p>
+    </div>
+    <div id="atmosphere-transports" class="step quiet slide" data-x="0" data-y="-350" data-z="800" >
+        <h2>Transports:</h2>
+        <ul>
+            <li>polling</li>
+            <li>long polling</li>
+            <li>streaming</li>
+            <li>websocket</li>
+        </ul>
+    </div>
+    <div id="atmosphere-subscribe" class="step" data-x="0" data-y="-200" data-scale="0.2" >
+        <h2>Subscribe</h2>
+        <textarea class="code" data-mode="text/x-java">
+@GET
+@Path("/rt")
+public SuspendResponse<String> subscribe(
+            @QueryParam("mode") BroadcastMode mode) {
+    Broadcaster broadcaster = roomBroadcaster(
+            Room.getCurrent(), mode, true);
+    return new SuspendResponse.SuspendResponseBuilder<String>()
+            .header("Access-Control-Allow-Origin", "*")
+            .broadcaster(broadcaster)
+            .build();
+}
+        </textarea>
+    </div>
+    <div id="atmosphere-publish" class="step" data-x="200" data-y="-200" data-scale="0.2" >
+        <h2>Broadcast</h2>
+        <textarea class="code" data-mode="text/x-java">
+private static Broadcaster roomBroadcaster(
+            Room room, BroadcastMode mode) {
+    return roomBroadcaster(room, mode, false);
+}
+
+public static Broadcaster roomBroadcaster(
+            Room room, BroadcastMode mode, boolean createIfNull) {
+    return BroadcasterFactory.getDefault().lookup(
+            "room#" + room.getId() + "/" +
+            (mode == null ? BroadcastMode.USER : mode), createIfNull);
+}
+
+public static void broadcast(
+            Room room, String data, BroadcastMode... mode) {
+    for (BroadcastMode broadcastMode :
+            Lists.asList(BroadcastMode.ALL, mode)) {
+        Broadcaster bc = roomBroadcaster(room, broadcastMode);
+        if (bc != null) {
+            // under 8 bytes atmosphere client (js)
+            // doesn't notify the event
+            bc.broadcast(Strings.padStart(data, 8, '-'));
+        }
+    }
+}
+        </textarea>
+    </div>
+    <div id="atmosphere-cors" class="step" data-x="-200" data-y="-200" data-scale="0.2" >
+        <h2>CORS: Cross Origin Resource Sharing</h2>
+        <textarea class="code" data-mode="text/x-java">
+@OPTIONS
+@Path("/rt")
+public Response preFlightSubscribe() {
+    return Response.ok()
+            .header("Access-Control-Allow-Origin", "*")
+            .header("Access-Control-Allow-Methods", "GET, POST")
+            .header("Access-Control-Allow-Headers",
+                "Origin, Content-Type, X-Atmosphere-Framework,"
+                 + "X-Cache-Date, X-Atmosphere-tracking-id, "
+                 + "X-Atmosphere-Transport")
+            .build();
+}
+        </textarea>
+    </div>
+
+    <div id="jetty" class="step image" data-x="0" data-y="100">
+        <img src="img/jetty.png" >
+    </div>
+
+    <div id="cassandra" class="step image" data-x="500" data-y="100">
+        <img src="img/cassandra.png" >
+    </div>
+    <div id="nosql-teenager" class="step image quiet" data-x="500" data-y="100" data-z="-500" data-rotate-x="90">
+        <img src="img/nosql-is-like-sex.png" width="800">
+    </div>
+    <div id="cassandra-cluster" class="step image" data-x="500" data-y="220" data-scale="0.5" >
+        <img src="img/cluster3nodes.png" >
+    </div>
+    <div id="cassandra-code" class="step" data-x="630" data-y="100" data-scale="0.05" >
+        <textarea class="code" data-mode="text/x-java">
+public void store(EV ev) {
+    Mutator<UUID> mutator = HFactory.createMutator(
+            voxxrKeyspace, UUIDSerializer.get());
+    mutator.addInsertion(ev.getKey(), "EV",
+            HFactory.createStringColumn("pres", ev.getPres()));
+    mutator.addInsertion(ev.getKey(), "EV",
+            HFactory.createStringColumn("user", ev.getUser()));
+    mutator.addInsertion(ev.getKey(), "EV",
+            HFactory.createStringColumn("type", ev.getType().getCode()));
+    mutator.addInsertion(ev.getKey(), "EV",
+            HFactory.createStringColumn("value", ev.getValue()));
+
+    MutationResult mr = mutator.execute();
+    logger.debug("inserted EV {} in {}us",
+            ev, mr.getExecutionTimeMicro());
+}
+        </textarea>
+    </div>
+
+
+    <div id="ovhpc" class="step image" data-x="-500" data-y="100">
+        <img src="img/cloud-public-ovh.png" >
+    </div>
+    <div id="ovh-pricing" class="step image quiet" data-x="-500" data-y="100" data-z="-200" data-rotate-x="90">
+        <img src="img/ovh-pricing.png" >
+    </div>
+    <div id="ovh-room-deploy-script" class="step" data-x="-550" data-y="250" data-scale="0.1" >
+        <textarea class="code">
+#!/bin/sh
+
+VOXXR_HOME=~/dev/wkspace/voxxr/voxxr
+SEED_IP=`cat $VOXXR_HOME/voxxr-room/current-seed-ip`
+
+cd $VOXXR_HOME && tar czvf out/production/voxxr-room.tgz voxxr-room && cd -
+
+echo "starting instance"
+ovhcloud instance startInstance --instanceId $INSTANCE
+echo "waiting for room node $ROOM to startup..."
+ROOM_IP=''
+while [ "$ROOM_IP" = "" ]; do
+ ROOM_IP=`ovhcloud instance getInstances --projectName voxxr | grep $INSTANCE | egrep -o '([0-9]+\.)+[0-9]+'`;
+done
+
+echo "login and RSA accept"
+ovhcloud instance ssh $INSTANCE ls
+
+echo "uploading files..."
+ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/voxxr-room/src/main/scripts/deploy-room-remote.sh "install.sh"
+ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/voxxr-room/src/main/scripts/voxxr-room.properties "voxxr-room.properties"
+ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/out/production/voxxr-room.tgz "voxxr-room.tgz"
+
+echo "executing remote install..."
+ovhcloud instance ssh $INSTANCE bash "./install.sh" $ROOM  $SEED_IP $HOST $ROOM_IP
+
+
+echo "ROOM $ROOM STARTED AT IP $ROOM_IP"
+echo "VOXXR-ROOM::$ROOM::$ROOM_IP"
+        </textarea>
+    </div>
+    <div id="ovh-room-deploy-remote-script" class="step" data-x="-450" data-y="250" data-scale="0.1" >
+        <textarea class="code">
+#!/bin/sh
+
+# set host name, it happens from time to time that machine initialized by ovh has localhost.localdomain as hostname :(
+echo $HOST > /etc/hostname
+hostname $HOST
+# FIX DNS set host name in /etc/hosts
+sed -i s/\ localhost/\ localhost\ `hostname`/g /etc/hosts
+
+apt-get update
+apt-get install -y openjdk-6-jdk ant git-core
+wget -q http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar -O /usr/share/ant/lib/ivy.jar
+
+tar xzvf voxxr-room.tgz
+
+echo "------- CONFIGURING -- ROOM => $ROOM -- SEED_IP => $SEED_IP"
+sed -i s/@ROOM@/$ROOM/g voxxr-room.properties
+sed -i s/@SEED_IP@/$SEED_IP/g voxxr-room.properties
+sed -i s/@ROOM_IP@/$ROOM_IP/g voxxr-room.properties
+
+cp -f voxxr-room.properties voxxr-room/src/main/java/
+
+cd voxxr-room
+
+echo "------- PACKAGING"
+ant package
+
+echo "------- LAUNCHING"
+ant run &>ant.log &
+        </textarea>
+    </div>
+
+    <div id="overview" class="step" data-x="-100" data-y="-100" data-scale="2">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>

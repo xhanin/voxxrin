@@ -15,8 +15,9 @@ function onLeaveFrom(slide, callback) {
 
 $(function() {
     $("textarea.code").each(function() {
+        var mode = $(this).attr('data-mode') || 'javascript';
         CodeMirror.fromTextArea(this, {
-          lineNumbers: true, theme: 'lesser-dark'
+          lineNumbers: true, theme: 'lesser-dark', mode: mode
         });
     });
 });
