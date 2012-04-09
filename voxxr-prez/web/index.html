@@ -61,7 +61,7 @@
                 }
             }, false);
 
-            loadIframe($('#dashboard iframe'));
+            loadIframe($('#d iframe'));
             $('.content.prez, #poll').loadIFrameOnEnter();
             $('#app').data('keep-previous-on-leave', true).loadIFrameOnEnter();
             $('.content.prez').on('enter', function() {
@@ -176,25 +176,30 @@
             <li><a data-goto="poll">Poll</a></li>
             <li><a data-goto="intro">Introduction</a></li>
             <li><a data-goto="archi">Architecture</a></li>
+            <li><a data-goto="dashboard">Dashboard</a></li>
             <li class="separator">Layout</li>
             <li><a data-layout="classic">Classic</a></li>
             <li><a data-layout="full">Full</a></li>
         </ul>
     </div>
-    <div id="intro" class="intro full content prez active">
+    <div id="intro" class="full content prez active">
         <iframe id="prezframe" data-src="intro.html" src="about:blank"></iframe>
     </div>
-    <div id="poll" class="poll full content">
-        <iframe id="pollframe" data-src="/p.html?event=1&prez=1" src="about:blank"></iframe>
-    </div>
-    <div id="app" class="app full content">
-        <iframe id="appframe" data-src="/m.html?x=1" src="about:blank"></iframe>
-    </div>
-    <div id="dashboard" class="dashboard full side">
-        <iframe id="dashboardframe" data-src="/d.html?event=1&prez=1" src="about:blank"></iframe>
-    </div>
-    <div id="archi" class="archi full content prez">
+    <div id="archi" class="full content prez">
         <iframe data-src="archi.html" src="about:blank"></iframe>
+    </div>
+    <div id="dashboard" class="full content prez">
+        <iframe data-src="dashboard.html" src="about:blank"></iframe>
+    </div>
+
+    <div id="poll" class="full content">
+        <iframe data-src="/p.html?event=1&prez=1" src="about:blank"></iframe>
+    </div>
+    <div id="app" class="full content">
+        <iframe data-src="/m.html?x=1" src="about:blank"></iframe>
+    </div>
+    <div id="d" class="full side">
+        <iframe data-src="/d.html?event=1&prez=1" src="about:blank"></iframe>
     </div>
 
     <div id="footer">

@@ -1,0 +1,100 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Dashboard :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Architecture :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+    <link href="css/cm-theme/cobalt.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet),
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="dashboard" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="dashboard" class="step center" data-x="0" data-y="0" data-scale="5" >
+        <h2>Dashboard</h2>
+    </div>
+
+    <div id="processing" class="step image" data-x="0" data-y="500" data-scale="2" >
+        <img src="img/processingjs.png">
+    </div>
+
+    <div id="processing-twitter" class="step image" data-x="-1000" data-y="1000" >
+        <a href="http://sandropaganotti.com/wp-content/goodies/demos/twitter-stream/" target="_blank">
+        <img src="img/processing-twitter-stream.png" width="800">
+        </a>
+    </div>
+
+    <div id="processing-letters" class="step image" data-x="0" data-y="1000" >
+        <a href="http://www.m-i-b.com.ar/letters/en/" target="_blank">
+        <img src="img/processing-letters.jpg" width="800">
+        </a>
+    </div>
+
+    <div id="example" class="step" data-x="1000" data-y="1000" >
+        <textarea class="code">
+void draw(){
+  size(canvas_x, canvas_y);
+  textFont(font, 18);
+  textAlign(LEFT);
+  fill(255);
+  textFont(font, font_size);
+  if(active_EV){
+    fill(active_EV.slot.get_color());
+    text(active_EV.EV.user + ": " + active_EV.EV.value,10, 10, 200, 30);
+  }
+
+  for(int i=0; i<EVs.size(); i++){
+    ((EV) EVs.get(i)).draw();
+  }
+  for(int i=0; i<slots.size(); i++){
+    ((Slot) slots.get(i)).draw();
+  }
+}
+        </textarea>
+    </div>
+
+    <div id="overview" class="step" data-x="0" data-y="0" data-scale="5">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>

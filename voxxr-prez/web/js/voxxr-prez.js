@@ -12,3 +12,11 @@ function onEnterIn(slide, callback) {
 function onLeaveFrom(slide, callback) {
     window[slide + 'Leave'] = callback;
 }
+
+$(function() {
+    $("textarea.code").each(function() {
+        CodeMirror.fromTextArea(this, {
+          lineNumbers: true, theme: 'cobalt'
+        });
+    });
+});
