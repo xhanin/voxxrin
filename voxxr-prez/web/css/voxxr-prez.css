@@ -36,6 +36,8 @@
 
 p.medium { font-size: 32px; }
 
+#impress h2.big { font-size: 72px; }
+
 
 #impress .CodeMirror { font-size: 18px; line-height: 1em; }
 #impress .CodeMirror-scroll {height: 500px; }

@@ -1,0 +1,138 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Presentation :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Presentation :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+    <link href="css/cm-theme/cobalt.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet),
+        #impress.step-impress-overview .step.impress-overview
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="impress" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="presentation" class="step center impress-overview" data-x="0" data-y="0" >
+        <h2>This Presentation: the internals</h2>
+    </div>
+    <div id="html5" class="step image impress-overview" data-x="-500" data-y="0">
+        <img src="img/HTML5.png" width="256" >
+    </div>
+    <div id="impressjs" class="step image impress-overview" data-x="-1000" data-y="0" data-scale="2" data-rotate="-90">
+        <img src="img/impressjs.png" >
+    </div>
+
+    <div id="impress-example" class="step" data-x="-1000" data-y="650" data-scale="0.5" >
+        <textarea class="code">
+<div class="step center" data-x="0" data-y="0" >
+    <h2>This Presentation: the internals</h2>
+</div>
+
+<div class="step image" data-x="-500" data-y="0">
+    <img src="img/HTML5.png" width="256" >
+</div>
+            
+<div class="step image" data-x="-1000" data-y="0"
+                                       data-scale="2" data-rotate="-90">
+    <img src="img/impressjs.png" >
+</div>
+        </textarea>
+    </div>
+
+    <div id="impress-overview" class="step quiet" data-x="-480" data-y="0" data-scale="2">
+        <img src="img/impress-overview.png" >
+    </div>
+
+    <div id="impress-example-3d" class="step quiet" data-x="0" data-y="0" data-z="-400"
+         data-scale="0.5" data-rotate-y="90">
+        <textarea class="code">
+<div class="step quiet"
+     data-x="0" data-y="0" data-z="-400"
+     data-scale="0.5" data-rotate-y="90">
+    ...
+</div>
+        </textarea>
+    </div>
+
+    <div id="codemirror" class="step image" data-x="0" data-y="450">
+        <img src="img/codemirror.png" >
+    </div>
+
+    <div id="codemirror-example" class="step" data-x="800" data-y="440" data-scale="0.5" >
+        <textarea class="code">
+&lt;textarea class="code">
+$(function() {
+    $("textarea.code").each(function() {
+        CodeMirror.fromTextArea(this, {
+          lineNumbers: true, theme: 'cobalt'
+        });
+    });
+});
+&lt;/textarea>
+        </textarea>
+    </div>
+
+    <div id="codemirror-example" class="step" data-x="800" data-y="440" data-scale="0.5" >
+        <textarea class="code">
+&lt;textarea class="code">
+$(function() {
+    $("textarea.code").each(function() {
+        CodeMirror.fromTextArea(this, {
+          lineNumbers: true, theme: 'cobalt'
+        });
+    });
+});
+&lt;/textarea>
+        </textarea>
+    </div>
+
+    <div id="overview" class="step" data-x="0" data-y="0" data-scale="3">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+
+    <div id="plus1" class="step center" data-x="-700" data-y="450" data-scale="2">
+        <h2 class="big">+</h2>
+    </div>
+
+
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>
