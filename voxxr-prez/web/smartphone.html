@@ -1,0 +1,162 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Smartphone :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Smartphone :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+    <link href="css/cm-theme/lesser-dark.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/cm-mode/clike/clike.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet)
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="smartphone" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="smartphone" class="step center" data-x="0" data-y="0" data-scale="1.4">
+        <h2>Developing<br>for Smartphones</h2>
+    </div>
+
+    <div id="ios" class="step image" data-x="-500" data-y="300" data-rotate="-5">
+        <img src="img/iphone-ipad.png" >
+    </div>
+    <div id="ios-development" class="step center quiet" data-x="-500" data-y="300" data-z="-800" data-rotate-x="15" >
+        <h2>iOS Development</h2>
+    </div>
+    <div id="xcode" class="step image quiet" data-x="-500" data-y="300" data-z="-900" data-rotate-x="30">
+        <img src="img/xcode-simulator.png" width="800">
+    </div>
+    <div id="objectivec" class="step quiet" data-x="-500" data-y="300" data-z="-1000" data-rotate-x="45" >
+        <h2>Objective C</h2>
+<textarea class="code">
+- (void)loadURL:(NSString*)url
+{
+	NSLog(@"Opening Url : %@",url);
+
+    imageURL = @"";
+    isImage = NO;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [webView loadRequest:request];
+
+	webView.hidden = NO;
+}
+</textarea>
+    </div>
+
+
+    <div id="android" class="step image" data-x="500" data-y="-300" data-rotate="5">
+        <img src="img/android-phone.png" >
+    </div>
+    <div id="android-development" class="step center quiet" data-x="500" data-y="-300" data-z="-800" data-rotate-x="15" >
+        <h2>Android Development</h2>
+    </div>
+    <div id="java" class="step quiet" data-x="500" data-y="-300" data-z="-900" data-rotate-x="30" >
+        <h2>Java</h2>
+<textarea class="code">
+public String openExternal(String url, boolean usePhoneGap) {
+    try {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+
+        this.ctx.startActivity(intent);
+        return "";
+    } catch (android.content.ActivityNotFoundException e) {
+        Log.d(LOG_TAG, "ChildBrowser: Error loading url "+url+":"+ e.toString());
+        return e.toString();
+    }
+}
+</textarea>
+    </div>
+    <div id="android-emulator" class="step image quiet" data-x="500" data-y="-300" data-z="-1000" data-rotate-x="45">
+        <img src="img/android-emulator.png" width="500" >
+        <p class="medium">Emulator startup: 45s</p>
+        <p class="medium">App startup in emulator: 20s</p>
+    </div>
+
+
+
+    <div id="phonegap" class="step image" data-x="500" data-y="500" data-rotate-y="10">
+        <img src="img/phonegap.png" width="512" >
+    </div>
+    <div id="phonegap-overview" class="step image quiet" data-x="500" data-y="500" data-z="-1500" data-rotate-y="25" >
+        <img src="img/phonegap-overview.png" >
+    </div>
+    <div id="web-development" class="step center quiet" data-x="500" data-y="500" data-z="-1500" data-rotate-y="40" >
+        <h2>The Web Development I know</h2>
+    </div>
+    <div id="html5" class="step image" data-x="1000" data-y="300" data-rotate-y="10" data-scale="0.5">
+        <img src="img/HTML5.png" width="376">
+    </div>
+    <div id="jquery" class="step image" data-x="1000" data-y="500" data-rotate-y="10" data-scale="0.5">
+        <img src="img/jquery.png" >
+    </div>
+    <div id="webkit-console" class="step image" data-x="1000" data-y="700" data-rotate-y="10" data-scale="0.5">
+        <img src="img/webkit-console.png" width="600" >
+        <p class="medium">with instant refresh</p>
+    </div>
+    <div id="but" class="step center quiet" data-x="500" data-y="500" data-z="-1500" data-rotate-y="25" >
+        <h2>But...</h2>
+    </div>
+    <div id="scrolling" class="step center quiet" data-x="500" data-y="500" data-z="-1500" data-rotate-y="40" >
+        <h2>Scrolling is...</h2>
+        <img src="img/wtf-1.jpg" >
+    </div>
+    <div id="touch" class="step center quiet" data-x="500" data-y="500" data-z="-1500" data-rotate-y="55" >
+        <h2>Touch handling is...</h2>
+        <img src="img/wtf-2.jpg" >
+    </div>
+
+    <div id="publishing" class="step center quiet" data-x="550" data-y="450" data-z="200" data-rotate-y="10" data-rotate="45" data-scale="0.5">
+        <h2>and publishing... ?</h2>
+    </div>
+    <div id="google-play" class="step image" data-x="650" data-y="-220" data-scale="0.6">
+        <img src="img/google-play.png" >
+    </div>
+    <div id="appstore" class="step image" data-x="-750" data-y="420" data-scale="0.4">
+        <img src="img/appstore.png" >
+    </div>
+
+    <div id="overview" class="step" data-x="0" data-y="0" data-scale="3">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>
