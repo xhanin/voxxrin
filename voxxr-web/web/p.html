@@ -42,7 +42,7 @@
                   models.Room.onEV(function(ev) {
                       if (ev.isPollStart) {
                           var poll = Processing.getInstanceById("poll");
-                          if(poll != null) { poll.startPoll(prez.title(),"POLL",15,ev.items); }
+                          if(poll != null) { poll.startPoll(prez.title(),"POLL",30,ev.items); }
                       }
                       if (ev.isPollVote) {
                           var poll = Processing.getInstanceById("poll");
