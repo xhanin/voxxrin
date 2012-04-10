@@ -78,7 +78,8 @@
 
             var actions = {
                 startPrez: function() { dashboardWindow.postMessage('EV:PZS', '*'); },
-                stopPrez: function() { dashboardWindow.postMessage('EV:PZE', '*'); }
+                stopPrez: function() { dashboardWindow.postMessage('EV:PZE', '*'); },
+                stopPoll: function() { dashboardWindow.postMessage('EV:PE', '*'); }
             }
             var polls = {
                 'menu': {
@@ -91,6 +92,12 @@
                         { label: 'Agenda Client',  action: function() { gotoFrame('scheduleclient') } },
                         { label: 'Agenda Service', action: function() { gotoFrame('scheduleservice') } },
                         { label: 'Crawler',        action: function() { gotoFrame('crawler') } }
+                    ]
+                },
+                'yesno': {
+                    options: [
+                        { label: 'Yes',   action: function() { } },
+                        { label: 'No',      action: function() { } }
                     ]
                 }
             };
@@ -238,8 +245,10 @@
             <li><a data-action="stopPrez">Stop Prez</a></li>
             <li><a data-goto="app">Show App</a></li>
             <li><a data-goto="poll">Show Poll</a></li>
+            <li><a data-action="stopPoll">Stop Poll</a></li>
             <li class="separator">Polls</li>
             <li><a data-poll="menu">Menu</a></li>
+            <li><a data-poll="yesno">Yes No</a></li>
         </ul>
     </div>
     <div id="intro" class="full content prez active">
