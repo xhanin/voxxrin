@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/underscore-min.js"></script>
     <script>
         var urlParams = {};
         (function () {
@@ -46,18 +47,63 @@
                 });
             }
 
+            function gotoFrame(frame) {
+                var from = $('.content.active').attr('id');
+                $('.content.active').trigger('leave', [frame]).removeClass('active');
+                $('#' + frame).trigger('enter', [from]).addClass('active');
+            }
+            function setLayout(layout) {
+                $('.content, .side')
+                        .removeClass('full')
+                        .removeClass('fullSide')
+                        .removeClass('classic')
+                        .addClass(layout);
+            }
+
+            var currentPoll = null;
+            function initPoll(poll) {
+                currentPoll = poll;
+                gotoFrame('poll');
+                setTimeout(function() {
+                    var options = _(poll.options).map(function(o) { return o.label}).join(',');
+                    dashboardWindow.postMessage('EV:PS' + options, '*');
+                }, 1500);
+            }
+            function handlePollResult(r) {
+                if (currentPoll) {
+                    currentPoll.options[r].action();
+                    currentPoll = null;
+                }
+            }
+
             var actions = {
                 startPrez: function() { dashboardWindow.postMessage('EV:PZS', '*'); },
                 stopPrez: function() { dashboardWindow.postMessage('EV:PZE', '*'); }
             }
+            var polls = {
+                'menu': {
+                    options: [
+                        { label: 'Architecture',   action: function() { gotoFrame('archi') } },
+                        { label: 'Dashboard',      action: function() { gotoFrame('dashboard') } },
+                        { label: 'Presentation',   action: function() { gotoFrame('impress') } },
+                        { label: 'Mobility',       action: function() { gotoFrame('smartphone') } },
+                        { label: 'RT Service',     action: function() { gotoFrame('rtservice') } },
+                        { label: 'Agenda Client',  action: function() { gotoFrame('scheduleclient') } },
+                        { label: 'Agenda Service', action: function() { gotoFrame('scheduleservice') } },
+                        { label: 'Crawler',        action: function() { gotoFrame('crawler') } }
+                    ]
+                }
+            };
 
             window.addEventListener("message", function(event) {
                 if (event.data.match(/^hash:/)) {
                     window.location.hash = event.data.substr('hash:'.length)
                 } else if (event.data.match(/^poll:/)) {
                     var poll = event.data.substr('poll:'.length);
-                    // TODO: init poll
-                    gotoFrame('poll');
+                    initPoll(polls[poll]);
+                } else if (event.data.match(/^pollresult:/)) {
+                    var pollResult = event.data.substr('pollresult:'.length);
+                    handlePollResult(pollResult);
                 } else if (event.data.match(/^goto:/)) {
                     var goto = event.data.substr('goto:'.length);
                     gotoFrame(goto);
@@ -101,21 +147,12 @@
                 if ($(this).attr('data-action')) {
                     actions[$(this).attr('data-action')].call();
                 }
+                if ($(this).attr('data-poll')) {
+                    initPoll(polls[$(this).attr('data-poll')]);
+                }
                 $('.top.menu').removeClass('active');
             });
         });
-        function gotoFrame(frame) {
-            var from = $('.content.active').attr('id');
-            $('.content.active').trigger('leave', [frame]).removeClass('active');
-            $('#' + frame).trigger('enter', [from]).addClass('active');
-        }
-        function setLayout(layout) {
-            $('.content, .side')
-                    .removeClass('full')
-                    .removeClass('fullSide')
-                    .removeClass('classic')
-                    .addClass(layout);
-        }
     </script>
      <style type="text/css">
          body {overflow:hidden}
@@ -183,16 +220,14 @@
     <div class="top menu">
         <ul>
             <li class="separator">Plan</li>
-            <li><a data-goto="app">App</a></li>
-            <li><a data-goto="poll">Poll</a></li>
             <li><a data-goto="intro">Introduction</a></li>
             <li><a data-goto="archi">Architecture</a></li>
             <li><a data-goto="dashboard">Dashboard</a></li>
             <li><a data-goto="impress">Presentation</a></li>
-            <li><a data-goto="smartphone">Smartphone</a></li>
+            <li><a data-goto="smartphone">Mobility</a></li>
             <li><a data-goto="rtservice">RT Service</a></li>
-            <li><a data-goto="scheduleclient">Schedule Client</a></li>
-            <li><a data-goto="scheduleservice">Schedule Service</a></li>
+            <li><a data-goto="scheduleclient">Agenda Client</a></li>
+            <li><a data-goto="scheduleservice">Agenda Service</a></li>
             <li><a data-goto="crawler">Crawler</a></li>
             <li class="separator">Layout</li>
             <li><a data-layout="classic">Classic</a></li>
@@ -200,7 +235,11 @@
             <li><a data-layout="fullSide">Full Dashboard</a></li>
             <li class="separator">Actions</li>
             <li><a data-action="startPrez">Start Prez</a></li>
-            <li><a data-layout="stopPrez">Stop Prez</a></li>
+            <li><a data-action="stopPrez">Stop Prez</a></li>
+            <li><a data-goto="app">Show App</a></li>
+            <li><a data-goto="poll">Show Poll</a></li>
+            <li class="separator">Polls</li>
+            <li><a data-poll="menu">Menu</a></li>
         </ul>
     </div>
     <div id="intro" class="full content prez active">
