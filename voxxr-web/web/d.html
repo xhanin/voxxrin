@@ -55,9 +55,6 @@
 
                   var voxxr = { prez: prez, room: prez.room(), connections: ko.observable(0)};
                   ko.applyBindings(voxxr);
-
-                  $("#start").click(function() { models.Room.current().sendEV('PZS')});
-                  $("#stop").click(function() { models.Room.current().sendEV('PZE')});
               }
 
 
