@@ -1,0 +1,251 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Crawler :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Crawler :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+    <link href="css/cm-theme/lesser-dark.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/cm-mode/clike/clike.js"></script>
+    <script src="js/cm-mode/xml/xml.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress .step:not(.active)
+        {
+            opacity: 0.1;
+        }
+        #impress.step-overview .step:not(.quiet)
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="crawler" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="crawler" class="step center" data-x="0" data-y="0" data-scale="4">
+        <h2 class="title">Crawler</h2>
+    </div>
+
+    <div id="consume-json" class="step" data-x="-1000" data-y="0">
+        <h2>Consume JSON</h2>
+        <textarea class="code">
+{"tags":[{"name":"HTML5"},{"name":"iPhone"},{"name":"jQuery"},{"name":"javascript"},{"name":"websockets"},{"name":"Cassandra"},{"name":"android"}],
+ "summary":"Une séance hautement interactive pour découvrir ce qui il y a sous le capot d'un nouveau service qui permet de faire passer un talk en version 2.0 : le talk participatif. Partagez en temps rÃ©el vos impressions grÃ¢ce Ã  l'appli iPhone / Android et prenez mÃªme le contrÃ´le du dÃ©roulement de la session ! Et au passage dÃ©couvrez comment ce service a Ã©tÃ© dÃ©veloppÃ© exclusivement pour DevoxxFR ! Au menu : HTML5, WebSocket / Atmosphere, Canvas / ProcessingJS, jQuery, PhoneGap, Cassandra, Amazon Web Services, ...",
+ "id":1064,
+ "speakerUri":"http://cfp.devoxx.com/rest/v1/events/speakers/924",
+ "title":"Voxxr: Ze Highly Interactive Talk",
+ "speaker":"Xavier Hanin",
+ "track":"Web, Mobile et le Cloud",
+ "experience":"NOVICE",
+ "language":"fr",
+ "speakers":[{"speakerUri":"http://cfp.devoxx.com/rest/v1/events/speakers/924","speaker":"Xavier Hanin"}],
+ "type":"Conference",
+ "room":"La Seine C"}
+        </textarea>
+    </div>
+
+    <div id="produce-json" class="step" data-x="1000" data-y="0">
+        <h2>Produce JSON</h2>
+        <textarea class="code">
+{
+    "id":1,
+    "uri":"/events/1/presentations/1",
+    "title":"Voxxr: Ze Highly Interactive Talk",
+    "speakers":[{"uri":"/events/1/speakers/1","name":"Xavier Hanin"}],
+    "track":"Web, Mobile et le Cloud",
+    "type":"Conference",
+    "kind":"Talk",
+    "experience":"NOVICE",
+    "room": {"id":"1", "name": "Room 1", "uri": "/events/1/room/1"},
+    "slot": "7pm",
+    "fromTime":"2012-04-18 19:00:00.0",
+    "toTime":"2011-11-15 12:30:00.0",
+    "tags":[{"name":"HTML5"},{"name":"iPhone"},{"name":"jQuery"},{"name":"javascript"},{"name":"websockets"},{"name":"Cassandra"},{"name":"android"}],
+    "summary":"Une séance hautement interactive pour découvrir ce qui il y a sous le capot d'un nouveau service qui permet de faire passer un talk en version 2.0 : le talk participatif. Partagez en temps réel vos impressions gràce à  l'appli iPhone / Android et prenez même le contrôle du déroulement de la session ! Et au passage découvrez comment ce service a été développé exclusivement pour DevoxxFR ! Au menu : HTML5, WebSocket / Atmosphere, Canvas / ProcessingJS, jQuery, PhoneGap, Cassandra, Amazon Web Services, ..."
+}
+        </textarea>
+     </div>
+
+    <div id="nodejs" class="step image" data-x="0" data-y="-500" data-scale="1.5">
+        <img src="img/nodejs.png" width="400">
+    </div>
+
+    <div id="crawl-http-get" class="step" data-x="-1000" data-y="-1000" data-rotate-x="45">
+        <h2>Asynchronous HTTP GET</h2>
+        <textarea class="code">
+function crawl(eventId) {
+    console.log('start crawling');
+    Q.all([
+        load('http://cfp.devoxx.com/rest/v1/events/'
+            + eventId),
+        load('http://cfp.devoxx.com/rest/v1/events/'
+            + eventId + '/schedule/rooms'),
+        load('http://cfp.devoxx.com/rest/v1/events/'
+            + eventId + '/schedule')
+    ]).spread(function(event, rooms, schedule) {
+        console.log(
+            "loaded event " + event.id + ", " + schedule.length
+            + " presentations and " + rooms.length + " rooms");
+
+            ...
+    }).fail(onFailure);
+}
+        </textarea>
+    </div>
+
+    <div id="crawl-each" class="step" data-x="0" data-y="-1000" data-rotate-x="45">
+        <h2>Functional iterations and easy mapping</h2>
+        <textarea class="code">
+_(schedule).each(function(s) {
+    voxxrin.event.nbPresentations++;
+
+    var fromTime = new Date(Date.parse(s.fromTime)),
+        daySchedule = voxxrin.daySchedules[
+            dateformat(fromTime, 'yyyy-mm-dd')];
+
+    var voxxrinPres =
+       {"id":prefix + s.id, "title":s.title,
+        "type":s.type, "kind":s.kind,
+        "uri":"/events/" + voxxrin.event.id
+            + "/presentations/" + prefix + s.id,
+        "speakers": _(s.speakers).map(toVoxxrinSpeaker),
+        "room": voxxrin.rooms[s.room],
+        "slot": dateformat(fromTime,
+                    fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
+        "fromTime":s.fromTime,"toTime":s.toTime};
+
+    ...
+}
+        </textarea>
+    </div>
+
+    <div id="crawl-http-post" class="step" data-x="1000" data-y="-1000" data-rotate-x="45">
+        <h2>Asynchronous HTTP POST / PUT</h2>
+        <textarea class="code">
+load(s.presentationUri).then(function(p) {
+    send(baseUrl + '/r' + voxxrinPres.uri,
+        _.extend(voxxrinPres, {
+            "track":p.track,
+            "experience":p.experience,
+            "tags":p.tags,
+            "summary":p.summary
+        })
+    ).then(function() {
+            console.log('PRESENTATION: ', voxxrinPres.title)
+      })
+     .fail(onFailure);
+}).fail(onFailure);
+        </textarea>
+    </div>
+
+    <div id="heroku" class="step image" data-x="0" data-y="500" data-scale="1.5">
+        <img src="img/heroku.png" >
+    </div>
+
+    <div id="heroku-files" class="step" data-x="-1000" data-y="1000" data-rotate-x="-45">
+        <h2>Settings files</h2>
+        <textarea class="code">
+Procfile:
+---------
+    web: node crawler.js
+
+package.json
+------------
+    {
+      "name": "voxxr-devoxx-crawler",
+      "version": "0.0.1",
+      "dependencies": {
+        "request": "2.9.100",
+        "q":"0.8.2",
+        "underscore":"1.3.1",
+        "dateformat":"1.0.2-1.2.3"
+      }
+    }
+        </textarea>
+    </div>
+    <div id="heroku-init" class="step" data-x="0" data-y="1000" data-rotate-x="-45">
+        <h2>Init</h2>
+        <textarea class="code">
+$ git init
+$ git add .
+$ git commit -m "init"
+
+$ heroku create --stack cedar
+Creating sharp-rain-871... done, stack is cedar
+http://sharp-rain-871.herokuapp.com/ | git@heroku.com:sharp-rain-871.git
+Git remote heroku added
+        </textarea>
+    </div>
+    <div id="heroku-deploy" class="step" data-x="1000" data-y="1000" data-rotate-x="-45">
+        <h2>Init</h2>
+        <textarea class="code">
+$ git push heroku
+Counting objects: 5, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 727 bytes, done.
+Total 3 (delta 2), reused 0 (delta 0)
+
+-----> Heroku receiving push
+-----> Node.js app detected
+-----> Resolving engine versions
+
+       Using Node.js version: 0.4.7
+       Using npm version: 1.0.106
+-----> Fetching Node.js binaries
+-----> Vendoring node into slug
+-----> Installing dependencies with npm
+       underscore@1.3.1 ./node_modules/underscore
+       dateformat@1.0.2-1.2.3 ./node_modules/dateformat
+       request@2.9.100 ./node_modules/request
+       q@0.8.2 ./node_modules/q
+       └── event-queue@0.2.0
+       Dependencies installed
+-----> Discovering process types
+       Procfile declares types -> web
+-----> Compiled slug size is 3.3MB
+-----> Launching... done, v7
+       http://stormy-warrior-6019.herokuapp.com deployed to Heroku
+        </textarea>
+    </div>
+
+    <div id="overview" class="step" data-x="0" data-y="0" data-scale="4">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>
