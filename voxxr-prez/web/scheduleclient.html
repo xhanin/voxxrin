@@ -1,0 +1,186 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Schedule Client :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Schedule Client :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/cm-mode/clike/clike.js"></script>
+    <script src="js/cm-mode/css/css.js"></script>
+    <script src="js/cm-mode/xml/xml.js"></script>
+    <script src="js/cm-mode/htmlmixed/htmlmixed.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet)
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="scheduleclient" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="scheduleclient" class="step center" data-x="0" data-y="0" data-scale="1.4">
+        <h2 class="title">Schedule Client</h2>
+    </div>
+
+    <div id="html5" class="step image" data-x="-500" data-y="300">
+        <img src="img/HTML5.png" width="256" >
+    </div>
+    <div id="jquerymobile" class="step image client" data-x="0" data-y="300">
+        <img src="img/jquery-logo.png" >
+    </div>
+    <div id="app-home-screen-1" class="step image jqm" data-x="100" data-y="400" data-rotate="90" data-scale="0.05">
+        <img src="img/app-home-screen.png" >
+    </div>
+    <div id="jquerymobile-html" class="step jqm" data-x="100" data-y="450" data-rotate="90" data-scale="0.05" >
+<textarea class="code" data-mode="text/html">
+<div id="events" class="events page" data-role="page">
+    <div data-role="header" >
+        <a href="#signin" data-transition="slidedown"
+           data-theme="e" class="ui-btn-left">xavierhanin</a>
+        <h1>Voxxrin</h1>
+        <a href="#about" data-transition="slidedown"
+           class="ui-btn-right">About</a>
+    </div>
+    <div data-role="content">
+        <ul class="events"  data-role="listview">
+            <li data-theme="a"><a href="#event~dvx6">
+                <h3>Devoxx France 2012</h3>
+                <p><strong></strong>
+                    ~ <span>Apr 18-20, 2012</span></p>
+            </a></li>
+        </ul>
+    </div>
+</div>
+</textarea>
+    </div>
+    <div id="jquerymobile-html-expanded" class="step jqm" data-x="100" data-y="500" data-rotate="90" data-scale="0.05" >
+<textarea class="code" data-mode="text/html">
+<ul class="events ui-listview" data-role="listview">
+    <li data-theme="a" data-corners="false" data-shadow="false"
+        data-iconshadow="true" data-inline="false" data-wrapperels="div"
+        data-icon="arrow-r" data-iconpos="right"
+        class="ui-btn ui-btn-up-a ui-btn-icon-right ui-li-has-arrow ui-li">
+        <div class="ui-btn-inner ui-li">
+            <div class="ui-btn-text">
+                <a class="ui-link-inherit" href="#event~dvx6">
+                <h3 class="ui-li-heading">DevoxxFrance 2012</h3>
+                <p class="ui-li-desc"><strong></strong>
+                    ~ <span>Apr 18-20, 2012</span></p>
+                </a>
+            </div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+        </div>
+    </li>
+</ul>
+</textarea>
+    </div>
+    <div id="tappable" class="step center jqm" data-x="30" data-y="400" data-rotate="90" data-scale="0.05">
+        <h2>Tappable.js</h2>
+        <p>http://cheeaun.com/blog/2012/03/how-i-built-hacker-news-mobile-web-app</p>
+        <img src="img/hacker-news-mobile-web-app-landing.png">
+    </div>
+
+    <div id="transitions" class="step center jqm" data-x="-30" data-y="400" data-rotate="90" data-scale="0.05">
+        <h2>Transitions</h2>
+    </div>
+    <div id="transitions-parallel" class="step center jqm" data-x="-30" data-y="450" data-rotate="90" data-scale="0.05">
+        <p>Parallelize out and in transitions</p>
+    </div>
+    <div id="transitions-reuse" class="step center jqm" data-x="-30" data-y="500" data-rotate="90" data-scale="0.05">
+        <p>Re use pages</p>
+    </div>
+    <div id="transitions-disabled" class="step center jqm" data-x="-30" data-y="550" data-rotate="90" data-scale="0.05">
+        <p>Disabled transitions</p>
+    </div>
+
+    <div id="header-footer" class="step center jqm" data-x="-100" data-y="400" data-rotate="90" data-scale="0.05">
+        <h2>Fixed Header - Footer</h2>
+    </div>
+    <div id="header-footer-overflow" class="step center jqm" data-x="-100" data-y="450" data-rotate="90" data-scale="0.05">
+        <textarea class="code">
+-webkit-overflow-scrolling: touch
+        </textarea>
+    </div>
+    <div id="header-footer--disabled" class="step center jqm" data-x="-100" data-y="500" data-rotate="90" data-scale="0.05">
+        <p>Disabled fixed header / footer</p>
+    </div>
+
+    <div id="knockoutjs" class="step image ko" data-x="500" data-y="300">
+        <img src="img/knockoutjs.png" >
+    </div>
+    <div id="knockoutjs-example" class="step image ko" data-x="500" data-y="400" data-rotate="90" data-scale="0.05">
+        <img src="img/knockoutjs-example.png" >
+    </div>
+    <div id="app-home-screen-2" class="step image ko" data-x="500" data-y="450" data-rotate="90" data-scale="0.05">
+        <img src="img/app-home-screen.png" >
+    </div>
+    <div id="knockoutjs-html" class="step ko" data-x="500" data-y="500" data-rotate="90" data-scale="0.05" >
+<textarea class="code" data-mode="text/html">
+&lt;div id="events" class="events page" data-role="page">
+    <div data-role="header" >
+        <a href="#signin" data-transition="slidedown"
+           data-bind="btntext: loginBtn" data-theme="e"
+           class="ui-btn-left">Login</a>
+        <h1>Voxxrin</h1>
+        <a href="#about" data-transition="slidedown"
+           class="ui-btn-right">About</a>
+    </div>
+    <div data-role="content">
+    <p class="loading" data-bind="visible: events.loading"></p>
+    <p data-bind="visible: events().length === 0 && !events.loading()">
+        No upcoming event covered :(
+    </p>
+    <ul class="events"  data-role="listview"
+            data-bind="listview: events">
+        <li data-theme="a"><a data-bind="href: hash">
+            <h3 data-bind="text: title"> </h3>
+            <p><strong data-bind="text: subtitle"></strong>
+                ~ <span data-bind="text: dates"></span></p>
+        </a></li>
+    </ul>
+    </div>
+&lt;/div>
+</textarea>
+    </div>
+
+    <div id="overview" class="step" data-x="0" data-y="200" data-scale="1.5">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>
