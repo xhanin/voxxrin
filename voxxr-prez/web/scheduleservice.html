@@ -1,0 +1,271 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Schedule Service :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+
+    <meta name="description" content="Schedule Service :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
+    <meta name="author" content="Xavier Hanin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/voxxr-prez.css" rel="stylesheet" />
+    <link href="css/codemirror.css" rel="stylesheet">
+    <link href="css/cm-theme/lesser-dark.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/codemirror.js"></script>
+    <script src="js/cm-mode/javascript/javascript.js"></script>
+    <script src="js/cm-mode/clike/clike.js"></script>
+    <script src="js/cm-mode/xml/xml.js"></script>
+    <script src="js/jquery-1.7.1.js"></script>
+    <script src="js/voxxr-prez.js"></script>
+
+    <style type="text/css">
+        #impress.step-overview .step:not(.quiet)
+        {
+            opacity: 1; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="impress" data-prez-id="scheduleservice" class="impress-not-supported">
+
+    <div class="fallback-message">
+        <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+        <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
+    </div>
+
+
+    <div id="scheduleservice" class="step center" data-x="-300" data-y="0" data-z="500" data-rotate="-45" data-scale="3">
+        <h2 class="title">Schedule Service</h2>
+    </div>
+
+    <div id="gae" class="step image" data-x="-1000" data-y="0">
+        <img src="img/gae.png" >
+    </div>
+
+    <div id="gae-pay-what-you-use" class="step center" data-x="200" data-y="0" data-rotate="-90">
+        <h2>Pay For What You Use,</h2>
+        <p>Use less!</p>
+    </div>
+
+    <div id="gae-go-runtime" class="step image" data-x="1000" data-y="-300">
+        <h2>Go Runtime</h2>
+        <img src="img/appengine-go.png" >
+        <p>250ms startup time<br>10~20ms response time</p>
+    </div>
+    <div id="gae-java-servlet" class="step image" data-x="1000" data-y="300">
+        <h2>Java Servlet</h2>
+        <img src="img/appengine-java-pure-servlet.png" >
+        <p>1400ms startup time<br>15~20ms response time</p>
+    </div>
+    <div id="gae-java-jersey" class="step image" data-x="2000" data-y="-300">
+        <h2>Java Jersey</h2>
+        <img src="img/appengine-java-jersey.png" >
+        <p>7500ms startup time<br>15~20ms response time</p>
+    </div>
+    <div id="gae-java-regexp-controller" class="step image" data-x="2000" data-y="300">
+        <h2>Java Regexp Controller</h2>
+        <img src="img/appengine-java-servlet-guava-regexp-controller.png" >
+        <p>1400ms startup time<br>15~20ms response time</p>
+    </div>
+
+    <div id="gae-baremetal-regexp-controller-1" class="step" data-x="680" data-y="1000" data-z="-550" data-rotate-y="-75" data-scale="0.5" >
+        <h2>Regexp Controller (1/2)</h2>
+        <textarea class="code" data-mode="text/x-java">
+public static class Route {
+    final RequestHandler handler;
+    final Pattern pattern;
+    final Map<Integer, String> paramNames;
+
+    public Route(RequestHandler handler,
+            Pattern pattern,
+            Map<Integer, String> paramNames) {
+        this.handler = handler;
+        this.pattern = pattern;
+        this.paramNames = paramNames;
+    }
+}
+public static interface RequestHandler {
+    void handle(HttpServletRequest req, HttpServletResponse resp,
+            Map<String, String> params) throws IOException;
+}
+// declare a route
+new Route(new EventResources(),
+            Pattern.compile("/r/events/([a-z0-9\\-]+)"),
+        new ImmutableMap.Builder<Integer, String>()
+            .put(1, "eventId").build()),
+        </textarea>
+    </div>
+    <div id="gae-baremetal-regexp-controller-2" class="step" data-x="925" data-y="1000" data-z="-200" data-rotate-y="-45" data-scale="0.5" >
+        <h2>Regexp Controller (2/2)</h2>
+        <textarea class="code" data-mode="text/x-java">
+@Override
+protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    String uri = req.getRequestURI();
+    for (Route route : routes) {
+        Matcher matcher = route.pattern.matcher(uri);
+        if (matcher.matches()) {
+            // extract named params
+            Map<String, String> params = Maps.newLinkedHashMap();
+            for (Map.Entry<Integer, String> param :
+                    route.paramNames.entrySet()) {
+                params.put(param.getValue(),
+                    matcher.group(param.getKey()));
+            }
+
+            route.handler.handle(req, resp, params);
+            return;
+        }
+    }
+    resp.sendError(404);
+}
+        </textarea>
+    </div>
+
+    <div id="gae-baremetal-1" class="step" data-x="1285" data-y="1000" data-z="0" data-rotate-y="-15" data-scale="0.5" >
+        <h2>Bare Metal ~ Datastore</h2>
+        <textarea class="code" data-mode="text/x-java">
+public static int countFavorites(String presentationId) {
+    return DatastoreServiceFactory.getDatastoreService().prepare(
+        new Query("MyPresentation")
+                .addFilter("presId",
+                    Query.FilterOperator.EQUAL, presentationId)
+                .addFilter("favorite",
+                    Query.FilterOperator.EQUAL, true))
+        .countEntities(FetchOptions.Builder.withDefaults());
+}
+        </textarea>
+    </div>
+
+    <div id="gae-baremetal-2" class="step" data-x="1715" data-y="1000" data-z="0" data-rotate-y="15" data-scale="0.5" >
+        <h2>Bare Metal ~ Memcache</h2>
+        <textarea class="code" data-mode="text/x-java">
+public static Entity findEntityByKey(Key key) throws EntityNotFoundException {
+    MemcacheService memcache =
+            MemcacheServiceFactory.getMemcacheService("entities");
+
+    String cacheKey = KeyFactory.keyToString(key);
+    Entity entity = (Entity) memcache.get(cacheKey);
+            
+    if (entity == null) {
+        DatastoreService datastore =
+            DatastoreServiceFactory.getDatastoreService();
+        entity = datastore.get(key);
+        memcache.put(cacheKey, entity);
+    }
+    return entity;
+}
+        </textarea>
+    </div>
+
+    <div id="gae-baremetal-3" class="step" data-x="2075" data-y="1000" data-z="-200" data-rotate-y="45" data-scale="0.5" >
+        <h2>Bare Metal ~ HTTP</h2>
+        <textarea class="code" data-mode="text/x-java">
+public static void sendJson(JSONObject json, HttpServletRequest req,
+            HttpServletResponse resp) throws IOException {
+    resp.addHeader("Content-Type", "application/json; charset=utf-8");
+    if (json.has("lastmodified")) {
+        try {
+            String etag = String.valueOf(json.getLong("lastmodified"));
+            if (etag.equals(req.getHeader("If-None-Match"))) {
+                resp.setStatus(304);
+                resp.getOutputStream().close();
+                return;
+            }
+            resp.addHeader("ETag", etag);
+        } catch (JSONException e) {
+            // ignore
+        }
+    }
+    resp.addHeader("Access-Control-Allow-Origin", "*");
+
+    OutputStreamWriter writer = new OutputStreamWriter(
+            resp.getOutputStream(), "UTF8");
+    writer.append(json.toString());
+    writer.flush();
+    writer.close();
+}
+        </textarea>
+    </div>
+
+    <div id="gae-resource-example" class="step" data-x="2320" data-y="1000" data-z="-550" data-rotate-y="75" data-scale="0.5" >
+        <h2>Bare Metal ~ Usage</h2>
+        <textarea class="code" data-mode="text/x-java">
+public void handle(HttpServletRequest req, HttpServletResponse resp,
+            Map<String, String> params) throws IOException {
+    String kind = "Presentation";
+
+    if ("GET".equalsIgnoreCase(req.getMethod())) {
+        Rests.sendAsJsonObject(Rests.createKey(
+            kind, params.get("presentationId")), req, resp);
+
+    } else if ("POST".equalsIgnoreCase(req.getMethod())) {
+        Rests.storeFromRequest(req, resp, kind,
+                new PrepareEntityCallback() {
+            @Override
+            public Entity prepare(
+                JSONObject json, Entity entity) throws JSONException {
+                return entity;
+            }
+        });
+    }
+}
+        </textarea>
+    </div>
+
+    <div id="gae-dependencies" class="step" data-x="-800" data-y="-200" data-z="-5000" data-scale="0.2" data-rotate="-45">
+        <textarea class="code" data-mode="application/xml">
+<dependency org="com.google.appengine"
+            name="appengine-api-1.0-sdk" rev="1.6.1.1" />
+
+<dependency org="com.google.guava"
+            name="guava" rev="11.0.1" />
+            
+<dependency org="org.json"
+            name="json" rev="20090211" />
+            
+<dependency org="org.twitter4j"
+            name="twitter4j-core" rev="2.2.5"/>
+<dependency org="org.twitter4j"
+            name="twitter4j-appengine" rev="2.2.5"/>
+
+<dependency org="javax.servlet"
+            name="servlet-api" rev="2.5" conf="provided->default" />
+
+<dependency org="junit"
+            name="junit" rev="4.10" conf="test->default" />
+        </textarea>
+    </div>
+
+    <div id="gae-first-day-with-twitter" class="step image" data-x="-600" data-y="0" data-z="-5000" data-scale="0.2">
+        <img src="img/gae-chart-on-first-day-with-twitter.png" >
+    </div>
+
+    <div id="cloc" class="step" data-x="-800" data-y="200" data-z="-5000"  data-scale="0.2" data-rotate="45">
+        <p>Java 1400 LOC - 22 classes</p>
+        <p>Framework 255 LOC - 2 classes</p>
+    </div>
+
+    <div id="overview" class="step" data-x="600" data-y="200" data-scale="4">
+    </div>
+
+    <div id="end" class="step" data-x="0" data-y="0" data-scale="12">
+        <script> onEnterIn('end', fppm("poll:menu")); </script>
+    </div>
+
+</div>
+
+
+
+<script src="js/impress.js"></script>
+<script>impress();</script>
+</body>
+</html>
