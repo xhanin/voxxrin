@@ -20,6 +20,7 @@
         $(function() {
             var mode = urlParams['mode'] || 'prod';
             var baseUrl = mode === 'dev' ?  'http://localhost:8080' : 'http://app.voxxr.in';
+            var dashboardWindow = $('#d iframe')[0].contentWindow;
 
             function loadIframe(iframe) {
                 if (iframe.attr('src') === 'about:blank') {
@@ -45,6 +46,11 @@
                 });
             }
 
+            var actions = {
+                startPrez: function() { dashboardWindow.postMessage('EV:PZS', '*'); },
+                stopPrez: function() { dashboardWindow.postMessage('EV:PZE', '*'); }
+            }
+
             window.addEventListener("message", function(event) {
                 if (event.data.match(/^hash:/)) {
                     window.location.hash = event.data.substr('hash:'.length)
@@ -58,6 +64,8 @@
                 } else if (event.data.match(/^layout:/)) {
                     var layout = event.data.substr('layout:'.length);
                     setLayout(layout);
+                } else if (event.data.match(/^EV:/)) {
+                    dashboardWindow.postMessage(event.data, '*');
                 }
             }, false);
 
@@ -89,6 +97,9 @@
                 }
                 if ($(this).attr('data-layout')) {
                     setLayout($(this).attr('data-layout'));
+                }
+                if ($(this).attr('data-action')) {
+                    actions[$(this).attr('data-action')].call();
                 }
                 $('.top.menu').removeClass('active');
             });
@@ -186,6 +197,9 @@
             <li class="separator">Layout</li>
             <li><a data-layout="classic">Classic</a></li>
             <li><a data-layout="full">Full</a></li>
+            <li class="separator">Actions</li>
+            <li><a data-action="startPrez">Start Prez</a></li>
+            <li><a data-layout="stopPrez">Stop Prez</a></li>
         </ul>
     </div>
     <div id="intro" class="full content prez active">

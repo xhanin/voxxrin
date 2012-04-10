@@ -26,6 +26,12 @@
 
       <script type="text/javascript">
           $(function() {
+              window.addEventListener("message", function(event) {
+                  if (event.data.match(/^EV:/)) {
+                      models.Room.current().sendEV(event.data.substr('EV:'.length));
+                  }
+              });
+
               function withPrez(prez) {
                   prez = ds.presentation(prez);
                   models.Room.bcmode = "DASHBOARD";
@@ -102,10 +108,6 @@
     <canvas id="feelingDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
     <div id="time" data-bind="text: prez.time"></div>
     <div id="hotFactor" data-bind="text: prez.hotFactor"></div>
-    <div id="buttons" data-bind="with: prez">
-        <button id="start" type="button" data-bind="visible: state() === 'STOPPED'">Start Presentation</button>
-        <button id="stop" type="button" data-bind="visible: state() === 'STARTED'">Stop Presentation</button>
-    </div>
 </div>
 </body>
 </html>

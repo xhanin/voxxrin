@@ -18,6 +18,13 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
     <script src="js/voxxr-prez.js"></script>
+    <style type="text/css">
+        #impress.step-start #main
+        {
+            opacity: 1; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(200, 200, 0, .2);
+        }
+    </style>
 </head>
 <body>
 
@@ -29,11 +36,22 @@
         <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser. Upcoming version 10 of Internet Explorer <i>should</i> also handle it.</p>
     </div>
 
-
     <div id="main" class="step" data-x="0" data-y="0" data-scale="4">
         <h2><a href="http://voxxr.in">Voxxr.in</a>:</h2>
         <h1>Ze Highly Interactive Talk</h1>
         <p class="author">by <a href="http://xhan.in/">Xavier Hanin</a></p>
+    </div>
+
+    <div id="start" class="step" data-x="0" data-y="0" data-scale="4">
+        <script>
+            var prezStartSent = false;
+            onEnterIn('start', function() {
+                if (!prezStartSent) {
+                    prezStartSent = true;
+                    ppm("EV:PZS");
+                }
+            });
+        </script>
     </div>
 
     <div id="devoxx" class="step image" data-x="-2000" data-y="-1500">
