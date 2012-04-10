@@ -40,7 +40,6 @@
                   prez.room().presentation(prez);
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
-                      console.log('EV', ev);
                       if (ev.isRate) {
                           var rateDrops = Processing.getInstanceById("rateDrops");
                           rateDrops.setPalette({1:0xffC44D58, 2:0xffFF6B6B, 3:0xffFBD405, 4:0xff4ECDC4, 5:0xffC7F464});
