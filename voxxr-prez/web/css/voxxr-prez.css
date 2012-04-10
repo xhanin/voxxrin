@@ -41,5 +41,11 @@ p.medium { font-size: 32px; }
 #impress ul li { list-style: disc; margin-left: 50px; }
 
 
-#impress .CodeMirror, #impress .CodeMirror pre { font-size: 18px; line-height: 1em; }
+#impress .CodeMirror, #impress .CodeMirror pre {
+    font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', 'Monaco', Courier, monospace !important;
+    font-size: 18px; line-height: 1em;
+}
+#impress .CodeMirror {
+    background: #fff; color: #000; text-shadow: 0 -1px 1px #ddd;
+}
 #impress .CodeMirror-scroll {height: 500px; }
