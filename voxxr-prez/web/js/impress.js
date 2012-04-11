@@ -203,6 +203,7 @@
                         z: data.rotateZ || data.rotate || 0
                     },
                     scale: data.scale || 1,
+                    speed: data.speed || 1,
                     el: el
                 };
             
@@ -289,7 +290,7 @@
             
             // if presentation starts (nothing is active yet)
             // don't animate (set duration to 0)
-            var duration = (active) ? "1s" : "0";
+            var duration = (active) ? (step.speed + "s") : "0";
             
             css(root, {
                 // to keep the perspective look similar for different scales
