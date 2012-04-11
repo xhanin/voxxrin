@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
   <head>
+      <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
       <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
       <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.debug.js"></script>
@@ -79,6 +81,8 @@
           });
       </script>
       <style type="text/css">
+      * { font-family: 'Open Sans', Arial, sans-serif; }
+
       #rateDrops, #feelingDrops { display: block; margin: 5px auto; }
       @media screen and (min-width: 500px) {
           body { background: white; }
@@ -87,10 +91,12 @@
       @media screen and (max-width: 500px) {
           body { background: -webkit-linear-gradient(left, #7d7e7d 0%,#0e0e0e 5%); }
           #rateDrops, #feelingDrops { width: 240px; height: 90px; }
+          .voxxrin { color: white; }
       }
-      #conAndMean, #time, #hotFactor {  width: 240px; height: 52px; margin: 5px auto; text-align: center; font-size: 32px; color: #4ecdc4; }
+      #conAndMean, #time, #hotFactor {  width: 240px; height: 52px; margin: 5px auto; text-align: center; font-size: 26px; color: #4ecdc4; }
       #buttons {  width: 240px; text-align: center; margin: 5px auto; }
-      #conAndMean .connections, #conAndMean .rateMean { font-size: 44px; color: #c7f464; }
+      #conAndMean .connections, #conAndMean .rateMean { font-size: 40px; color: #c7f464; }
+      .voxxrin {position: absolute; bottom: 5px; left: 50%; width: 100px; margin-left: -50px; text-align: center;}
       </style>
 </head>
 <body>
@@ -104,6 +110,7 @@
     <canvas id="feelingDrops"  data-processing-sources="assets/pde/EV-drops.pde"></canvas>
     <div id="time" data-bind="text: prez.time"></div>
     <div id="hotFactor" data-bind="text: prez.hotFactor"></div>
+    <p class="voxxrin">http://voxxr.in/</p>
 </div>
 </body>
 </html>
