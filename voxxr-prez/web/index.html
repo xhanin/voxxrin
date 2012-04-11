@@ -50,7 +50,7 @@
             function gotoFrame(frame) {
                 var from = $('.content.active').attr('id');
                 $('.content.active').trigger('leave', [frame]).removeClass('active');
-                $('#' + frame).trigger('enter', [from]).addClass('active');
+                var to = $('#' + frame).trigger('enter', [from]).addClass('active');
             }
             function setLayout(layout) {
                 $('.content, .side')
@@ -59,9 +59,37 @@
                         .removeClass('classic')
                         .addClass(layout);
             }
+            var chapterDuration = 8 * 60 * 1000;
+            var chapterProgressInterval = null;
+            var chapterStartedAt = 0;
+            function startChapter() {
+                chapterStartedAt = new Date().getTime();
+                $('#chapterprogress .bar').css('width', '0%');
+                $('#chapterprogress').addClass('active').removeClass('warning').removeClass('danger');
+                chapterProgressInterval = setInterval(function() {
+                    var elapsed = new Date().getTime() - chapterStartedAt;
+                    var progress = elapsed / chapterDuration;
+                    if (progress >= 1) {
+                        $('#chapterprogress').removeClass('warning').addClass('danger');
+                    } else if (progress >= 0.9) {
+                        $('#chapterprogress').addClass('warning');
+                    }
+                    $('#chapterprogress .bar').css('width',
+                                Math.min(progress * 100, 100) + '%');
+                }, 1000);
+            }
+            function endChapter() {
+                $('#chapterprogress').removeClass('active');
+                if (chapterProgressInterval) {
+                    clearInterval(chapterProgressInterval);
+                    chapterProgressInterval = null;
+                }
+                chapterStartedAt = 0;
+            }
 
             var currentPoll = null;
             function initPoll(poll) {
+                endChapter();
                 currentPoll = poll;
                 gotoFrame('poll');
                 setTimeout(function() {
@@ -132,7 +160,10 @@
                     var frame = $('#' + id + ' iframe');
                     frame.attr('src', frame.attr('src') + '#' + window.location.hash.substring(id.length + 1));
                 }
-            });
+            })
+            $('.content.prez.chapter')
+                    .on('enter', startChapter)
+                    .on('leave', endChapter);
 
             var initialPrez = 'intro';
             if (window.location.hash) {
@@ -214,6 +245,91 @@
          #footer {position:absolute; bottom: 0px; left:0px; width: 100%;}
          #footer-right {position:absolute; bottom: 0px; right:20%;}
          #footer-main {position:absolute; bottom: 0px; left:0px; width: 100%; height: 13px; background-color: black;}
+
+         /* STYLE FROM Twitter Bootstrap, MIT license, see http://twitter.github.com/bootstrap/components.html#progress */
+         .progress {
+            overflow: hidden;
+            height: 14px;
+            margin-bottom: 4px;
+            background-color: #F7F7F7;
+            background-image: -moz-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: -ms-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(whiteSmoke), to(#F9F9F9));
+            background-image: -webkit-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: -o-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-repeat: repeat-x;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#f9f9f9', GradientType=0);
+            -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+         .progress .bar {
+            width: 0%;
+            height: 14px;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+            background-color: #0E90D2;
+            background-image: -moz-linear-gradient(top, #149BDF, #0480BE);
+            background-image: -ms-linear-gradient(top, #149BDF, #0480BE);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#149BDF), to(#0480BE));
+            background-image: -webkit-linear-gradient(top, #149BDF, #0480BE);
+            background-image: -o-linear-gradient(top, #149BDF, #0480BE);
+            background-image: linear-gradient(top, #149BDF, #0480BE);
+            background-repeat: repeat-x;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#149bdf', endColorstr='#0480be', GradientType=0);
+            -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-transition: width 0.6s ease;
+            -moz-transition: width 0.6s ease;
+            -ms-transition: width 0.6s ease;
+            -o-transition: width 0.6s ease;
+            transition: width 0.6s ease;
+        }
+
+         .progress.warning .bar {
+             background-color: #FAA732;
+             background-image: -moz-linear-gradient(top, #FBB450, #F89406);
+             background-image: -ms-linear-gradient(top, #FBB450, #F89406);
+             background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FBB450), to(#F89406));
+             background-image: -webkit-linear-gradient(top, #FBB450, #F89406);
+             background-image: -o-linear-gradient(top, #FBB450, #F89406);
+             background-image: linear-gradient(top, #FBB450, #F89406);
+             background-repeat: repeat-x;
+             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fbb450', endColorstr='#f89406', GradientType=0);
+         }
+         .progress.danger .bar {
+             background-color: #DD514C;
+             background-image: -moz-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: -ms-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#EE5F5B), to(#C43C35));
+             background-image: -webkit-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: -o-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: linear-gradient(top, #EE5F5B, #C43C35);
+             background-repeat: repeat-x;
+             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ee5f5b', endColorstr='#c43c35', GradientType=0);
+         }
+
+         #chapterprogress {
+            display: none;
+            margin-top: 9px;
+            margin-left: 260px;
+            margin-right: 250px;
+         }
+         #chapterprogress.active {
+             display: block;
+         }
      </style>
     <title>Voxxrin: Ze Highly Interactive Talk</title>
 
@@ -222,6 +338,9 @@
 <body>
     <div id="header">
         <img id="header-left" src="img/devoxx-header-left.png">
+        <div id="chapterprogress" class="progress">
+            <div class="bar" style="width: 60%;"></div>
+        </div>
         <img id="header-right" src="img/devoxx-header-right.png">
     </div>
     <div class="top menu">
@@ -255,28 +374,28 @@
     <div id="intro" class="full content prez active">
         <iframe id="prezframe" data-src="intro.html" src="about:blank"></iframe>
     </div>
-    <div id="archi" class="full content prez">
+    <div id="archi" class="full content prez chapter">
         <iframe data-src="archi.html" src="about:blank"></iframe>
     </div>
-    <div id="dashboard" class="full content prez">
+    <div id="dashboard" class="full content prez chapter">
         <iframe data-src="dashboard.html" src="about:blank"></iframe>
     </div>
-    <div id="impress" class="full content prez">
+    <div id="impress" class="full content prez chapter">
         <iframe data-src="impress.html" src="about:blank"></iframe>
     </div>
-    <div id="smartphone" class="full content prez">
+    <div id="smartphone" class="full content prez chapter">
         <iframe data-src="smartphone.html" src="about:blank"></iframe>
     </div>
-    <div id="rtservice" class="full content prez">
+    <div id="rtservice" class="full content prez chapter">
         <iframe data-src="rtservice.html" src="about:blank"></iframe>
     </div>
-    <div id="scheduleclient" class="full content prez">
+    <div id="scheduleclient" class="full content prez chapter">
         <iframe data-src="scheduleclient.html" src="about:blank"></iframe>
     </div>
-    <div id="scheduleservice" class="full content prez">
+    <div id="scheduleservice" class="full content prez chapter">
         <iframe data-src="scheduleservice.html" src="about:blank"></iframe>
     </div>
-    <div id="crawler" class="full content prez">
+    <div id="crawler" class="full content prez chapter">
         <iframe data-src="crawler.html" src="about:blank"></iframe>
     </div>
     <div id="conclusion" class="full content prez">
