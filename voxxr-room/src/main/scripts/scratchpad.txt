@@ -1,18 +1,26 @@
 git push git@bitbucket.org:xhanin/voxxr.git dev
 
-src/main/scripts/deploy-cassandra-cluster.sh
-src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
+# startup real time cluster
+voxxr-room/src/main/scripts/deploy-cassandra-cluster.sh
+voxxr-room/src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
 ovhcloud instance getInstances --projectName voxxr
 
-curl --request POST http://178.32.211.12:8076/r/room/presentation?id=1\&title=Test
-src/test/rest/post-start-pres-1-1.sh
-src/test/rest/post-stop-pres-1-1.sh
+# here we need room IP, could be obtained with ovh cli
+curl --request POST http://178.32.208.239:8076/r/room/presentation?id=1
+
+# end presentation
+curl --request POST http://178.32.208.239:8076/r/room/presentation?id=
+
+# in the end, backup cassandra cluster
+voxxr-room/src/main/scripts/backup-cassandra-cluster.sh
 
 
- ovhcloud instance ssh 69446
-nodetool -h localhost -p 7199 snapshot Voxxr
-tar czvf c4.tgz /var/lib/cassandra/data/Voxxr/snapshots/xxx
-scp c4.tgz xavier@bordeaux.4sh.fr:~/
+# then shutdown
+ovhcloud instance stopInstance --instanceId 65102
+ovhcloud instance stopInstance --instanceId 69191
+ovhcloud instance stopInstance --instanceId 69253
+ovhcloud instance stopInstance --instanceId 69254
+
 
 #############
 

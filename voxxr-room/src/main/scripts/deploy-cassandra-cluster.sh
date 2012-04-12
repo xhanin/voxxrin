@@ -16,7 +16,7 @@ done
 echo "waiting for seed node to startup..."
 SEED_IP=''
 while [ "$SEED_IP" = "" ]; do
- SEED_IP=`ovhcloud instance getInstances --projectName voxxr | grep $SEED_INSTANCE | egrep -o '([0-9]+\.)+[0-9]+'`;
+ SEED_IP=`ovhcloud instance getInstances --projectName voxxr | grep $SEED_INSTANCE | grep 'running' | egrep -o '([0-9]+\.)+[0-9]+'`;
 done
 
 echo "Cassandra cluster seed machine running. IP=$SEED_IP"

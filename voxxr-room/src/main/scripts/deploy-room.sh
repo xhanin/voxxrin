@@ -13,7 +13,7 @@ ovhcloud instance startInstance --instanceId $INSTANCE
 echo "waiting for room node $ROOM to startup..."
 ROOM_IP=''
 while [ "$ROOM_IP" = "" ]; do
- ROOM_IP=`ovhcloud instance getInstances --projectName voxxr | grep $INSTANCE | egrep -o '([0-9]+\.)+[0-9]+'`;
+ ROOM_IP=`ovhcloud instance getInstances --projectName voxxr | grep $INSTANCE | grep 'running' | egrep -o '([0-9]+\.)+[0-9]+'`;
 done
 
 echo "login and RSA accept"
