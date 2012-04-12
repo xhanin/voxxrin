@@ -27,12 +27,26 @@
       <script type="text/javascript" src="assets/js/models-presentation.js"></script>
 
       <script type="text/javascript">
+          function onEVSelected(ev) {
+              console.log('Poking ' + ev.user);
+              if (ev.isFeeling) {
+                  if (ev.feelingValue === 'W') {
+                        models.Room.current().sendEV('PK' + ev.user + ',' + 'So what\'s your question?');
+                  } else if (ev.feelingValue === 'A') {
+                        models.Room.current().sendEV('PK' + ev.user + ',' + 'Thank you!');
+                  } else if (ev.feelingValue === 'Y') {
+                        models.Room.current().sendEV('PK' + ev.user + ',' + 'Wake up!');
+                  }
+              }
+          }
+
           $(function() {
               window.addEventListener("message", function(event) {
                   if (event.data.match(/^EV:/)) {
                       models.Room.current().sendEV(event.data.substr('EV:'.length));
                   }
               });
+
 
               function withPrez(prez) {
                   prez = ds.presentation(prez);

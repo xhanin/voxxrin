@@ -108,6 +108,7 @@ class Evenire {
     int diff_y = mouseY - pos_y;
     if(mouse_down && 0 < diff_x && diff_x < box_w && 0 < diff_y && diff_y < box_h){
       active_evenire = this;
+      onEVSelected(evenire);
       mouse_down = false;
     }
     fill(slot.get_color());
