@@ -9,25 +9,25 @@ Source organization
 -------------------
 
 Sources are organized in modules:
-- voxxr-web is the main module, containing both
-    - the main server part (in src/main/java), sometimes called agenda service or schedule
-      service, developed in Java running on Google App Engine for Java.
-    - the client in web folder, with:
-        - m.html the main client web app (also packaged as an app with phonegap)
-        - d.html a dashboard component
-        - p.html a poll result component
-- voxxr-room is the module with the real time room service, developped in Java using atmosphere and cassandra
-  There are also scripts to deploy it on ovh public cloud service
-- voxxr-home-j is the source of the front web server serving http://voxxr.in/ hosted on GAE, nothing fancy here
-- voxxr-devoxx-crawler is the module which allow to crawl the devoxx rest API and feed the agenda it
-  (for Devoxx France schedule at the time being). It is using node.js and can be deployed on heroku
-- voxxr-droid is the module which allow to package the app as an android app, thanks to phonegap
-- voxxr-ios is the same for ios
-- voxxr-prez is the source of the presentation for which Voxxr.in was originally developped by Xavier Hanin.
-  This presentation heavily relies on impressjs and a good browser in general (tested mainly on chrome).
-  This presentation embeds both the actual presentation and the structure to embed a dashboard, poll results and
-  commands in an html5 presentation. In the future the structure should be extracted from the presentation content to
-  be easily reusable with other presentations.
+
+*   voxxr-web is the main module, containing both
+    *   the main server part (in src/main/java), sometimes called agenda service or schedule service, developed in Java running on Google App Engine for Java.
+    *   the client in web folder, with:
+        *   m.html the main client web app (also packaged as an app with phonegap)
+        *   d.html a dashboard component
+        *   p.html a poll result component
+*   voxxr-room is the module with the real time room service, developped in Java using atmosphere and cassandra
+    There are also scripts to deploy it on ovh public cloud service
+*   voxxr-home-j is the source of the front web server serving http://voxxr.in/ hosted on GAE, nothing fancy here
+*   voxxr-devoxx-crawler is the module which allow to crawl the devoxx rest API and feed the agenda it
+    (for Devoxx France schedule at the time being). It is using node.js and can be deployed on heroku
+*   voxxr-droid is the module which allow to package the app as an android app, thanks to phonegap
+*   voxxr-ios is the same for ios
+*   voxxr-prez is the source of the presentation for which Voxxr.in was originally developped by Xavier Hanin.
+    This presentation heavily relies on impressjs and a good browser in general (tested mainly on chrome).
+    This presentation embeds both the actual presentation and the structure to embed a dashboard, poll results and
+    commands in an html5 presentation. In the future the structure should be extracted from the presentation content to
+    be easily reusable with other presentations.
 
 License
 -------
