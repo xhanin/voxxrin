@@ -3,6 +3,7 @@ package voxxr.app;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
 import us.monoid.web.Resty;
+import voxxr.AuthorizationToken;
 import voxxr.Env;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class VoxxrinApp {
     private static Resty resty() {
         return new Resty() {
             {
-                getAdditionalHeaders().put("Authorization", "Qh12EEHzVPn2AkKfihVs");
+                getAdditionalHeaders().put("Authorization", AuthorizationToken.TOKEN);
             }
         };
     }

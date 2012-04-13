@@ -150,7 +150,7 @@ public class Rests {
     }
 
     public static boolean isSecure(HttpServletRequest req) {
-        return "Qh12EEHzVPn2AkKfihVs".equals(req.getHeader("Authorization"));
+        return AuthorizationToken.TOKEN.equals(req.getHeader("Authorization"));
     }
 
     public static Entity storeFromJSON(JSONObject json, String kind, PrepareEntityCallback callback) throws JSONException {

@@ -4,7 +4,8 @@ var http = require("http"),
     dateformat = require('dateformat'),
     load = require("./load.js"),
     send = require("./send.js"),
-    request = require('request')
+    request = require('request'),
+    token = require('./authorizationToken')
     ;
 
 var prefix = 'dvx',
@@ -114,7 +115,7 @@ function toVoxxrinSpeaker(sp) {
         request.get(speaker.imageURI).pipe(request.put({
             url: baseUrl + '/r' + voxxrinSpeaker.pictureURI,
             headers: {
-                'Authorization':'Qh12EEHzVPn2AkKfihVs'
+                'Authorization':token
             }
         }));
     }).fail(onFailure);
