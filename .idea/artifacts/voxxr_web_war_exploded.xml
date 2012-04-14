@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="voxxr-web:war exploded">
+  <artifact type="exploded-war" build-on-make="true" name="voxxr-web:war exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/voxxr_web_war_exploded</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="voxxr-web/web/Web" />
