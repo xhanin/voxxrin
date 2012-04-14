@@ -1,10 +1,16 @@
 package voxxr.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import voxxr.data.*;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * User: xavierhanin
@@ -13,7 +19,11 @@ import javax.ws.rs.core.Response;
  */
 @Path("/feedback")
 public class EVResource {
+    private final static Map<String, Long> lastTimestampsByUserAndType = new ConcurrentHashMap<String, Long>();
+    public static final int EV_OF_SAME_TYPE_THRESHOLD_IN_MS = 1000;
+
     private VoxxrRepository repo = CassandraVoxxrRepository.getInstance();
+    private final Logger logger = LoggerFactory.getLogger(EVResource.class);
 
     @POST
     public Response sendFeedback(String evBC) {
@@ -34,6 +44,19 @@ public class EVResource {
                     .header("Access-Control-Allow-Origin", "*")
                     .build();
         }
+
+        String key = ev.getUser() + "/" + ev.getType().getCode();
+        Long lastEVFromUserOfSameType = lastTimestampsByUserAndType.get(key);
+        if (lastEVFromUserOfSameType != null
+                && (System.currentTimeMillis() - lastEVFromUserOfSameType.longValue()) < EV_OF_SAME_TYPE_THRESHOLD_IN_MS) {
+            logger.info("ignored EV {} last one was at {}",
+                    ev, new SimpleDateFormat("HH:mm:ss.S").format(new Date(lastEVFromUserOfSameType)));
+            return Response
+                .ok("{\"status\":\"ignored\"}", "application/json")
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
+        }
+        lastTimestampsByUserAndType.put(key, System.currentTimeMillis());
 
         repo.store(ev);
 
