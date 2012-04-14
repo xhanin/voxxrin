@@ -25,13 +25,23 @@
       <script type="text/javascript" src="assets/js/models-presentation.js"></script>
 
       <script type="text/javascript">
+          var pollStartedAt,
+                  pollDuration = 30 * 1000;
+
+          // functions called by poll.pde
+          function getElapsedPercent() {
+              return pollStartedAt ? Math.min(((Date.now() - pollStartedAt) * 100 / pollDuration)) : 100;
+          }
           function onPollChoiceSelect(selected) {
               console.log('selected', selected);
               if (window.parent) {
                   window.parent.postMessage('pollresult:' + selected, '*');
               }
           }
+
           $(function() {
+              var poll;
+
               function withPrez(prez) {
                   prez = ds.presentation(prez);
                   models.Room.bcmode = "DASHBOARD";
@@ -41,16 +51,16 @@
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
                       if (ev.isPollStart) {
-                          var poll = Processing.getInstanceById("poll");
-                          if(poll != null) { poll.startPoll(prez.title(),"POLL",30,ev.items); }
+                          poll = Processing.getInstanceById("poll");
+                          poll.startPoll(prez.title(),"POLL",ev.items);
+                          pollStartedAt = Date.now();
+                          setTimeout(function() {models.Room.current().sendEV("PE");}, pollDuration);
                       }
                       if (ev.isPollVote) {
-                          var poll = Processing.getInstanceById("poll");
-                          if(poll != null) { poll.addPollVote(ev.vote); }
+                          if (poll) poll.addPollVote(ev.vote);
                       }
                       if (ev.isPollEnd) {
-                          var poll = Processing.getInstanceById("poll");
-                          if(poll != null) { poll.stopPoll(); }
+                          if (poll) { pollStartedAt = null; poll.stopPoll(); }
                       }
                   });
 
@@ -78,6 +88,13 @@
                         }
                   });
               }
+//              $("#stress").click(function() {
+//                  function stressOne() {
+//                      var poll = Processing.getInstanceById("poll");
+//                      if(poll != null) { poll.addPollVote(1); }
+//                  }
+//                  setInterval(stressOne, 1);
+//              });
           });
       </script>
       <style type="text/css">
@@ -86,6 +103,7 @@
 </head>
 <body>
 <div>
+    <!--<input id="stress" type="button" value="STRESS">-->
     <canvas id="poll"  data-processing-sources="assets/pde/poll.pde"></canvas>
 </div>
 </body>

@@ -20,8 +20,6 @@ String poll_subtitle = "NO CURRENT POLL";
 PFont font, font1, font2, font3, font4;
 int selected = -1;
 
-int ticks = 0;
-int total_ticks = 0;
 int total_weight = 0;
 float k_total;
 
@@ -33,7 +31,6 @@ String layout_actual = "standard";
 String visual_mode = "lineal";
 int max_displayed_balls = 49;
 int displayed_balls_nb = 0;
-int FRAME_RATE = 20;
 
 Ball[] balls = new Ball[0];
 float grav = 1.40;                    // Gravedad
@@ -55,8 +52,6 @@ boolean stopped = true;
 
 
 void setup() {
-  frameRate(FRAME_RATE);
-
   size(800, 600);
   background(255);
   smooth();
@@ -79,15 +74,6 @@ void draw() {
     if ( refresh_timer == refresh_frequency ) {
         refresh_timer = 0;
         sortBalls();
-    }
-
-    if (!stopped) {
-        if (ticks >= total_ticks) {
-            models.Room.current().sendEV("PE");
-            stopPoll();
-        } else {
-            ticks++;
-        }
     }
 
     background(255);
@@ -203,17 +189,15 @@ void layout( PFont font1, PFont font2, PFont font3 ) {
   text(poll_title+" ", width - space_right - ancho_parcial, height-31);
 
   barraAvance( space_left, height - 25, width - space_right, height - 15,
-                ticks, total_ticks, ColorLineasGrales, ColorAcento );
+                getElapsedPercent(), 100, ColorLineasGrales, ColorAcento );
 
 }
 
-void startPoll(String title, String subtitle, int duration, String[] options) {
+void startPoll(String title, String subtitle, String[] options) {
     stopped = false;
     balls = new Ball[0];
-    ticks = 0;
     poll_title = title;
     poll_subtitle = subtitle;
-    total_ticks = duration * FRAME_RATE;
     for ( int i=0; i<options.length; i++ ) {
         addNewOption(i, options[i]);
     }
@@ -222,7 +206,6 @@ void startPoll(String title, String subtitle, int duration, String[] options) {
 void stopPoll() {
     stopped = true;
     poll_subtitle = "POLL FINISHED"
-    ticks = total_ticks;
 }
 
 void addPollVote( int id ) {
