@@ -45,7 +45,7 @@
   padding: 5px;
   margin: 2px auto;
   position: relative;
-  width: 180px;
+  width: 185px;
   height: 60px;
 }
 #feedback .feeling a {
@@ -58,6 +58,13 @@
   -webkit-box-sizing: border-box;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 3px;
   box-sizing: border-box;
+}
+#feedback .feeling a.sending,
+#feedback .feeling a.ui-btn-active {
+  background: #556270;
+  margin-top: 6px;
+  margin-left: 6px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 3px;
 }
 #feedback .feeling .applause {
   background: #c7f464;

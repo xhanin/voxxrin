@@ -219,12 +219,16 @@ $(function() { models.Device.current().whenReady(function() {
         }
 
         tappable("#feedback .feeling a", function(e, target) {
+            $(target).addClass('sending');
+            setTimeout(function() {$(target).removeClass('sending')}, 200);
             feeling($(target).closest(".roomRT.page"), $(target).attr('data-value'));
         });
 
         function feeling(roomRT, r) {
-            sendEV("F" + r, function() {
-                roomRT.find("#feedback .feeling a[data-value='" + r + "']").gfxFlipIn({});
+            sendEV("F" + r, function(data) {
+                var btn = roomRT.find("#feedback .feeling a[data-value='" + r + "']");
+                if (data.status === 'ok') { btn.gfxFlipIn({}) }
+                btn.removeClass('sending');
             });
         }
 

@@ -38,7 +38,7 @@
             background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@color6), to(@color7));
         }
         .star.voting {
-            background: @color6;
+            background: @color6; 
         }
         .star.over {
             background: url('../img/star_highlight.png') no-repeat;
@@ -51,7 +51,7 @@
         padding:    5px;
         margin:     2px auto;
         position:   relative;
-        width:      180px;
+        width:      185px;
         height:     60px;
 
         a {
@@ -65,8 +65,14 @@
             -webkit-box-sizing: border-box;
             -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
             box-sizing: border-box;
+
+            
         }
 
+        a.sending, a.ui-btn-active {
+            background: @color1;
+            margin-top: 6px; margin-left: 6px;
+            -webkit-box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 3px;        }
         .applause {
             background:  @color4;
         }
