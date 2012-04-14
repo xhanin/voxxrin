@@ -11,20 +11,42 @@ import voxxr.data.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.concurrent.TimeUnit;
 
 /**
  */
 @Path("/room")
 public class RoomResource {
     public static enum BroadcastMode {
-        ALL, DASHBOARD, USER
+        ALL("all"), DASHBOARD("dashboard"), USER("user"), USER_DELAYED("user", 15000);
+
+        private String broadcasterName;
+        private int delayInMs = 0;
+
+        private BroadcastMode(String broadcasterName) {
+            this.broadcasterName = broadcasterName;
+        }
+
+        private BroadcastMode(String broadcasterName, int delayInMs) {
+            this.broadcasterName = broadcasterName;
+            this.delayInMs = delayInMs;
+        }
+
+        public String getBroadcasterName() {
+            return broadcasterName;
+        }
+
+        public int getDelayInMs() {
+            return delayInMs;
+        }
     }
 
     private static Broadcaster roomBroadcaster(Room room, BroadcastMode mode) {
         return roomBroadcaster(room, mode, false);
     }
     public static Broadcaster roomBroadcaster(Room room, BroadcastMode mode, boolean createIfNull) {
-        return BroadcasterFactory.getDefault().lookup("room#" + room.getId() + "/" + (mode == null ? BroadcastMode.USER : mode), createIfNull);
+        return BroadcasterFactory.getDefault().lookup("room#" + room.getId() + "/"
+                + (mode == null ? BroadcastMode.USER : mode).getBroadcasterName(), createIfNull);
     }
 
     public static void broadcast(Room room, String data, BroadcastMode... mode) {
@@ -32,7 +54,12 @@ public class RoomResource {
             Broadcaster bc = roomBroadcaster(room, broadcastMode);
             if (bc != null) {
                 // under 8 bytes atmosphere client doesn't notify the event
-                bc.broadcast(Strings.padStart(data, 8, '-'));
+                if (broadcastMode.getDelayInMs() > 0) {
+                    bc.delayBroadcast(Strings.padStart(data, 8, '-'),
+                            broadcastMode.getDelayInMs(), TimeUnit.MILLISECONDS);
+                } else {
+                    bc.broadcast(Strings.padStart(data, 8, '-'));
+                }
             }
         }
     }
