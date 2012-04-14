@@ -1,18 +1,16 @@
 <!doctype html>
 <html>
   <head>
+      <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
       <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
       <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.debug.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.atmosphere.js"></script>
       <script type="text/javascript" src="assets/js/libs/jquery.form.js"></script>
-      <script type="text/javascript" src="assets/js/libs/jquery.sparkline.min.js"></script>
-      <script type="text/javascript" src="assets/js/libs/gfx.js"></script>
-      <script type="text/javascript" src="assets/js/libs/gfx.effects.js"></script>
-      <script type="text/javascript" src="assets/js/libs/gfx.flip.js"></script>
+      <script type="text/javascript" src="assets/js/libs/d3.v2.js"></script>
 
       <script type="text/javascript" src="assets/js/libs/date.format.js"></script>
-      <script type="text/javascript" src="assets/js/libs/processing-1.3.6.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
       <script type="text/javascript" src="assets/js/voxxr-conf.js"></script>
@@ -25,24 +23,217 @@
       <script type="text/javascript" src="assets/js/models-presentation.js"></script>
 
       <script type="text/javascript">
-          var pollStartedAt,
-                  pollDuration = 30 * 1000;
-
-          // functions called by poll.pde
-          function getElapsedPercent() {
-              return pollStartedAt ? Math.min(((Date.now() - pollStartedAt) * 100 / pollDuration)) : 100;
-          }
-          function onPollChoiceSelect(selected) {
-              console.log('selected', selected);
-              if (window.parent) {
-                  window.parent.postMessage('pollresult:' + selected, '*');
-              }
-          }
-
           $(function() {
-              var poll;
+              var pollStartedAt,
+                      pollDuration = 30 * 1000;
+              var refreshProgressBarInterval;
+
+              var options = [];
+              var voteCount = 0;
+              var width = 600, height = 580;
+              var bubble = d3.layout.pack()
+                      .sort(null)
+                      .size([width, height]);
+
+              var stack = d3.layout.stack()
+                      .x(function() { return 0})
+                      .y(function(d) { return d.value })
+                      .offset('expand')
+                      .order('reverse');
+
+              var voteCountEl = $('#voteCount');
+
+              function getElapsedPercent() {
+                  return pollStartedAt ? Math.min(((Date.now() - pollStartedAt) * 100 / pollDuration)) : 100;
+              }
+
+              function onPollChoiceSelect(selected) {
+                  console.log('selected', selected);
+                  if (window.parent) {
+                      window.parent.postMessage('pollresult:' + selected, '*');
+                  }
+              }
+
+              function startPoll(items) {
+                  voteCount = 0;
+                  pollStartedAt = Date.now();
+                  setTimeout(function() {models.Room.current().sendEV("PE");}, pollDuration);
+                  $('#pollprogress').removeClass('danger').removeClass('warning');
+                  refreshProgressBarInterval = setInterval(function() {
+                      var elapsed = getElapsedPercent();
+                      if (elapsed >= 95) {
+                        $('#pollprogress').removeClass('warning').addClass('danger');
+                      } else if (elapsed >= 80) {
+                        $('#pollprogress').addClass('warning');
+                      }
+                      $('#pollprogress .bar')
+                              .css('width', elapsed + '%')
+                              ;
+                  }, 200);
+
+                  options = _(items).map(function(item, i) { return {key: i, title:item, value: 1} });
+                  drawPoll(options);
+              }
+
+              function addPollVote(vote) {
+                  if (pollStartedAt) {
+                      voteCount++;
+                      voteCountEl.text(voteCount);
+                      options[vote].value++;
+                      drawPoll(options);
+                  }
+              }
+
+              function stopPoll() {
+                  pollStartedAt = null;
+                  if (refreshProgressBarInterval) {
+                      clearInterval(refreshProgressBarInterval);
+                      refreshProgressBarInterval = null;
+                  }
+                  $('#pollprogress').addClass('danger').removeClass('warning');
+                  $('#pollprogress .bar')
+                          .css('width', '100%')
+                          .text('Poll Finished');
+              }
+
+              function drawPoll(options) {
+                  drawPollChart(options.slice(0));
+                  drawPollRanking(options.slice(0));
+              }
+
+              function drawPollChart(options) {
+                  if (options.length === 0) {
+                      $('#poll').empty();
+                      return;
+                  }
+
+                  // sort and layout options depending on their weight
+                  var data = bubble.nodes({children: options})
+                                  .filter(function(d) {
+                                      return !d.children;
+                                  });
+
+                  var margin = 12;
+                  // apply option size and position to the div representing an option
+                  // based on what the layout provides: x, y, and r
+                  function applyNodeSizeAndPosition(node) {
+                      return node
+                              .style("border-radius", function(d) {
+                                  return (d.r + 2) + "px"
+                              })
+                              .style("width", function(d) {
+                                  return ((d.r - margin) * 2) + "px"
+                              })
+                              .style("height", function(d) {
+                                  return ((d.r - margin) * 2) + "px"
+                              })
+                              .style("left", function(d) {
+                                  return d.x + "px"
+                              })
+                              .style("top", function(d) {
+                                  return (d.y + margin) + "px"
+                              })
+                              .style("margin-left", function(d) {
+                                  return "-" + (d.r - margin) + "px"
+                              })
+                              .style("margin-top", function(d) {
+                                  return "-" + (d.r - margin) + "px"
+                              })
+                  }
+
+                  // apply text size and center it in the div representing an option
+                  // based on what the layout provides: x, y, and r
+                  function applyTextSizeAndPosition(p) {
+                      return p
+                              .style("margin-top", function(d) {
+                                  return (d.r - margin - ((d.r - margin) / (4 * 2))) + "px";
+                              })
+                              .style("font-size", function(d) {
+                                  return ((d.r - margin) / 4) + "px";
+                              })
+                              .html(function(d) {
+                                      return d.title + '<br>' + (d.value - 1)
+                              })
+                  }
+
+                  var node = d3.select("#poll")
+                          .selectAll("div.node")
+                          .data(data,
+                              function(d) {
+                                  return d.title
+                              })
+                          ;
+                  // apply node and text size and position to updated nodes
+                  applyNodeSizeAndPosition(node);
+                  applyTextSizeAndPosition(node.select("p"));
+                  // handle new nodes
+                  applyTextSizeAndPosition(
+                          applyNodeSizeAndPosition(node.enter().append("div")
+                                  .attr("class", "node")
+                                  .attr("data-key", function(d) {
+                                      return d.key
+                                  })
+                                  .style("position", "absolute")
+                          ).append("p")
+                                  .style("text-align", "center")
+                  )
+                  // handle removed poll options
+                  node.exit().remove();
+              }
+
+              function drawPollRanking(options) {
+                  if (options.length === 0) {
+                      $('#pollranks').empty();
+                      return;
+                  }
+
+                  options.sort(function(a,b) { return b.value - a.value })
+                  // sort and layout options depending on their weight
+                  var layers = _(options).map(function(o) { return [o] });
+                  var data = _(stack(layers)).map(function(a) { return a[0] });
+
+                  var margin = 4;
+                  // apply option size and position to the div representing an option
+                  // based on what the layout provides: y (thickness) and y0 (baseline)
+                  function applySizeAndPosition(node) {
+                      return node
+                              .style("height", function(d) {
+                                  return (height * d.y) + "px"
+                              })
+                              .style("top", function(d) {
+                                  return ((height * (1 - (d.y0 + d.y))) + (margin / 2)) + "px"
+                              })
+                              .style("font-size", function(d) {
+                                  return Math.min(((height / 2 * d.y) - margin), 30) + "px"
+                              })
+                  }
+
+                  var node = d3.select("#pollranks")
+                          .selectAll("div.node")
+                          .data(data,
+                              function(d) {
+                                  return d.title
+                              })
+                          ;
+                  // apply node and text size and position to updated nodes
+                  applySizeAndPosition(node);
+                  // handle new nodes
+                  applySizeAndPosition(node.enter().append("div")
+                          .attr("class", "node")
+                          .attr("data-key", function(d) {
+                              return d.key
+                          })
+                          .style("position", "absolute")
+                          .style("text-align", "center")
+                          .text(function(d) {
+                              return d.title
+                          }));
+                  // handle removed poll options
+                  node.exit().remove();
+              }
 
               function withPrez(prez) {
+                  drawPoll(options);
                   prez = ds.presentation(prez);
                   models.Room.bcmode = "DASHBOARD";
                   models.Room.current(prez.room());
@@ -51,21 +242,15 @@
                   prez.room().connect();
                   models.Room.onEV(function(ev) {
                       if (ev.isPollStart) {
-                          poll = Processing.getInstanceById("poll");
-                          poll.startPoll(prez.title(),"POLL",ev.items);
-                          pollStartedAt = Date.now();
-                          setTimeout(function() {models.Room.current().sendEV("PE");}, pollDuration);
+                          startPoll(ev.items);
                       }
                       if (ev.isPollVote) {
-                          if (poll) poll.addPollVote(ev.vote);
+                          addPollVote(ev.vote);
                       }
                       if (ev.isPollEnd) {
-                          if (poll) { pollStartedAt = null; poll.stopPoll(); }
+                          stopPoll();
                       }
                   });
-
-                  var voxxr = { prez: prez, room: prez.room(), connections: ko.observable(0)};
-                  ko.applyBindings(voxxr);
               }
 
 
@@ -88,23 +273,141 @@
                         }
                   });
               }
-//              $("#stress").click(function() {
+              $("div.node").live('click', function() {
+                  onPollChoiceSelect($(this).attr('data-key'));
+              });
+//              $("#voteCount").click(function() {
+//                  // stress test
 //                  function stressOne() {
-//                      var poll = Processing.getInstanceById("poll");
-//                      if(poll != null) { poll.addPollVote(1); }
+//                      addPollVote(Math.round(Math.random() * 5));
 //                  }
 //                  setInterval(stressOne, 1);
 //              });
           });
       </script>
       <style type="text/css">
-      #poll { width: 800px; height: 600px; }
+      * { font-family: 'Open Sans', Arial, sans-serif; }
+      #poll { width: 600px; height: 580px; position: absolute; top: 25px; left: 0px; }
+      #pollranks { height: 580px; float: left; position: absolute; top: 25px; right: 0px; left: 600px; }
+      #pollprogress { position: absolute; top: 0px; left: 70px; right: 0px; margin: 5px; }
+      #voteCount { position: absolute; top: 0px; left: 0px; width: 70px; margin: 2px;
+          text-align: center;
+          font-size: 24px;
+          color: #0E90D2;
+      }
+
+      #poll div.node {
+          background-color: white;
+          border: 8px solid #0c7ab3;
+          -webkit-box-shadow: rgba(0,0,0,.2) 3px 3px 3px;
+
+          -webkit-transition-property: width, height, left, top;
+          -webkit-transition-duration: 0.2s;
+          -webkit-transition-timing-function: ease-out;
+      }
+      #poll div.node p {
+          font-weight: bolder;
+      }
+
+      #pollranks div.node {
+          width: 100%;
+          -webkit-transition-property: height, top;
+          -webkit-transition-duration: 0.2s;
+          -webkit-transition-timing-function: ease-out;
+
+          font-weight: bolder;
+          overflow-x: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+      }
+
+      div.node {
+          cursor: pointer;
+      }
+
+         /* STYLE FROM Twitter Bootstrap, MIT license, see http://twitter.github.com/bootstrap/components.html#progress */
+         .progress {
+            overflow: hidden;
+            height: 14px;
+            margin-bottom: 4px;
+            background-color: #F7F7F7;
+            background-image: -moz-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: -ms-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(whiteSmoke), to(#F9F9F9));
+            background-image: -webkit-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: -o-linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-image: linear-gradient(top, whiteSmoke, #F9F9F9);
+            background-repeat: repeat-x;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#f9f9f9', GradientType=0);
+            -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+        }
+         .progress .bar {
+            width: 0%;
+            height: 14px;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+            background-color: #0E90D2;
+            background-image: -moz-linear-gradient(top, #149BDF, #0480BE);
+            background-image: -ms-linear-gradient(top, #149BDF, #0480BE);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#149BDF), to(#0480BE));
+            background-image: -webkit-linear-gradient(top, #149BDF, #0480BE);
+            background-image: -o-linear-gradient(top, #149BDF, #0480BE);
+            background-image: linear-gradient(top, #149BDF, #0480BE);
+            background-repeat: repeat-x;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#149bdf', endColorstr='#0480be', GradientType=0);
+            -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-transition: width 0.6s ease;
+            -moz-transition: width 0.6s ease;
+            -ms-transition: width 0.6s ease;
+            -o-transition: width 0.6s ease;
+            transition: width 0.6s ease;
+        }
+         .progress.warning .bar {
+             background-color: #FAA732;
+             background-image: -moz-linear-gradient(top, #FBB450, #F89406);
+             background-image: -ms-linear-gradient(top, #FBB450, #F89406);
+             background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FBB450), to(#F89406));
+             background-image: -webkit-linear-gradient(top, #FBB450, #F89406);
+             background-image: -o-linear-gradient(top, #FBB450, #F89406);
+             background-image: linear-gradient(top, #FBB450, #F89406);
+             background-repeat: repeat-x;
+             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fbb450', endColorstr='#f89406', GradientType=0);
+         }
+         .progress.danger .bar {
+             background-color: #DD514C;
+             background-image: -moz-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: -ms-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#EE5F5B), to(#C43C35));
+             background-image: -webkit-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: -o-linear-gradient(top, #EE5F5B, #C43C35);
+             background-image: linear-gradient(top, #EE5F5B, #C43C35);
+             background-repeat: repeat-x;
+             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ee5f5b', endColorstr='#c43c35', GradientType=0);
+         }
+
       </style>
 </head>
 <body>
 <div>
-    <!--<input id="stress" type="button" value="STRESS">-->
-    <canvas id="poll"  data-processing-sources="assets/pde/poll.pde"></canvas>
+    <div id="voteCount"></div>
+    <div id="pollprogress" class="progress">
+        <div class="bar"></div>
+    </div>
+    <div id="poll"></div>
+    <div id="pollranks"></div>
 </div>
 </body>
 </html>
