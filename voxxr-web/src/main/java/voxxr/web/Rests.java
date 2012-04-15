@@ -15,9 +15,12 @@ import org.json.JSONTokener;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * User: xavierhanin
@@ -196,5 +199,25 @@ public class Rests {
         } else {
             return KeyFactory.createKey(kind, id);
         }
+    }
+
+    public static String post(URL url, String data) throws IOException {
+            // Send data
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data == null ? "" : data);
+            wr.flush();
+
+            // Get the response
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = rd.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            wr.close();
+            rd.close();
+            return sb.toString();
     }
 }

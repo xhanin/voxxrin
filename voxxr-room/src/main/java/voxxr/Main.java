@@ -4,6 +4,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import voxxr.app.VoxxrinApp;
 import voxxr.data.CassandraVoxxrRepository;
 import voxxr.data.EV;
 import voxxr.data.Presentation;
@@ -36,6 +37,8 @@ public class Main {
         server.setHandler(context);
 
         server.start();
+        logger.info("declaring room to Voxxrin App");
+        VoxxrinApp.declareRoom(Env.getRoom());
 
         logger.info("storing Room Start EV");
         CassandraVoxxrRepository.getInstance().store(new EV("", "-", EV.Type.ROOM_START, Env.getRoom()));
