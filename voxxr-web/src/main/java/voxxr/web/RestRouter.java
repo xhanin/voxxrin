@@ -2,6 +2,7 @@ package voxxr.web;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import voxxr.tasks.ScheduleCheckTask;
 import voxxr.web.twitter.CallbackTwitter;
 import voxxr.web.twitter.SignInTwitter;
 
@@ -61,8 +62,14 @@ public class RestRouter extends HttpServlet {
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "speakerId").put(3, "format").build()),
         new Route(new MyPresentationResources(), Pattern.compile("/r/events/([a-z0-9\\-]+)/presentations/([a-z0-9\\-]+)/my"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "eventId").put(2, "presentationId").build()),
+        new Route(new RoomResources(), Pattern.compile("/r/rooms/([a-z0-9\\-]+)"),
+                new ImmutableMap.Builder<Integer, String>().put(1, "roomId").build()),
+        new Route(new RoomRTResources(), Pattern.compile("/r/rooms/([a-z0-9\\-]+)/rt"),
+                new ImmutableMap.Builder<Integer, String>().put(1, "roomId").build()),
         new Route(new DeviceResources(), Pattern.compile("/r/devices/([a-z0-9\\-]+)?"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "deviceId").build()),
+        new Route(new ScheduleCheckTask(), Pattern.compile("/t/schedule/check"),
+                new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new SignInTwitter(), Pattern.compile("/r/twitter/signin"),
                 new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new CallbackTwitter(), Pattern.compile("/r/twitter/authentified/(.+)"),

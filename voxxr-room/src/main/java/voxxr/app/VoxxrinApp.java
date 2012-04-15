@@ -17,6 +17,24 @@ import static us.monoid.web.Resty.*;
  */
 public class VoxxrinApp {
     /**
+     * Informs voxxrin app that this room server is handling a particular room
+     * @param roomId
+     */
+    public static void declareRoom(String roomId) {
+        try {
+            resty().json(Env.getApp() + "/r/rooms/" + roomId + "/rt",
+                    content(new JSONObject()
+                            .put("roomRT", Env.getURI())));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Informs voxxrin app that a pres is started, which in turn returns its title.
      * @param presId
      * @return

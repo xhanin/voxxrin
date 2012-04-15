@@ -14,6 +14,11 @@
         <url-pattern>/r/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>RestRouter</servlet-name>
+        <url-pattern>/t/*</url-pattern>
+    </servlet-mapping>
+
 
     <welcome-file-list>
         <welcome-file>m.html</welcome-file>
