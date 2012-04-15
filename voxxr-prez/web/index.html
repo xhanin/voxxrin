@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
     <script src="js/jquery-1.7.1.js"></script>
     <script src="js/underscore-min.js"></script>
     <script>
@@ -198,21 +199,26 @@
          #header {position:absolute; top: 0px; left:0px; width: 100%;height:36px;z-index: 2000;background: url('img/devoxx-header-repeat.png') repeat-x;}
          #header-left {position:absolute; top: 0px; left:0px;}
          #header-right {position:absolute; top: 0px; right:0px;}
-         .menu { position: absolute; right: 0; top: 36px; width: 200px; z-index: 10000; margin-right: -200px;
-             background: white; opacity: 0.95;
-             -webkit-transition-property: margin;
-             -webkit-transition-duration: 0.25s;
+         .menu { position: absolute; right: 0; top: 30px; width: 400px; z-index: 10000; margin-right: -420px;
+             background: white; opacity: 0.90;
+             -webkit-transition-property: margin-right;
+             -webkit-transition-duration: 0.4s;
              -webkit-transition-timing-function: ease-out;
+             border: 1px solid rgba(0, 0, 0, 0.5);
+             border-top: none;
+             -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
          }
          .menu.active { margin-right: 0; }
+         .menu ul { display: block; float: left; width: 200px; }
          .menu li {
               padding: 4px 4px 4px 14px;
               list-style: none;
-              color: #08C;
+              color: black;
+             font-family: 'Open Sans', Arial, sans-serif;
          }
-         .menu li.separator { color: white; background-color: #08C; }
+         .menu li.separator { color: white; background-color: black; font-weight: bold; }
          .menu li a { width: 100%; cursor: pointer; }
-         .menu li:hover { color: white; background-color: #08C; }
+         .menu li:hover { color: white; background-color: black; }
 
          .content {
              position:absolute; top: 34px; bottom: 13px; left:0px; width: 80%; margin-left: -1400px;
@@ -356,6 +362,8 @@
             <li><a data-goto="scheduleservice">Agenda Service</a></li>
             <li><a data-goto="crawler">Crawler</a></li>
             <li><a data-goto="conclusion">Conclusion</a></li>
+        </ul>
+        <ul>
             <li class="separator">Layout</li>
             <li><a data-layout="classic">Classic</a></li>
             <li><a data-layout="full">Full</a></li>
