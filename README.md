@@ -52,7 +52,7 @@ For client only development you don't even need an IDE if you don't want: edit t
 access server on http://app.voxxr.in .
 
 In voxxr-web there is a watch.js that you can run with "node watch.js" to automatically recompile the less file into a
-regular css.
+regular css (you will need lessc executable in your path to do so).
 
 Dependencies
 ------------
