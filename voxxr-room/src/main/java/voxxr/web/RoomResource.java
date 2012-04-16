@@ -99,18 +99,18 @@ public class RoomResource {
 
     @POST
     @Path("/presentation")
-    public Response setCurrentPresentation(@QueryParam("id") String id) {
+    public Response setCurrentPresentation(@QueryParam("eventId") String eventId, @QueryParam("id") String id) {
         Room room = Room.getCurrent();
         String title;
         if (id == null || id.toString().trim().length() == 0) {
             Presentation currentPres = room.getCurrentPres();
             if (currentPres != null && currentPres.getId() != null) {
-                VoxxrinApp.stopPres(currentPres.getId());
+                VoxxrinApp.stopPres(eventId, currentPres.getId());
             }
             room.setCurrentPres(null);
             title = null;
         } else {
-            title = VoxxrinApp.startPres(id);
+            title = VoxxrinApp.startPres(eventId, id);
             room.setCurrentPres(new Presentation(id, title));
         }
         LoggerFactory.getLogger(RoomResource.class).info("current presentation changed to " + room.getCurrentPres());

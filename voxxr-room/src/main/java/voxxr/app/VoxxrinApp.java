@@ -39,9 +39,9 @@ public class VoxxrinApp {
      * @param presId
      * @return
      */
-    public static String startPres(String presId) {
+    public static String startPres(String eventId, String presId) {
         try {
-            return (String) resty().json(Env.getApp() + "/r/events/" + presId + "/nowplaying",
+            return (String) resty().json(Env.getApp() + "/r/events/" + eventId + "/nowplaying",
                     content(new JSONObject()
                             .put("id", presId)
                             .put("action", "start")
@@ -55,9 +55,9 @@ public class VoxxrinApp {
         }
     }
 
-    public static void stopPres(String presId) {
+    public static void stopPres(String eventId, String presId) {
         try {
-            resty().json(Env.getApp() + "/r/events/" + presId + "/nowplaying",
+            resty().json(Env.getApp() + "/r/events/" + eventId + "/nowplaying",
                     content(new JSONObject()
                             .put("id", presId)
                             .put("action", "stop"))).get("id");
