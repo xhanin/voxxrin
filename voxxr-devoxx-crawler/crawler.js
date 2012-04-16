@@ -68,6 +68,17 @@ function crawl() {
                         "speakers": _(s.speakers).map(toVoxxrinSpeaker),
                         "room": voxxrin.rooms[s.room],
                         "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
+
+                if (voxxrinPres.id === 'dvx655') {
+                    // very special case for Voxxrin presentation at devoxxFR:
+                    // force the room id to a separate room because I prefer to use a dedicated server
+                    // for this first presentation
+                    voxxrinPres.room = {"id":"1", "name": "La Seine C", "uri": "/rooms/1"};
+                    send(baseUrl + '/r' + voxxrinPres.room.uri, voxxrinPres.room).then(function() {
+                        console.log('ROOM:', voxxrinPres.room);
+                    }).fail(onFailure);
+                }
+
                 if (_(daySchedule.schedule).find(function(p) { return p.id === voxxrinPres.id })) {
                     // workaround bug in CFP API having multiple times the same pres
                     return;
