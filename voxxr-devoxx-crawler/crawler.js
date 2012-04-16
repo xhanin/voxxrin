@@ -41,8 +41,11 @@ function crawl() {
             "enabled":true
         };
         _(rooms).each(function(r) {
-            voxxrin.rooms[r.name] = {"id":voxxrin.event.id + "-" + r.id, "name": r.name,
-                "uri": "/events/" + voxxrin.event.id + "/room/" + voxxrin.event.id + "-" + r.id};
+            var room = voxxrin.rooms[r.name] = {"id":voxxrin.event.id + "-" + r.id, "name": r.name,
+                "uri": "/rooms/" + voxxrin.event.id + "-" + r.id};
+            send(baseUrl + '/r' + room.uri, room).then(function() {
+                console.log('ROOM:', room);
+            }).fail(onFailure);
         });
         var day, i;
         for (day = from, i=0; day <= to; day.setDate(day.getDate() + 1), i++) {
