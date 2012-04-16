@@ -32,39 +32,41 @@ public class ScheduleCheckTask implements RestRouter.RequestHandler {
         Date date = new Date();
         logger.info("checking scheduling on " + date);
 
-        Iterable<Entity> presentationsToClose = ds.prepare(new Query("PresentationHeader")
-                .addFilter("toTime", Query.FilterOperator.LESS_THAN_OR_EQUAL, date)
-                .addFilter("nowplaying", Query.FilterOperator.EQUAL, true))
-                .asIterable(FetchOptions.Builder.withDefaults());
+        try {
+            Iterable<Entity> presentationsToClose = ds.prepare(new Query("PresentationHeader")
+                    .addFilter("toTime", Query.FilterOperator.LESS_THAN_OR_EQUAL, date)
+                    .addFilter("nowplaying", Query.FilterOperator.EQUAL, true))
+                    .asIterable(FetchOptions.Builder.withDefaults());
 
-        for (Entity pres : presentationsToClose) {
-             // to close a presentation in room we simply set the current pres id to ""
-            updatePresInRoom(pres, getRoomRT(ds, pres), "");
-        }
-
-        Iterable<Entity> presentationsToOpen = ds.prepare(new Query("PresentationHeader")
-                .addFilter("fromTime", Query.FilterOperator.LESS_THAN_OR_EQUAL, date)
-                .addFilter("nowplaying", Query.FilterOperator.EQUAL, false))
-                .asIterable(FetchOptions.Builder.withDefaults());
-
-        for (Entity pres : presentationsToOpen) {
-            if (((Date) pres.getProperty("toTime")).compareTo(date) < 0) {
-                // we can't filter out these presentations in the query,
-                // BigTable supports only one inequality filter
-                continue;
+            for (Entity pres : presentationsToClose) {
+                 // to close a presentation in room we simply set the current pres id to ""
+                updatePresInRoom(pres, getRoomRT(ds, pres), (String) pres.getProperty("eventId"), "");
             }
-            updatePresInRoom(pres, getRoomRT(ds, pres), (String) pres.getProperty("id"));
-        }
 
-        maybeScheduleNextCheck(ds, date);
+            Iterable<Entity> presentationsToOpen = ds.prepare(new Query("PresentationHeader")
+                    .addFilter("fromTime", Query.FilterOperator.LESS_THAN_OR_EQUAL, date)
+                    .addFilter("nowplaying", Query.FilterOperator.EQUAL, false))
+                    .asIterable(FetchOptions.Builder.withDefaults());
+
+            for (Entity pres : presentationsToOpen) {
+                if (((Date) pres.getProperty("toTime")).compareTo(date) < 0) {
+                    // we can't filter out these presentations in the query,
+                    // BigTable supports only one inequality filter
+                    continue;
+                }
+                updatePresInRoom(pres, getRoomRT(ds, pres), (String) pres.getProperty("eventId"), (String) pres.getProperty("id"));
+            }
+        } finally {
+            maybeScheduleNextCheck(ds, date);
+        }
     }
 
-    private void updatePresInRoom(Object context, String rt, String newPresIdInRoom) throws IOException {
+    private void updatePresInRoom(Object context, String rt, String eventId, String newPresIdInRoom) throws IOException {
         if (rt == null) {
             logger.warning("unable to find room RT address for: " + context + ". IGNORED.");
         } else {
             logger.info("updating pres in room " + rt + ": '" + newPresIdInRoom + "'; context is: " + context);
-            Rests.post(new URL(rt + "/r/room/presentation?id=" + newPresIdInRoom), "");
+            Rests.post(new URL(rt + "/r/room/presentation?eventId=" + eventId + "&id=" + newPresIdInRoom), "");
         }
     }
 

@@ -6,10 +6,10 @@ voxxr-room/src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
 ovhcloud instance getInstances --projectName voxxr
 
 # here we need room IP, could be obtained with ovh cli
-curl --request POST http://178.32.208.239:8076/r/room/presentation?id=1
+curl --request POST http://178.32.208.239:8076/r/room/presentation?eventId=1&id=1
 
 # end presentation
-curl --request POST http://178.32.208.239:8076/r/room/presentation?id=
+curl --request POST http://178.32.208.239:8076/r/room/presentation?eventId=1&id=
 
 # in the end, backup cassandra cluster
 voxxr-room/src/main/scripts/backup-cassandra-cluster.sh
