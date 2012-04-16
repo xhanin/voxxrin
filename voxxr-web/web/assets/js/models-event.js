@@ -108,6 +108,9 @@
                         var p = ds.presentation.find(presentation.id);
                         if (!p) {
                             p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
+                        } else {
+                            // useful at least for rt information which may have been updated
+                            p.room().load(presentation.room);
                         }
                         if (!p.room().presentation() || (p.room().presentation().id() !== p.id())) {
                             p.room().presentation(p);
