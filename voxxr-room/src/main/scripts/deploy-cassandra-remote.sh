@@ -36,14 +36,13 @@ sed -i s/@TOKEN@/$TOKEN/g /etc/cassandra/cassandra.yaml
 
 echo "------------ STARTING CASSANDRA NODE"
 service cassandra start
-sleep 2
-
+sleep 15
 
 if [ "$TOKEN" = "0" ]
 then
   echo "------------ CREATING SCHEMA"
   cassandra-cli -h $INSTANCEIP -p 9160 < cassandra-schema-create-keyspace.txt
-  sleep 2
+  sleep 5
   cassandra-cli -h $INSTANCEIP -p 9160 < cassandra-schema.txt
 fi
 
