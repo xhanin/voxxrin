@@ -39,6 +39,10 @@ public class ScheduleCheckTask implements RestRouter.RequestHandler {
                     .asIterable(FetchOptions.Builder.withDefaults());
 
             for (Entity pres : presentationsToClose) {
+                if ("dvx655".equals(pres.getProperty("id"))) {
+                    // very specific case: Voxxrin prez stop is handled manually
+                    continue;
+                }
                  // to close a presentation in room we simply set the current pres id to ""
                 updatePresInRoom(pres, getRoomRT(ds, pres), (String) pres.getProperty("eventId"), "");
             }
