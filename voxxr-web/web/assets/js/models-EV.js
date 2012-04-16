@@ -13,10 +13,12 @@
             ev.room = parts[0];
             ev.user = parts[1];
             ev.value = parts[2];
-        } else {
+        } else if (parts.length == 2) {
             ev.room = room;
             ev.user = parts[0];
             ev.value = parts[1];
+        } else {
+            return {user: '-', value: ''};
         }
 
         var m = USER_PATTERN.exec(ev.user);
