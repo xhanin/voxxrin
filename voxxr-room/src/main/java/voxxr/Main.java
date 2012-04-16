@@ -38,7 +38,11 @@ public class Main {
 
         server.start();
         logger.info("declaring room to Voxxrin App");
-        VoxxrinApp.declareRoom(Env.getRoom());
+        try {
+            VoxxrinApp.declareRoom(Env.getRoom());
+        } catch (Exception ex) {
+            logger.warn("room not declared to app server!", ex);
+        }
 
         logger.info("storing Room Start EV");
         CassandraVoxxrRepository.getInstance().store(new EV("", "-", EV.Type.ROOM_START, Env.getRoom()));
