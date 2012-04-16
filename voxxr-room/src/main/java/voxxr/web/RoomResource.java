@@ -110,6 +110,14 @@ public class RoomResource {
             room.setCurrentPres(null);
             title = null;
         } else {
+            Presentation currentPres = room.getCurrentPres();
+            if (currentPres != null && currentPres.getId() != null && currentPres.getId().equals(id)) {
+                // same presentation as already defined as current presentation, we simply ignore the request
+                return Response.ok("{\"status\":\"ignored\"}",
+                        "application/json")
+                        .header("Access-Control-Allow-Origin", "*")
+                        .build();
+            }
             title = VoxxrinApp.startPres(eventId, id);
             room.setCurrentPres(new Presentation(id, title));
         }
