@@ -1,28 +1,44 @@
-git push git@bitbucket.org:xhanin/voxxr.git dev
-
+########### startup for devoxx
 # startup real time cluster
 voxxr-room/src/main/scripts/deploy-cassandra-cluster.sh
-voxxr-room/src/main/scripts/deploy-room.sh 65102 r1 voxxr-w1
+
+# startup devoxx rooms
+voxxr-room/src/main/scripts/deploy-room.sh 106394 dvx6-12 voxxr-r1 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106395 dvx6-13 voxxr-r2 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106396 dvx6-14 voxxr-r3 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106397 dvx6-15 voxxr-r4 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106398 dvx6-16 voxxr-r5 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106399 dvx6-17 voxxr-r6 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106400 dvx6-18 voxxr-r7 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106401 dvx6-19 voxxr-r8 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106402 dvx6-20 voxxr-r9 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106403 dvx6-21 voxxr-r10 64m 64m
+########### end startup for devoxx
+
 ovhcloud instance getInstances --projectName voxxr
 
-# here we need room IP, could be obtained with ovh cli
-curl --request POST http://178.32.208.239:8076/r/room/presentation?eventId=1&id=1
+########### voxxr talk dedicated server
+# startup
+voxxr-room/src/main/scripts/deploy-room.sh 106393 1 voxxr-rxl1 512m 2048m
+# start pres in room
+curl --request POST "http://178.32.209.42:8076/r/room/presentation?eventId=dvx6&id=dvx655"
+# end pres in room
+curl --request POST "http://XXX.XXX.XXX.XXX:8076/r/room/presentation?eventId=dvx6&id="
+# stop
+ovhcloud instance stopInstance --instanceId 106393
+########### end voxxr talk dedicated server
 
-# end presentation
-curl --request POST http://178.32.208.239:8076/r/room/presentation?eventId=1&id=
 
 # in the end, backup cassandra cluster
 voxxr-room/src/main/scripts/backup-cassandra-cluster.sh
 
+# then shutdown everything
+NODES=( 69446 69447 69448 106393 106394 106395 106396 106397 106398 106399 106400 106401 106402 106403 )
+for ((i=0; i < ${#NODES[@]}; i++)); do
+    ovhcloud instance stopInstance --instanceId ${NODES[$i]}
+done
 
-# then shutdown
-ovhcloud instance stopInstance --instanceId 65102
-ovhcloud instance stopInstance --instanceId 69446
-ovhcloud instance stopInstance --instanceId 69447
-ovhcloud instance stopInstance --instanceId 69448
-
-
-invalid session:
+# in case of invalid session:
 rm ~/.ovh/session
 
 #############
