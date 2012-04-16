@@ -4,7 +4,8 @@ ROOM=$1
 SEED_IP=$2
 HOST=$3
 ROOM_IP=$4
-
+JVMMS=$5
+JVMMX=$6
 
 # set host name, it happens from time to time that machine initialized by ovh has localhost.localdomain as hostname :(
 echo $HOST > /etc/hostname
@@ -23,6 +24,8 @@ echo "------- CONFIGURING -- ROOM => $ROOM -- SEED_IP => $SEED_IP"
 sed -i s/@ROOM@/$ROOM/g voxxr-room.properties
 sed -i s/@SEED_IP@/$SEED_IP/g voxxr-room.properties
 sed -i s/@ROOM_IP@/$ROOM_IP/g voxxr-room.properties
+sed -i s/@JVMMS@/$JVMMS/g voxxr-room.properties
+sed -i s/@JVMMX@/$JVMMX/g voxxr-room.properties
 
 cp -f voxxr-room.properties voxxr-room/src/main/java/
 

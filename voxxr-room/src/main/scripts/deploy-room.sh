@@ -3,6 +3,9 @@
 INSTANCE=$1
 ROOM=$2
 HOST=$3
+JVMMS=$4
+JVMMX=$5
+
 VOXXR_HOME=~/dev/wkspace/voxxr/voxxr
 SEED_IP=`cat $VOXXR_HOME/voxxr-room/current-seed-ip`
 
@@ -25,7 +28,7 @@ ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/voxxr-room/src/main/scripts/vox
 ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/out/production/voxxr-room.tgz "voxxr-room.tgz"
 
 echo "executing remote install..."
-ovhcloud instance ssh $INSTANCE bash "./install.sh" $ROOM  $SEED_IP $HOST $ROOM_IP
+ovhcloud instance ssh $INSTANCE bash "./install.sh" $ROOM  $SEED_IP $HOST $ROOM_IP $JVMMS $JVMMX
 
 
 echo "ROOM $ROOM STARTED AT IP $ROOM_IP"

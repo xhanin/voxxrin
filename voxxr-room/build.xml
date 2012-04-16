@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="voxxr-room"
         xmlns:ivy="antlib:org.apache.ivy.ant" >
+    <property file="src/main/java/voxxr-room.properties" />
 
     <target name="deps" description="--> resolve and fetch dependencies">
         <ivy:retrieve conf="default" pattern="lib/[artifact].[ext]" sync="true"/>
@@ -53,6 +54,8 @@ ${git.status}
 ---------------------------------------------------------------------------
         </echo>
         <java fork="true" classname="voxxr.Main">
+            <jvmarg value="-Xms${jvm.ms}"/>
+            <jvmarg value="-Xmx${jvm.mx}" />
             <classpath>
                 <path refid="deps" />
                 <file file="target/${ant.project.name}.jar" />
