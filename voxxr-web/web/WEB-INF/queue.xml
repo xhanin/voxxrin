@@ -1,0 +1,10 @@
+<queue-entries>
+    <queue>
+        <name>default</name>
+        <rate>1/s</rate>
+    </queue>
+    <queue>
+        <name>schedule</name>
+        <rate>1/s</rate>
+    </queue>
+</queue-entries>
