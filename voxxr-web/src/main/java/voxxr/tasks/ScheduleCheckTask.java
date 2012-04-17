@@ -118,7 +118,7 @@ public class ScheduleCheckTask implements RestRouter.RequestHandler {
 
         if (nextCheck != null) {
             logger.info("scheduling next check at " + nextCheck);
-            Queue queue = QueueFactory.getDefaultQueue();
+            Queue queue = QueueFactory.getQueue("schedule");
             queue.purge();
             queue.add(TaskOptions.Builder.withUrl("/t/schedule/check")
                         .etaMillis(nextCheck.getTime()));
