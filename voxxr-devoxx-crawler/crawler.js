@@ -30,12 +30,19 @@ function crawl() {
         var from = new Date(Date.parse(event.from)),
             to = new Date(Date.parse(event.to));
 
+
+        var fromTime = from, toTime = to;
+        if (schedule.length) {
+            fromTime = _(schedule).sortBy(function(s) {return s.fromTime})[0].fromTime;
+            toTime = _(schedule).sortBy(function(s) {return s.toTime})[schedule.length - 1].toTime;
+        }
+
         voxxrin.event = {
             "id": prefix + event.id,
             "title":event.name,"subtitle":"","description":event.description,
             "dates": formatDates(from, to),
-            "from": schedule.length ? schedule[0].fromTime : event.from,
-            "to": schedule.length ? schedule[schedule.length-1].toTime : event.to,
+            "from": fromTime,
+            "to": toTime,
             "location":event.location, "nbPresentations":0,
             "days":[],
             "enabled":true
