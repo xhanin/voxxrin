@@ -9,6 +9,7 @@ JVMMX=$5
 VOXXR_HOME=~/dev/wkspace/voxxr/voxxr
 SEED_IP=`cat $VOXXR_HOME/voxxr-room/current-seed-ip`
 
+cd $VOXXR_HOME/voxxr-room && ant deps && cd -
 cd $VOXXR_HOME && tar czvf out/production/voxxr-room.tgz voxxr-room && cd -
 
 echo "starting instance"
