@@ -32,7 +32,7 @@ cp -f voxxr-room.properties voxxr-room/src/main/java/
 cd voxxr-room
 
 echo "------- PACKAGING"
-ant package
+ant -Dskip.deps=true package
 
 echo "------- LAUNCHING"
-ant run &>ant.log &
+ant -Dskip.deps=true run &>ant.log &

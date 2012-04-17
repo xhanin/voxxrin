@@ -3,8 +3,12 @@
         xmlns:ivy="antlib:org.apache.ivy.ant" >
     <property file="src/main/java/voxxr-room.properties" />
 
-    <target name="deps" description="--> resolve and fetch dependencies">
+    <target name="retrieve-deps" description="--> resolve and fetch dependencies"
+            unless="skip.deps">
         <ivy:retrieve conf="default" pattern="lib/[artifact].[ext]" sync="true"/>
+    </target>
+
+    <target name="deps" depends="retrieve-deps" description="--> resolve and fetch dependencies">
         <path id="deps">
             <fileset dir="lib" includes="*.jar" />
         </path>
@@ -46,8 +50,9 @@ ${git.status}
         <jar basedir="target/classes" destfile="target/${ant.project.name}.jar" />
     </target>
 
-    <target name="run" depends="package"
+    <target name="run" depends="deps"
             description="--> launch ${ant.project.name}">
+        <!-- should run package task before running -->
         <echo>
 ---------------------------------------------------------------------------
             STARTING ${ant.project.name} ${git.commit} ${git.modified}
