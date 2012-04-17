@@ -9,4 +9,4 @@ voxxr-room/src/main/scripts/deploy-room.sh 106399 dvx6-17 voxxr-r6 64m 64m
 voxxr-room/src/main/scripts/deploy-room.sh 106400 dvx6-18 voxxr-r7 64m 64m
 voxxr-room/src/main/scripts/deploy-room.sh 106401 dvx6-19 voxxr-r8 64m 64m
 voxxr-room/src/main/scripts/deploy-room.sh 106402 dvx6-20 voxxr-r9 64m 64m
-voxxr-room/src/main/scripts/deploy-room.sh 106403 dvx6-21 voxxr-r10 64m 64m
+voxxr-room/src/main/scripts/deploy-room.sh 106576 dvx6-21 voxxr-r10 64m 64m
