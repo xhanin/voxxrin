@@ -5,4 +5,19 @@
         <property name="enabled" direction="asc"/>
         <property name="from" direction="asc"/>
     </datastore-index>
+
+    <datastore-index kind="PresentationHeader" ancestor="false" source="auto">
+        <property name="nowplaying" direction="asc"/>
+        <property name="toTime" direction="asc"/>
+    </datastore-index>
+
+    <datastore-index kind="PresentationHeader" ancestor="false" source="auto">
+        <property name="nowplaying" direction="asc"/>
+        <property name="fromTime" direction="asc"/>
+    </datastore-index>
+
+    <datastore-index kind="MyPresentation" ancestor="false" source="auto">
+        <property name="presId" direction="asc"/>
+        <property name="twitterid" direction="asc"/>
+    </datastore-index>
 </datastore-indexes>
