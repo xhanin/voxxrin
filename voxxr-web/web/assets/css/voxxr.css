@@ -14,6 +14,7 @@
   position: relative;
   width: 280px;
   height: 60px;
+  text-align: center;
 }
 #feedback .rate .star {
   /* background: @color3; /* url('../img/star_empty.png') no-repeat; */
@@ -46,7 +47,8 @@
   margin: 2px auto;
   position: relative;
   width: 185px;
-  height: 60px;
+  height: 80px;
+  text-align: center;
 }
 #feedback .feeling a {
   float: left;
