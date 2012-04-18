@@ -239,6 +239,9 @@ $(function() { models.Device.current().whenReady(function() {
     });
 
     tappable(".roomRT.page .tabs a.network", function(e, target) {
+        // refresh presentation stats
+        models.Presentation.current().loadStats();
+        
         var roomRT = $(target).closest(".roomRT.page");
         roomRT.find(".tabs a").removeClass("ui-btn-active");
         $(target).addClass("ui-btn-active");
