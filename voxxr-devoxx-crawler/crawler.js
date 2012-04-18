@@ -10,7 +10,8 @@ var http = require("http"),
 
 var prefix = 'dvx',
     eventId = 6,
-    baseUrl = 'http://app.voxxr.in';
+    baseUrl = 'http://localhost:8080';
+//    baseUrl = 'http://app.voxxr.in';
 
 var voxxrin = {
     event: {},
@@ -68,12 +69,15 @@ function crawl() {
             voxxrin.daySchedules[dateformat(day, 'yyyy-mm-dd')] =
                 {"id":prefix + event.id + '-' + i, "dayNumber": i, "schedule":[]};
         }
-        _(schedule).each(function(s) {
+        _(schedule).each(function(s, i) {
             voxxrin.event.nbPresentations++;
             var fromTime = new Date(Date.parse(s.fromTime)),
                 daySchedule = voxxrin.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
 
             var voxxrinPres = {"id":prefix + s.id, "title":s.title, "type":s.type, "kind":s.kind,
+                    "previousId": prefix + schedule[(i-1+schedule.length)%schedule.length].id,
+                    "nextId": prefix + schedule[(i+1)%schedule.length].id,
+                    "dayId": daySchedule.id,
                     "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
                     "speakers": _(s.speakers).map(toVoxxrinSpeaker),
                     "room": voxxrin.rooms[s.room],
@@ -107,13 +111,6 @@ function crawl() {
                     .fail(onFailure);
             }).fail(onFailure);
         });
-
-        if(schedule.length){
-            _(schedule).each(function(s, i) {
-                s.previousId = schedule[(i-1+schedule.length)%schedule.length].id;
-                s.nextId = schedule[(i+1)%schedule.length].id;
-            });
-        }
 
         send(baseUrl + '/r/events', voxxrin.event).then(function() {
             console.log('EVENT:', voxxrin.event);
