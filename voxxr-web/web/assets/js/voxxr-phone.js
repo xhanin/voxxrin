@@ -133,15 +133,6 @@ $(function() { models.Device.current().whenReady(function() {
 
     ko.applyBindings(voxxr.user(), $('#signin').get(0));
 
-    var hfpoints = [];
-    var rpoints = [];
-    for (var i=0 ; i < 200 ; i++) {
-        hfpoints[i] = rpoints[i] = null;
-    }
-    var pindex = 0;
-    var hfsparkoptions = { width: 260, height: 50, defaultPixelsPerValue: 1, lineColor: '#C44D58', fillColor: '#FBD405', spotColor: false}
-    var ratesparkoptions = { lineColor: '#556270', fillColor: false, composite: true, spotColor: false}
-    $(".roomRT.page .spark").sparkline(hfpoints, hfsparkoptions);
     models.Room.onEV(function(f) {
         if (f.isPollStart) {
             navigator.notification.vibrate(1000);
@@ -160,20 +151,6 @@ $(function() { models.Device.current().whenReady(function() {
                 'Poked by ' + f.user,            // title
                 'Ok'                  // buttonName
             );
-        }
-        if (f.isHotFactor) {
-            hfpoints[pindex] = Math.round(Math.log(f.hotFactorValue) * 1000);
-            rpoints[pindex] = voxxr.chosenPresentation().rate.avg();
-            pindex++;
-            if (pindex == 200) {
-                pindex = 199;
-                hfpoints.splice(0,1);
-                hfpoints.push(null);
-                rpoints.splice(0,1);
-                rpoints.push(null);
-            }
-            $(".roomRT.page .spark").sparkline(hfpoints, hfsparkoptions);
-            $(".roomRT.page .spark").sparkline(rpoints, ratesparkoptions);
         }
     });
 
