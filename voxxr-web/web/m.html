@@ -245,7 +245,24 @@
             <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
         </div>
         <div data-role="content">
-        <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
+        <h2>
+            <a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> <span class="title" data-bind="text: title"> </span>
+            <a data-bind="href: previousInSlotHash" data-icon="arrow-l" class="nav ui-btn-left ui-btn ui-btn-up-a ui-btn-icon-left ui-btn-corner-all ui-shadow" data-corners="true" data-shadow="true" data-iconshadow="true" data-inline="false" data-wrapperels="span">
+                <span class="ui-btn-inner ui-btn-corner-all">
+                    <span class="ui-btn-text">Previous</span>
+                    <span class="ui-icon ui-icon-arrow-l ui-icon-shadow"></span>
+                </span>
+            </a>
+            <a data-bind="href: nextInSlotHash" data-icon="arrow-r" class="nav ui-btn-left ui-btn ui-btn-up-a ui-btn-icon-right ui-btn-corner-all ui-shadow" data-corners="true" data-shadow="true" data-iconshadow="true" data-inline="false" data-wrapperels="span">
+                <span class="ui-btn-inner ui-btn-corner-all">
+                    <span class="ui-btn-text">Next</span>
+                    <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+                </span>
+            </a>
+            <em>
+                <span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span>
+            </em>
+        </h2>
         <a href="#roomRT" class="showroom" data-role="button" data-theme="e" data-transition="flip"
            data-bind="visible: playing">
             Show room now</a>

@@ -72,7 +72,10 @@
         }
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
-        self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
+        function hashOf(eventId, presentationId){
+            return "#presentation~" + eventId + "~" + presentationId;
+        }
+        self.hash = ko.computed(function() {return hashOf(self.eventId(), self.id()) });
         self.my = ko.computed(function() {
             if (!models.User.current()) return null; // for dashboard and poll
             return models.User.current().my() ? models.User.current().my().presentation(self.eventId(), self.id()) : null
@@ -157,6 +160,46 @@
             _(self.speakers()).each(function(speaker) { speaker.load() });
         }
         self.quit = function() {}
+
+        function findAndSortPresentationsInCurrentSlot(){
+            var currentSlotPresentations = models.ScheduleDay.current()?models.ScheduleDay.current().data().schedule:[];
+            currentSlotPresentations = _.filter(currentSlotPresentations, function(presentation){
+                return models.Presentation.current() && presentation.slot === models.Presentation.current().data().slot;
+            });
+            currentSlotPresentations = _.sortBy(currentSlotPresentations, function(presentation){ return presentation.id; });
+            return currentSlotPresentations;
+        }
+        function findIndexForCurrentPresentationIn(presentations){
+            if(!models.Presentation.current()){
+                return -1;
+            }
+            var presentationIds = _.map(presentations, function(presentation){ return presentation.id; });
+            return _.indexOf(presentationIds, models.Presentation.current().data().id);
+        }
+        function findPresentationInSameSlot(delta){
+            var currentSlotPresentations = findAndSortPresentationsInCurrentSlot();
+            var currentPresentationIndex = findIndexForCurrentPresentationIn(currentSlotPresentations);
+
+            if(currentPresentationIndex === -1){
+                return null;
+            }
+
+            // modulo is a bitcomplicated here, due modulo bug (for negative numbers)
+            // more info here : http://javascript.about.com/od/problemsolving/a/modulobug.htm
+            return currentSlotPresentations[(currentPresentationIndex+currentSlotPresentations.length+delta)%currentSlotPresentations.length];
+        }
+        self.nextInSlot = ko.computed(function() {
+            return findPresentationInSameSlot(1);
+        });
+        self.previousInSlot = ko.computed(function(){
+            return findPresentationInSameSlot(-1);
+        });
+        self.nextInSlotHash = ko.computed(function() {
+            return self.nextInSlot()?hashOf(self.eventId(), self.nextInSlot().id):null;
+        });
+        self.previousInSlotHash = ko.computed(function() {
+            return self.previousInSlot()?hashOf(self.eventId(), self.previousInSlot().id):null;
+        });
     }
 
     Presentation.current = currentModelObject();
