@@ -62,7 +62,7 @@
             return favFol;
         });
         self.involvedUsers.inroom = ko.computed(function() {
-            if (models.User.current()) return []; // for dashboard and poll
+            if (!models.User.current()) return []; // for dashboard and poll
             return _(self.involvedUsers()).filter(function(myPres) { return myPres.presence() == 'IN' });
         });
         self.involvedUsers.findByUserid = function(userid) {
