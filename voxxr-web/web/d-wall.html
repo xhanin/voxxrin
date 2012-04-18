@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+      <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+      <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
+      <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
+      <script type="text/javascript" src="assets/js/libs/knockout-2.0.0.debug.js"></script>
+
+      <script type="text/javascript" src="assets/js/libs/date.format.js"></script>
+
+      <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
+
+      <script type="text/javascript">
+          $(function(){
+              if (!urlParams['event']) {
+                  alert('you must give an event id as query param');
+              } else {
+                  var eventId = urlParams['event'];
+
+                  $.ajax({
+                        url: "http://app.voxxr.in/r/events/" + eventId + "/nowplaying",
+                        dataType:"json",
+                        success: function(data) {
+                            _(data).each(function(p) {
+                               $('<div class="conf"><h2>' + p.title + '</h2><iframe src="http://app.voxxr.in/d.html?event=' + eventId + '&prez=' + p.id + '"></iframe></div>')
+                                       .appendTo("#dashboard-wall");
+                            });
+                        }
+                  });
+              }
+          });
+      </script>
+      <style type="text/css">
+        * { font-family: 'Open Sans', Arial, sans-serif; }
+        iframe {
+            width: 250px; height: 400px;
+        }
+        .conf {
+          display: block;
+          float: left;
+            width: 250px;
+            text-overflow: ellipsis;
+        }
+        h2 {
+            display: block;
+            font-size: 12px;
+            font-style: italic;
+            width: 250px;
+            height: 40px;
+            text-overflow: ellipsis;
+        }
+     </style>
+</head>
+<body>
+<div id="dashboard-wall">
+</div>
+</body>
+</html>
