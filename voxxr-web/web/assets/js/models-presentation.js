@@ -48,7 +48,8 @@
             var followerIds = _(models.User.current().twuser().followers()).map(function(twuser) { return twuser.id() });
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
             var favFol = _(self.involvedUsers()).filter(function(myPres) {
-                return followerIds.indexOf(myPres.twuser().id()) >= 0
+                return (myPres.favorite() || myPres.presence() !== 'NO')
+                    && followerIds.indexOf(myPres.twuser().id()) >= 0
                     && friendsIds.indexOf(myPres.twuser().id()) === -1 // do not display friends in followers
             });
             return favFol;
@@ -56,7 +57,8 @@
         self.involvedUsers.friends = ko.computed(function() {
             if (!models.User.current()) return []; // for dashboard and poll
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
-            var favFol = _(self.involvedUsers()).filter(function(myPres) { return friendsIds.indexOf(myPres.twuser().id()) >= 0 });
+            var favFol = _(self.involvedUsers()).filter(function(myPres) {
+                return (myPres.favorite() || myPres.presence() !== 'NO') && friendsIds.indexOf(myPres.twuser().id()) >= 0 });
             return favFol;
         });
         self.involvedUsers.inroom = ko.computed(function() {
