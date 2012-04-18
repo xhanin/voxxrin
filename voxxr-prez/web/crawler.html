@@ -119,8 +119,11 @@ function crawl(eventId) {
     </div>
 
     <div id="crawl-each" class="step" data-x="0" data-y="-1000" data-rotate-x="45">
-        <h2>Functional iterations and easy mapping</h2>
+        <h2>Functional constructs and easy mapping</h2>
         <textarea class="code">
+var fromTime = _(schedule).sortBy('fromTime')[0].fromTime;
+var toTime = _(schedule).sortBy('toTime')[schedule.length - 1].toTime;
+
 _(schedule).each(function(s) {
     voxxrin.event.nbPresentations++;
 

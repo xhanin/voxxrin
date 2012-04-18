@@ -30,6 +30,10 @@
         {
             opacity: 1; cursor: pointer;
         }
+        #impress.step-agenda-service-intro #agenda-service { opacity: 1; cursor: pointer; }
+        #impress.step-crawler-intro #crawler { opacity: 1; cursor: pointer; }
+        #impress.step-rt-service-intro #rt-service { opacity: 1; cursor: pointer; }
+        #impress.step-client-intro #client { opacity: 1; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -45,11 +49,36 @@
     <div id="archi" class="step center" data-x="-4500" data-y="0" data-scale="5"  data-rotate="-90">
         <h2>Architecture</h2>
     </div>
+    <div id="archi-intro" class="step center quiet" data-x="-4500" data-y="0" data-scale="2"  data-rotate-y="90">
+        <h2>Web is everywhere</h2>
+        <p>HTTP</p>
+        <p>Web client</p>
+    </div>
+    <div id="agenda-service-intro" class="step" data-x="-5650" data-y="0" data-rotate="-90" data-scale="3">
+    </div>
+    <div id="crawler-intro" class="step" data-x="-4800" data-y="2200" data-rotate="-180" data-scale="3">
+    </div>
+    <div id="rt-service-intro" class="step" data-x="-3450" data-y="0" data-rotate="-90" data-scale="3">
+    </div>
+    <div id="client-intro" class="step" data-x="-4500" data-y="-2250" data-scale="3">
+    </div>
+
+
     <div id="agenda-service" class="step center agenda-service" data-x="-5650" data-y="0" data-rotate="-90" data-scale="3">
         <h2 class="title">Agenda Service</h2>
     </div>
+    <div id="agenda-service-devoxx-api" class="step center quiet" data-x="-5650" data-y="0" data-rotate="-90" data-rotate-x="90" data-scale="3">
+        <h2>Devoxx API?</h2>
+    </div>
     <div id="gae" class="step image agenda-service" data-x="-5250" data-y="0" data-rotate="-90">
         <img src="img/gae.png" >
+    </div>
+    <div id="gae-bare-metal" class="step center quiet" data-x="-5250" data-y="0" data-rotate="-90" data-rotate-y="-90">
+        <h2>Bare Metal APIs</h2>
+        <p>BigTable (no JDO / JPA)</p>
+        <p>Memcache</p>
+        <p>Servlet</p>
+        <p>Task queues</p>
     </div>
     <div id="twitter4j" class="step image agenda-service" data-x="-5250" data-y="400" data-rotate="-180">
         <img src="img/twitter4j.png" >
@@ -57,6 +86,9 @@
 
     <div id="crawler" class="step center crawler" data-x="-4800" data-y="2200" data-rotate="-180" data-scale="3">
         <h2 class="title">Crawler</h2>
+    </div>
+    <div id="crawler-java" class="step center quiet" data-x="-4800" data-y="2200" data-rotate="-180" data-rotate-x="90" data-scale="3">
+        <h2>Java on AppEngine?</h2>
     </div>
     <div id="nodejs" class="step image crawler" data-x="-5000" data-y="1750" data-rotate="-90">
         <img src="img/nodejs.png" >
@@ -112,26 +144,14 @@
     <div id="chrome" class="step image client" data-x="-4350" data-y="-1600" data-rotate="-90" data-scale="0.5">
         <img src="img/chrome.png" width="512" >
     </div>
+    <div id="chrome-dashboard" class="step image client quiet" data-x="-4350" data-y="-1600" data-rotate="-90" data-rotate-y="90" data-scale="0.5">
+        <img src="img/prez-app.png" width="800">
+    </div>
     <div id="firefox" class="step image client" data-x="-4350" data-y="-1900" data-rotate="-90" data-scale="0.5">
         <img src="img/firefox.png" width="512" >
     </div>
     <div id="html5" class="step image client" data-x="-3750" data-y="-1500" data-rotate="-90">
         <img src="img/HTML5.png" width="256" >
-    </div>
-    <div id="jqtouch" class="step image quiet" data-x="-4000" data-y="-1750" data-z="-250" data-rotate-x="-90">
-        <img src="img/jqtouch.jpg" >
-    </div>
-    <div id="jqtouch-vs-jquerymobile" class="step image quiet" data-x="-4000" data-y="-1750" data-z="-250" data-rotate-x="-90" data-rotate-y="-45">
-        <img src="img/jqtouch-vs-jquerymobile.png" >
-    </div>
-    <div id="zepto" class="step image quiet" data-x="-4000" data-y="-2000" data-z="-250" data-rotate-x="-90">
-        <img src="img/zepto.png" >
-    </div>
-    <div id="zepto-vs-jquery" class="step image quiet" data-x="-4000" data-y="-2000" data-z="-250" data-rotate-x="-90" data-rotate-y="-45">
-        <img src="img/zepto-vs-jquery.jpg" >
-    </div>
-    <div id="android-ics-bug" class="step image quiet" data-x="-4000" data-y="-2250" data-z="-250" data-rotate-x="-90">
-        <img src="img/android-ics-bug.png" width="600" >
     </div>
     <div id="jquerymobile" class="step image client" data-x="-4000" data-y="-1750" data-rotate="-90">
         <img src="img/jquery-logo.png" >
