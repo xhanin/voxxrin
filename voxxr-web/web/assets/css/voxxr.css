@@ -451,6 +451,13 @@
 #jqt .presentation.page .toggleFavorite.favorite {
   background: url('../img/favorite.png') no-repeat 8px 8px;
 }
+#jqt .presentation.page .nav span.ui-btn-inner {
+  padding-top: 0.1em;
+  padding-bottom: 0.4em;
+}
+#jqt .presentation.page .nav span.ui-btn-inner {
+  font-size: 0.6em;
+}
 #jqt .twuser .picture {
   display: block;
   float: left;
