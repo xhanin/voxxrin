@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+    <!--dirty fix for the schedule next check task not properly working -->
+    <cron>
+      <url>/t/schedule/check</url>
+    <description>Recheck schedule</description>
+    <schedule>every 5 minutes</schedule>
+  </cron>
+</cronentries>
