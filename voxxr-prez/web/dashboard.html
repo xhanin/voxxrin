@@ -71,6 +71,29 @@
         </script>
     </div>
 
+    <div id="processing-example" class="step" data-x="1000" data-y="1000" >
+        <textarea class="code">
+void draw(){
+  size(canvas_x, canvas_y);
+  textFont(font, 18);
+  textAlign(LEFT);
+  fill(255);
+  textFont(font, font_size);
+  if(active_EV){
+    fill(active_EV.slot.get_color());
+    text(active_EV.EV.user + ": " + active_EV.EV.value,10, 10, 200, 30);
+  }
+
+  for(int i=0; i<EVs.size(); i++){
+    ((EV) EVs.get(i)).draw();
+  }
+  for(int i=0; i<slots.size(); i++){
+    ((Slot) slots.get(i)).draw();
+  }
+}
+        </textarea>
+    </div>
+
     <div id="processing-letters" class="step image" data-x="0" data-y="1000" >
         <a href="http://www.m-i-b.com.ar/letters/en/" target="_blank">
         <img src="img/processing-letters.jpg" width="800">
@@ -93,28 +116,84 @@
         </script>
     </div>
 
-    <div id="example" class="step" data-x="1000" data-y="1000" >
-        <textarea class="code">
-void draw(){
-  size(canvas_x, canvas_y);
-  textFont(font, 18);
-  textAlign(LEFT);
-  fill(255);
-  textFont(font, font_size);
-  if(active_EV){
-    fill(active_EV.slot.get_color());
-    text(active_EV.EV.user + ": " + active_EV.EV.value,10, 10, 200, 30);
-  }
+    <div id="processing-letters-crash" class="step image quiet" data-x="0" data-y="1000" data-z="-2800" >
+       <h2>Crash :(</h2>
+   </div>
 
-  for(int i=0; i<EVs.size(); i++){
-    ((EV) EVs.get(i)).draw();
-  }
-  for(int i=0; i<slots.size(); i++){
-    ((Slot) slots.get(i)).draw();
-  }
+    <div id="letters-rewrite" class="step center quiet" data-x="0" data-y="1000" data-z="-2800" data-rotate-y="45"  >
+       <h2>Rewrite</h2>
+    </div>
+    <div id="letters-d3.js" class="step center quiet" data-x="2000" data-y="1000" data-z="-2800" >
+       <h2>D3.js</h2>
+        <p>Layout</p>
+        <p>Use the DOM and CSS3</p>
+    </div>
+    <div id="d3-example-1" class="step quiet" data-x="2000" data-y="1000" data-z="-2800" data-rotate-x="45" >
+        <textarea class="code">
+var bubble = d3.layout.pack()
+        .sort(null).size([width, height]);
+var data = bubble.nodes({children: pollVotesr})
+            .filter(function(d) { return !d.children; });
+var node = d3.select("#poll")
+        .selectAll("div.node")
+        .data(data, function(d) { return d.title }) ;
+var newNodes = node.enter().append("div")
+                      .attr("class", "node")
+                      .attr("data-key", function(d) {
+                          return d.key
+                      })
+                      .style("position", "absolute");
+// apply node size and position to new nodes
+applyNodeSizeAndPosition(newNodes);
+// apply node size and position to updated nodes
+applyNodeSizeAndPosition(node);
+        </textarea>
+    </div>
+    <div id="d3-example-2" class="step quiet" data-x="3000" data-y="1000" data-z="-2800" data-rotate-x="45" >
+        <textarea class="code">
+var margin = 12;
+// apply node size and position to the div representing a poll option
+// based on what the layout provides: x, y, and r
+function applyNodeSizeAndPosition(node) {
+    return node
+            .style("border-radius", function(d) {
+                return (d.r + 2) + "px"
+            })
+            .style("width", function(d) {
+                return ((d.r - margin) * 2) + "px"
+            })
+            .style("height", function(d) {
+                return ((d.r - margin) * 2) + "px"
+            })
+            .style("left", function(d) {
+                return d.x + "px"
+            })
+            .style("top", function(d) {
+                return (d.y + margin) + "px"
+            })
+            .style("margin-left", function(d) {
+                return "-" + (d.r - margin) + "px"
+            })
+            .style("margin-top", function(d) {
+                return "-" + (d.r - margin) + "px"
+            })
 }
         </textarea>
     </div>
+    <div id="d3-example-3" class="step quiet" data-x="4000" data-y="1000" data-z="-2800" data-rotate-x="45" >
+        <textarea class="code">
+#poll div.node {
+    background-color: white;
+    border: 8px solid #0c7ab3;
+    -webkit-box-shadow: rgba(0,0,0,.2) 3px 3px 3px;
+
+    -webkit-transition-property: width, height, left, top;
+    -webkit-transition-duration: 0.2s;
+    -webkit-transition-timing-function: ease-out;
+}
+        </textarea>
+    </div>
+
 
     <div id="overview" class="step" data-x="0" data-y="500" data-scale="5">
     </div>

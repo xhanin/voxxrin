@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=1024" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>RT Service :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
+    <title>Real Time :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin</title>
 
     <meta name="description" content="RT Service :: Voxxr.in: Ze Highly Interactive Talk by Xavier Hanin." />
     <meta name="author" content="Xavier Hanin" />
@@ -43,7 +43,7 @@
 
 
     <div id="rtservice" class="step center" data-x="-850" data-y="-100" data-rotate="-90" data-scale="1.4">
-        <h2 class="title">Real Time Service</h2>
+        <h2 class="title">Real Time App</h2>
     </div>
 
     <div id="atmosphere" class="step center" data-x="0" data-y="-350" data-scale="1.5">
@@ -59,6 +59,18 @@
             <li>streaming</li>
             <li>websocket</li>
         </ul>
+    </div>
+    <div id="transport-polling" class="step image quiet" data-x="800" data-y="-350" data-z="800" >
+        <img src="img/rt-web-polling.png" width="800">
+    </div>
+    <div id="transport-long-polling" class="step image quiet" data-x="1600" data-y="-350" data-z="800" >
+        <img src="img/rt-web-long-polling.png" width="800">
+    </div>
+    <div id="transport-streaming" class="step image quiet" data-x="800" data-y="650" data-z="800" >
+        <img src="img/rt-web-streaming.png" width="800">
+    </div>
+    <div id="transport-websockets" class="step image quiet" data-x="1600" data-y="650" data-z="800" >
+        <img src="img/rt-web-websockets.png" width="800">
     </div>
     <div id="atmosphere-subscribe" class="step" data-x="0" data-y="-200" data-scale="0.2" >
         <h2>Subscribe</h2>
@@ -123,8 +135,46 @@ public Response preFlightSubscribe() {
         </textarea>
     </div>
 
+    <div id="atmosphere-jquery" class="step" data-x="0" data-y="-500" data-scale="0.2" >
+        <h2>JQuery Client</h2>
+        <textarea class="code">
+var transport = "long-polling";
+if ('WebSocket' in window) { transport = "websocket"; }
+function rtCallback(response) {
+    var $room = self;
+
+    if (response.state == 'error' || response.state == 'closed') {
+        $room.status(DISCONNECTED);
+        attemptToReconnect();
+        return;
+    }
+
+    if (response.transport != 'polling'
+        && response.state != 'connected' && response.state != 'closed') {
+        if (response.status == 200) {
+            var data = response.responseBody;
+            var ev = models.EV.fromBC(data, $room.id());
+            ...
+        }
+    }
+}
+$.atmosphere.subscribe(
+        $room.rt() + '/r/room/rt?mode=' + Room.bcmode,
+        rtCallback,
+        $.atmosphere.request = {
+            transport: transport,
+            maxRequest : 100000
+        });
+        </textarea>
+    </div>
+
     <div id="jetty" class="step image" data-x="0" data-y="100">
         <img src="img/jetty.png" >
+    </div>
+    <div id="jetty-cluster" class="step" data-x="0" data-y="220" data-scale="0.5" >
+        <img src="img/cluster3nodes.png" width="250" >
+        <img src="img/cluster3nodes.png" width="250" >
+        <img src="img/cluster3nodes.png" width="250" >
     </div>
 
     <div id="cassandra" class="step image" data-x="500" data-y="100">
@@ -163,71 +213,6 @@ public void store(EV ev) {
     </div>
     <div id="ovh-pricing" class="step image quiet" data-x="-500" data-y="100" data-z="-200" data-rotate-x="90">
         <img src="img/ovh-pricing.png" >
-    </div>
-    <div id="ovh-room-deploy-script" class="step" data-x="-550" data-y="250" data-scale="0.1" >
-        <textarea class="code">
-#!/bin/sh
-
-VOXXR_HOME=~/dev/wkspace/voxxr/voxxr
-SEED_IP=`cat $VOXXR_HOME/voxxr-room/current-seed-ip`
-
-cd $VOXXR_HOME && tar czvf out/production/voxxr-room.tgz voxxr-room && cd -
-
-echo "starting instance"
-ovhcloud instance startInstance --instanceId $INSTANCE
-echo "waiting for room node $ROOM to startup..."
-ROOM_IP=''
-while [ "$ROOM_IP" = "" ]; do
- ROOM_IP=`ovhcloud instance getInstances --projectName voxxr | grep $INSTANCE | egrep -o '([0-9]+\.)+[0-9]+'`;
-done
-
-echo "login and RSA accept"
-ovhcloud instance ssh $INSTANCE ls
-
-echo "uploading files..."
-ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/voxxr-room/src/main/scripts/deploy-room-remote.sh "install.sh"
-ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/voxxr-room/src/main/scripts/voxxr-room.properties "voxxr-room.properties"
-ovhcloud instance ssh $INSTANCE copy $VOXXR_HOME/out/production/voxxr-room.tgz "voxxr-room.tgz"
-
-echo "executing remote install..."
-ovhcloud instance ssh $INSTANCE bash "./install.sh" $ROOM  $SEED_IP $HOST $ROOM_IP
-
-
-echo "ROOM $ROOM STARTED AT IP $ROOM_IP"
-echo "VOXXR-ROOM::$ROOM::$ROOM_IP"
-        </textarea>
-    </div>
-    <div id="ovh-room-deploy-remote-script" class="step" data-x="-450" data-y="250" data-scale="0.1" >
-        <textarea class="code">
-#!/bin/sh
-
-# set host name, it happens from time to time that machine initialized by ovh has localhost.localdomain as hostname :(
-echo $HOST > /etc/hostname
-hostname $HOST
-# FIX DNS set host name in /etc/hosts
-sed -i s/\ localhost/\ localhost\ `hostname`/g /etc/hosts
-
-apt-get update
-apt-get install -y openjdk-6-jdk ant git-core
-wget -q http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar -O /usr/share/ant/lib/ivy.jar
-
-tar xzvf voxxr-room.tgz
-
-echo "------- CONFIGURING -- ROOM => $ROOM -- SEED_IP => $SEED_IP"
-sed -i s/@ROOM@/$ROOM/g voxxr-room.properties
-sed -i s/@SEED_IP@/$SEED_IP/g voxxr-room.properties
-sed -i s/@ROOM_IP@/$ROOM_IP/g voxxr-room.properties
-
-cp -f voxxr-room.properties voxxr-room/src/main/java/
-
-cd voxxr-room
-
-echo "------- PACKAGING"
-ant package
-
-echo "------- LAUNCHING"
-ant run &>ant.log &
-        </textarea>
     </div>
 
     <div id="overview" class="step" data-x="-100" data-y="-100" data-scale="2">
