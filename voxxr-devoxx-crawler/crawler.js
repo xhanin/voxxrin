@@ -27,13 +27,17 @@ function crawl() {
     ]).spread(function(event, rooms, schedule) {
         console.log("loaded event " + event.id + ", " + schedule.length
             + " presentations and " + rooms.length + " rooms");
+
+        schedule = _(schedule).sortBy(function(s) {return s.fromTime});
+        // filtering events like breakfasts which hasn't any presentationUri
+        schedule = _(schedule).filter(function(s) { return s.presentationUri });
+
         var from = new Date(Date.parse(event.from)),
             to = new Date(Date.parse(event.to));
 
-
         var fromTime = from, toTime = to;
         if (schedule.length) {
-            fromTime = _(schedule).sortBy(function(s) {return s.fromTime})[0].fromTime;
+            fromTime = schedule[0].fromTime;
             toTime = _(schedule).sortBy(function(s) {return s.toTime})[schedule.length - 1].toTime;
         }
 
@@ -64,46 +68,47 @@ function crawl() {
             voxxrin.daySchedules[dateformat(day, 'yyyy-mm-dd')] =
                 {"id":prefix + event.id + '-' + i, "dayNumber": i, "schedule":[]};
         }
-        _(schedule).each(function(s) {
-            if (s.presentationUri) {
-                voxxrin.event.nbPresentations++;
-                var fromTime = new Date(Date.parse(s.fromTime)),
-                    daySchedule = voxxrin.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
+        _(schedule).each(function(s, i) {
+            voxxrin.event.nbPresentations++;
+            var fromTime = new Date(Date.parse(s.fromTime)),
+                daySchedule = voxxrin.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
 
-                var voxxrinPres = {"id":prefix + s.id, "title":s.title, "type":s.type, "kind":s.kind,
-                        "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
-                        "speakers": _(s.speakers).map(toVoxxrinSpeaker),
-                        "room": voxxrin.rooms[s.room],
-                        "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
+            var voxxrinPres = {"id":prefix + s.id, "title":s.title, "type":s.type, "kind":s.kind,
+                    "previousId": prefix + schedule[(i-1+schedule.length)%schedule.length].id,
+                    "nextId": prefix + schedule[(i+1)%schedule.length].id,
+                    "dayId": daySchedule.id,
+                    "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
+                    "speakers": _(s.speakers).map(toVoxxrinSpeaker),
+                    "room": voxxrin.rooms[s.room],
+                    "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
 
-                if (voxxrinPres.id === 'dvx655') {
-                    // very special case for Voxxrin presentation at devoxxFR:
-                    // force the room id to a separate room because I prefer to use a dedicated server
-                    // for this first presentation
-                    voxxrinPres.room = {"id":"1", "name": "La Seine C", "uri": "/rooms/1"};
-                    send(baseUrl + '/r' + voxxrinPres.room.uri, voxxrinPres.room).then(function() {
-                        console.log('ROOM:', voxxrinPres.room);
-                    }).fail(onFailure);
-                }
-
-                if (_(daySchedule.schedule).find(function(p) { return p.id === voxxrinPres.id })) {
-                    // workaround bug in CFP API having multiple times the same pres
-                    return;
-                }
-                voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
-                daySchedule.schedule.push(voxxrinPres);
-                load(s.presentationUri).then(function(p) {
-                    send(baseUrl + '/r' + voxxrinPres.uri,
-                        _.extend(voxxrinPres, {
-                            "track":p.track,
-                            "experience":p.experience,
-                            "tags":p.tags,
-                            "summary":p.summary
-                        }))
-                        .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
-                        .fail(onFailure);
+            if (voxxrinPres.id === 'dvx655') {
+                // very special case for Voxxrin presentation at devoxxFR:
+                // force the room id to a separate room because I prefer to use a dedicated server
+                // for this first presentation
+                voxxrinPres.room = {"id":"1", "name": "La Seine C", "uri": "/rooms/1"};
+                send(baseUrl + '/r' + voxxrinPres.room.uri, voxxrinPres.room).then(function() {
+                    console.log('ROOM:', voxxrinPres.room);
                 }).fail(onFailure);
             }
+
+            if (_(daySchedule.schedule).find(function(p) { return p.id === voxxrinPres.id })) {
+                // workaround bug in CFP API having multiple times the same pres
+                return;
+            }
+            voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
+            daySchedule.schedule.push(voxxrinPres);
+            load(s.presentationUri).then(function(p) {
+                send(baseUrl + '/r' + voxxrinPres.uri,
+                    _.extend(voxxrinPres, {
+                        "track":p.track,
+                        "experience":p.experience,
+                        "tags":p.tags,
+                        "summary":p.summary
+                    }))
+                    .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
+                    .fail(onFailure);
+            }).fail(onFailure);
         });
 
         send(baseUrl + '/r/events', voxxrin.event).then(function() {
