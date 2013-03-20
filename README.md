@@ -16,14 +16,17 @@ Sources are organized in modules:
         *   m.html the main client web app (also packaged as an app with phonegap)
         *   d.html a dashboard component
         *   p.html a poll result component
-    Note : If you need to deploy the app on GAE, you will need to download & install ivy, then run a `ant -lib ivy.jar deps` in voxxr-web folder
-    to copy your libraries to WEB-INF/lib folder.
+
+_Note : If you need to deploy the app on GAE, you will need to download & install ivy, then run a `ant -lib ivy.jar deps` in voxxr-web folder to copy your libraries to WEB-INF/lib folder._
+
 *   voxxr-room is the module with the real time room service, developped in Java using atmosphere and cassandra
     There are also scripts to deploy it on ovh public cloud service
 *   voxxr-home-j is the source of the front web server serving http://voxxr.in/ hosted on GAE, nothing fancy here
 *   voxxr-devoxx-crawler is the module which allow to crawl the devoxx rest API and feed the agenda it
     (for Devoxx France schedule at the time being). It is using node.js and can be deployed on heroku.
-    You can easily deploy it on heroku by running a `git subtree push --prefix voxxr-devoxx-crawler heroku master` command.
+
+_You can easily deploy it on heroku by running a `git subtree push --prefix voxxr-devoxx-crawler heroku master` command._
+
 *   voxxr-droid is the module which allow to package the app as an android app, thanks to phonegap
 *   voxxr-ios is the same for ios
 *   voxxr-prez is the source of the presentation for which Voxxr.in was originally developped by Xavier Hanin.
