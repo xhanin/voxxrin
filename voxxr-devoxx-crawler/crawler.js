@@ -9,7 +9,7 @@ var http = require("http"),
     ;
 
 var prefix = 'dvx',
-    eventId = 6,
+    crawled_eventIds = [ 8 /* devoxx fr */, 9 /* devoxx UK */ ]
     baseUrl = 'http://app.voxxr.in';
 
 var voxxrin = {
@@ -18,8 +18,8 @@ var voxxrin = {
     daySchedules: {}
 };
 
-function crawl() {
-    console.log('start crawling');
+function crawl(eventId) {
+    console.log('start crawling on event ' + eventId);
     Q.all([
         load('http://cfp.devoxx.com/rest/v1/events/' + eventId),
         load('http://cfp.devoxx.com/rest/v1/events/' + eventId + '/schedule/rooms'),
@@ -171,7 +171,9 @@ var port = process.env.PORT || 3000;
 http.createServer(function(req, response) {
     response.writeHead(200, {"Content-Type": "text/plain"});
     if (req.method === 'POST') {
-        crawl();
+        _(crawled_eventIds).each(function(eventId){
+            crawl(eventId);
+        });
         response.write("Started crawling...");
     } else {
         response.write("Ready...");
