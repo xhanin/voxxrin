@@ -11,4 +11,5 @@
         <include path="/d-wall.html" />
         <include path="/p.html" />
     </static-files>
+    <threadsafe>true</threadsafe>
 </appengine-web-app>
