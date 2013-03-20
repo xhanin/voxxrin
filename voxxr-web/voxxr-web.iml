@@ -15,9 +15,7 @@
       </configuration>
       <facet type="google-app-engine" name="Google App Engine">
         <configuration>
-          <password>dfeedfccdfcddff5df93df9adfc6dfc1</password>
-          <sdk-home-path>$MODULE_DIR$/../../../../tools/appengine/appengine-java-sdk-1.6.1.1</sdk-home-path>
-          <email>xavier.hanin@gmail.com</email>
+          <sdk-home-path>$USER_HOME$/tools/appengine/appengine-java-sdk-1.7.5</sdk-home-path>
         </configuration>
       </facet>
     </facet>
@@ -35,7 +33,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="IvyIDEA">

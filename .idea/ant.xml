@@ -2,30 +2,9 @@
 <project version="4">
   <component name="AntConfiguration">
     <defaultAnt name="Apache Ant version 1.8.2" />
-    <buildFile url="file://$PROJECT_DIR$/voxxr-web/build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/voxxr-droid/build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/voxxr-room/build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/voxxr-web/build.xml" />
+    <buildFile url="file://$PROJECT_DIR$/voxxr-droid/build.xml" />
+    <buildFile url="file://$PROJECT_DIR$/voxxr-room/build.xml" />
   </component>
 </project>
 

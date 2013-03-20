@@ -35,6 +35,16 @@ _You can easily deploy it on heroku by running a `git subtree push --prefix voxx
     commands in an html5 presentation. In the future the structure should be extracted from the presentation content to
     be easily reusable with other presentations.
 
+IDEA Configuration
+------------------
+
+To configure IDEA properly (without having to change/ignore anything after `git clone`), you will need :
+* A JDK 1.6 or greater configured as your default Project JDK
+* Install GAE Java SDK 1.7.5 in $USER_HOME$/tools/appengine/appengine-java-sdk-1.7.5
+* Install Android SDK 2.3.3 on your filesystem, then reference it in the Platform Setting/SDKs section, with the exact name "Android 2.3.3 Platform"
+  Note that to install it, you will need to install [ADT Bundle](http://developer.android.com/sdk/index.html). Once installed, run the `sdk/tools/android` package manager
+  which will download and install the proper Android SDK.
+
 License
 -------
 
