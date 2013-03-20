@@ -16,6 +16,8 @@ Sources are organized in modules:
         *   m.html the main client web app (also packaged as an app with phonegap)
         *   d.html a dashboard component
         *   p.html a poll result component
+    Note : If you need to deploy the app on GAE, you will need to download & install ivy, then run a `ant -lib ivy.jar deps` in voxxr-web folder
+    to copy your libraries to WEB-INF/lib folder.
 *   voxxr-room is the module with the real time room service, developped in Java using atmosphere and cassandra
     There are also scripts to deploy it on ovh public cloud service
 *   voxxr-home-j is the source of the front web server serving http://voxxr.in/ hosted on GAE, nothing fancy here
