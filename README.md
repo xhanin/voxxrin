@@ -22,7 +22,8 @@ Sources are organized in modules:
     There are also scripts to deploy it on ovh public cloud service
 *   voxxr-home-j is the source of the front web server serving http://voxxr.in/ hosted on GAE, nothing fancy here
 *   voxxr-devoxx-crawler is the module which allow to crawl the devoxx rest API and feed the agenda it
-    (for Devoxx France schedule at the time being). It is using node.js and can be deployed on heroku
+    (for Devoxx France schedule at the time being). It is using node.js and can be deployed on heroku.
+    You can easily deploy it on heroku by running a `git subtree push --prefix voxxr-devoxx-crawler heroku master` command.
 *   voxxr-droid is the module which allow to package the app as an android app, thanks to phonegap
 *   voxxr-ios is the same for ios
 *   voxxr-prez is the source of the presentation for which Voxxr.in was originally developped by Xavier Hanin.
