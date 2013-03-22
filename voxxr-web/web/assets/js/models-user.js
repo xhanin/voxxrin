@@ -154,10 +154,14 @@
     };
     My.load = function(user, options) {
         getJSON('/my', function(data) {
+            if(!data){ // It can happen on some devices under phonegap (didn't understood why ATM)
+                return;
+            }
+
             console.log('loaded My: user.id()=' + user.id()
                 + '; user.twuser().id()=' + user.twuser().id()
                 + '; user.my().data=' + ((typeof(user.my()) !== 'undefined') ? user.my().data : null)
-                + '; data.twitterid=' + data.twitterid);
+                + '; data.twitterid=' + (data?data.twitterid:null));
             if (user.my() && user.my().data // user my already loaded
                 && user.my().data.id === data.id // for the same user as the current one
                 && user.my().data.lastmodified // and we have lastmodified info (stored after lastmodified feature was implemented)
