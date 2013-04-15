@@ -132,7 +132,7 @@ var devoxx = function() {
                             "track":p.track,
                             "experience":p.experience,
                             "tags":p.tags,
-                            "summary":p.summary + "/n" + p.description
+                            "summary":p.summary
                         }))
                         .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
                         .fail(onFailure);
@@ -236,7 +236,7 @@ var mixit = function() {
                 };
             }).value();
             _(rooms).each(function(r) {
-                var room = voxxrin.rooms[r] = {"id":voxxrin.event.id + "-" + r.id, "name": r.name,
+                var room = voxxrin.rooms[r.name] = {"id":voxxrin.event.id + "-" + r.id, "name": r.name,
                     "uri": "/rooms/" + voxxrin.event.id + "-" + r.id};
                 send(baseUrl + '/r' + room.uri, room).then(function() {
                     console.log('ROOM:', room);
@@ -263,8 +263,11 @@ var mixit = function() {
                         "dayId": daySchedule.id,
                         "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
                         "speakers": _(s.speakers).map(toVoxxrinSpeaker),
-                        "room": voxxrin.rooms[s.room],
-                        "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
+                        "room": voxxrin.rooms[s.room ? s.room : "???"],
+                        "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
+                        "fromTime":dateformat(s.start,"yyyy-mm-dd HH:MM:ss.0"),
+                        "toTime":dateformat(s.end,"yyyy-mm-dd HH:MM:ss.0")
+                    };
                 voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
                 daySchedule.schedule.push(voxxrinPres);
                 send(baseUrl + '/r' + voxxrinPres.uri,
@@ -275,7 +278,7 @@ var mixit = function() {
                                 "name": interest.name
                             };
                         }),
-                        "summary":s.summary
+                        "summary":s.summary + "\n\n" + s.description
                     }))
                     .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
                     .fail(onFailure);
