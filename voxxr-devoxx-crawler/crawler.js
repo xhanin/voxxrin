@@ -302,7 +302,7 @@ var mixit = function() {
     };
 }();
 
-var events = [devoxx, mixit];
+var EVENTS_FAMILIES = [devoxx, mixit];
 
 function formatDates(from, to) {
     if (from === to) {
@@ -331,10 +331,14 @@ http.createServer(function(req, response) {
     // Updating base url in dev mode
     baseUrl = mode==="dev"?devBaseUrl:baseUrl;
 
+    // Browsing only specific event family if "eventFamiliyId" http query param is provided
+    var specificEventFamilyId = urlObj.query.eventFamilyId;
+    var eventFamiliesToCrawl = specificEventFamilyId? [ EVENTS_FAMILIES[specificEventFamilyId] ] : EVENTS_FAMILIES;
+
     response.writeHead(200, {"Content-Type": "text/plain"});
     if (req.method === 'POST') {
-        _(events).each(function(evt) {
-            evt.crawl();
+        _(eventFamiliesToCrawl).each(function(eventFamily) {
+            eventFamily.crawl();
         });
         response.write("Started crawling...");
     } else {
