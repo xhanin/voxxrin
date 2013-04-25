@@ -333,7 +333,12 @@ http.createServer(function(req, response) {
 
     // Browsing only specific event family if "eventFamiliyId" http query param is provided
     var specificEventFamilyId = urlObj.query.eventFamilyId;
-    var eventFamiliesToCrawl = specificEventFamilyId? [ EVENTS_FAMILIES[specificEventFamilyId] ] : EVENTS_FAMILIES;
+    if(specificEventFamilyId){
+        if(!_.isArray(specificEventFamilyId)){
+            specificEventFamilyId = [ specificEventFamilyId ];
+        }
+    }
+    var eventFamiliesToCrawl = specificEventFamilyId? _.map(specificEventFamilyId, function(famId){ return EVENTS_FAMILIES[famId]; }) : EVENTS_FAMILIES;
 
     response.writeHead(200, {"Content-Type": "text/plain"});
     if (req.method === 'POST') {
