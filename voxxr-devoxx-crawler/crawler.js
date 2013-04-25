@@ -1,6 +1,7 @@
 var http = require("http"),
     Q = require('q'),
     _ = require('underscore'),
+    url = require('url'),
     dateformat = require('dateformat'),
     load = require("./load.js"),
     send = require("./send.js"),
@@ -9,6 +10,7 @@ var http = require("http"),
     ;
 
 var baseUrl = 'http://app.voxxr.in';
+var devBaseUrl = 'http://localhost:8080';
 
 var voxxrin = {
     event: {},
@@ -323,6 +325,12 @@ function onFailure(err) {
 
 var port = process.env.PORT || 3000;
 http.createServer(function(req, response) {
+    var urlObj = url.parse(req.url, true);
+    var mode = urlObj.query.mode;
+
+    // Updating base url in dev mode
+    baseUrl = mode==="dev"?devBaseUrl:baseUrl;
+
     response.writeHead(200, {"Content-Type": "text/plain"});
     if (req.method === 'POST') {
         _(events).each(function(evt) {
