@@ -9,8 +9,8 @@ var http = require("http"),
     token = require('./authorizationToken')
     ;
 
-var baseUrl = 'http://app.voxxr.in';
-var devBaseUrl = 'http://localhost:8080';
+var PROD_BASE_URL = 'http://app.voxxr.in';
+var DEV_BASE_URL = 'http://localhost:8080';
 
 var voxxrin = {
     event: {},
@@ -22,7 +22,7 @@ var devoxx = function() {
     var prefix = 'dvx';
     var eventIds = [ 8 /* devoxx fr */, 9 /* devoxx UK */ ];
 
-    function toVoxxrinSpeaker(sp) {
+    function toVoxxrinSpeaker(baseUrl, sp) {
         var id = sp.speakerUri.substring(sp.speakerUri.lastIndexOf('/') + 1);
         var voxxrinSpeakerHeader = {"id":prefix + id, "name":sp.speaker,
             "uri":"/events/" + voxxrin.event.id + "/speakers/" + prefix + id
@@ -48,7 +48,7 @@ var devoxx = function() {
         return voxxrinSpeakerHeader;
     }
 
-    function crawl_devoxx(eventId) {
+    function crawl_devoxx(baseUrl, eventId) {
         console.log('start crawling on Devoxx (event ' + eventId + ')');
         Q.all([
             load('http://cfp.devoxx.com/rest/v1/events/' + eventId),
@@ -108,7 +108,7 @@ var devoxx = function() {
                         "nextId": prefix + schedule[(i+1)%schedule.length].id,
                         "dayId": daySchedule.id,
                         "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
-                        "speakers": _(s.speakers).map(toVoxxrinSpeaker),
+                        "speakers": _(s.speakers).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); }),
                         "room": voxxrin.rooms[s.room],
                         "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
 
@@ -153,9 +153,9 @@ var devoxx = function() {
     }
 
     return {
-        crawl: function() {
+        crawl: function(baseUrl) {
             _(eventIds).each(function(id) {
-                crawl_devoxx(id);
+                crawl_devoxx(baseUrl, id);
             });
         }
     }
@@ -177,7 +177,7 @@ var mixit = function() {
         }
     ];
 
-    function toVoxxrinSpeaker(sp) {
+    function toVoxxrinSpeaker(baseUrl, sp) {
         var id = prefix + sp.id;
         var voxxrinSpeakerHeader = {"id": id, "name":sp.firstname + " " + sp.lastname,
             "uri":"/events/" + voxxrin.event.id + "/speakers/" + id
@@ -202,7 +202,7 @@ var mixit = function() {
         return voxxrinSpeakerHeader;
     }
 
-    function crawl_mixit(event) {
+    function crawl_mixit(baseUrl, event) {
         console.log('start crawling Mix-IT');
         var id = prefix + event.id;
         Q.all([
@@ -279,7 +279,7 @@ var mixit = function() {
                         "nextId": prefix + schedule[(i+1)%schedule.length].id,
                         "dayId": daySchedule.id,
                         "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
-                        "speakers": _(s.speakers).map(toVoxxrinSpeaker),
+                        "speakers": _(s.speakers).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); }),
                         "room": voxxrin.rooms[s.room ? s.room : "???"],
                         "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
                         "fromTime":dateformat(s.start,"yyyy-mm-dd HH:MM:ss.0"),
@@ -348,7 +348,7 @@ http.createServer(function(req, response) {
     var mode = urlObj.query.mode;
 
     // Updating base url in dev mode
-    baseUrl = mode==="dev"?devBaseUrl:baseUrl;
+    var baseUrl = mode==="dev"?DEV_BASE_URL:PROD_BASE_URL;
 
     // Browsing only specific event family if "eventFamiliyId" http query param is provided
     var specificEventFamilyId = urlObj.query.eventFamilyId;
@@ -362,7 +362,7 @@ http.createServer(function(req, response) {
     response.writeHead(200, {"Content-Type": "text/plain"});
     if (req.method === 'POST') {
         _(eventFamiliesToCrawl).each(function(eventFamily) {
-            eventFamily.crawl();
+            eventFamily.crawl(baseUrl);
         });
         response.write("Started crawling...");
     } else {
