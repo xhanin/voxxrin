@@ -163,7 +163,19 @@ var devoxx = function() {
 
 var mixit = function() {
     var prefix = 'mxt';
-    //var eventIds: [ 13 /* Mix-IT 3013 */ ];
+    var events = [
+        {
+            /* Mix-IT 2013 */
+            id: 13,
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2013-04-25T08:30:00.000+02:00")),
+            to: new Date(Date.parse("2013-04-26T18:30:00.000+02:00")),
+            title: "Mix-IT 2013",
+            subtitle: "",
+            description: "Java, Agilité, Web, Innovations... Des idées pour tout de suite !",
+            location: "SUPINFO Lyon - Lyon"
+        }
+    ];
 
     function toVoxxrinSpeaker(sp) {
         var id = prefix + sp.id;
@@ -190,15 +202,15 @@ var mixit = function() {
         return voxxrinSpeakerHeader;
     }
 
-    function crawl_mixit() {
+    function crawl_mixit(event) {
         console.log('start crawling Mix-IT');
-        var id = prefix + "13";
+        var id = prefix + event.id;
         Q.all([
             load('http://www.mix-it.fr/api/talks?details=true')
         ]).spread(function(schedule) {
             console.log("loaded event Mix-IT, " + schedule.length + " presentations");
-            var from = new Date(Date.parse("2013-04-25T08:30:00.000+02:00")),
-                to = new Date(Date.parse("2013-04-26T18:30:00.000+02:00"));
+            var from = event.from,
+                to = event.to;
             // Parsing dates and adding "virtual" start and end time for all-day running events
             _(schedule).each(function(s) {
                 if (! s.start) {
@@ -217,11 +229,14 @@ var mixit = function() {
             }
             voxxrin.event = {
                 "id": id,
-                "title":"Mix-IT 2013","subtitle":"","description":"Java, Agilité, Web, Innovations... Des idées pour tout de suite !",
+                "title": event.title,
+                "subtitle": event.subtitle,
+                "description": event.description,
                 "dates": formatDates(from, to),
                 "from": fromTime,
                 "to": toTime,
-                "location":"SUPINFO Lyon - Lyon", "nbPresentations":0,
+                "location": event.location,
+                "nbPresentations":0,
                 "days":[],
                 "enabled":true
             };
@@ -298,7 +313,11 @@ var mixit = function() {
     }
 
     return {
-        crawl: crawl_mixit
+        crawl: function(baseUrl) {
+            _(events).each(function(event) {
+                crawl_mixit(baseUrl, event);
+            });
+        }
     };
 }();
 
