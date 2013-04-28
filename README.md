@@ -39,12 +39,15 @@ IDEA Configuration
 ------------------
 
 To configure IDEA properly (without having to change/ignore anything after `git clone`), you will need :
+* Having custom Plugins `IvyIDEA` and `NodeJS` installed
 * A JDK 1.6 or greater configured as your default Project JDK
   Note that to work properly you will have to name this JDK "1.7", yes this is weird ! (see [this tweet](https://twitter.com/fcamblor/status/327434205380354048))
 * Install GAE Java SDK 1.7.5 in $USER_HOME$/tools/appengine/appengine-java-sdk-1.7.5
 * Install Android SDK 2.3.3 on your filesystem, then reference it in the Platform Setting/SDKs section, with the exact name "Android 2.3.3 Platform"
   Note that to install it, you will need to install [ADT Bundle](http://developer.android.com/sdk/index.html). Once installed, run the `sdk/tools/android` package manager
   which will download and install the proper Android SDK.
+* Run `ant compile` on `voxxr-web` project, which will fetch needed ivy dependencies and paste them in `WEB-INF/lib` folder
+  Note that if you come to change any ivy dependency, you should re-run the `ant compile` to update libraries accordingly.
 
 License
 -------
