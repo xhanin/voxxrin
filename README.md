@@ -46,8 +46,8 @@ To configure IDEA properly (without having to change/ignore anything after `git 
 * Install Android SDK 2.3.3 on your filesystem, then reference it in the Platform Setting/SDKs section, with the exact name "Android 2.3.3 Platform"
   Note that to install it, you will need to install [ADT Bundle](http://developer.android.com/sdk/index.html). Once installed, run the `sdk/tools/android` package manager
   which will download and install the proper Android SDK.
-* Run `ant compile` on `voxxr-web` project, which will fetch needed ivy dependencies and paste them in `WEB-INF/lib` folder
-  Note that if you come to change any ivy dependency, you should re-run the `ant compile` to update libraries accordingly.
+* Run `ant -lib ivy.jar compile` on `voxxr-web` project, which will fetch needed ivy dependencies and paste them in `WEB-INF/lib` folder
+  Note that if you come to change any ivy dependency, you should re-run the `ant -lib ivy.jar compile` to update libraries accordingly.
 
 License
 -------
