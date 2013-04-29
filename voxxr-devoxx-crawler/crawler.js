@@ -6,7 +6,8 @@ var http = require("http"),
     load = require("./load.js"),
     send = require("./send.js"),
     request = require('request'),
-    token = require('./authorizationToken')
+    token = require('./authorizationToken'),
+    md = require("node-markdown").Markdown
     ;
 
 var PROD_BASE_URL = 'http://app.voxxr.in';
@@ -380,19 +381,27 @@ var breizhcamp = function() {
         {
             "id": id,
             "name": speaker.fullname,
-            "uri": "/events/" + voxxrin.event.id + "/speakers/" + id,
-            "pictureURI":"/events/" + voxxrin.event.id + "/speakers/" + id + "/picture.png",
-            "bio": speaker.description
+            "uri": "/events/" + voxxrin.event.id + "/speakers/" + id
         };
 
+        var pictureURI = "/events/" + voxxrin.event.id + "/speakers/" + id + "/picture.png";
+
+
         request.get(speaker.avatar).pipe(request.put({
-            url: baseUrl + '/r' + voxxrinSpeaker.pictureURI,
+            url: baseUrl + '/r' + pictureURI,
             headers: {
                 'Authorization':token
             }
         }));
 
-        send(baseUrl + '/r' + voxxrinSpeaker.uri, voxxrinSpeaker)
+        if (!speaker.description) {
+            speaker.description = "";
+        }
+
+        send(baseUrl + '/r' + voxxrinSpeaker.uri, _.extend(voxxrinSpeaker, {
+            "pictureURI":pictureURI,
+            "bio": md(speaker.description)
+        }))
             .then(function () {
                 console.log('SPEAKER: ', voxxrinSpeaker.id, voxxrinSpeaker.name)
             })
@@ -577,14 +586,14 @@ var breizhcamp = function() {
                             };
 
                             if (talk.id !== undefined) {
+                                if (!talk.description) {
+                                    talk.description = "";
+                                }
                                 load("http://cfp.breizhcamp.org/accepted/talk/" + talk.id).then(function(talkDetail) {
-                                    talk.description = talkDetail.description;
-                                    talk.speakers = talkDetail.speakers;
-                                    talk.tags = talkDetail.tags;
                                     send(baseUrl + '/r' + voxxrinPres.uri, _.extend(voxxrinPres,
                                         {
-                                            "tags":talk.tags,
-                                            "summary":talk.description
+                                            "tags":talkDetail.tags,
+                                            "summary":md(talkDetail.description)
                                         })).then(function () {
                                             console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)
                                         }).fail(onFailure);
@@ -622,7 +631,7 @@ var breizhcamp = function() {
     };
 }();
 
-var EVENTS_FAMILIES = [devoxx, mixit, breizhcamp];
+var EVENTS_FAMILIES = [/*devoxx, mixit, */breizhcamp];
 
 function formatDates(from, to) {
     if (from === to) {
