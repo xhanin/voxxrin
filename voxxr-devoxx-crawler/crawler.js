@@ -492,12 +492,26 @@ var breizhcamp = function() {
                     })
                 });
 
-                fromTime = new Date(from.split("/")[2], from.split("/")[1], from.split("/")[0],
-                    fromTime.split(":")[0], fromTime.split(":")[1]);
-                toTime = new Date(to.split("/")[2], to.split("/")[1], to.split("/")[0],
-                    toTime.split(':')[0], toTime.split(':')[1]);
-                from = new Date(from.split("/")[2], from.split("/")[1], from.split("/")[0]);
-                to = new Date(to.split("/")[2], to.split("/")[1], to.split("/")[0]);
+                fromTime = new Date(
+                    from.split("/")[2],
+                    parseInt(from.split("/")[1]) - 1,
+                    from.split("/")[0],
+                    fromTime.split(":")[0],
+                    fromTime.split(":")[1]);
+                toTime = new Date(
+                    to.split("/")[2],
+                    parseInt(to.split("/")[1]) - 1,
+                    to.split("/")[0],
+                    toTime.split(':')[0],
+                    toTime.split(':')[1]);
+                from = new Date(
+                    from.split("/")[2],
+                    parseInt(from.split("/")[1]) - 1,
+                    from.split("/")[0]);
+                to = new Date(
+                    to.split("/")[2],
+                    parseInt(to.split("/")[1]) - 1,
+                    to.split("/")[0]);
 
                 voxxrin.event = {
                     "id": prefix + eventId,
@@ -505,8 +519,8 @@ var breizhcamp = function() {
                     "subtitle":"",
                     "description":"",
                     "dates": formatDates(from, to),
-                    "from": fromTime,
-                    "to": toTime,
+                    "from": dateformat(fromTime,"yyyy-mm-dd HH:MM:ss.0"),
+                    "to": dateformat(toTime,"yyyy-mm-dd HH:MM:ss.0"),
                     "location":"IFSIC", "nbPresentations":0,
                     "days":[],
                     "enabled":true
@@ -537,7 +551,10 @@ var breizhcamp = function() {
 
                 _(programme.programme.jours).each(function(jour) {
 
-                    var day = new Date(jour.date.split("/")[2], jour.date.split("/")[1], jour.date.split("/")[0]);
+                    var day = new Date(
+                        jour.date.split("/")[2],
+                        parseInt(jour.date.split("/")[1]) -1,
+                        jour.date.split("/")[0]);
 
                     voxxrin.event.days.push(
                         {"id": eventId + '-' + indexJour,
@@ -559,18 +576,17 @@ var breizhcamp = function() {
                             voxxrin.event.nbPresentations++;
 
                             var fromTime = new Date(jour.date.split("/")[2],
-                                jour.date.split("/")[1],
+                                parseInt(jour.date.split("/")[1]) - 1,
                                 jour.date.split("/")[0],
                                 parseInt(talk.time.split(":")[0]),
                                 parseInt(talk.time.split(":")[1]));
 
                             var endTime = new Date(jour.date.split("/")[2],
-                                jour.date.split("/")[1],
+                                parseInt(jour.date.split("/")[1]) - 1,
                                 jour.date.split("/")[0],
                                 parseInt(talk.endTime.split(":")[0]),
                                 parseInt(talk.endTime.split(":")[1]));
                             var daySchedule = voxxrin.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
-
 
                             var voxxrinPres =
                             {
