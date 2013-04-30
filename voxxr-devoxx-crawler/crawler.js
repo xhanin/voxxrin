@@ -631,7 +631,7 @@ var breizhcamp = function() {
     };
 }();
 
-var EVENTS_FAMILIES = [/*devoxx, mixit, */breizhcamp];
+var EVENTS_FAMILIES = [devoxx, mixit, breizhcamp];
 
 function formatDates(from, to) {
     if (from === to) {
