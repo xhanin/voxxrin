@@ -253,7 +253,7 @@
         <div class="summary">
             <p class="loading" data-bind="visible: loading">
             </p>
-            <p data-bind="text: summary">
+            <p data-bind="html: summary">
             </p>
         </div>
         <a data-role="button" data-theme="b" class="toggleDetails" data-icon="arrow-d"></a>
@@ -262,7 +262,7 @@
             <li class="speaker"><img data-bind="visible: !loading(), attr: {src: pictureURL}">
                 <h4 data-bind="text: name"></h4>
                 <span class="loading" data-bind="visible: loading"></span>
-                <p data-bind="visible: !loading(), text: bio"></p>
+                <p data-bind="visible: !loading(), html: bio"></p>
             </li>
         </ul>
         <p class="signinPrompt" data-bind="visible: !user().twuser().authenticated()">
