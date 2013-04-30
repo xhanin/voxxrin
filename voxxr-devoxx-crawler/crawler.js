@@ -492,6 +492,10 @@ var breizhcamp = function() {
                     })
                 });
 
+                fromTime = new Date(from.split("/")[2], from.split("/")[1], from.split("/")[0],
+                    fromTime.split(":")[0], fromTime.split(":")[1]);
+                toTime = new Date(to.split("/")[2], to.split("/")[1], to.split("/")[0],
+                    toTime.split(':')[0], toTime.split(':')[1]);
                 from = new Date(from.split("/")[2], from.split("/")[1], from.split("/")[0]);
                 to = new Date(to.split("/")[2], to.split("/")[1], to.split("/")[0]);
 
