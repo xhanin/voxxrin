@@ -72,7 +72,7 @@
         }
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
-        self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
+        self.hash = ko.computed(function() {return "#!presentation~" + self.eventId() + "~" + self.id()});
         self.my = ko.computed(function() {
             if (!models.User.current()) return null; // for dashboard and poll
             return models.User.current().my() ? models.User.current().my().presentation(self.eventId(), self.id()) : null

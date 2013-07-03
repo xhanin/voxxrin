@@ -107,29 +107,29 @@ $(function() { models.Device.current().whenReady(function() {
     var voxxr = new VoxxrViewModel();
     voxxr.load();
     Route
-        .add('events', function() {
+        .add('!events', function() {
             return voxxr.gotoEvents();
         }, [])
-        .add('event~:event', function() {
+        .add('!event~:event', function() {
             return voxxr.gotoEvent(this.params.event);
-        }, ["#events"])
-        .add('nowplaying~:event', function() {
+        }, ["#!events"])
+        .add('!nowplaying~:event', function() {
             return voxxr.gotoNowPlaying(this.params.event);
-        }, ["#events", "#event~:event"])
-        .add('dayschedule~:event~:day', function() {
+        }, ["#!events", "#!event~:event"])
+        .add('!dayschedule~:event~:day', function() {
             return voxxr.gotoDay(this.params.event, this.params.day);
-        }, ["#events", "#event~:event"])
-        .add('presentation~:event~:presentation', function() {
+        }, ["#!events", "#!event~:event"])
+        .add('!presentation~:event~:presentation', function() {
             return voxxr.gotoPresentation(this.params.event, this.params.presentation);
-        }, ["#events", "#event~:event"])
-        .add('roomRT', function() {
-            if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
+        }, ["#!events", "#!event~:event"])
+        .add('!roomRT', function() {
+            if (!models.Room.current()) setTimeout(function() {location.hash = '#!events'}, 0);
             return voxxr.gotoRoom();
         })
         .add('', function() {
             return voxxr.gotoEvents();
         }, [])
-        .start('events');
+        .start('!events');
 
     ko.applyBindings(voxxr.user(), $('#signin').get(0));
 
@@ -367,9 +367,9 @@ $(function() { models.Device.current().whenReady(function() {
     if (storedVersion !== models.version) {
         localStorage.setItem('version', models.version);
         if (storedVersion) {
-            $.mobile.changePage('#' + models.version);
+            $.mobile.changePage('#!' + models.version);
         } else {
-            $.mobile.changePage('#about');
+            $.mobile.changePage('#!about');
         }
     }
 })
