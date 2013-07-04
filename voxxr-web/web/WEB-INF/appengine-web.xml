@@ -10,6 +10,7 @@
         <include path="/d.html" />
         <include path="/d-wall.html" />
         <include path="/p.html" />
+        <include path="/robots.txt" />
     </static-files>
     <threadsafe>true</threadsafe>
 </appengine-web-app>
