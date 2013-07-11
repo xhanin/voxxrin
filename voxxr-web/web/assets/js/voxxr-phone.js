@@ -112,16 +112,16 @@ $(function() { models.Device.current().whenReady(function() {
         }, [])
         .add('!event~:event', function() {
             return voxxr.gotoEvent(this.params.event);
-        }, ["#!events"])
+        }, ["index#!events"])
         .add('!nowplaying~:event', function() {
             return voxxr.gotoNowPlaying(this.params.event);
-        }, ["#!events", "#!event~:event"])
+        }, ["index#!events", "index#!event~:event"])
         .add('!dayschedule~:event~:day', function() {
             return voxxr.gotoDay(this.params.event, this.params.day);
-        }, ["#!events", "#!event~:event"])
+        }, ["index#!events", "index#!event~:event"])
         .add('!presentation~:event~:presentation', function() {
             return voxxr.gotoPresentation(this.params.event, this.params.presentation);
-        }, ["#!events", "#!event~:event"])
+        }, ["index#!events", "index#!event~:event"])
         .add('!roomRT', function() {
             if (!models.Room.current()) setTimeout(function() {location.hash = '#!events'}, 0);
             return voxxr.gotoRoom();
