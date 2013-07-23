@@ -1,13 +1,16 @@
 package com.seo4ajax;
 
-import org.apache.commons.io.IOUtils;
+import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.google.appengine.api.urlfetch.URLFetchService;
+import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.PropertyResourceBundle;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,12 +45,21 @@ public class S4AServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher(indexFileURL).forward(
 					request, response);
 		} else {
-			URLConnection urlConnection = new URL(Constant.API_URL + "/"
-					+ siteToken + "/?" + queryString).openConnection();
-			urlConnection.setConnectTimeout(30 * 1000);
-			urlConnection.setReadTimeout(10 * 1000);
-			IOUtils.copy(urlConnection.getInputStream(),
-                    response.getOutputStream());
+
+            URLFetchService urlFetchService = URLFetchServiceFactory.getURLFetchService();
+            String urlStr = Constant.API_URL + "/" + siteToken + "/index?" + queryString;
+            URL targetUrl = new URL(urlStr);
+            HTTPResponse httpResponse = urlFetchService.fetch(targetUrl);
+
+            ServletOutputStream outputStream = response.getOutputStream();
+            outputStream.write(httpResponse.getContent());
+            outputStream.close();
+
+            if (httpResponse.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // OK
+            } else {
+                throw new RuntimeException("Error : response code "+httpResponse.getResponseCode() + " || url="+urlStr);
+            }
 		}
 	}
 }
