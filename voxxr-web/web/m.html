@@ -49,9 +49,9 @@
 <div id="jqt">
     <div id="events" class="events page" data-role="page">
         <div data-role="header" >
-            <a href="index#!signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">Login</a>
+            <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">Login</a>
             <h1>Voxxrin</h1>
-            <a href="index#!about" data-transition="slidedown" class="ui-btn-right">About</a>
+            <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
         </div>
         <div data-role="content">
         <p class="loading" data-bind="visible: events.loading">
@@ -70,7 +70,7 @@
      </div>
     <div id="signin" class="signin page" data-role="page">
         <div data-role="header" >
-            <a href="index#!events" data-icon="delete" data-rel="back">Close</a>
+            <a href="#events" data-icon="delete" data-rel="back">Close</a>
             <h1>Voxxrin</h1>
         </div>
         <div data-role="content">
@@ -118,7 +118,7 @@
     </div>
     <div id="about" class="about page" data-role="page">
         <div data-role="header">
-            <a href="index#!events" data-icon="delete" data-rel="back">Close</a>
+            <a href="#events" data-icon="delete" data-rel="back">Close</a>
             <h1>Voxxrin</h1>
         </div>
         <div data-role="content">
@@ -160,13 +160,13 @@
             <p class="version">
                 Voxxrin is still in Beta.
             </p>
-            <p><br /><br /><a href="index#!events" data-icon="delete" data-role="button" data-rel="back">Close</a></p>
+            <p><br /><br /><a href="#events" data-icon="delete" data-role="button" data-rel="back">Close</a></p>
         </div>
     </div>
     <div id="event" class="event page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: title"></h1>
-            <a href="index#!events" data-rel="back" data-icon="arrow-l">Back</a>
+            <a href="#events" data-rel="back" data-icon="arrow-l">Back</a>
         </div>
         <div data-role="content">
             <div class="message" data-bind="visible: remaining">
@@ -246,7 +246,7 @@
         </div>
         <div data-role="content">
         <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
-        <a href="index#!roomRT" class="showroom" data-role="button" data-theme="e" data-transition="flip"
+        <a href="#roomRT" class="showroom" data-role="button" data-theme="e" data-transition="flip"
            data-bind="visible: playing">
             Show room now</a>
         <h3 class="summary">Abstract</h3>
@@ -267,7 +267,7 @@
         </ul>
         <p class="signinPrompt" data-bind="visible: !user().twuser().authenticated()">
             By signing in with your twitter account you could see what your network think of this talk.
-            <a href="index#!signin" data-transition="slidedown" data-theme="e" data-role="button">Login</a>
+            <a href="#signin" data-transition="slidedown" data-theme="e" data-role="button">Login</a>
         </p>
         <div data-bind="visible: user().twuser().authenticated()">
             <h3 >Following related</h3>
@@ -428,7 +428,7 @@
     </div>
     <div id="0.3.0" class="page" data-role="page">
         <div data-role="header">
-            <a href="index#!events" data-icon="delete" data-rel="back">Close</a>
+            <a href="#events" data-icon="delete" data-rel="back">Close</a>
             <h1>Voxxrin</h1>
         </div>
         <div data-role="content">
@@ -437,7 +437,7 @@
                 Completely rewritten UI, Twitter integration, Favorites, see people attending a talk in real time,
                 offline mode, plus tons of new features and bug fixes.
             </p>
-            <a href="index#!events" data-icon="delete" data-role="button" data-rel="back">Close</a>
+            <a href="#events" data-icon="delete" data-role="button" data-rel="back">Close</a>
         </div>
     </div>
 </div>

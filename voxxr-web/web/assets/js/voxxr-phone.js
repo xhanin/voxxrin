@@ -367,9 +367,9 @@ $(function() { models.Device.current().whenReady(function() {
     if (storedVersion !== models.version) {
         localStorage.setItem('version', models.version);
         if (storedVersion) {
-            $.mobile.changePage('#!' + models.version);
+            $.mobile.changePage('#' + models.version);
         } else {
-            $.mobile.changePage('#!about');
+            $.mobile.changePage('#about');
         }
     }
 })
