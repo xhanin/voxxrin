@@ -653,7 +653,324 @@ var breizhcamp = function() {
     };
 }();
 
-var EVENTS_FAMILIES = [devoxx, mixit, breizhcamp];
+
+
+var codeursenseine = function() {
+    var prefix = 'ces';
+    var eventId = '761';
+
+    var creneaux = {
+        "keynote": {
+            title: 'Keynote',
+            duree: 70
+        },
+        "break": {
+            title: 'Buffet',
+            duree: 60
+        },
+        "conference": {
+            title: 'Conférence',
+            duree: 50
+        }
+    };
+
+    function toVoxxrinSpeaker(baseUrl, speaker) {
+        var id = prefix + speaker.id;
+
+        // Optim gravatar
+        if (speaker.avatar && speaker.avatar.indexOf("gravatar") !== -1) {
+            speaker.avatar = speaker.avatar + "&s=200";
+        }
+        // Optim twitter
+        if (speaker.avatar && speaker.avatar.indexOf("twimg") !== -1) {
+            if (speaker.avatar.indexOf("_normal") !== -1) {
+                speaker.avatar = speaker.avatar.replace("_normal", "");
+            }
+        }
+
+        var voxxrinSpeaker =
+        {
+            "id": id,
+            "name": speaker.fullname,
+            "uri": "/events/" + voxxrin.event.id + "/speakers/" + id
+        };
+
+        var pictureURI = "/events/" + voxxrin.event.id + "/speakers/" + id + "/picture.png";
+
+
+        request.get(speaker.avatar).pipe(request.put({
+            url: baseUrl + '/r' + pictureURI,
+            headers: {
+                'Authorization':token
+            }
+        }));
+
+        if (!speaker.description) {
+            speaker.description = "";
+        }
+
+        send(baseUrl + '/r' + voxxrinSpeaker.uri, _.extend(voxxrinSpeaker, {
+            "pictureURI":pictureURI,
+            "bio": md(speaker.description)
+        }))
+            .then(function () {
+                console.log('SPEAKER: ', voxxrinSpeaker.id, voxxrinSpeaker.name)
+            })
+            .fail(onFailure);
+        return voxxrinSpeaker;
+    }
+
+    function crawl_codeursenseine(baseUrl) {
+        console.log('start crawling Codeurs en Seine');
+        Q.all([
+                //load('http://localhost:4000/programme-2013.json') ,""
+                load('http://www.codeursenseine.com/programme-2013.json') ,""
+                //,
+                //load('http://cfp.breizhcamp.org/accepted/speakers')
+            ]).spread(function(programme , speakers) {
+                console.log(baseUrl);
+                console.log("Loading codeursenseine programme");
+                var from = undefined;
+                var to = undefined;
+                var jourFrom = undefined;
+                var jourTo = undefined;
+                var fromTime = undefined;
+                var toTime = undefined;
+
+                var speakersByTalk = {};
+
+                _(speakers).each(function(speaker) {
+                    _(speaker.talks).each(function (talk) {
+                        if (speakersByTalk[talk.id] === undefined) {
+                            speakersByTalk[talk.id] = [];
+                        }
+                        speakersByTalk[talk.id].push(speaker);
+                    });
+                });
+                var rooms = [];
+
+                _(programme.programme.jours).each(function (jour){
+                    if (from === undefined || from > jour.date) {
+                        from = jour.date;
+                        jourFrom = jour;
+                    }
+                    if (to == undefined || to < jour.date) {
+                        to = jour.date;
+                        jourTo = jour;
+                    }
+
+                    _(jour.tracks).each(function(track) {
+                        _(track.talks).each(function(talk) {
+                            if (talk.time.length < 5) {
+                                talk.time = '0' + talk.time;
+                            }
+                            var hour = parseInt(talk.time.split(":")[0]);
+                            var minute = parseInt(talk.time.split(":")[1]);
+
+                            minute += creneaux[talk.format].duree;
+                            while (minute >= 60) {
+                                hour += 1;
+                                minute -= 60;
+                            }
+                            if (minute < 10) {
+                                minute = "0" + minute;
+                            }
+                            if (hour < 10) {
+                                hour = "0" + hour;
+                            }
+                            talk.endTime = "" + hour + ":" + minute;
+
+                            if (! talk.room) {
+                                talk.room = "TBD";
+                            }
+
+                            rooms.push(talk.room);
+                        });
+                    });
+                });
+
+
+
+                _(jourFrom.tracks).each(function(track){
+                    _(track.talks).each(function(talk) {
+                        if (fromTime === undefined || fromTime > talk.time) {
+                            fromTime = talk.time;
+                        }
+                    });
+                });
+
+                _(jourTo.tracks).each(function(track) {
+                    _(track.talks).each(function(talk) {
+                        if (toTime === undefined || toTime < talk.endTime) {
+                            toTime = talk.endTime;
+                        }
+                    })
+                });
+
+                fromTime = from.split("/")[2] + "-"
+                    + from.split("/")[1] + "-"
+                    + from.split("/")[0] + " "
+                    + fromTime.split(":")[0] + ":"
+                    + fromTime.split(":")[1] + ":00.0";
+                toTime = to.split("/")[2] + "-"
+                    + to.split("/")[1] + "-"
+                    + to.split("/")[0] + " "
+                    + toTime.split(':')[0] + ":"
+                    + toTime.split(':')[1] + ":00.0";
+                from = new Date(
+                    from.split("/")[2],
+                    parseInt(from.split("/")[1]) - 1,
+                    from.split("/")[0]);
+                to = new Date(
+                    to.split("/")[2],
+                    parseInt(to.split("/")[1]) - 1,
+                    to.split("/")[0]);
+
+                voxxrin.event = {
+                    "id": prefix + eventId,
+                    "title":"Codeurs En Seine 2013",
+                    "subtitle":"",
+                    "description":"",
+                    "dates": formatDates(from, to),
+                    "from": fromTime,
+                    "to": toTime,
+                    "location":"UFR Rouen - Madrillet", "nbPresentations":0,
+                    "days":[],
+                    "enabled":true
+                };
+
+
+                var i = 0;
+                rooms = _.chain(rooms).uniq(false)
+                    .sortBy(function(room) {
+                        return room;
+                    }).map(function(room) {
+                        return {
+                            id: i++,
+                            name: room
+                        };
+                    }).value();
+
+
+                _(rooms).each(function(r) {
+                    var room = voxxrin.rooms[r.name] = {"id":voxxrin.event.id + "-" + r.id, "name": r.name,
+                        "uri": "/rooms/" + voxxrin.event.id + "-" + r.id};
+                    send(baseUrl + '/r' + room.uri, room).then(function() {
+                        console.log('ROOM:', room);
+                    }).fail(onFailure);
+                });
+
+                var indexJour = 0;
+
+                _(programme.programme.jours).each(function(jour) {
+
+                    var day = new Date(
+                        jour.date.split("/")[2],
+                        parseInt(jour.date.split("/")[1]) -1,
+                        jour.date.split("/")[0]);
+
+                    voxxrin.event.days.push(
+                        {"id": eventId + '-' + indexJour,
+                            "name": dateformat(day, 'mmm dd'),
+                            "uri": "/events/" + eventId + "/day/" + eventId + '-' + indexJour,
+                            "nbPresentations": 0});
+                    voxxrin.daySchedules[jour.date.split("/")[2] + "-"
+                        + jour.date.split("/")[1] + "-"
+                        + jour.date.split("/")[0]] = {
+                        "id": eventId + '-' + indexJour,
+                        "dayNumber": indexJour,
+                        "schedule": []};
+
+                    indexJour++
+                });
+
+
+                _(programme.programme.jours).each(function(jour) {
+                    _(jour.tracks).each(function(track) {
+                        _(track.talks).each(function(talk) {
+                            voxxrin.event.nbPresentations++;
+
+                            var fromTime = jour.date.split("/")[2] + "-"
+                                + jour.date.split("/")[1] + "-"
+                                + jour.date.split("/")[0] + " "
+                                + talk.time.split(":")[0] + ":"
+                                + talk.time.split(":")[1] + ":00.0";
+
+                            var endTime = jour.date.split("/")[2] + "-"
+                                + jour.date.split("/")[1] + "-"
+                                + jour.date.split("/")[0] + " "
+                                + talk.endTime.split(":")[0] + ":"
+                                + talk.endTime.split(":")[1] + ":00.0";
+                            var daySchedule = voxxrin.daySchedules[jour.date.split("/")[2] + "-"
+                                + jour.date.split("/")[1] + "-"
+                                + jour.date.split("/")[0]];
+
+                            var voxxrinPres =
+                            {
+                                "id":prefix + talk.id,
+                                "title":talk.title,
+                                "type":"Talk",
+                                "kind":talk.format,
+                                "previousId": null, // TODO : add previous/next logic
+                                "nextId": null, // TODO : add previous/next logic
+                                "dayId": daySchedule.id,
+                                "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + talk.id,
+                                "room": voxxrin.rooms[talk.room],
+                                "slot": talk.time,
+                                "fromTime":fromTime,
+                                "toTime":endTime
+                                ,
+                                "speakers":  _(speakersByTalk[talk.id]).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); })
+                            };
+
+                            // if (talk.id !== undefined) {
+                            //     if (!talk.description) {
+                            //         talk.description = "";
+                            //     }
+                            //     load("http://cfp.breizhcamp.org/accepted/talk/" + talk.id).then(function(talkDetail) {
+                            //         send(baseUrl + '/r' + voxxrinPres.uri, _.extend(voxxrinPres,
+                            //             {
+                            //                 "tags":talkDetail.tags,
+                            //                 "summary":md(talkDetail.description)
+                            //             })).then(function () {
+                            //                 console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)
+                            //             }).fail(onFailure);
+                            //     });
+                            // } else {
+                            //     send(baseUrl + '/r' + voxxrinPres.uri, voxxrinPres).then(function () {
+                            //             console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)
+                            //         }).fail(onFailure);
+                            // }
+
+
+
+                            voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
+                            daySchedule.schedule.push(voxxrinPres);
+
+                        });
+                    });
+                });
+
+                send(baseUrl + '/r/events', voxxrin.event).then(function() {
+                    console.log('EVENT:', voxxrin.event);
+                }).fail(onFailure);
+                _(voxxrin.daySchedules).each(function (ds) {
+                    send(baseUrl + '/r/events/' + voxxrin.event.id + '/day/' + ds.id, ds).then(function(){
+                        console.log('DAY SCHEDULE:', ds.id, ' LENGTH:', ds.schedule.length);
+                    }).fail(onFailure);
+                });
+            }).fail(onFailure);
+    }
+
+    return {
+        crawl: function(baseUrl) {
+            crawl_codeursenseine(baseUrl);
+        }
+    };
+}();
+
+//eventFamilyId is the index of thsi array of family
+var EVENTS_FAMILIES = [devoxx, mixit, breizhcamp, codeursenseine];
 
 function formatDates(from, to) {
     if (from === to) {
@@ -682,6 +999,7 @@ http.createServer(function(req, response) {
     // Updating base url in dev mode
     var baseUrl = mode==="dev"?DEV_BASE_URL:PROD_BASE_URL;
 
+
     // Browsing only specific event family if "eventFamiliyId" http query param is provided
     var specificEventFamilyId = urlObj.query.eventFamilyId;
     if(specificEventFamilyId){
@@ -689,6 +1007,7 @@ http.createServer(function(req, response) {
             specificEventFamilyId = [ specificEventFamilyId ];
         }
     }
+
     var eventFamiliesToCrawl = specificEventFamilyId? _.map(specificEventFamilyId, function(famId){ return EVENTS_FAMILIES[famId]; }) : EVENTS_FAMILIES;
 
     response.writeHead(200, {"Content-Type": "text/plain"});
