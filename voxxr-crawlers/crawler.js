@@ -688,6 +688,8 @@ var codeursenseine = function() {
             }
         }
 
+
+
         var voxxrinSpeaker =
         {
             "id": id,
@@ -698,16 +700,22 @@ var codeursenseine = function() {
         var pictureURI = "/events/" + voxxrin.event.id + "/speakers/" + id + "/picture.png";
 
 
-        request.get(speaker.avatar).pipe(request.put({
-            url: baseUrl + '/r' + pictureURI,
-            headers: {
-                'Authorization':token
-            }
-        }));
+        if (speaker.avatar != "")
+        {
+            request.get(speaker.avatar).pipe(request.put({
+                url: baseUrl + '/r' + pictureURI,
+                headers: {
+                    'Authorization':token
+                }
+            }, function(error, response, body) {}));
+        }
+
+
 
         if (!speaker.description) {
             speaker.description = "";
         }
+
 
         send(baseUrl + '/r' + voxxrinSpeaker.uri, _.extend(voxxrinSpeaker, {
             "pictureURI":pictureURI,
@@ -716,17 +724,19 @@ var codeursenseine = function() {
             .then(function () {
                 console.log('SPEAKER: ', voxxrinSpeaker.id, voxxrinSpeaker.name)
             })
-            .fail(onFailure);
+            .fail(function (err) {
+                console.log('ERROR: ', err, voxxrinSpeaker.id, voxxrinSpeaker.name)
+            });
+
+
         return voxxrinSpeaker;
     }
 
     function crawl_codeursenseine(baseUrl) {
         console.log('start crawling Codeurs en Seine');
         Q.all([
-                //load('http://localhost:4000/programme-2013.json') ,""
-                load('http://www.codeursenseine.com/programme-2013.json') ,""
-                //,
-                //load('http://cfp.breizhcamp.org/accepted/speakers')
+                load('http://www.codeursenseine.com/programme-2013.json') ,load('http://www.codeursenseine.com/speakers-2013.json')
+
             ]).spread(function(programme , speakers) {
                 console.log(baseUrl);
                 console.log("Loading codeursenseine programme");
@@ -857,8 +867,12 @@ var codeursenseine = function() {
                         "uri": "/rooms/" + voxxrin.event.id + "-" + r.id};
                     send(baseUrl + '/r' + room.uri, room).then(function() {
                         console.log('ROOM:', room);
-                    }).fail(onFailure);
+                    }).fail(function (err) {
+                console.log('ERROR ROOM: ', err)
+            });
                 });
+
+                console.log("ROOM SENT!");
 
                 var indexJour = 0;
 
@@ -918,48 +932,46 @@ var codeursenseine = function() {
                                 "room": voxxrin.rooms[talk.room],
                                 "slot": talk.time,
                                 "fromTime":fromTime,
-                                "toTime":endTime
-                                ,
+                                "toTime":endTime,
+                                "summary":talk.description,
                                 "speakers":  _(speakersByTalk[talk.id]).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); })
                             };
 
-                            // if (talk.id !== undefined) {
-                            //     if (!talk.description) {
-                            //         talk.description = "";
-                            //     }
-                            //     load("http://cfp.breizhcamp.org/accepted/talk/" + talk.id).then(function(talkDetail) {
-                            //         send(baseUrl + '/r' + voxxrinPres.uri, _.extend(voxxrinPres,
-                            //             {
-                            //                 "tags":talkDetail.tags,
-                            //                 "summary":md(talkDetail.description)
-                            //             })).then(function () {
-                            //                 console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)
-                            //             }).fail(onFailure);
-                            //     });
-                            // } else {
-                            //     send(baseUrl + '/r' + voxxrinPres.uri, voxxrinPres).then(function () {
-                            //             console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)
-                            //         }).fail(onFailure);
-                            // }
+
+                            if (talk.id === undefined) {
+                            
+                                send(baseUrl + '/r' + voxxrinPres.uri, voxxrinPres).then(function () {
+                                        console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)
+                                    }).fail(onFailure);
+                            }
 
 
 
                             voxxrin.event.days[daySchedule.dayNumber].nbPresentations++;
+                            //console.log('TALK:', voxxrinPres);
                             daySchedule.schedule.push(voxxrinPres);
 
                         });
                     });
                 });
 
+
                 send(baseUrl + '/r/events', voxxrin.event).then(function() {
-                    console.log('EVENT:', voxxrin.event);
-                }).fail(onFailure);
+                    console.log('EVENT:', voxxrin.event.title);
+                }).fail(function (err) {
+                console.log('ERROR EVENTS: ', err)
+            });
                 _(voxxrin.daySchedules).each(function (ds) {
                     send(baseUrl + '/r/events/' + voxxrin.event.id + '/day/' + ds.id, ds).then(function(){
                         console.log('DAY SCHEDULE:', ds.id, ' LENGTH:', ds.schedule.length);
-                    }).fail(onFailure);
+                        console.log("SCHEDULE SENT!");
+                    }).fail(function (err) {
+                console.log('ERROR SCHEDULE: ', err)
+            });
                 });
-            }).fail(onFailure);
+            }).fail(function (err) {
+                console.log('ERROR GLOBAL: ', err)
+            });
     }
 
     return {
