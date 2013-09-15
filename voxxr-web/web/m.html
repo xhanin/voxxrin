@@ -52,6 +52,7 @@
             <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">Login</a>
             <h1>Voxxrin</h1>
             <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
+            <a href="#events" id="showPastEvents" data-bind="visible: !showPastEvents()" data-transition="slidedown" style="margin-right: 90px" class="ui-btn-right">Show past events</a>
         </div>
         <div data-role="content">
         <p class="loading" data-bind="visible: events.loading">
@@ -60,7 +61,7 @@
         <p data-bind="visible: events().length === 0 && !events.loading()">
             No upcoming event covered :(
         </p>
-        <ul class="events"  data-role="listview" data-bind="listview: events">
+        <ul class="events"  data-role="listview" data-bind="listview: showableEvents">
             <li data-theme="a"><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
                 <p><strong data-bind="text: subtitle"></strong> ~ <span data-bind="text: dates"></span></p>

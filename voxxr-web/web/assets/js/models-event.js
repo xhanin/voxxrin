@@ -29,6 +29,7 @@
         self.nowplaying.hash = ko.computed(function() {return "index#!nowplaying~" + self.id()});
         self.data = ko.observable({});
         self.loading = ko.observable(false);
+        self.enabled = ko.observable();
         self.my = null;
         var crons = {};
 
@@ -46,6 +47,7 @@
             self.subtitle(data.subtitle);
             self.from(data.from);
             self.to(data.to);
+            self.enabled(data.enabled);
             self.nbPresentations(data.nbPresentations);
             self.dates(data.dates);
             if (has.nowplaying) {

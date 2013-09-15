@@ -7,11 +7,20 @@ $(function() { models.Device.current().whenReady(function() {
         self.chosenEventId = ko.observable(null);
         self.chosenDay = models.ScheduleDay.current;
         self.chosenDayId = ko.observable(null);
+        self.showPastEvents = ko.observable(false);
         self.chosenPresentation = models.Presentation.current;
         self.chosenPresentationId = ko.observable(null);
         self.currentRoom = models.Room.current;
         self.user = models.User.current;
         self.device = models.Device.current;
+        self.showableEvents = ko.computed(function() {
+            var events = self.events();
+            var showPastEvents = self.showPastEvents();
+            var filteredEvents = _.filter(events, function(ev) {
+                return showPastEvents || ev.enabled();
+            });
+            return filteredEvents;
+        });
         self.loginBtn = ko.computed(function() {
             var u = self.user();
             return (u && u.id()) || 'Login';
@@ -302,6 +311,9 @@ $(function() { models.Device.current().whenReady(function() {
     } else if (typeof ChildBrowser !== 'undefined') {
         client_browser = ChildBrowser.install();
     }
+    tappable("a#showPastEvents", function() {
+        voxxr.showPastEvents(true);
+    });
     tappable("a.signin", function() {
         if (client_browser != null) {
             console.log('registering onLocationChange');
