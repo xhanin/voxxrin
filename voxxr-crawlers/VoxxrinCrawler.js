@@ -89,8 +89,8 @@ module.exports = function(opts){
                     'speakers': s.speakers,
                     'room': _(self.rooms).find(function(room){ return room.name === (s.room?s.room:"???"); }),
                     'slot': dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
-                    'fromTime': s.fromTime,
-                    'toTime': s.toTime
+                    'fromTime': typeof(s.fromTime) === "string" ? s.fromTime : dateformat(s.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
+                    'toTime': typeof(s.toTime) === "string" ? s.toTime : dateformat(s.toTime,"yyyy-mm-dd HH:MM:ss.0")
                 };
 
                 var shouldStop = self.options.decorateVoxxrinPresentation.call(self, voxxrinPres, daySchedule);
