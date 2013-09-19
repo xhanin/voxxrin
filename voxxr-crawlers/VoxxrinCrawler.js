@@ -150,7 +150,7 @@ module.exports = function(opts){
     };
 
     self.formatDates = function (from, to) {
-        if (from === to) {
+        if (from === to || from.getDay() === to.getDay()) {
             return dateformat(from, 'mmm dd, yyyy');
         } else if (from.getMonth() === to.getMonth()) {
             return dateformat(from, 'mmm') + ' '
