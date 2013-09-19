@@ -21,7 +21,7 @@ module.exports = function(opts){
 
             self.options.logInitialCrawlingResults.apply(self, promisesResults);
 
-            var schedule = self.options.extractSortedScheduleFromInitialCrawling.apply(self, promisesResults);
+            self.currentContext.sortedSchedule = self.options.extractSortedScheduleFromInitialCrawling.apply(self, promisesResults);
             self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
             self.rooms = self.options.extractRoomsFromInitialCrawling.apply(self, promisesResults);
             _(self.rooms).each(function(room) {
@@ -50,7 +50,7 @@ module.exports = function(opts){
             });
 
             var presentationInfosPromises = [];
-            _(schedule).each(function(s, i) {
+            _(self.currentContext.sortedSchedule).each(function(s, i) {
                 self.event.nbPresentations++;
                 var fromTime = new Date(Date.parse(s.fromTime)),
                     daySchedule = self.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
@@ -82,8 +82,8 @@ module.exports = function(opts){
                     'title': s.title,
                     'type': s.type,
                     'kind': s.kind,
-                    'previousId': self.options.prefix + schedule[(i-1+schedule.length)%schedule.length].id,
-                    'nextId': self.options.prefix + schedule[(i+1)%schedule.length].id,
+                    'previousId': self.options.prefix + self.currentContext.sortedSchedule[(i-1+self.currentContext.sortedSchedule.length)%self.currentContext.sortedSchedule.length].id,
+                    'nextId': self.options.prefix + self.currentContext.sortedSchedule[(i+1)%self.currentContext.sortedSchedule.length].id,
                     'dayId': daySchedule.id,
                     'uri': '/events/' + self.event.id + "/presentations/" + self.options.prefix + s.id,
                     'speakers': s.speakers,
