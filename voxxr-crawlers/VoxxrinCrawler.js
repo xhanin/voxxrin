@@ -15,7 +15,7 @@ module.exports = function(opts){
         console.log('start crawling on '+self.options.name+' (event ' + event + ')');
         self.currentContext = { baseUrl: baseUrl, event: event };
 
-        var urlPromises = _.map(self.options.initialCrawlingUrls(event), load);
+        var urlPromises = _.map(self.options.initialCrawlingUrls(event), self.options.initialUrlParsingCallback);
         Q.all(urlPromises).spread(function(){
             var promisesResults = arguments;
 
@@ -179,6 +179,7 @@ module.exports = function(opts){
             events: [],
             onFailureCallback: function(err) { console.log('ERROR', err); },
             initialCrawlingUrls: function(event){ throw "Should be implemented : initialCrawlingUrls" },
+            initialUrlParsingCallback: load, // By default : parsing content as JSON
             logInitialCrawlingResults: function(){ console.log("Initial promises fetched !"); },
             extractSortedScheduleFromInitialCrawling: function() { throw "Should be implemented : extractSortedScheduleFromInitialCrawling" },
             extractEventFromInitialCrawling: function(){ throw "Should be implemented : extractEventFromInitialCrawling" },
