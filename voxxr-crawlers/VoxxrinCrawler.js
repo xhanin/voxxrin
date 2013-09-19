@@ -87,7 +87,7 @@ module.exports = function(opts){
                     'dayId': daySchedule.id,
                     'uri': '/events/' + self.event.id + "/presentations/" + self.options.prefix + s.id,
                     'speakers': s.speakers,
-                    'room': _(self.rooms).find(function(room){ return room.name === (s.room?s.room:"???"); }),
+                    'room': _(self.rooms).find(function(room){ return room.name === (s.roomName?s.roomName:"???"); }),
                     'slot': dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
                     'fromTime': typeof(s.fromTime) === "string" ? s.fromTime : dateformat(s.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
                     'toTime': typeof(s.toTime) === "string" ? s.toTime : dateformat(s.toTime,"yyyy-mm-dd HH:MM:ss.0")

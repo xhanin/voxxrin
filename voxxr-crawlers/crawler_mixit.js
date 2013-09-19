@@ -61,6 +61,7 @@ module.exports = new VoxxrinCrawler({
             s.kind = s.format; delete s.format;
             s.fromTime = s.start;
             s.toTime = s.end;
+            s.roomName = s.room;
         });
 
         return sortedSchedule;
@@ -126,7 +127,6 @@ module.exports = new VoxxrinCrawler({
         return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
-        //voxxrinPres.room = voxxrinPres.room.name;
         voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
         voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0")
         //voxxrinPres.experience = voxxrinPres.level;
