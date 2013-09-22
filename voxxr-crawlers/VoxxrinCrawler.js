@@ -66,17 +66,28 @@ module.exports = function(opts){
                         .then(function(fetchedSpeaker) {
                             var speakerImage = fetchedSpeaker.imageUrl;
                             delete fetchedSpeaker.imageUrl;
+                            var voxxrinSpeakerUri;
+                            if(speakerImage) {
                                 var imageExt = speakerImage.substring(speakerImage.lastIndexOf('.'));
                                 imageExt = imageExt.length > 5 ? ".png" : imageExt;
+                                voxxrinSpeakerUri = "/events/" + self.event.id + "/speakers/" + fetchedSpeaker.id + "/picture" + imageExt;
+                            } else {
+                                voxxrinSpeakerUri = null;
+                            }
 
-                            var voxxrinSpeakerUri = "/events/" + self.event.id + "/speakers/" + fetchedSpeaker.id + "/picture" + imageExt;
                             fetchedSpeaker.pictureURI = voxxrinSpeakerUri;
 
+                            // Updating initial speaker object's pictureURI
+                            sp.pictureURI = voxxrinSpeakerUri;
+
                             send(baseUrl + '/r' + sp.uri, fetchedSpeaker)
-                                .then(function() {console.log('SPEAKER: ', fetchedSpeaker.id, fetchedSpeaker.name)})
-                                .fail(self.options.onFailureCallback);
-                            self.provideSpeakerImage(speakerImage, voxxrinSpeakerUri);
-                        });
+                            .then(function() {
+                                if(speakerImage){
+                                    self.provideSpeakerImage(speakerImage, voxxrinSpeakerUri);
+                                }
+                                console.log('SPEAKER: ', fetchedSpeaker.id, fetchedSpeaker.name);
+                            }).fail(self.options.onFailureCallback);
+                        }).fail(self.options.onFailureCallback);
                     });
 
                     var voxxrinPres = {
@@ -138,6 +149,7 @@ module.exports = function(opts){
     };
 
     self.provideSpeakerImage = function(pictureUri, voxxrinPictureUri) {
+        console.log("Fetching picture "+pictureUri+" ...");
         request.get(pictureUri).pipe(request.put({
             url: self.currentContext.baseUrl + '/r' + voxxrinPictureUri,
             headers: {
