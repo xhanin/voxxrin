@@ -95,25 +95,11 @@ module.exports = new VoxxrinCrawler({
     },
     extractEventFromInitialCrawling: function(baseUrlBody, scheduleBody) {
         var $ = cheerio.load(baseUrlBody);
-
-        var configuredEvent = this.currentContext.event;
-        var fromTime = this.currentContext.sortedSchedule[0].fromTime;
-        var toTime = this.currentContext.sortedSchedule[this.currentContext.sortedSchedule.length - 1].toTime;
-
         var $venues = $('#venues');
         return {
-            'id': this.options.prefix + configuredEvent.id,
-            'title': configuredEvent.title,
             'subtitle': '',
             'description': $('.tagline').text(),
-            'dates': this.formatDates(fromTime, toTime),
-            'from': fromTime,
-            'to': toTime,
-            'location': $venues.find('h3 a').text() + ', ' + $venues.find('.primary-place a').eq(2).text() + ', ' + $venues.find('.primary-place a').eq(1).text(),
-            'nbPresentations':0,
-            'days':[],
-            'enabled':true,
-            'dayDates': this.calculateDayDates(fromTime, toTime)
+            'location': $venues.find('h3 a').text() + ', ' + $venues.find('.primary-place a').eq(2).text() + ', ' + $venues.find('.primary-place a').eq(1).text()
         };
     },
     extractRoomsFromInitialCrawling: function(baseUrlBody, scheduleBody) {

@@ -22,10 +22,29 @@ module.exports = function(opts){
             self.options.logInitialCrawlingResults.apply(self, promisesResults);
 
             var scheduleDeferred = Q.defer();
+            console.log("Retrieving schedule...");
             self.options.extractScheduleFromInitialCrawling.apply(self, [scheduleDeferred].concat(promisesResults));
             Q.when(scheduleDeferred.promise).then(function(schedule){
+                console.log("Schedule fetched !");
                 self.currentContext.sortedSchedule = _(schedule).sortBy(function(s) { return s.fromTime; });
+
+                var fromTime = self.currentContext.sortedSchedule[0].fromTime;
+                var toTime = self.currentContext.sortedSchedule[self.currentContext.sortedSchedule.length - 1].toTime;
+
                 self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
+                self.event = _.extend({}, {
+                    id: self.options.prefix + event.id,
+                    title: self.currentContext.event.title,
+                    description: self.currentContext.event.description,
+                    dates: self.formatDates(fromTime, toTime),
+                    from: fromTime,
+                    to: toTime,
+                    nbPresentations: 0,
+                    days: [],
+                    enabled: true,
+                    dayDates: self.calculateDayDates(fromTime, toTime)
+                }, self.event);
+
                 self.rooms = self.options.extractRoomsFromInitialCrawling.apply(self, promisesResults);
                 _(self.rooms).each(function(room) {
                     room.uri = '/rooms/' + room.id;
@@ -53,13 +72,17 @@ module.exports = function(opts){
                 });
 
                 var daySchedulesPromises = [];
-                _(self.currentContext.sortedSchedule).each(function(s, i) {
+                _(self.currentContext.sortedSchedule).each(function(s, scheduleIndex) {
+                    console.log("Handling talk number "+scheduleIndex+"...");
+
                     self.event.nbPresentations++;
                     var fromTime = new Date(Date.parse(s.fromTime)),
                         daySchedule = self.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
 
                     var speakersDeferred = [];
-                    _(s.speakers).each(function(sp) {
+                    _(s.speakers).each(function(sp, speakerIndex) {
+                        console.log("Handling speaker "+speakerIndex+"...");
+
                         // Generating speaker uri
                         sp.uri = '/events/' + self.event.id + '/speakers/' + sp.id;
 
@@ -70,6 +93,8 @@ module.exports = function(opts){
                         self.options.fetchSpeakerInfosFrom.call(self, speakerInfosDeferred, sp);
                         Q.when(speakerInfosDeferred.promise)
                         .then(function(fetchedSpeaker) {
+                            console.log("Speaker infos "+speakerIndex+" for talk "+scheduleIndex+" fetched !");
+
                             var speakerImage = fetchedSpeaker.imageUrl;
                             delete fetchedSpeaker.imageUrl;
                             var voxxrinSpeakerUri;
@@ -102,8 +127,8 @@ module.exports = function(opts){
                         'title': s.title,
                         'type': s.type,
                         'kind': s.kind,
-                        'previousId': self.options.prefix + self.currentContext.sortedSchedule[(i-1+self.currentContext.sortedSchedule.length)%self.currentContext.sortedSchedule.length].id,
-                        'nextId': self.options.prefix + self.currentContext.sortedSchedule[(i+1)%self.currentContext.sortedSchedule.length].id,
+                        'previousId': self.options.prefix + self.currentContext.sortedSchedule[(scheduleIndex-1+self.currentContext.sortedSchedule.length)%self.currentContext.sortedSchedule.length].id,
+                        'nextId': self.options.prefix + self.currentContext.sortedSchedule[(scheduleIndex+1)%self.currentContext.sortedSchedule.length].id,
                         'dayId': daySchedule.id,
                         'uri': '/events/' + self.event.id + "/presentations/" + self.options.prefix + s.id,
                         'speakers': s.speakers,
@@ -118,6 +143,8 @@ module.exports = function(opts){
                         return;
                     }
 
+                    console.log("Presentation "+scheduleIndex+" ready...");
+
                     self.event.days[daySchedule.dayNumber].nbPresentations++;
 
                     var presentationInfoPromise = Q.defer();
@@ -128,6 +155,8 @@ module.exports = function(opts){
 
                     Q.all([presentationInfoPromise.promise].concat(speakersDeferred))
                     .spread(function(presentationInfos) {
+                        console.log("Presentation "+scheduleIndex+" required infos available !");
+
                         daySchedule.schedule.push(presentationInfos);
                         daySchedulePromise.resolve(presentationInfos);
 
@@ -291,17 +320,8 @@ module.exports = function(opts){
              * This object should look like this :
              * {
              *   'id': string, // Unique event id for voxxrin. Generally made of this.options.prefix + some unique id
-             *   'title': string, // Computable. Event title. Could be made of this.currentContext.event.title
              *   'subtitle': '', // Useless ???
-             *   'description': string, // Computable. Event description. Could be made of this.currentContext.event.description
-             *   'dates': string, // Computable. String-ed dates displayed below the event
-             *   'from': date, // Computable. First planned schedule datetime
-             *   'to': date, // Computable. Last planned schedule datetime
-             *   'location': string, // Place where the event takes place
-             *   'nbPresentations':0,
-             *   'days':[],
-             *   'enabled':true,
-             *   'dayDates': [date] // Computable. List of Dates where
+             *   'location': string // Place where the event takes place
              * }
              *
              * This method is a deferred-oriented method, where, once you have built the event object, you should call

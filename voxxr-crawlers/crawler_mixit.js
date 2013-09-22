@@ -63,35 +63,15 @@ module.exports = new VoxxrinCrawler({
             s.roomName = s.room;
         });
 
-        deferred.resolve(sortedSchedule);
+        var nonCancelledSchedule = _(sortedSchedule).filter(function (s) { return s.toTime; });
+
+        deferred.resolve(nonCancelledSchedule);
     },
     extractEventFromInitialCrawling: function(schedule) {
         var event = this.currentContext.event;
-        var from = event.from,
-            to = event.to;
-
-        var fromTime = from, toTime = to;
-        if (schedule.length) {
-            fromTime = schedule[0].start;
-            var nonCancelledSchedule = _(schedule).filter(function (s) {
-                return s.end;
-            });
-            toTime = _(nonCancelledSchedule).sortBy(function(s) {return s.end})[nonCancelledSchedule.length - 1].end;
-        }
-
         return {
-            'id': this.options.prefix + event.id,
-            'title': event.title,
             'subtitle': event.subtitle,
-            'description': event.description,
-            'dates': this.formatDates(from, to),
-            'from': fromTime,
-            'to': toTime,
-            'location': event.location,
-            'nbPresentations':0,
-            'days':[],
-            'enabled':true,
-            'dayDates': this.calculateDayDates(from, to)
+            'location': event.location
         };
     },
     extractRoomsFromInitialCrawling: function(schedule) {

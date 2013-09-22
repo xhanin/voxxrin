@@ -50,23 +50,9 @@ module.exports = new VoxxrinCrawler({
         }));
     },
     extractEventFromInitialCrawling: function(fetchedEvent) {
-        var configuredEvent = this.currentContext.event;
-        var fromTime = this.currentContext.sortedSchedule[0].fromTime;
-        var toTime = this.currentContext.sortedSchedule[this.currentContext.sortedSchedule.length - 1].toTime;
-
         return {
-            'id': this.options.prefix + configuredEvent.id,
-            'title': configuredEvent.title,
             'subtitle': '',
-            'description': fetchedEvent.description,
-            'dates': this.formatDates(fromTime, toTime),
-            'from': fromTime,
-            'to': toTime,
-            'location': fetchedEvent.place,
-            'nbPresentations':0,
-            'days':[],
-            'enabled':true,
-            'dayDates': this.calculateDayDates(fromTime, toTime)
+            'location': fetchedEvent.place
         };
     },
     extractRoomsFromInitialCrawling: function(fetchedEvent) {
