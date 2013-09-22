@@ -21,10 +21,9 @@ module.exports = new VoxxrinCrawler({
     logInitialCrawlingResults: function(fetchedEvent){
         console.log("loaded event JugSummerCamp, " + fetchedEvent.presentations.length + " presentations");
     },
-    extractSortedScheduleFromInitialCrawling: function(deferred, fetchedEvent) {
+    extractScheduleFromInitialCrawling: function(deferred, fetchedEvent) {
         var self = this;
-        var sortedSchedule = _(fetchedEvent.presentations).sortBy(function(s) { return s['start-date']; });
-        deferred.resolve(_(sortedSchedule).map(function(s) {
+        deferred.resolve(_(fetchedEvent.presentations).map(function(s) {
             // Crappy hack because timestamps in jugsummercamp json file are not in UTC...
             var fromTime = new Date(s['start-date'] - 2*60*60*1000);
             var toTime = new Date(s['end-date'] - 2*60*60*1000);
@@ -88,17 +87,6 @@ module.exports = new VoxxrinCrawler({
             'imageUrl': sp['__pictureUrl']
         });
         return deferred.promise;
-    },
-    decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
-        //voxxrinPres.room = voxxrinPres.room.name;
-        //voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
-        //voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0")
-        //voxxrinPres.experience = voxxrinPres.level;
-
-        //delete voxxrinPres.start;
-        //delete voxxrinPres.end;
-
-        return false;
     },
     fetchPresentationInfosFrom: function(deferred, s, voxxrinPres) {
         deferred.resolve(_.extend({}, voxxrinPres, {

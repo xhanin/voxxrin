@@ -36,7 +36,7 @@ module.exports = new VoxxrinCrawler({
     logInitialCrawlingResults: function(baseUrlBody, scheduleBody){
         console.log("loaded event "+this.currentContext.event.title);
     },
-    extractSortedScheduleFromInitialCrawling: function(deferred, baseUrlBody, scheduleBody) {
+    extractScheduleFromInitialCrawling: function(deferred, baseUrlBody, scheduleBody) {
         var self = this;
 
         self.currentContext.$ = cheerio.load(scheduleBody);
@@ -90,9 +90,7 @@ module.exports = new VoxxrinCrawler({
             return schedule;
         });
         Q.all(speakersDeferred).spread(function(){
-            var sortedSchedule = _(schedules).sortBy(function(s) { return s.fromTime; });
-
-            deferred.resolve(sortedSchedule);
+            deferred.resolve(schedules);
         });
     },
     extractEventFromInitialCrawling: function(baseUrlBody, scheduleBody) {
@@ -136,17 +134,6 @@ module.exports = new VoxxrinCrawler({
             'imageUrl': sp['__pictureUrl']
         });
         return deferred.promise;
-    },
-    decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
-        //voxxrinPres.room = voxxrinPres.room.name;
-        //voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
-        //voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0")
-        //voxxrinPres.experience = voxxrinPres.level;
-
-        //delete voxxrinPres.start;
-        //delete voxxrinPres.end;
-
-        return false;
     },
     fetchPresentationInfosFrom: function(deferred, s, voxxrinPres) {
         deferred.resolve(_.extend({}, voxxrinPres, {

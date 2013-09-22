@@ -22,9 +22,9 @@ module.exports = function(opts){
             self.options.logInitialCrawlingResults.apply(self, promisesResults);
 
             var scheduleDeferred = Q.defer();
-            self.options.extractSortedScheduleFromInitialCrawling.apply(self, [scheduleDeferred].concat(promisesResults));
-            Q.when(scheduleDeferred.promise).then(function(sortedSchedule){
-                self.currentContext.sortedSchedule = sortedSchedule;
+            self.options.extractScheduleFromInitialCrawling.apply(self, [scheduleDeferred].concat(promisesResults));
+            Q.when(scheduleDeferred.promise).then(function(schedule){
+                self.currentContext.sortedSchedule = _(schedule).sortBy(function(s) { return s.fromTime; });
                 self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
                 self.rooms = self.options.extractRoomsFromInitialCrawling.apply(self, promisesResults);
                 _(self.rooms).each(function(room) {
@@ -213,7 +213,7 @@ module.exports = function(opts){
              *   // you could pass an opt.initialCrawlingUrls as well
              *   initialCrawlingUrls: [string]
              *   **
-             *     Eventually other specific fields you will need in extractSortedScheduleFromInitialCrawling(),
+             *     Eventually other specific fields you will need in extractScheduleFromInitialCrawling(),
              *     extractEventFromInitialCrawling() and extractRoomsFromInitialCrawling() methods
              *     In general, we prefix these field names with double underscores '__'
              *   **
@@ -228,7 +228,7 @@ module.exports = function(opts){
             /**
              * Not mandatory, by default, will return current configured event's `initialCrawlingUrls` field
              * Purpose is to generate a [string] containing every urls to fetch at the beginning of the crawling process
-             * Results of these urls will be passed as varargs to extractSortedScheduleFromInitialCrawling(),
+             * Results of these urls will be passed as varargs to extractScheduleFromInitialCrawling(),
              * extractEventFromInitialCrawling() and extractRoomsFromInitialCrawling() callbacks
              */
             initialCrawlingUrls: function(event){ return event.initialCrawlingUrls; },
@@ -277,8 +277,6 @@ module.exports = function(opts){
              *   ...
              * ]
              *
-             * The schedule should be ordered given the start of every talks
-             *
              * This method is a deferred-oriented method, where, once you have built the sorted schedule, you should call
              * deferred.resolve(sortedSchedule).
              * This makes xhr calls to subsequent urls (for speaker infos for instance) possible
@@ -286,7 +284,7 @@ module.exports = function(opts){
              * Additionnal arguments are the result of fetched initialCrawlingUrls where initialUrlParsingCallback()
              * has been applied
              */
-            extractSortedScheduleFromInitialCrawling: function(deferred, firstUrlResult, secondUrlResult, etc) { throw "Should be implemented : extractSortedScheduleFromInitialCrawling" },
+            extractScheduleFromInitialCrawling: function(deferred, firstUrlResult, secondUrlResult, etc) { throw "Should be implemented : extractScheduleFromInitialCrawling" },
             /**
              * Converting initialUrls results into an Event object, representing every talks
              * for the event.
@@ -319,7 +317,7 @@ module.exports = function(opts){
              */
             extractRoomsFromInitialCrawling: function(firstUrlResult, secondUrlResult, etc){ throw "Should be implemented : extractRoomsFromInitialCrawling" },
             /**
-             * Converting speakers info fetched during extractSortedScheduleFromInitialCrawling, into
+             * Converting speakers info fetched during extractScheduleFromInitialCrawling, into
              * a more complex speaker object
              * This object should look like this :
              * {
@@ -332,11 +330,11 @@ module.exports = function(opts){
              * deferred.resolve(speaker).
              * This makes xhr calls to subsequent urls (for additionnal speaker infos for instance) possible
              *
-             * Speaker argument is the speaker object result from extractSortedScheduleFromInitialCrawling()
+             * Speaker argument is the speaker object result from extractScheduleFromInitialCrawling()
              */
             fetchSpeakerInfosFrom: function(deferred, speaker) { throw "Should be implemented : fetchSpeakerInfosFrom" },
             /**
-             * Allowing to decorate initial presentation object, created during extractSortedScheduleFromInitialCrawling()
+             * Allowing to decorate initial presentation object, created during extractScheduleFromInitialCrawling()
              * This method could be useful to remove unwanted properties on the object
              *
              * The method should return a boolean allowing to omit (when true) given presentation
@@ -352,7 +350,7 @@ module.exports = function(opts){
              *   'experience': 0, // Computable
              *   'tags': [string], // List of tags qualifying presentation
              *
-             *   ... and attributes from extractSortedScheduleFromInitialCrawling() call :
+             *   ... and attributes from extractScheduleFromInitialCrawling() call :
              *
              *   'id': integer, // unique id for current talk
              *   'title': string, // Talk's summary
