@@ -52,17 +52,23 @@ module.exports = function(opts){
                     };
                 });
 
-            var presentationInfosPromises = [];
+                var daySchedulesPromises = [];
                 _(self.currentContext.sortedSchedule).each(function(s, i) {
                     self.event.nbPresentations++;
                     var fromTime = new Date(Date.parse(s.fromTime)),
                         daySchedule = self.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
 
+                    var speakersDeferred = [];
                     _(s.speakers).each(function(sp) {
                         // Generating speaker uri
                         sp.uri = '/events/' + self.event.id + '/speakers/' + sp.id;
 
-                        Q.when(self.options.fetchSpeakerInfosFrom.call(self, Q.defer(), sp))
+                        var speakerDeferred = Q.defer();
+                        speakersDeferred.push(speakerDeferred.promise);
+
+                        var speakerInfosDeferred = Q.defer();
+                        self.options.fetchSpeakerInfosFrom.call(self, speakerInfosDeferred, sp);
+                        Q.when(speakerInfosDeferred.promise)
                         .then(function(fetchedSpeaker) {
                             var speakerImage = fetchedSpeaker.imageUrl;
                             delete fetchedSpeaker.imageUrl;
@@ -79,6 +85,7 @@ module.exports = function(opts){
 
                             // Updating initial speaker object's pictureURI
                             sp.pictureURI = voxxrinSpeakerUri;
+                            speakerDeferred.resolve();
 
                             send(baseUrl + '/r' + sp.uri, fetchedSpeaker)
                             .then(function() {
@@ -87,7 +94,7 @@ module.exports = function(opts){
                                 }
                                 console.log('SPEAKER: ', fetchedSpeaker.id, fetchedSpeaker.name);
                             }).fail(self.options.onFailureCallback);
-                        }).fail(self.options.onFailureCallback);
+                        }).fail(_.bind(self.onDeferredFailureCallback, {deferred: speakerInfosDeferred}));
                     });
 
                     var voxxrinPres = {
@@ -113,11 +120,16 @@ module.exports = function(opts){
 
                     self.event.days[daySchedule.dayNumber].nbPresentations++;
 
-                    var presentationInfoPromise = self.options.fetchPresentationInfosFrom.call(self, Q.defer(), s, voxxrinPres);
-                    presentationInfosPromises.push(presentationInfoPromise);
-                    Q.when(presentationInfoPromise)
-                    .then(function(presentationInfos) {
+                    var presentationInfoPromise = Q.defer();
+                    self.options.fetchPresentationInfosFrom.call(self, presentationInfoPromise, s, voxxrinPres);
+
+                    var daySchedulePromise = Q.defer();
+                    daySchedulesPromises.push(daySchedulePromise.promise);
+
+                    Q.all([presentationInfoPromise.promise].concat(speakersDeferred))
+                    .spread(function(presentationInfos) {
                         daySchedule.schedule.push(presentationInfos);
+                        daySchedulePromise.resolve(presentationInfos);
 
                         send(baseUrl + '/r' + voxxrinPres.uri, presentationInfos)
                         .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
@@ -131,7 +143,7 @@ module.exports = function(opts){
                 }).fail(self.options.onFailureCallback);
 
                 // Waiting for every presentations being persisted
-                Q.all(presentationInfosPromises).spread(function(){
+                Q.all(daySchedulesPromises).spread(function(){
                     _(self.daySchedules).each(function (ds) {
                         send(baseUrl + '/r/events/' + self.event.id + '/day/' + ds.id, ds).then(function(){
                             console.log('DAY SCHEDULE:', ds.id, ' LENGTH:', ds.schedule.length);
