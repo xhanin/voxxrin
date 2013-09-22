@@ -29,7 +29,7 @@ module.exports = new VoxxrinCrawler({
     logInitialCrawlingResults: function(schedule){
         console.log("loaded event Mix-IT, " + schedule.length + " presentations");
     },
-    extractSortedScheduleFromInitialCrawling: function(schedule) {
+    extractSortedScheduleFromInitialCrawling: function(deferred, schedule) {
         var self = this;
         // Parsing dates and adding "virtual" start and end time for all-day running events
         var sortedSchedule = _(schedule).map(function(s) {
@@ -64,7 +64,7 @@ module.exports = new VoxxrinCrawler({
             s.roomName = s.room;
         });
 
-        return sortedSchedule;
+        deferred.resolve(sortedSchedule);
     },
     extractEventFromInitialCrawling: function(schedule) {
         var event = this.currentContext.event;

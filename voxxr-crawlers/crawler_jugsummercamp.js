@@ -26,10 +26,10 @@ module.exports = new VoxxrinCrawler({
     logInitialCrawlingResults: function(fetchedEvent){
         console.log("loaded event JugSummerCamp, " + fetchedEvent.presentations.length + " presentations");
     },
-    extractSortedScheduleFromInitialCrawling: function(fetchedEvent) {
+    extractSortedScheduleFromInitialCrawling: function(deferred, fetchedEvent) {
         var self = this;
         var sortedSchedule = _(fetchedEvent.presentations).sortBy(function(s) { return s['start-date']; });
-        return _(sortedSchedule).map(function(s) {
+        deferred.resolve(_(sortedSchedule).map(function(s) {
             // Crappy hack because timestamps in jugsummercamp json file are not in UTC...
             var fromTime = new Date(s['start-date'] - 2*60*60*1000);
             var toTime = new Date(s['end-date'] - 2*60*60*1000);
@@ -53,7 +53,7 @@ module.exports = new VoxxrinCrawler({
 
                 '__summary': s.description
             };
-        });
+        }));
     },
     extractEventFromInitialCrawling: function(fetchedEvent) {
         var configuredEvent = this.currentContext.event;
