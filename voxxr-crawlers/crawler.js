@@ -11,7 +11,8 @@ var http = require("http"),
     VoxxrinCrawler = require('./VoxxrinCrawler.js'),
     //devoxx = require('./crawler_devoxx.js')
     mixit = require('./crawler_mixit.js'),
-    jugsummercamp = require('./crawler_jugsummercamp.js')
+    jugsummercamp = require('./crawler_jugsummercamp.js'),
+    lanyrd = require('./crawler_lanyrd.js')
     ;
 
 var PROD_BASE_URL = 'http://app.voxxr.in';
@@ -824,7 +825,7 @@ var codeursenseine = function() {
 }();
 
 //eventFamilyId is the index of thsi array of family
-var EVENTS_FAMILIES = [devoxx, mixit, breizhcamp, codeursenseine, jugsummercamp];
+var EVENTS_FAMILIES = [devoxx, mixit, breizhcamp, codeursenseine, jugsummercamp, lanyrd];
 
 function formatDates(from, to) {
     if (from === to) {

@@ -1,0 +1,157 @@
+var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
+    Q = require('q'),
+    _ = require('underscore'),
+    load = require("./load.js"),
+    dateformat = require('dateformat'),
+    send = require("./send.js"),
+    request = require("request"),
+    cheerio = require("cheerio");;
+
+module.exports = new VoxxrinCrawler({
+    name: 'Lanyrd',
+    prefix: 'lrd',
+    events: [
+        {
+            /* Lean Kanban France 2013 */
+            id: 'lkbf13',
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: 'Lean Kanban France 2013',
+            domainUrl: 'http://lanyrd.com',
+            baseUrl: 'http://lanyrd.com/2013/lean-kanban-france/'
+        }
+    ],
+    initialCrawlingUrls: function(event) {
+        return [
+            event.baseUrl,
+            event.baseUrl+"schedule/"
+        ];
+    },
+    initialUrlParsingCallback: function(url) {
+        var deferred = Q.defer();
+        request({uri:url}, function(error,response,body){
+            deferred.resolve(body);
+        });
+        return deferred.promise;
+    },
+    logInitialCrawlingResults: function(baseUrlBody, scheduleBody){
+        console.log("loaded event "+this.currentContext.event.title);
+    },
+    extractSortedScheduleFromInitialCrawling: function(deferred, baseUrlBody, scheduleBody) {
+        var self = this;
+
+        self.currentContext.$ = cheerio.load(scheduleBody);
+        var $ = self.currentContext.$;
+
+        var speakersDeferred = [];
+        var schedules = $(".schedule-item").map(function(i) {
+            // Crappy hack because timestamps in jugsummercamp json file are not in UTC...
+            var $el = $(this);
+            var fromTimeVal = $el.find('.dtstart .value-title').attr("title");
+            var toTimeVal = $el.find('.dtend .value-title').attr("title");
+            var schedule = {
+                'id': i,
+                'title': $el.find("h2 a").text(),
+                'type': 'Talk',
+                'kind': 'Conference',
+                // Will be done.. later (see below)
+                'speakers': [],
+                'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+"))) - 2*60*60*1000),
+                'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+"))) - 2*60*60*1000),
+                'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
+
+                '__summary': $el.find('div.desc').text()
+            };
+
+            var prezUrl = self.currentContext.event.domainUrl + $el.find('h2 a').attr('href');
+
+            var speakerDeferred = Q.defer();
+            speakersDeferred.push(speakerDeferred.promise);
+            request({uri:prezUrl}, function(error,response,speakerPageBody){
+                var $ = cheerio.load(speakerPageBody);
+
+                schedule.speakers = $('div.primary div.mini-profile').map(function(){
+                    var $el = $(this);
+                    var speakerProfileUrl = $el.find('.name a').attr('href').replace(/\/$/, "")
+                    try {
+                        return {
+                            'id': self.options.prefix + '-' + speakerProfileUrl.substring(speakerProfileUrl.lastIndexOf('/')).replace(/^\//, "").replace("_","-"),
+                            'name': $el.find('.name a').text(),
+                            'bio': $el.find('div.profile-longdesc p').text(),
+                            '__pictureUrl': $el.find('div.avatar a img').attr('src')
+                        };
+                    }catch(e){
+                        console.error(e);
+                    }
+                });
+
+                speakerDeferred.resolve(schedule.speakers);
+            });
+
+            return schedule;
+        });
+        Q.all(speakersDeferred).spread(function(){
+            var sortedSchedule = _(schedules).sortBy(function(s) { return s.fromTime; });
+
+            deferred.resolve(sortedSchedule);
+        });
+    },
+    extractEventFromInitialCrawling: function(baseUrlBody, scheduleBody) {
+        var $ = cheerio.load(baseUrlBody);
+
+        var configuredEvent = this.currentContext.event;
+        var fromTime = this.currentContext.sortedSchedule[0].fromTime;
+        var toTime = this.currentContext.sortedSchedule[this.currentContext.sortedSchedule.length - 1].toTime;
+
+        var $venues = $('#venues');
+        return {
+            'id': this.options.prefix + configuredEvent.id,
+            'title': configuredEvent.title,
+            'subtitle': '',
+            'description': $('.tagline').text(),
+            'dates': this.formatDates(fromTime, toTime),
+            'from': fromTime,
+            'to': toTime,
+            'location': $venues.find('h3 a').text() + ', ' + $venues.find('.primary-place a').eq(2).text() + ', ' + $venues.find('.primary-place a').eq(1).text(),
+            'nbPresentations':0,
+            'days':[],
+            'enabled':true,
+            'dayDates': this.calculateDayDates(fromTime, toTime)
+        };
+    },
+    extractRoomsFromInitialCrawling: function(baseUrlBody, scheduleBody) {
+        var self = this;
+        var i=0;
+        return _.chain(this.currentContext.sortedSchedule).pluck('roomName').uniq(false).sortBy(function(r) { return r; }).map(function(r) {
+           return {
+               id: self.event.id + "-" + i++,
+               name: r
+           };
+       }).value();
+    },
+    fetchSpeakerInfosFrom: function(deferred, sp) {
+        deferred.resolve({
+            'id': sp.id,
+            'name': sp.name,
+            'bio': sp.bio,
+            'imageUrl': sp['__pictureUrl']
+        });
+        return deferred.promise;
+    },
+    decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
+        //voxxrinPres.room = voxxrinPres.room.name;
+        //voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
+        //voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0")
+        //voxxrinPres.experience = voxxrinPres.level;
+
+        //delete voxxrinPres.start;
+        //delete voxxrinPres.end;
+
+        return false;
+    },
+    fetchPresentationInfosFrom: function(deferred, s, voxxrinPres) {
+        deferred.resolve(_.extend({}, voxxrinPres, {
+            'summary': s['__summary']
+        }));
+        return deferred.promise;
+    }
+});
