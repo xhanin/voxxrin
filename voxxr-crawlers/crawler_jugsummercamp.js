@@ -55,16 +55,6 @@ module.exports = new VoxxrinCrawler({
             'location': fetchedEvent.place
         };
     },
-    extractRoomsFromInitialCrawling: function(fetchedEvent) {
-        var self = this;
-        var i=0;
-        return _.chain(this.currentContext.sortedSchedule).pluck('roomName').uniq(false).sortBy(function(r) { return r; }).map(function(r) {
-           return {
-               id: self.event.id + "-" + i++,
-               name: r
-           };
-       }).value();
-    },
     fetchSpeakerInfosFrom: function(deferred, sp) {
         deferred.resolve({
             'id': sp.id,

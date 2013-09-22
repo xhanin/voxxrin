@@ -60,7 +60,7 @@ module.exports = new VoxxrinCrawler({
             s.kind = s.format; delete s.format;
             s.fromTime = s.start;
             s.toTime = s.end;
-            s.roomName = s.room;
+            s.roomName = s.room || "???";
         });
 
         var nonCancelledSchedule = _(sortedSchedule).filter(function (s) { return s.toTime; });
@@ -73,21 +73,6 @@ module.exports = new VoxxrinCrawler({
             'subtitle': event.subtitle,
             'location': event.location
         };
-    },
-    extractRoomsFromInitialCrawling: function(schedule) {
-        var self = this;
-        var i=0;
-        return _.chain(schedule).map(function(s) {
-           if (! s.room) {
-               return "???";
-           }
-           return s.room;
-       }).uniq(false).sortBy(function(r) { return r; }).map(function(r) {
-           return {
-               id: self.event.id + "-" + i++,
-               name: r
-           };
-       }).value();
     },
     fetchSpeakerInfosFrom: function(deferred, sp) {
         load(sp.url).then(function(speaker) {

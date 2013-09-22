@@ -11,6 +11,16 @@ var http = require("http"),
 module.exports = function(opts){
     var self = this;
 
+    function extractUniqueRoomsFrom(sortedSchedule, eventId) {
+        var i=0;
+        return _.chain(sortedSchedule).pluck('roomName').uniq(false).sortBy(function(r) { return r; }).map(function(r) {
+           return {
+               id: eventId + "-" + i++,
+               name: r
+           };
+       }).value();
+    }
+
     function crawlEvent(baseUrl, event) {
         console.log('start crawling on '+self.options.name+' (event ' + event + ')');
         self.currentContext = { baseUrl: baseUrl, event: event };
@@ -45,7 +55,7 @@ module.exports = function(opts){
                     dayDates: self.calculateDayDates(fromTime, toTime)
                 }, self.event);
 
-                self.rooms = self.options.extractRoomsFromInitialCrawling.apply(self, promisesResults);
+                self.rooms = extractUniqueRoomsFrom(self.currentContext.sortedSchedule, self.event.id);
                 _(self.rooms).each(function(room) {
                     room.uri = '/rooms/' + room.id;
                 });
@@ -242,8 +252,8 @@ module.exports = function(opts){
              *   // you could pass an opt.initialCrawlingUrls as well
              *   initialCrawlingUrls: [string]
              *   **
-             *     Eventually other specific fields you will need in extractScheduleFromInitialCrawling(),
-             *     extractEventFromInitialCrawling() and extractRoomsFromInitialCrawling() methods
+             *     Eventually other specific fields you will need in extractScheduleFromInitialCrawling() and
+             *     extractEventFromInitialCrawling() methods
              *     In general, we prefix these field names with double underscores '__'
              *   **
              * }
@@ -257,8 +267,8 @@ module.exports = function(opts){
             /**
              * Not mandatory, by default, will return current configured event's `initialCrawlingUrls` field
              * Purpose is to generate a [string] containing every urls to fetch at the beginning of the crawling process
-             * Results of these urls will be passed as varargs to extractScheduleFromInitialCrawling(),
-             * extractEventFromInitialCrawling() and extractRoomsFromInitialCrawling() callbacks
+             * Results of these urls will be passed as varargs to extractScheduleFromInitialCrawling() and
+             * extractEventFromInitialCrawling() callbacks
              */
             initialCrawlingUrls: function(event){ return event.initialCrawlingUrls; },
             /**
@@ -332,10 +342,6 @@ module.exports = function(opts){
              * has been applied
              */
             extractEventFromInitialCrawling: function(firstUrlResult, secondUrlResult, etc){ throw "Should be implemented : extractEventFromInitialCrawling" },
-            /**
-             * Computable, should be removed soon
-             */
-            extractRoomsFromInitialCrawling: function(firstUrlResult, secondUrlResult, etc){ throw "Should be implemented : extractRoomsFromInitialCrawling" },
             /**
              * Converting speakers info fetched during extractScheduleFromInitialCrawling, into
              * a more complex speaker object

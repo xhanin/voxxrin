@@ -102,16 +102,6 @@ module.exports = new VoxxrinCrawler({
             'location': $venues.find('h3 a').text() + ', ' + $venues.find('.primary-place a').eq(2).text() + ', ' + $venues.find('.primary-place a').eq(1).text()
         };
     },
-    extractRoomsFromInitialCrawling: function(baseUrlBody, scheduleBody) {
-        var self = this;
-        var i=0;
-        return _.chain(this.currentContext.sortedSchedule).pluck('roomName').uniq(false).sortBy(function(r) { return r; }).map(function(r) {
-           return {
-               id: self.event.id + "-" + i++,
-               name: r
-           };
-       }).value();
-    },
     fetchSpeakerInfosFrom: function(deferred, sp) {
         deferred.resolve({
             'id': sp.id,
