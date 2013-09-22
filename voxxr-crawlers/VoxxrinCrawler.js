@@ -201,18 +201,183 @@ module.exports = function(opts){
 
     (function(opts){
         self.options = _.extend({
-            name: 'noname',
-            prefix: 'nopfx',
+            name: 'noname', // MANDATORY, a simple string describing event name
+            prefix: 'nopfx', // MANDATORY, a tiny string allowing to prefix urls. Some sort of url namespace.
+            /**
+             * Array of objects like this :
+             * {
+             *   id: integer, // An id allowing to distinguish an event from another one in current event family
+             *   title: string, // Name of this event which will be displayed in the events list
+             *   // List of crawling urls associated with this event
+             *   // If every initial crawling URLs could be calculated from the same event info in the event family,
+             *   // you could pass an opt.initialCrawlingUrls as well
+             *   initialCrawlingUrls: [string]
+             *   **
+             *     Eventually other specific fields you will need in extractSortedScheduleFromInitialCrawling(),
+             *     extractEventFromInitialCrawling() and extractRoomsFromInitialCrawling() methods
+             *     In general, we prefix these field names with double underscores '__'
+             *   **
+             * }
+             * Current event object will be made available in self.currentContext.event
+             */
             events: [],
+            /**
+             * Not mandatory, by default, will display the error message in console
+             */
             onFailureCallback: function(err) { console.log('ERROR', err); },
-            initialCrawlingUrls: function(event){ throw "Should be implemented : initialCrawlingUrls" },
+            /**
+             * Not mandatory, by default, will return current configured event's `initialCrawlingUrls` field
+             * Purpose is to generate a [string] containing every urls to fetch at the beginning of the crawling process
+             * Results of these urls will be passed as varargs to extractSortedScheduleFromInitialCrawling(),
+             * extractEventFromInitialCrawling() and extractRoomsFromInitialCrawling() callbacks
+             */
+            initialCrawlingUrls: function(event){ return event.initialCrawlingUrls; },
+            /**
+             * Define the way initial urls results are parsed
+             * By default, result will be parsed as JSON object, but you could change this implementation, for instance,
+             * to consider urls are returning HTML content
+             * Important note : this method should return a promise, resolved once the content has been parsed to an
+             * object representation (JSON object, HTML string, whatever)
+             */
             initialUrlParsingCallback: load, // By default : parsing content as JSON
-            logInitialCrawlingResults: function(){ console.log("Initial promises fetched !"); },
+            /**
+             * Some hint saying initial urls have been fetched
+             * No big deal here...
+             */
+            logInitialCrawlingResults: function(){ console.log("Initial urls fetched !"); },
+            /**
+             * Converting initialUrls results into a sorted Schedule object, representing every talks
+             * for the event.
+             * This object should look like this :
+             * [
+             *   {
+             *     'id': integer, // unique id for current talk
+             *     'title': string, // Talk's summary
+             *     'type': string, // Type of talk, could be, for instance, 'University', 'Hands-on Labs', 'Tools in Action', 'Conference', 'Quickie', 'BOF', or whatever
+             *     'kind': 'Talk'|'Keynote', // Type of talk, special cases for Keynotes
+             *     'speakers': [
+             *       {
+             *         'id': integer, // Unique speaker id
+             *         'name': string, // Speaker name
+             *         **
+             *           Eventually other specific fields you will need in fetchSpeakerInfosFrom() method
+             *           In general, we prefix these field names with double underscore '__'
+             *         **
+             *       },
+             *       ...
+             *     ],
+             *     'fromTime': date, // datetime start of the talk
+             *     'toTime': date, // datetime end of the talk
+             *     'roomName': string, // Room's name for the talk
+             *     **
+             *       Eventually other specific fields you will need in fetchPresentationInfosFrom() method
+             *       In general, we prefix these field names with double underscore '__'
+             *     **
+             *   },
+             *   ...
+             * ]
+             *
+             * The schedule should be ordered given the start of every talks
+             *
+             * This method is a deferred-oriented method, where, once you have built the sorted schedule, you should call
+             * deferred.resolve(sortedSchedule).
+             * This makes xhr calls to subsequent urls (for speaker infos for instance) possible
+             *
+             * Additionnal arguments are the result of fetched initialCrawlingUrls where initialUrlParsingCallback()
+             * has been applied
+             */
             extractSortedScheduleFromInitialCrawling: function(deferred, firstUrlResult, secondUrlResult, etc) { throw "Should be implemented : extractSortedScheduleFromInitialCrawling" },
+            /**
+             * Converting initialUrls results into an Event object, representing every talks
+             * for the event.
+             * This object should look like this :
+             * {
+             *   'id': string, // Unique event id for voxxrin. Generally made of this.options.prefix + some unique id
+             *   'title': string, // Computable. Event title. Could be made of this.currentContext.event.title
+             *   'subtitle': '', // Useless ???
+             *   'description': string, // Computable. Event description. Could be made of this.currentContext.event.description
+             *   'dates': string, // Computable. String-ed dates displayed below the event
+             *   'from': date, // Computable. First planned schedule datetime
+             *   'to': date, // Computable. Last planned schedule datetime
+             *   'location': string, // Place where the event takes place
+             *   'nbPresentations':0,
+             *   'days':[],
+             *   'enabled':true,
+             *   'dayDates': [date] // Computable. List of Dates where
+             * }
+             *
+             * This method is a deferred-oriented method, where, once you have built the event object, you should call
+             * deferred.resolve(event).
+             * This makes xhr calls to subsequent urls (for additionnal event infos for instance) possible
+             *
+             * Additionnal arguments are the result of fetched initialCrawlingUrls where initialUrlParsingCallback()
+             * has been applied
+             */
             extractEventFromInitialCrawling: function(firstUrlResult, secondUrlResult, etc){ throw "Should be implemented : extractEventFromInitialCrawling" },
+            /**
+             * Computable, should be removed soon
+             */
             extractRoomsFromInitialCrawling: function(firstUrlResult, secondUrlResult, etc){ throw "Should be implemented : extractRoomsFromInitialCrawling" },
+            /**
+             * Converting speakers info fetched during extractSortedScheduleFromInitialCrawling, into
+             * a more complex speaker object
+             * This object should look like this :
+             * {
+             *   'id': integer, // Unique speaker id
+             *   'name': string, // Speaker name
+             *   'bio': string, // Speaker bio
+             *   'imageUrl': url // Speaker picture image (should be a url)
+             * }
+             * This method is a deferred-oriented method, where, once you have built the Speaker object, you should call
+             * deferred.resolve(speaker).
+             * This makes xhr calls to subsequent urls (for additionnal speaker infos for instance) possible
+             *
+             * Speaker argument is the speaker object result from extractSortedScheduleFromInitialCrawling()
+             */
             fetchSpeakerInfosFrom: function(deferred, speaker) { throw "Should be implemented : fetchSpeakerInfosFrom" },
+            /**
+             * Allowing to decorate initial presentation object, created during extractSortedScheduleFromInitialCrawling()
+             * This method could be useful to remove unwanted properties on the object
+             *
+             * The method should return a boolean allowing to omit (when true) given presentation
+             * Omitting a presentation won't persist it
+             */
             decorateVoxxrinPresentation: function(voxxrinPres, daySchedule){ return false; },
+            /**
+             * Allowing to decorate initial Presentation by fetching additionnal informations
+             * This object should look like this :
+             * {
+             *   'summary': string, // Presentation's description
+             *   'track': string, // Facultative, presentation's track name
+             *   'experience': 0, // Computable
+             *   'tags': [string], // List of tags qualifying presentation
+             *
+             *   ... and attributes from extractSortedScheduleFromInitialCrawling() call :
+             *
+             *   'id': integer, // unique id for current talk
+             *   'title': string, // Talk's summary
+             *   'type': string, // Type of talk, could be, for instance, 'University', 'Hands-on Labs', 'Tools in Action', 'Conference', 'Quickie', 'BOF', or whatever
+             *   'kind': 'Talk'|'Keynote', // Type of talk, special cases for Keynotes
+             *   'speakers': [
+             *     {
+             *       'id': integer, // Unique speaker id
+             *       'name': string, // Speaker name
+             *       **
+             *         Eventually other specific fields you will need in fetchSpeakerInfosFrom() method
+             *         In general, we prefix these field names with double underscore '__'
+             *       **
+             *     },
+             *     ...
+             *   ],
+             *   'fromTime': date, // datetime start of the talk
+             *   'toTime': date, // datetime end of the talk
+             *   'roomName': string, // Room's name for the talk
+             * }
+             *
+             * This method is a deferred-oriented method, where, once you have built the Presentation object, you should call
+             * deferred.resolve(presentation).
+             * This makes xhr calls to subsequent urls (for additionnal event infos for instance) possible
+             */
             fetchPresentationInfosFrom: function(deferred, schedule, voxxrinPres){ throw "Should be implemented : fetchPresentationInfosFrom" }
         }, opts);
 

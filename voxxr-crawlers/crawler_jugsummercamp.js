@@ -15,14 +15,9 @@ module.exports = new VoxxrinCrawler({
             /* Hardcoding some event details here, since not provided by REST API */
             title: "JugSummerCamp 2013",
             description: "Une journée entière, à l'espace Encan de La Rochelle, pour prendre les dernières nouvelles du monde Java.",
-            initialUrl: "http://www.jugsummercamp.com/api/edition/4"
+            initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/4"]
         }
     ],
-    initialCrawlingUrls: function(event) {
-        return [
-            event.initialUrl
-        ];
-    },
     logInitialCrawlingResults: function(fetchedEvent){
         console.log("loaded event JugSummerCamp, " + fetchedEvent.presentations.length + " presentations");
     },
