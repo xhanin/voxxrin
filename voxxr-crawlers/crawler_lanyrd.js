@@ -55,8 +55,8 @@ module.exports = new VoxxrinCrawler({
                 'kind': 'Conference',
                 // Will be done.. later (see below)
                 'speakers': [],
-                'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+"))) - 2*60*60*1000),
-                'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+"))) - 2*60*60*1000),
+                'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+")))),
+                'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+")))),
                 'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
 
                 '__summary': $el.find('div.desc').text()
