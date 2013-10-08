@@ -25,12 +25,11 @@ public class EventsResources implements RestRouter.RequestHandler {
         String kind = "Event";
         MemcacheService memcache = MemcacheServiceFactory.getMemcacheService("entities");
         if ("GET".equalsIgnoreCase(req.getMethod())) {
-                Iterable<Entity> entities = (Iterable<Entity>) memcache.get("events");
+            Iterable<Entity> entities = (Iterable<Entity>) memcache.get("events");
             if (entities == null) {
                 DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
                 entities = datastore.prepare(new Query(kind)
-                        // Useless filter : filtering will be applied on clientside instead
-                        //.addFilter("enabled", Query.FilterOperator.EQUAL, true)
+                        .addFilter("enabled", Query.FilterOperator.EQUAL, true)
                         .addSort("from"))
                         .asIterable(FetchOptions.Builder.withLimit(100));
                 memcache.put("events", new ArrayList(Lists.newArrayList(entities)));
