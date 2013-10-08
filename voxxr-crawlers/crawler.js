@@ -514,6 +514,10 @@ var codeursenseine = function() {
         "conference": {
             title: 'Conférence',
             duree: 50
+        },
+        "podcast": {
+            title: 'Podcast',
+            duree: 60
         }
     };
 
