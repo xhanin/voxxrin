@@ -109,12 +109,13 @@ var devoxx = function() {
                 var fromTime = new Date(Date.parse(s.fromTime)),
                     daySchedule = voxxrin.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
 
+                var notDuplicatedSpeakers = _.map(_.uniq(_.pluck(s.speakers, "speakerId")), function(speakerId){ return _.find(s.speakers, function(speaker){ return speaker.speakerId === speakerId; }); });
                 var voxxrinPres = {"id":prefix + s.id, "title":s.title, "type":s.type, "kind":s.kind,
                         "previousId": prefix + schedule[(i-1+schedule.length)%schedule.length].id,
                         "nextId": prefix + schedule[(i+1)%schedule.length].id,
                         "dayId": daySchedule.id,
                         "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
-                        "speakers": _(s.speakers).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); }),
+                        "speakers": _(notDuplicatedSpeakers).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); }),
                         "room": voxxrin.rooms[s.room],
                         "slot": dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'), "fromTime":s.fromTime,"toTime":s.toTime};
 
