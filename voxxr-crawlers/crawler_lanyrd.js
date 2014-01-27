@@ -44,7 +44,6 @@ module.exports = new VoxxrinCrawler({
 
         var speakersDeferred = [];
         var schedules = $(".schedule-item").map(function(i) {
-            // Crappy hack because timestamps in jugsummercamp json file are not in UTC...
             var $el = $(this);
             var fromTimeVal = $el.find('.dtstart .value-title').attr("title");
             var toTimeVal = $el.find('.dtend .value-title').attr("title");
