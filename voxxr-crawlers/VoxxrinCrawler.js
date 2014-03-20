@@ -263,7 +263,9 @@ module.exports = function(opts){
             /**
              * Not mandatory, by default, will display the error message in console
              */
-            onFailureCallback: function(err) { console.log('ERROR', err); },
+            onFailureCallback: function(err) {
+                console.log('ERROR', err);
+            },
             /**
              * Not mandatory, by default, will return current configured event's `initialCrawlingUrls` field
              * Purpose is to generate a [string] containing every urls to fetch at the beginning of the crawling process
@@ -333,10 +335,6 @@ module.exports = function(opts){
              *   'subtitle': '', // Useless ???
              *   'location': string // Place where the event takes place
              * }
-             *
-             * This method is a deferred-oriented method, where, once you have built the event object, you should call
-             * deferred.resolve(event).
-             * This makes xhr calls to subsequent urls (for additionnal event infos for instance) possible
              *
              * Additionnal arguments are the result of fetched initialCrawlingUrls where initialUrlParsingCallback()
              * has been applied
