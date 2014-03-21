@@ -15,14 +15,14 @@ module.exports = function(opts){
         var i=0;
         return _.chain(sortedSchedule).pluck('roomName').uniq(false).sortBy(function(r) { return r; }).map(function(r) {
            return {
-               id: eventId + "-" + i++,
+               id: (eventId + "-" + i++).toLowerCase(),
                name: r
            };
        }).value();
     }
 
     function crawlEvent(baseUrl, event) {
-        console.log('start crawling on '+self.options.name+' (event ' + event + ')');
+        console.log('start crawling on ' + self.options.name + ' (event ' + event + ')');
         self.currentContext = { baseUrl: baseUrl, event: event };
 
         var urlPromises = _.map(self.options.initialCrawlingUrls(event), self.options.initialUrlParsingCallback);
@@ -43,7 +43,7 @@ module.exports = function(opts){
 
                 self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
                 self.event = _.extend({}, {
-                    id: self.options.prefix + event.id,
+                    id: (self.options.prefix + event.id).toLowerCase(),
                     title: self.currentContext.event.title,
                     description: self.currentContext.event.description,
                     dates: self.formatDates(fromTime, toTime),
@@ -67,7 +67,7 @@ module.exports = function(opts){
                 });
 
                 _(self.event.dayDates).each(function(dayDate, i){
-                    var dayId = self.event.id + '-' + i;
+                    var dayId = (self.event.id + '-' + i).toLowerCase();
                     self.event.days.push({
                         'id': dayId,
                         'name': dateformat(dayDate, 'mmm dd'),
@@ -132,15 +132,16 @@ module.exports = function(opts){
                         }).fail(_.bind(self.onDeferredFailureCallback, {deferred: speakerInfosDeferred}));
                     });
 
+                    var prezId = (self.options.prefix + s.id).toLowerCase();
                     var voxxrinPres = {
-                        'id': self.options.prefix + s.id,
+                        'id': prezId,
                         'title': s.title,
                         'type': s.type,
                         'kind': s.kind,
                         'previousId': self.options.prefix + self.currentContext.sortedSchedule[(scheduleIndex-1+self.currentContext.sortedSchedule.length)%self.currentContext.sortedSchedule.length].id,
                         'nextId': self.options.prefix + self.currentContext.sortedSchedule[(scheduleIndex+1)%self.currentContext.sortedSchedule.length].id,
                         'dayId': daySchedule.id,
-                        'uri': '/events/' + self.event.id + "/presentations/" + self.options.prefix + s.id,
+                        'uri': '/events/' + self.event.id + "/presentations/" + prezId,
                         'speakers': s.speakers,
                         'room': _(self.rooms).find(function(room){ return room.name === (s.roomName?s.roomName:"???"); }),
                         'slot': dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
