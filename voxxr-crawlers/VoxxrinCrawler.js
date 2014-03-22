@@ -52,7 +52,7 @@ module.exports = function(opts){
                 var toTime = self.currentContext.sortedSchedule[self.currentContext.sortedSchedule.length - 1].toTime;
 
                 self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
-                self.event = _.extend({}, {
+                self.event = _.extend({}, self.event, {
                     id: (self.options.prefix + event.id).toLowerCase(),
                     title: self.currentContext.event.title,
                     description: self.currentContext.event.description,
@@ -63,7 +63,7 @@ module.exports = function(opts){
                     days: [],
                     enabled: true,
                     dayDates: self.calculateDayDates(fromTime, toTime)
-                }, self.event);
+                });
 
                 self.rooms = extractUniqueRoomsFrom(self.currentContext.sortedSchedule, self.event.id);
                 _(self.rooms).each(function(room) {
@@ -80,13 +80,13 @@ module.exports = function(opts){
                 _(self.event.dayDates).each(function(dayDate, i){
                     var dayId = (self.event.id + '-' + i).toLowerCase();
                     self.event.days.push({
-                        'id': dayId,
+                        'id': dayId.toLowerCase(),
                         'name': dateformat(dayDate, 'mmm dd'),
                         'uri': '/events/' + self.event.id + '/day/' + dayId,
                         'nbPresentations': 0
                     });
                     self.daySchedules[dateformat(dayDate, 'yyyy-mm-dd')] = {
-                        'id': dayId,
+                        'id': dayId.toLowerCase(),
                         'dayNumber': i,
                         'schedule': []
                     };
