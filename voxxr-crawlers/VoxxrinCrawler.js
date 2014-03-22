@@ -191,6 +191,7 @@ module.exports = function(opts){
                 });
 
                 delete self.event.dayDates;
+                delete self.event.initialCrawlingUrls;
                 self.sendQueries++;
                 send(baseUrl + '/r/events', self.event).then(function() {
                     console.log('EVENT:', self.event);
