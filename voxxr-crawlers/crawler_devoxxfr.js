@@ -38,7 +38,15 @@ module.exports = new VoxxrinCrawler({
         var deferred = arguments[0];
         var slots = [];
         for(var i=1; i<arguments.length; i++) {
-            slots.push.apply(slots, arguments[i].slots);
+            var splittedCorrespondingUrl = this.currentContext.event.initialCrawlingUrls[i-1].split("/");
+            var scheduleDay = splittedCorrespondingUrl[splittedCorrespondingUrl.length-1].substr(0,3);
+            var daySlots = arguments[i].slots;
+
+            // For each slots, remembering their corresponding day, because we could have slots having the same
+            // ids on different days (thus, we should append the day name to the id later...)
+            var enhancedDaySlots = _.map(daySlots, function(daySlot) { return _.extend({}, daySlot, { day: scheduleDay }); });
+
+            slots.push.apply(slots, enhancedDaySlots);
         }
 
         var self = this;
