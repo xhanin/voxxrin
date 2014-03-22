@@ -144,7 +144,7 @@ module.exports = function(opts){
                         }).fail(_.bind(self.onDeferredFailureCallback, {deferred: speakerInfosDeferred}));
                     });
 
-                    var prezId = (self.options.prefix + s.id).toLowerCase();
+                    var prezId = (self.options.prefix + s.id).toLowerCase().replace(/_/gi, "-");
                     var voxxrinPres = {
                         'id': prezId,
                         'title': s.title,
