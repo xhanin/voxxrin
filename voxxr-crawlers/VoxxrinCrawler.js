@@ -10,6 +10,10 @@ var http = require("http"),
 
 module.exports = function(opts){
     var self = this;
+    self.sendQueries = 0;
+    self.sendQueryErrors = 0;
+    self.loadQueries = 0;
+    self.loadQueryErrors = 0;
 
     function extractUniqueRoomsFrom(sortedSchedule, eventId) {
         var i=0;
@@ -21,8 +25,14 @@ module.exports = function(opts){
        }).value();
     }
 
-    function crawlEvent(baseUrl, event) {
+    function crawlEvent(baseUrl, event, debugQueries) {
         console.log('start crawling on ' + self.options.name + ' (event ' + event + ')');
+        if (debugQueries) {
+            setInterval(function () {
+                console.log("Sent queries : " + self.sendQueries + ", errors : " + self.sendQueryErrors);
+                console.log("Loaded queries : " + self.loadQueries + ", errors : " + self.loadQueryErrors);
+            }, 5000);
+        }
         self.currentContext = { baseUrl: baseUrl, event: event };
 
         var urlPromises = _.map(self.options.initialCrawlingUrls(event), self.options.initialUrlParsingCallback);
@@ -61,6 +71,7 @@ module.exports = function(opts){
                 });
 
                 _(self.rooms).each(function(r) {
+                    self.sendQueries++;
                     send(baseUrl + '/r' + r.uri, r).then(function() {
                         console.log('ROOM:', r);
                     }).fail(self.options.onFailureCallback);
@@ -122,6 +133,7 @@ module.exports = function(opts){
                             sp.pictureURI = voxxrinSpeakerUri;
                             speakerDeferred.resolve();
 
+                            self.sendQueries++;
                             send(baseUrl + '/r' + sp.uri, fetchedSpeaker)
                             .then(function() {
                                 if(speakerImage){
@@ -171,6 +183,7 @@ module.exports = function(opts){
                         daySchedule.schedule.push(presentationInfos);
                         daySchedulePromise.resolve(presentationInfos);
 
+                        self.sendQueries++;
                         send(baseUrl + '/r' + voxxrinPres.uri, presentationInfos)
                         .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
                         .fail(self.options.onFailureCallback);
@@ -178,6 +191,7 @@ module.exports = function(opts){
                 });
 
                 delete self.event.dayDates;
+                self.sendQueries++;
                 send(baseUrl + '/r/events', self.event).then(function() {
                     console.log('EVENT:', self.event);
                 }).fail(self.options.onFailureCallback);
@@ -185,6 +199,7 @@ module.exports = function(opts){
                 // Waiting for every presentations being persisted
                 Q.all(daySchedulesPromises).spread(function(){
                     _(self.daySchedules).each(function (ds) {
+                        self.sendQueries++;
                         send(baseUrl + '/r/events/' + self.event.id + '/day/' + ds.id, ds).then(function(){
                             console.log('DAY SCHEDULE:', ds.id, ' LENGTH:', ds.schedule.length);
                         }).fail(self.options.onFailureCallback);
@@ -194,14 +209,16 @@ module.exports = function(opts){
         });
     }
 
-    self.crawl = function(baseUrl) {
+    self.crawl = function(baseUrl, debugQueries) {
         _(self.options.events).each(function(event){
-            crawlEvent(baseUrl, event);
+            crawlEvent(baseUrl, event, debugQueries);
         });
     };
 
     self.provideSpeakerImage = function(pictureUri, voxxrinPictureUri) {
         console.log("Fetching picture "+pictureUri+" ...");
+        self.sendQueries++;
+        self.loadQueries++;
         request.get(pictureUri).pipe(request.put({
             url: self.currentContext.baseUrl + '/r' + voxxrinPictureUri,
             headers: {
@@ -209,6 +226,7 @@ module.exports = function(opts){
             }
         }, function(error, response, body){
             if(error){
+                self.sendQueryErrors++;
                 console.error("Error while importing speaker picture "+pictureUri+" to "+voxxrinPictureUri);
             } else {
                 console.log("Speaker picture "+pictureUri+" fetched successfully to "+voxxrinPictureUri + " !");
@@ -265,6 +283,7 @@ module.exports = function(opts){
              * Not mandatory, by default, will display the error message in console
              */
             onFailureCallback: function(err) {
+                self.sendQueryErrors++;
                 console.log('ERROR', err);
             },
             /**
@@ -405,6 +424,7 @@ module.exports = function(opts){
         }, opts);
 
         self.onDeferredFailureCallback = function(err){
+            self.loadQueryErrors++;
             this.deferred.reject(new Error(err));
         };
 

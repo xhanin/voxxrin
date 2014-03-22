@@ -104,6 +104,7 @@ module.exports = new VoxxrinCrawler({
         return this.currentContext.event;
     },
     fetchSpeakerInfosFrom: function(deferred, sp) {
+        this.loadQueries++;
         load(sp.__href).then(function(speaker) {
             var voxxrinSpeaker = _.extend({}, sp, {
                 'bio':speaker.bio,
