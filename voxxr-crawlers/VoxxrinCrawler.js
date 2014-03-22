@@ -219,8 +219,8 @@ module.exports = function(opts){
         console.log("Fetching picture "+pictureUri+" ...");
         self.sendQueries++;
         self.loadQueries++;
-        request.get(pictureUri).pipe(request.put({
-            url: self.currentContext.baseUrl + '/r' + voxxrinPictureUri,
+        request.get({ uri: pictureUri, headers: { 'User-Agent': 'Node' } }).pipe(request.put({
+            uri: self.currentContext.baseUrl + '/r' + voxxrinPictureUri,
             headers: {
                 'Authorization':token
             }
