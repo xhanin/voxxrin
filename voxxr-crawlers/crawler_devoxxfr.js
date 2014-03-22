@@ -55,7 +55,8 @@ module.exports = new VoxxrinCrawler({
             try {
                 var title, id, type, kind, speakers, summary, track;
                 if (s.break) {
-                    id = self.options.prefix + s.break.id;
+                    // We should use slotId because "dej" slots have the same id on different days
+                    id = s.slotId;
                     title = s.break.nameFR;
                     type = "Break";
                     kind = "Break";
@@ -63,7 +64,7 @@ module.exports = new VoxxrinCrawler({
                     summary = "";
                     track = null;
                 } else if(s.talk) {
-                    id = self.options.prefix + s.talk.id;
+                    id = s.talk.id;
                     title = s.talk.title;
                     type = s.talk.talkType;
                     kind = "Talk";
@@ -78,7 +79,7 @@ module.exports = new VoxxrinCrawler({
                     summary = s.talk.summary;
                     track = s.talk.track;
                 } else {
-                    id = self.options.prefix + s.slotId;
+                    id = s.slotId;
                     title = "SANS TITRE ("+ s.slotId+")";
                     type = "???";
                     kind = "???";
