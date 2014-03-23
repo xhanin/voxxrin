@@ -103,12 +103,12 @@ public class EventResources implements RestRouter.RequestHandler {
                 });
                 prezKeys = ImmutableSet.copyOf(prezKeys);
 
-                Rests.deleteEntitiesByKeys("Speaker", speakerKeys.toArray(new String[0]));
-                Rests.deleteEntitiesByKeys("Room", roomKeys.toArray(new String[0]));
-                Rests.deleteEntitiesByKeys("Presentation", prezKeys.toArray(new String[0]));
-                Rests.deleteEntitiesByKeys("PresentationHeader", prezKeys.toArray(new String[0]));
-                Rests.deleteEntitiesByKeys("DaySchedule", dayKeys.toArray(new String[0]));
-                Rests.deleteEntitiesByKeys("Event", eventId);
+                Rests.deleteEntitiesByKeys(req, resp, "Speaker", speakerKeys.toArray(new String[0]));
+                Rests.deleteEntitiesByKeys(req, resp, "Room", roomKeys.toArray(new String[0]));
+                Rests.deleteEntitiesByKeys(req, resp, "Presentation", prezKeys.toArray(new String[0]));
+                Rests.deleteEntitiesByKeys(req, resp, "PresentationHeader", prezKeys.toArray(new String[0]));
+                Rests.deleteEntitiesByKeys(req, resp, "DaySchedule", dayKeys.toArray(new String[0]));
+                Rests.deleteEntitiesByKeys(req, resp, "Event", eventId);
 
             } catch (EntityNotFoundException e) {
                 resp.sendError(404);

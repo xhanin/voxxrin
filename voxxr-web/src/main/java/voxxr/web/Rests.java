@@ -172,7 +172,16 @@ public class Rests {
         return entity;
     }
 
-    public static void deleteEntitiesByKeys(final String kind, String... ids) {
+    public static void deleteEntitiesByKeys(HttpServletRequest req, HttpServletResponse resp,
+                                            final String kind, String... ids) throws IOException {
+        if (!isSecure(req)) {
+            resp.sendError(403, "Unauthorized");
+            return;
+        }
+        insecureDeleteEntitiesByKeys(kind, ids);
+    }
+
+    public static void insecureDeleteEntitiesByKeys(final String kind, String... ids) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Collection<Key> keys = Collections2.transform(Arrays.asList(ids), new Function<String, Key>() {
             @Override
