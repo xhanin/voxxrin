@@ -6,6 +6,7 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +22,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * User: xavierhanin
@@ -167,6 +170,20 @@ public class Rests {
 
         DatastoreServiceFactory.getDatastoreService().put(callback.prepare(json, entity));
         return entity;
+    }
+
+    public static void deleteEntitiesByKeys(final String kind, String... ids) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Collection<Key> keys = Collections2.transform(Arrays.asList(ids), new Function<String, Key>() {
+            @Override
+            public Key apply(@Nullable String input) {
+                return createKey(kind, input);
+            }
+        });
+        datastore.delete(keys);
+        for(Key key : keys){
+            MemcacheServiceFactory.getMemcacheService("entities").delete(KeyFactory.keyToString(key));
+        }
     }
 
     public static Entity getOrCreateEntityForUpdate(String kind, String id) {
