@@ -9,6 +9,7 @@
     <dependencies defaultconf="default,sources->@">
         <dependency org="com.google.appengine" name="appengine-api-1.0-sdk" rev="1.6.1.1" />
         <dependency org="com.google.guava" name="guava" rev="11.0.1" />
+        <dependency org="com.google.code.gson" name="gson" rev="2.2.4" />
         <dependency org="org.json" name="json" rev="20090211" />
         <dependency org="org.twitter4j" name="twitter4j-core" rev="2.2.5"/>
         <dependency org="org.twitter4j" name="twitter4j-appengine" rev="2.2.5"/>
