@@ -26,6 +26,7 @@
         self.eventId = ko.observable();
         self.uri = ko.observable();
         self.title = ko.observable(null);
+        self.type = ko.observable(null);
         self.speakers = ko.observableArray(null);
         self.slot = ko.observable(null);
         self.fromTime = ko.observable(null);
@@ -112,6 +113,7 @@
             self.eventId(data.eventId);
             self.uri(data.id ? (data.uri || ('/events/' + data.eventId + '/presentations/' + data.id)) : '');
             self.title(data.title);
+            self.type(data.type);
             self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
             self.slot(data.slot);
             self.favorites(data.favorites);

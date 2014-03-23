@@ -397,6 +397,9 @@
 #jqt .events.page .events li {
   min-height: 80px;
 }
+#jqt .dayschedule.page li .type {
+  color: #F25AF7;
+}
 #jqt .dayschedule.page li .speakers {
   color: #4ecdc4;
 }
