@@ -280,6 +280,10 @@
   content: '\a';
   white-space: pre;
 }
+#jqt .ui-listview .presentation a {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
 #jqt .ui-listview .presentation.favorite {
   border: 1px solid #F4C63F;
   background: #FADB4E;
@@ -301,6 +305,10 @@
 }
 #jqt .ui-listview .presentation.favorite a span {
   color: #222;
+}
+#jqt .ui-listview .presentation .li-prez-infos {
+    padding-top: 2px;
+    padding-bottom: 4px;
 }
 #jqt .ui-listview .presentation .favorites {
   display: block;
