@@ -42,9 +42,23 @@
             var schedule = data.schedule;
             if (schedule) {
                 self.presentations(_(schedule).map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); }));
-                self.slots(_.chain(schedule).sortBy(function(p) { return p.fromTime; }).groupBy('slot').map(function(pres, slot) {
-                    return ds.scheduleSlot({id: self.id() + '/' + slot, eventId: self.eventId(), name: slot, presentations: pres});
-                }).value());
+                self.slots(
+                    _.chain(schedule.sort(function(s1, s2) {
+                        if(s1.fromTime === s2.fromTime) {
+                            // If fromTime is the same, we should consider displaying
+                            // longest slots first
+                            return Date.parse(s2.toTime) - Date.parse(s1.toTime);
+                        } else {
+                            return Date.parse(s1.fromTime) - Date.parse(s2.fromTime);
+                        }
+                     })).groupBy(function(p) {
+                        var formattedFromTime = dateFormat(new Date(Date.parse(p.fromTime)), new Date(Date.parse(p.fromTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
+                        var formattedToTime = dateFormat(new Date(Date.parse(p.toTime)), new Date(Date.parse(p.toTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
+                        return formattedFromTime+"-"+formattedToTime;
+                     }).map(function(pres, slot) {
+                        return ds.scheduleSlot({id: self.id() + '/' + slot, eventId: self.eventId(), name: slot, presentations: pres});
+                     }).value()
+                );
                 self.nbPresentations(schedule.length);
             } else {
                 self.nbPresentations(data.nbPresentations);
