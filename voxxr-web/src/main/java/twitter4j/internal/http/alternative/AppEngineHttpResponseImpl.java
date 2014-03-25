@@ -17,14 +17,8 @@ package twitter4j.internal.http.alternative;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPResponse;
-import twitter4j.TwitterException;
-import twitter4j.TwitterRuntimeException;
+import twitter4j.*;
 import twitter4j.conf.ConfigurationContext;
-import twitter4j.internal.http.HttpResponse;
-import twitter4j.internal.http.HttpResponseCode;
-import twitter4j.internal.logging.Logger;
-import twitter4j.internal.org.json.JSONArray;
-import twitter4j.internal.org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -48,7 +42,7 @@ final class AppEngineHttpResponseImpl extends HttpResponse implements HttpRespon
     private static Logger logger = Logger.getLogger(AppEngineHttpResponseImpl.class);
 
     AppEngineHttpResponseImpl(Future<HTTPResponse> futureResponse) {
-        super(ConfigurationContext.getInstance());
+        super(ConfigurationContext.getInstance().getHttpClientConfiguration());
         this.future = futureResponse;
     }
 
