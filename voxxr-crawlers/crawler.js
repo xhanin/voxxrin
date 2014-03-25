@@ -112,8 +112,6 @@ var devoxx = function() {
 
                 var notDuplicatedSpeakers = _.map(_.uniq(_.pluck(s.speakers, "speakerId")), function(speakerId){ return _.find(s.speakers, function(speaker){ return speaker.speakerId === speakerId; }); });
                 var voxxrinPres = {"id":prefix + s.id, "title":s.title, "type":s.type, "kind":s.kind,
-                        "previousId": prefix + schedule[(i-1+schedule.length)%schedule.length].id,
-                        "nextId": prefix + schedule[(i+1)%schedule.length].id,
                         "dayId": daySchedule.id,
                         "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + s.id,
                         "speakers": _(notDuplicatedSpeakers).map(function(sp){ return toVoxxrinSpeaker(baseUrl, sp); }),
@@ -441,8 +439,6 @@ var breizhcamp = function() {
                                 "title":talk.title,
                                 "type":"Talk",
                                 "kind":talk.format,
-                                "previousId": null, // TODO : add previous/next logic
-                                "nextId": null, // TODO : add previous/next logic
                                 "dayId": daySchedule.id,
                                 "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + talk.id,
                                 "room": voxxrin.rooms[talk.room],
@@ -774,8 +770,6 @@ var codeursenseine = function() {
                                 "title":talk.title,
                                 "type":"Talk",
                                 "kind":talk.format,
-                                "previousId": null, // TODO : add previous/next logic
-                                "nextId": null, // TODO : add previous/next logic
                                 "dayId": daySchedule.id,
                                 "uri":"/events/" + voxxrin.event.id + "/presentations/" + prefix + talk.id,
                                 "room": voxxrin.rooms[talk.room],

@@ -150,8 +150,6 @@ module.exports = function(opts){
                         'title': s.title,
                         'type': s.type,
                         'kind': s.kind,
-                        'previousId': self.options.prefix + self.currentContext.sortedSchedule[(scheduleIndex-1+self.currentContext.sortedSchedule.length)%self.currentContext.sortedSchedule.length].id,
-                        'nextId': self.options.prefix + self.currentContext.sortedSchedule[(scheduleIndex+1)%self.currentContext.sortedSchedule.length].id,
                         'dayId': daySchedule.id,
                         'uri': '/events/' + self.event.id + "/presentations/" + prezId,
                         'speakers': s.speakers,
