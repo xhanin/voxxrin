@@ -81,6 +81,10 @@
         self.favorite = ko.computed(function() { return self.my() && self.my().favorite() });
         self.user = models.User.current;
         self.data = ko.observable({});
+        self.nextId = ko.observable(null);
+        self.nextHash = ko.computed(function() {return "index#!presentation~" + self.eventId() + "~" + self.nextId()});
+        self.prevId = ko.observable(null);
+        self.prevHash = ko.computed(function() {return "index#!presentation~" + self.eventId() + "~" + self.prevId()});
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -121,6 +125,8 @@
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
+            self.prevId(data.prevId);
+            self.nextId(data.nextId);
             if (hasInvolvedUsers) {
                 self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
                     return ds.myPresentation(_.extend({id: myPres.id

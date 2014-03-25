@@ -55,8 +55,20 @@
                         var formattedFromTime = dateFormat(new Date(Date.parse(p.fromTime)), new Date(Date.parse(p.fromTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
                         var formattedToTime = dateFormat(new Date(Date.parse(p.toTime)), new Date(Date.parse(p.toTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
                         return formattedFromTime+"-"+formattedToTime;
-                     }).map(function(pres, slot) {
-                        return ds.scheduleSlot({id: self.id() + '/' + slot, eventId: self.eventId(), name: slot, presentations: pres});
+                     }).map(function(presentations, slot) {
+
+                        // Updating prev/next prez url on every presentation
+                        _(presentations).each(function(pres, index) {
+                            pres.nextId = presentations[(index+1)%presentations.length].id;
+                            pres.prevId = presentations[(index+presentations.length-1)%presentations.length].id;
+                        });
+
+                        return ds.scheduleSlot({
+                            id: self.id() + '/' + slot,
+                            eventId: self.eventId(),
+                            name: slot,
+                            presentations: presentations
+                        });
                      }).value()
                 );
                 self.nbPresentations(schedule.length);

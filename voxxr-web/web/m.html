@@ -246,8 +246,10 @@
     </div>
     <div id="presentation" class="presentation page" data-role="page">
         <div data-role="header">
-            <h1 data-bind="text: title"> </h1>
+            <!--<h1 data-bind="text: title"> </h1>-->
             <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
+            <a href="#" data-bind="href: nextHash" data-rel="next" class="ui-btn-right" data-icon="arrow-r">Next</a>
+            <a href="#" data-bind="href: prevHash" data-rel="prev" style="margin-right: 90px" class="ui-btn-right" data-icon="arrow-l">Prev</a>
         </div>
         <div data-role="content">
         <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> [<span data-bind="text: type"></span>] <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
