@@ -221,7 +221,7 @@ module.exports = function(opts){
         request.get({ uri: pictureUri, headers: { 'User-Agent': 'Node' } }).pipe(request.put({
             uri: self.currentContext.baseUrl + '/r' + voxxrinPictureUri,
             headers: {
-                'Authorization':token
+                'Authorization':token.gae
             }
         }, function(error, response, body){
             if(error){

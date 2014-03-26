@@ -6,7 +6,7 @@ module.exports = function(options, data) {
     if ('string' == typeof options) options = { url: options }
     options.method = options.method || 'POST';
     options.headers = options.headers || {
-        'Authorization':token,
+        'Authorization':token.gae,
         'Content-Type': 'application/json'
     }
     options.body = JSON.stringify(data);
