@@ -24,6 +24,7 @@
         self.slots = ko.observableArray([]);
         self.slots.loading = ko.observable(false);
         self.hash = ko.computed(function() {return "index#!dayschedule~" + self.eventId() + "~" + self.id()});
+        self.eventHash = ko.computed(function(){ return "index#!event~" + self.eventId(); });
         self.data = ko.observable({});
 
         function load(data) {
@@ -61,6 +62,7 @@
                         _(presentations).each(function(pres, index) {
                             pres.nextId = presentations[(index+1)%presentations.length].id;
                             pres.prevId = presentations[(index+presentations.length-1)%presentations.length].id;
+                            pres.dayId = data.id;
                         });
 
                         return ds.scheduleSlot({

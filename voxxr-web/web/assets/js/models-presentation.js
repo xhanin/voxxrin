@@ -82,9 +82,11 @@
         self.user = models.User.current;
         self.data = ko.observable({});
         self.nextId = ko.observable(null);
-        self.nextHash = ko.computed(function() {return "index#!presentation~" + self.eventId() + "~" + self.nextId()});
+        self.nextHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.nextId(); });
         self.prevId = ko.observable(null);
-        self.prevHash = ko.computed(function() {return "index#!presentation~" + self.eventId() + "~" + self.prevId()});
+        self.prevHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.prevId(); });
+        self.dayId = ko.observable(null);
+        self.backHash = ko.computed(function() { return "index#!dayschedule~" + self.eventId() + "~" + self.dayId(); });
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -127,6 +129,7 @@
             self.summary(data.summary);
             self.prevId(data.prevId);
             self.nextId(data.nextId);
+            self.dayId(data.dayId);
             if (hasInvolvedUsers) {
                 self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
                     return ds.myPresentation(_.extend({id: myPres.id

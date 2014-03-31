@@ -168,7 +168,7 @@
     <div id="event" class="event page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: title"></h1>
-            <a href="#events" data-rel="back" data-icon="arrow-l">Back</a>
+            <a href="#events" data-rel="backToEvents" data-icon="arrow-l">Back</a>
         </div>
         <div data-role="content">
             <div class="message" data-bind="visible: remaining">
@@ -207,7 +207,7 @@
     <div id="dayschedule" class="dayschedule page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: name"></h1>
-            <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
+            <a data-bind="href: eventHash" data-rel="backToEvent" data-icon="arrow-l">Event</a>
             <div class="slotsNav ui-navbar ui-navbar-noicons" role="navigation">
                 <ul class="ui-grid-a" data-bind="foreach: slots">
                     <li class="ui-block-n" style="width: 95px">
@@ -246,10 +246,9 @@
     </div>
     <div id="presentation" class="presentation page" data-role="page">
         <div data-role="header">
-            <!--<h1 data-bind="text: title"> </h1>-->
-            <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
+            <a href="#" data-bind="href: backHash" data-rel="backToDaylySchedule" data-icon="arrow-l">Back</a>
             <a href="#" data-bind="href: nextHash" data-rel="next" class="ui-btn-right" data-icon="arrow-r">&nbsp;Next&nbsp;</a>
-            <a href="#" data-bind="href: prevHash" data-rel="prev" style="margin-right: 90px" class="ui-btn-right" data-icon="arrow-l">&nbsp;Prev&nbsp;</a>
+            <a href="#" data-bind="href: prevHash" data-rel="prev" style="margin-right: 100px" class="ui-btn-right" data-icon="arrow-l">&nbsp;Prev&nbsp;</a>
         </div>
         <div data-role="content">
         <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> [<span data-bind="text: type"></span>] <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
