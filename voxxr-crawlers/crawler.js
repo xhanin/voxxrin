@@ -27,7 +27,11 @@ var voxxrin = {
 
 var devoxx = function() {
     var prefix = 'dvx';
-    var eventIds = [ 8 /* devoxx fr */, 9 /* devoxx UK */ ];
+    var eventIds = [
+        10 /* Devoxx World 2k13 */
+        // Following events are commented, since not available anymore...
+        // 8 /* devoxx fr */, 9 /* devoxx UK */,
+         ];
 
     function toVoxxrinSpeaker(baseUrl, sp) {
         var id = sp.speakerUri.substring(sp.speakerUri.lastIndexOf('/') + 1);
