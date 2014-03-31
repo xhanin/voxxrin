@@ -858,6 +858,7 @@ http.createServer(function(req, response) {
 
     // Updating base url in dev mode
     var baseUrl = mode==="dev"?DEV_BASE_URL:PROD_BASE_URL;
+    var debugQueries = true || mode==="dev";
 
 
     // Browsing only specific event family if "eventFamiliyId" http query param is provided
@@ -898,7 +899,7 @@ http.createServer(function(req, response) {
     response.writeHead(200, {"Content-Type": "text/plain"});
     if (req.method === 'POST') {
         _(eventFamiliesToCrawl).each(function(eventFamily) {
-            eventFamily.crawl(baseUrl);
+            eventFamily.crawl(baseUrl, debugQueries);
         });
         response.write("Started crawling...");
     } else {
