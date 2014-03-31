@@ -111,7 +111,7 @@ module.exports = new VoxxrinCrawler({
         deferred.resolve(sortedSchedule);
     },
     extractEventFromInitialCrawling: function() {
-        return this.currentContext.event;
+        return {};
     },
     fetchSpeakerInfosFrom: function(deferred, sp) {
         this.loadQueries++;

@@ -53,7 +53,7 @@ module.exports = function(opts){
                 var toTime = self.currentContext.sortedSchedule[self.currentContext.sortedSchedule.length - 1].toTime;
 
                 self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
-                self.event = _.extend({}, self.event, {
+                self.event = _.extend({}, {
                     id: (self.options.prefix + event.id).toLowerCase(),
                     title: self.currentContext.event.title,
                     description: self.currentContext.event.description,
@@ -65,7 +65,7 @@ module.exports = function(opts){
                     days: [],
                     enabled: true,
                     dayDates: self.calculateDayDates(fromTime, toTime)
-                });
+                }, self.event);
 
                 self.rooms = extractUniqueRoomsFrom(self.currentContext.sortedSchedule, self.event.id);
                 _(self.rooms).each(function(room) {
