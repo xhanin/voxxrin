@@ -5,6 +5,7 @@ var http = require("http"),
     dateformat = require('dateformat'),
     load = require("./load.js"),
     send = require("./send.js"),
+    moment = require('moment-timezone'),
     request = require('request'),
     token = require('./authorizationToken');
 
@@ -56,6 +57,7 @@ module.exports = function(opts){
                     id: (self.options.prefix + event.id).toLowerCase(),
                     title: self.currentContext.event.title,
                     description: self.currentContext.event.description,
+                    timezone: self.currentContext.event.timezone || "Europe/Paris",
                     dates: self.formatDates(fromTime, toTime),
                     from: fromTime,
                     to: toTime,
@@ -155,8 +157,8 @@ module.exports = function(opts){
                         'speakers': s.speakers,
                         'room': _(self.rooms).find(function(room){ return room.name === (s.roomName?s.roomName:"???"); }),
                         'slot': dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
-                        'fromTime': typeof(s.fromTime) === "string" ? s.fromTime : dateformat(s.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
-                        'toTime': typeof(s.toTime) === "string" ? s.toTime : dateformat(s.toTime,"yyyy-mm-dd HH:MM:ss.0")
+                        'fromTime': typeof(s.fromTime) === "string" ? s.fromTime : moment.tz(s.fromTime, self.event.timezone).format("YYYY-MM-DD HH:mm:ss.0"),
+                        'toTime': typeof(s.toTime) === "string" ? s.toTime : moment.tz(s.toTime, self.event.timezone).format("YYYY-MM-DD HH:mm:ss.0")
                     };
 
                     var shouldStop = self.options.decorateVoxxrinPresentation.call(self, voxxrinPres, daySchedule);

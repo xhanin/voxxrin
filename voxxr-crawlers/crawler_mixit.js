@@ -91,8 +91,8 @@ module.exports = new VoxxrinCrawler({
         return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
-        voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
-        voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0")
+//        voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
+//        voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0")
         //voxxrinPres.experience = voxxrinPres.level;
 
         delete voxxrinPres.start;

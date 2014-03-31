@@ -18,6 +18,7 @@ module.exports = new VoxxrinCrawler({
             title: "Devoxx France 2014",
             subtitle: "",
             description: "",
+            timezone: "Europe/Paris",
             location: "Mariott Hotel",
             initialCrawlingUrls: [
                 "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/wednesday",
@@ -130,8 +131,8 @@ module.exports = new VoxxrinCrawler({
         return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
-        voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
-        voxxrinPres.toTime = dateformat(voxxrinPres.toTime,"yyyy-mm-dd HH:MM:ss.0");
+//        voxxrinPres.fromTime = moment(voxxrinPres.fromTime, "Europe/Paris").format("YYYY-MM-DD HH:mm:ss.0"),
+//        voxxrinPres.toTime = moment(voxxrinPres.toTime, "Europe/Paris").format("YYYY-MM-DD HH:mm:ss.0");
         //voxxrinPres.experience = voxxrinPres.level;
 
         //delete voxxrinPres.start;
