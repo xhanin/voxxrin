@@ -202,6 +202,10 @@
   float: left;
   min-height: 1px;
 }
+#jqt .ui-btn-left  .ui-btn-inner,
+#jqt .ui-btn-right .ui-btn-inner {
+  text-overflow: clip;
+}
 #jqt .ui-block-n .ui-btn-inner {
   padding: .8em .5em .9em .5em;
   text-overflow: clip;
