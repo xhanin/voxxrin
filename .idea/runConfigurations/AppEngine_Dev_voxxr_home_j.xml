@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="AppEngine Dev voxxr-home-j" type="GoogleAppEngineDevServer" factoryName="Local" APPLICATION_SERVER_NAME="AppEngine Dev">
+  <configuration default="false" name="AppEngine Dev voxxr-home-j" type="GoogleAppEngineDevServer" factoryName="Local" APPLICATION_SERVER_NAME="AppEngine Dev" ALTERNATIVE_JRE_ENABLED="false">
     <server-settings>
       <option name="artifact" value="voxxr-home-j:war exploded" />
     </server-settings>
