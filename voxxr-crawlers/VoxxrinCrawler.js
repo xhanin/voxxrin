@@ -157,8 +157,8 @@ module.exports = function(opts){
                         'speakers': s.speakers,
                         'room': _(self.rooms).find(function(room){ return room.name === (s.roomName?s.roomName:"???"); }),
                         'slot': dateformat(fromTime, fromTime.getMinutes() ? 'h:MMtt' : 'htt'),
-                        'fromTime': typeof(s.fromTime) === "string" ? s.fromTime : moment.tz(s.fromTime, self.event.timezone).format("YYYY-MM-DD HH:mm:ss.0"),
-                        'toTime': typeof(s.toTime) === "string" ? s.toTime : moment.tz(s.toTime, self.event.timezone).format("YYYY-MM-DD HH:mm:ss.0")
+                        'fromTime': typeof(s.fromTime) === "string" ? s.fromTime : moment(s.fromTime).tz(self.event.timezone).format("YYYY-MM-DD HH:mm:ss.0"),
+                        'toTime': typeof(s.toTime) === "string" ? s.toTime : moment(s.toTime).tz(self.event.timezone).format("YYYY-MM-DD HH:mm:ss.0")
                     };
 
                     var shouldStop = self.options.decorateVoxxrinPresentation.call(self, voxxrinPres, daySchedule);
