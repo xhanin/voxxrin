@@ -63,6 +63,7 @@
                             pres.nextId = presentations[(index+1)%presentations.length].id;
                             pres.prevId = presentations[(index+presentations.length-1)%presentations.length].id;
                             pres.dayId = data.id;
+                            pres.slot = slot;
                         });
 
                         return ds.scheduleSlot({
