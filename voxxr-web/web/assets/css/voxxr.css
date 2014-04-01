@@ -206,6 +206,9 @@
 #jqt .ui-btn-right .ui-btn-inner {
   text-overflow: clip;
 }
+#jqt .presentation.page .ui-header .ui-btn-right .ui-btn-inner {
+  padding-left: 18px;
+}
 #jqt .ui-block-n .ui-btn-inner {
   padding: .8em .5em .9em .5em;
   text-overflow: clip;

@@ -43,6 +43,7 @@
             var schedule = data.schedule;
             if (schedule) {
                 self.presentations(_(schedule).map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); }));
+                var sortedSlotsLabels = [];
                 self.slots(
                     _.chain(schedule.sort(function(s1, s2) {
                         if(s1.fromTime === s2.fromTime) {
@@ -55,13 +56,25 @@
                      })).groupBy(function(p) {
                         var formattedFromTime = dateFormat(new Date(Date.parse(p.fromTime)), new Date(Date.parse(p.fromTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
                         var formattedToTime = dateFormat(new Date(Date.parse(p.toTime)), new Date(Date.parse(p.toTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
-                        return formattedFromTime+"-"+formattedToTime;
-                     }).map(function(presentations, slot) {
+                        var slotLabel = formattedFromTime+"-"+formattedToTime;
+                        if(!_(sortedSlotsLabels).contains(slotLabel)) {
+                            sortedSlotsLabels.push(slotLabel);
+                        }
+                        return slotLabel;
+                     }).map(function(presentations, slot, slots) {
+
+                        var currentSlotIndex = _(sortedSlotsLabels).indexOf(slot);
+                        var previousSlotIndex = currentSlotIndex-1;
+                        var nextSlotIndex = currentSlotIndex+1;
 
                         // Updating prev/next prez url on every presentation
                         _(presentations).each(function(pres, index) {
-                            pres.nextId = presentations[(index+1)%presentations.length].id;
-                            pres.prevId = presentations[(index+presentations.length-1)%presentations.length].id;
+                            pres.nextPrezId = presentations[(index+1)%presentations.length].id;
+                            pres.prevPrezId = presentations[(index+presentations.length-1)%presentations.length].id;
+
+                            pres.nextSlotPrezId = nextSlotIndex<sortedSlotsLabels.length?slots[sortedSlotsLabels[nextSlotIndex]][0].id:null;
+                            pres.prevSlotPrezId = previousSlotIndex>=0?slots[sortedSlotsLabels[previousSlotIndex]][0].id:null;
+
                             pres.dayId = data.id;
                             pres.slot = slot;
                         });

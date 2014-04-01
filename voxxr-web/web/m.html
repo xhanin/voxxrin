@@ -247,8 +247,10 @@
     <div id="presentation" class="presentation page" data-role="page">
         <div data-role="header" style="height: 45px">
             <a href="#" data-bind="href: backHash" data-rel="backToDaylySchedule" data-icon="back">Back</a>
-            <a href="#" data-bind="href: nextHash" data-rel="next" class="ui-btn-right" data-icon="arrow-r">&nbsp;Next&nbsp;</a>
-            <a href="#" data-bind="href: prevHash" data-rel="prev" style="margin-right: 100px" class="ui-btn-right" data-icon="arrow-l">&nbsp;Prev&nbsp;</a>
+            <a href="#" data-bind="href: nextPrezHash" data-rel="nextPrez" style="margin-right: 0px" class="ui-btn-right" data-icon="arrow-r">&nbsp;</a>
+            <a href="#" data-bind="href: prevPrezHash" data-rel="prevPrez" style="margin-right: 50px" class="ui-btn-right" data-icon="arrow-l">&nbsp;</a>
+            <a href="#" data-bind="href: nextSlotPrezHash, visible: nextSlotPrezDefined" data-rel="nextSlot" style="margin-right: 120px" class="ui-btn-right" data-icon="arrow-d">&nbsp;</a>
+            <a href="#" data-bind="href: prevSlotPrezHash, visible: prevSlotPrezDefined" data-rel="prevSlot" style="margin-right: 170px" class="ui-btn-right" data-icon="arrow-u">&nbsp;</a>
         </div>
         <div data-role="content">
         <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> [<span data-bind="text: type"></span>] <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>

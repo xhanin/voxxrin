@@ -81,10 +81,16 @@
         self.favorite = ko.computed(function() { return self.my() && self.my().favorite() });
         self.user = models.User.current;
         self.data = ko.observable({});
-        self.nextId = ko.observable(null);
-        self.nextHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.nextId(); });
-        self.prevId = ko.observable(null);
-        self.prevHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.prevId(); });
+        self.nextPrezId = ko.observable(null);
+        self.nextPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.nextPrezId(); });
+        self.prevPrezId = ko.observable(null);
+        self.prevPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.prevPrezId(); });
+        self.nextSlotPrezId = ko.observable(null);
+        self.nextSlotPrezDefined = ko.computed(function(){ return !_.isNull(self.nextSlotPrezId()) && !_.isUndefined(self.nextSlotPrezId()); });
+        self.nextSlotPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.nextSlotPrezId(); });
+        self.prevSlotPrezId = ko.observable(null);
+        self.prevSlotPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.prevSlotPrezId(); });
+        self.prevSlotPrezDefined = ko.computed(function(){ return !_.isNull(self.prevSlotPrezId()) && !_.isUndefined(self.prevSlotPrezId()); });
         self.dayId = ko.observable(null);
         self.backHash = ko.computed(function() { return "index#!dayschedule~" + self.eventId() + "~" + self.dayId(); });
 
@@ -127,8 +133,10 @@
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
-            self.prevId(data.prevId);
-            self.nextId(data.nextId);
+            self.prevPrezId(data.prevPrezId);
+            self.nextPrezId(data.nextPrezId);
+            self.prevSlotPrezId(data.prevSlotPrezId);
+            self.nextSlotPrezId(data.nextSlotPrezId);
             self.dayId(data.dayId);
             if (hasInvolvedUsers) {
                 self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
