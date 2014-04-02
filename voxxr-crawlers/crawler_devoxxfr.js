@@ -50,6 +50,12 @@ module.exports = new VoxxrinCrawler({
             slots.push.apply(slots, enhancedDaySlots);
         }
 
+        slots = _(slots).reject(function(prez) {
+            return prez.notAllocated===true // removed talks
+                // OpenDataCamp && Devoxx4Kids which should be considered as special events
+                || (prez.talk && (prez.talk.id==="ZYE-706" || prez.talk.id==="USM-170"));
+        });
+
         var self = this;
         // Parsing dates and adding "virtual" start and end time for all-day running events
         var schedules = _(slots).map(function(s) {
