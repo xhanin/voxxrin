@@ -9,16 +9,27 @@ module.exports = new VoxxrinCrawler({
     name: 'MixIT',
     prefix: 'mxt',
     events: [
-        {
+//        {
             /* Mix-IT 2013 */
-            id: 13,
+//            id: 13,
             /* Hardcoding some event details here, since not provided by REST API */
-            from: new Date(Date.parse("2013-04-25T08:30:00.000+02:00")),
-            to: new Date(Date.parse("2013-04-26T18:30:00.000+02:00")),
-            title: "Mix-IT 2013",
+//            from: new Date(Date.parse("2013-04-25T08:30:00.000+02:00")),
+//            to: new Date(Date.parse("2013-04-26T18:30:00.000+02:00")),
+//            title: "Mix-IT 2013",
+//            subtitle: "",
+//            description: "Java, Agilité, Web, Innovations... Des idées pour tout de suite !",
+//            location: "SUPINFO Lyon - Lyon"
+//        },
+        {
+            /* Mix-IT 2014 */
+            id: 14,
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2014-04-29T09:00:00.000+02:00")),
+            to: new Date(Date.parse("2013-04-30T18:30:00.000+02:00")),
+            title: "Mix-IT 2014",
             subtitle: "",
             description: "Java, Agilité, Web, Innovations... Des idées pour tout de suite !",
-            location: "SUPINFO Lyon - Lyon"
+            location: "CPE Lyon"
         }
     ],
     initialCrawlingUrls: function(event) {
