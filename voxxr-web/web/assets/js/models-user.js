@@ -198,7 +198,9 @@
         self.location = ko.observable();
         self.followers = ko.observableArray([]);
         self.friends = ko.observableArray([]);
-        self.authenticated = ko.computed(function() { return isNonNull(self.id()) || isNonNull(self.screenname()) });
+        self.authenticated = ko.computed(function() {
+            return (isNonNull(self.id()) || isNonNull(self.screenname())) && isNonNull(models.User.current());
+        });
         self.ready = ko.observable(false);
         self.loading = ko.observable(false);
 
@@ -215,7 +217,7 @@
             target.loading(false);
             target.ready(data.profile_image_url ? true : false);
         }
-        
+
         function load() {
             if (self.loading()) return;
             if (isAuthenticated()) {
