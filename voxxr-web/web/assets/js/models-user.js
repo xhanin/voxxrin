@@ -210,14 +210,24 @@
 
         function loadData(target, data) {
             target.id(data.id);
-            target.screenname(data.screen_name);
+            target.screenname(data.screenName);
             target.name(data.name);
-            target.pictureURL(data.profile_image_url);
+            target.pictureURL(data.profileImageUrl);
             target.location(data.location);
             target.loading(false);
-            target.ready(data.profile_image_url ? true : false);
+            target.ready(data.profileImageUrl ? true : false);
         }
 
+        function serverTwitterUserToTwUser(twitterUser) {
+            // Explicitely not using ds.twUser() here because we want to avoid
+            // a TwUser.load() call which would trigger another server side call
+            // This is because server will serve followers/friends twitter users
+            // as completely filled objects (and not lazy ones)
+            var u = new TwUser({});
+            loadData(u, twitterUser);
+            return u;
+        }
+        
         function load() {
             if (self.loading()) return;
             if (isAuthenticated()) {
@@ -225,17 +235,13 @@
                 self.loading(true);
                 var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
                 getJSON(
-                    'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
+                    models.baseUrl + '/twitter/userInfos?'+param,
                     function(data) {
-                        loadData(data[0]);
-                        if (options.autoLoadFollowers) {
-                            self.loadFollowers();
-                        }
-                        if (options.autoLoadFriends) {
-                            self.loadFriends();
-                        }
+                        loadData(self, data.twitterUser);
+                        self.followers(_(data.followers).map(serverTwitterUserToTwUser));
+                        self.friends(_(data.friends).map(serverTwitterUserToTwUser));
                     },
-                    { authenticate: false, usenetwork: '+1d' }
+                    { authenticate: true, usenetwork: '+1d' }
                 ).always(function() {self.loading(false);});
             } else {
                 self.clear();
@@ -245,31 +251,12 @@
         self.copyFrom = function(anotherKoTwUser) {
             loadData(self, {
                 id: anotherKoTwUser.id(),
-                screen_name: anotherKoTwUser.screenname(),
+                screenName: anotherKoTwUser.screenname(),
                 name: anotherKoTwUser.name(),
-                profile_image_url: anotherKoTwUser.pictureURL(),
+                profileImageUrl: anotherKoTwUser.pictureURL(),
                 location: anotherKoTwUser.location()
             });
         };
-
-        self.loadFollowers = function() {
-            getJSON(
-                'https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
-                function(data) {
-                    self.followers(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
-                },
-                { authenticate: false, uselocal: 'whenoffline' }
-            );
-        }
-        self.loadFriends = function() {
-            getJSON(
-                'https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
-                function(data) {
-                    self.friends(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
-                },
-                { authenticate: false, uselocal: 'whenoffline' }
-            );
-        }
 
         self.loadDetails = function() {
             if (!self.pictureURL()) {
