@@ -206,20 +206,20 @@
             return self.authenticated();
         }
 
-        function loadData(data) {
-            self.id(data.id);
-            self.screenname(data.screen_name);
-            self.name(data.name);
-            self.pictureURL(data.profile_image_url);
-            self.location(data.location);
-            self.loading(false);
-            self.ready(data.profile_image_url ? true : false);
+        function loadData(target, data) {
+            target.id(data.id);
+            target.screenname(data.screen_name);
+            target.name(data.name);
+            target.pictureURL(data.profile_image_url);
+            target.location(data.location);
+            target.loading(false);
+            target.ready(data.profile_image_url ? true : false);
         }
         
         function load() {
             if (self.loading()) return;
             if (isAuthenticated()) {
-                loadData({id: self.id(), screen_name: self.screenname()}); // reset
+                loadData(self, {id: self.id(), screen_name: self.screenname()}); // reset
                 self.loading(true);
                 var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
                 getJSON(
@@ -239,6 +239,16 @@
                 self.clear();
             }
         }
+
+        self.copyFrom = function(anotherKoTwUser) {
+            loadData(self, {
+                id: anotherKoTwUser.id(),
+                screen_name: anotherKoTwUser.screenname(),
+                name: anotherKoTwUser.name(),
+                profile_image_url: anotherKoTwUser.pictureURL(),
+                location: anotherKoTwUser.location()
+            });
+        };
 
         self.loadFollowers = function() {
             getJSON(
@@ -267,7 +277,7 @@
         };
 
         self.clear = function() {
-            loadData({});
+            loadData(self, {});
         };
 
         if (options.autoLoad) {
