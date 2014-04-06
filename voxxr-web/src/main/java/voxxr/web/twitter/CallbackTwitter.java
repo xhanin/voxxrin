@@ -1,12 +1,13 @@
 package voxxr.web.twitter;
 
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.repackaged.com.google.common.base.Optional;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import voxxr.web.RestRouter;
-import voxxr.web.User;
+import voxxr.web.TwitterUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,25 +70,51 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
         writer.close();
     }
 
-    public static User authenticatedFromTwitter(String deviceid) {
+    private static Optional<Entity> _findTwitterEntityByDeviceAndStatus(String deviceId, String status) {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
         Query q = new Query("OAuthAccessToken")
-                .addFilter("deviceid", Query.FilterOperator.EQUAL, deviceid)
-                .addFilter("status", Query.FilterOperator.EQUAL, "CREATED")
+                .addFilter("deviceid", Query.FilterOperator.EQUAL, deviceId)
+                .addFilter("status", Query.FilterOperator.EQUAL, status)
                 .addSort("datetime", Query.SortDirection.DESCENDING);
 
         List<Entity> entities = ds.prepare(q).asList(FetchOptions.Builder.withLimit(1));
         if (entities.isEmpty()) {
-            return null;
+            return Optional.absent();
         }
 
-        Entity e = entities.get(0);
-        e.setProperty("status", "AUTHENTICATED");
-        ds.put(e);
-
-        return new User((String) e.getProperty("screen_name"), (Long) e.getProperty("twitterid"), deviceid);
+        return Optional.of(entities.get(0));
     }
 
+    private static TwitterUser _fromEntityToTwitterUser(Entity e) {
+        return new TwitterUser(
+                (String) e.getProperty("screen_name"),
+                (Long) e.getProperty("twitterid"),
+                (String) e.getProperty("deviceid"),
+                new AccessToken((String)e.getProperty("token"), (String)e.getProperty("tokenSecret"))
+        );
+    }
 
+    public static TwitterUser authenticatedFromTwitter(String deviceid) {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Optional<Entity> e = _findTwitterEntityByDeviceAndStatus(deviceid, "CREATED");
+        if(e.isPresent()) {
+            Entity entity = e.get();
+            entity.setProperty("status", "AUTHENTICATED");
+            ds.put(entity);
+
+            return _fromEntityToTwitterUser(entity);
+        } else {
+            return null;
+        }
+    }
+
+    public static TwitterUser authenticatedTwitterUser(String deviceId) {
+        Optional<Entity> e = _findTwitterEntityByDeviceAndStatus(deviceId, "AUTHENTICATED");
+        if(e.isPresent()) {
+            return _fromEntityToTwitterUser(e.get());
+        } else {
+            return null;
+        }
+    }
 }
