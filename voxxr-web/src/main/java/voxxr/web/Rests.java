@@ -156,7 +156,7 @@ public class Rests {
     }
 
     public static boolean isSecure(HttpServletRequest req) {
-        return AuthorizationToken.TOKEN.equals(req.getHeader("Authorization"));
+        return AuthorizationTokens.CRAWLER_AUTH_TOKEN.equals(req.getHeader("Authorization"));
     }
 
     public static Entity storeFromJSON(JSONObject json, String kind, PrepareEntityCallback callback) throws JSONException {
