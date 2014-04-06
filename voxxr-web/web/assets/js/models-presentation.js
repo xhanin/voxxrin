@@ -53,6 +53,15 @@
                     && followerIds.indexOf(myPres.twuser().id()) >= 0
                     && friendsIds.indexOf(myPres.twuser().id()) === -1 // do not display friends in followers
             });
+
+            _(favFol).map(function(fav){
+               var completelyFilledUser = _(models.User.current().twuser().followers()).find(function(twuser){
+                   return twuser.id() === fav.twuser().id();
+               });
+               fav.twuser.copyFrom(completelyFilledUser);
+               return fav;
+            });
+
             return favFol;
         });
         self.involvedUsers.friends = ko.computed(function() {
@@ -60,6 +69,15 @@
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
             var favFol = _(self.involvedUsers()).filter(function(myPres) {
                 return (myPres.favorite() || myPres.presence() !== 'NO') && friendsIds.indexOf(myPres.twuser().id()) >= 0 });
+
+            _(favFol).map(function(fav){
+               var completelyFilledUser = _(models.User.current().twuser().friends()).find(function(twuser){
+                   return twuser.id() === fav.twuser().id();
+               });
+               fav.twuser().copyFrom(completelyFilledUser);
+               return fav;
+            });
+
             return favFol;
         });
         self.involvedUsers.inroom = ko.computed(function() {

@@ -6,7 +6,7 @@
         self.data().id = data.id || (data.userid + '/' + data.eventId + '/' + data.presId);
 
         self.id = ko.observable(self.data().id);
-        self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}).loadDetails() : null);
+        self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}) : null);
         self.favorite = ko.observable();
         self.presence = ko.observable(Presences.NO);
         self.feelings = {
