@@ -337,6 +337,9 @@ $(function() { models.Device.current().whenReady(function() {
 
         function twitterSignin(deviceId) {
             var url = models.baseUrl + '/twitter/signin?deviceid=' + deviceId;
+            if(urlParams['mode'] === 'dev') {
+                url += '&mode=dev';
+            }
             if (client_browser) {
                 console.log('opening child web page ' + url);
                 window.plugins.childBrowser.showWebPage(url);

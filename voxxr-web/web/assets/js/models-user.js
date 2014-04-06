@@ -50,7 +50,7 @@
         if (my) {
             function sendToServer() {
                 if (!self.data().eventId || !self.data().presId || !self.data().userid) return;
-                postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
+                postJSON(models.baseUrl + '/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
                     function(data) {
                         self.data().lastmodified = data.lastmodified;
                         my.store(data.lastmodified);
@@ -110,14 +110,14 @@
 
 
         function save() {
-            postJSON('/my', self.data, function(data) {
+            postJSON(models.baseUrl + '/my', self.data, function(data) {
                 store(data.lastmodified);
             }).fail(function() { store(); });
         }
 
         function store(lastmodified) {
             self.data.lastmodified = lastmodified || new Date().getTime();
-            getJSON.updateLocalCache('/my', JSON.stringify(self.data));
+            getJSON.updateLocalCache(models.baseUrl + '/my', JSON.stringify(self.data));
         }
 
         loadData(data);
@@ -153,7 +153,7 @@
         }
     };
     My.load = function(user, options) {
-        getJSON('/my', function(data) {
+        getJSON(models.baseUrl + '/my', function(data) {
             if(!data){ // It can happen on some devices under phonegap (didn't understood why ATM)
                 return;
             }

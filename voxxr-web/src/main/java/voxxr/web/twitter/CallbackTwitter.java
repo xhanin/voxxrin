@@ -35,6 +35,7 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
             RequestToken requestToken = new RequestToken((String) requestTokenEntity.getProperty("token"), (String) requestTokenEntity.getProperty("tokenSecret"));
 
             String verifier = req.getParameter("oauth_verifier");
+            String modeParam = req.getParameterMap().containsKey("mode")?"?mode="+req.getParameter("mode"):"";
             try {
                 AccessToken oAuthAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
                 long twitterid = oAuthAccessToken.getUserId();
@@ -52,9 +53,9 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
                 oAuthAccessTokenEntity.setProperty("status", "CREATED");
                 ds.put(oAuthAccessTokenEntity);
 
-                resp.sendRedirect("/signedin.html");
+                resp.sendRedirect("/signedin.html"+modeParam);
             } catch (TwitterException e) {
-                resp.sendRedirect("/notsignedin.html");
+                resp.sendRedirect("/notsignedin.html"+modeParam);
             }
         } catch (EntityNotFoundException e) {
             respondError(req, resp);
