@@ -8,16 +8,6 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
 module.exports = new VoxxrinCrawler({
     name: 'JugSummerCamp',
     prefix: 'jsc',
-    events: [
-        {
-            /* Jugsummercamp 2013 */
-            id: 13,
-            /* Hardcoding some event details here, since not provided by REST API */
-            title: "JugSummerCamp 2013",
-            description: "Une journée entière, à l'espace Encan de La Rochelle, pour prendre les dernières nouvelles du monde Java.",
-            initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/4"]
-        }
-    ],
     logInitialCrawlingResults: function(fetchedEvent){
         console.log("loaded event JugSummerCamp, " + fetchedEvent.presentations.length + " presentations");
     },

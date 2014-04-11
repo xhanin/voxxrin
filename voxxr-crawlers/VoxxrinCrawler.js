@@ -26,7 +26,7 @@ module.exports = function(opts){
        }).value();
     }
 
-    function crawlEvent(baseUrl, event, debugQueries) {
+    self.crawlEvent = function(baseUrl, event, debugQueries) {
         console.log('start crawling on ' + self.options.name + ' (event ' + event + ')');
         if (debugQueries) {
             setInterval(function () {
@@ -208,11 +208,11 @@ module.exports = function(opts){
                 });
             });
         });
-    }
+    };
 
     self.crawl = function(baseUrl, debugQueries) {
         _(self.options.events).each(function(event){
-            crawlEvent(baseUrl, event, debugQueries);
+            self.crawlEvent(baseUrl, event, debugQueries);
         });
     };
 

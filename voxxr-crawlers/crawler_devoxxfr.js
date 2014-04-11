@@ -8,25 +8,6 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
 module.exports = new VoxxrinCrawler({
     name: 'DevoxxFr',
     prefix: 'dvxfr',
-    events: [
-        {
-            /* Devoxx Fr 2014 */
-            id: 14,
-            /* Hardcoding some event details here, since not provided by REST API */
-            from: new Date(Date.parse("2014-04-16T08:00:00.000+02:00")),
-            to: new Date(Date.parse("2014-04-18T18:55:00.000+02:00")),
-            title: "Devoxx France 2014",
-            subtitle: "",
-            description: "",
-            timezone: "Europe/Paris",
-            location: "Mariott Hotel",
-            initialCrawlingUrls: [
-                "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/wednesday",
-                "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/thursday",
-                "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/friday"
-            ]
-        }
-    ],
     logInitialCrawlingResults: function(){
         var schedules = arguments;
         var presentationCount = 0;

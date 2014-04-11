@@ -10,16 +10,6 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
 module.exports = new VoxxrinCrawler({
     name: 'Lanyrd',
     prefix: 'lrd',
-    events: [
-        {
-            /* Lean Kanban France 2013 */
-            id: 'lkbf13',
-            /* Hardcoding some event details here, since not provided by REST API */
-            title: 'Lean Kanban France 2013',
-            domainUrl: 'http://lanyrd.com',
-            baseUrl: 'http://lanyrd.com/2013/lean-kanban-france/'
-        }
-    ],
     initialCrawlingUrls: function(event) {
         return [
             event.baseUrl,
