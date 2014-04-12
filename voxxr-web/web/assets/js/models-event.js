@@ -58,8 +58,12 @@
                 }));
             }
             if (has.days) {
-                self.days(_(data.days).map(function(day) {
-                    return ds.scheduleDay(_.extend(day, {eventId: self.id()}));
+                self.days(_(data.days).map(function(day, index) {
+                    return ds.scheduleDay(_.extend(day, {
+                        eventId: self.id(),
+                        prevDayId: index>0?data.days[index-1].id:null,
+                        nextDayId: index<data.days.length-1?data.days[index+1].id:null
+                    }));
                 }));
             }
             self.loading(false);

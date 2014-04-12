@@ -206,7 +206,8 @@
 #jqt .ui-btn-right .ui-btn-inner {
   text-overflow: clip;
 }
-#jqt .presentation.page .ui-header .ui-btn-right .ui-btn-inner {
+#jqt .presentation.page .ui-header .ui-btn-right .ui-btn-inner,
+#jqt .dayschedule.page .ui-header .ui-btn-right .ui-btn-inner {
   padding-left: 18px;
 }
 #jqt .ui-block-n .ui-btn-inner {

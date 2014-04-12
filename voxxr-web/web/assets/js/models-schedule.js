@@ -25,6 +25,12 @@
         self.slots.loading = ko.observable(false);
         self.hash = ko.computed(function() {return "index#!dayschedule~" + self.eventId() + "~" + self.id()});
         self.eventHash = ko.computed(function(){ return "index#!event~" + self.eventId(); });
+        self.prevDayId = ko.observable(null);
+        self.prevDayDefined = ko.computed(function(){ return !_.isNull(self.prevDayId()) && !_.isUndefined(self.prevDayId()); });
+        self.prevDayHash = ko.computed(function() { return "index#!dayschedule~" + self.eventId() + "~" + self.prevDayId(); });
+        self.nextDayId = ko.observable(null);
+        self.nextDayDefined = ko.computed(function(){ return !_.isNull(self.nextDayId()) && !_.isUndefined(self.nextDayId()); });
+        self.nextDayHash = ko.computed(function() { return "index#!dayschedule~" + self.eventId() + "~" + self.nextDayId(); });
         self.data = ko.observable({});
 
         function load(data) {
@@ -40,6 +46,8 @@
             self.eventId(data.eventId);
             self.uri(data.id ? (data.uri || ('/events/' + data.eventId + '/day/' + data.id)) : '');
             self.name(data.name);
+            self.prevDayId(data.prevDayId);
+            self.nextDayId(data.nextDayId);
             var schedule = data.schedule;
             if (schedule) {
                 self.presentations(_(schedule).map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); }));
