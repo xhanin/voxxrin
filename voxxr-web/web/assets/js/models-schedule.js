@@ -10,6 +10,8 @@
             .map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); })
             .sortBy(function (p) { return p.room().id(); })
             .value());
+        self.fromTime = ko.observable(data.fromTime);
+        self.toTime = ko.observable(data.toTime);
     }
 
     var ScheduleDay = function(data) {
@@ -22,6 +24,30 @@
         self.nbPresentations = ko.observable();
         self.presentations = ko.observableArray([]);
         self.slots = ko.observableArray([]);
+        self.showPastPresentationsOnToday = ko.observable(false);
+        self.scheduleIsToday = ko.computed(function(){
+            var slots = self.slots();
+            var now = Date.now();
+
+            return slots.length
+                && Date.parse(slots[0].fromTime()) <= now
+                && Date.parse(slots[slots.length-1].toTime()) >= now;
+        });
+        self.futureSlots = ko.computed(function(){
+            var slots = self.slots();
+            var showPastPresentationsOnToday = self.showPastPresentationsOnToday();
+            var now = Date.now();
+
+            // If today is the watching day, we should hide past presentations
+            if(self.scheduleIsToday() && !showPastPresentationsOnToday) {
+                return _(slots).filter(function(slot) {
+                    return Date.parse(slot.toTime()) > now;
+                });
+            } else { // Otherwise, no filtering !
+                return slots;
+            }
+
+        });
         self.slots.loading = ko.observable(false);
         self.hash = ko.computed(function() {return "index#!dayschedule~" + self.eventId() + "~" + self.id()});
         self.eventHash = ko.computed(function(){ return "index#!event~" + self.eventId(); });
@@ -91,7 +117,9 @@
                             id: self.id() + '/' + slot,
                             eventId: self.eventId(),
                             name: slot,
-                            presentations: presentations
+                            presentations: presentations,
+                            fromTime: presentations[0].fromTime,
+                            toTime: presentations[0].toTime
                         });
                      }).value()
                 );

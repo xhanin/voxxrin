@@ -314,6 +314,12 @@ $(function() { models.Device.current().whenReady(function() {
     tappable("a#showPastEvents", function() {
         voxxr.showPastEvents(true);
     });
+    tappable("a#showFuturePrez", function() {
+        models.ScheduleDay.current().showPastPresentationsOnToday(false);
+    });
+    tappable("a#showPastPrez", function() {
+        models.ScheduleDay.current().showPastPresentationsOnToday(true);
+    });
     tappable("a.signin", function() {
         if (client_browser != null) {
             console.log('registering onLocationChange');

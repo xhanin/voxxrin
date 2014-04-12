@@ -210,6 +210,8 @@
             <a data-bind="href: eventHash" data-rel="backToEvent" data-icon="back">Event</a>
             <a href="#" data-bind="href: nextDayHash, visible: nextDayDefined" data-rel="nextDay" style="margin-right: 0px" class="ui-btn-right" data-icon="arrow-r">&nbsp;</a>
             <a href="#" data-bind="href: prevDayHash, visible: prevDayDefined" data-rel="prevDay" style="margin-right: 50px" class="ui-btn-right" data-icon="arrow-l">&nbsp;</a>
+            <a href="#" id="showPastPrez" data-bind="visible: scheduleIsToday() && !showPastPresentationsOnToday()" data-transition="slidedown" style="margin-right: 100px" class="ui-btn-right">&nbsp;Past&nbsp;</a>
+            <a href="#" id="showFuturePrez" data-bind="visible: scheduleIsToday() && showPastPresentationsOnToday()" data-transition="slidedown" style="margin-right: 100px" class="ui-btn-right">&nbsp;Future&nbsp;</a>
             <div class="slotsNav ui-navbar ui-navbar-noicons" role="navigation">
                 <ul class="ui-grid-a" data-bind="foreach: slots">
                     <li class="ui-block-n" style="width: 95px">
@@ -227,7 +229,7 @@
         <div data-bind="visible: slots().length === 0 && !slots.loading() && !loading()" class="message">
             Schedule not available yet.
         </div>
-        <ul class="schedule" data-role="listview" data-bind="listview: slots" data-filter="true" data-theme="a">
+        <ul class="schedule" data-role="listview" data-bind="listview: futureSlots" data-filter="true" data-theme="a">
             <li class="slot" data-role="list-divider" data-bind="attr: {'data-slot': name}">
                 <span class="ui-icon ui-icon-arrow-u ui-icon-shadow"></span>
                 <span data-bind="text: name"></span>
