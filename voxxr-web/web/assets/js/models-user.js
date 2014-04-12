@@ -6,7 +6,7 @@
         self.data().id = data.id || (data.userid + '/' + data.eventId + '/' + data.presId);
 
         self.id = ko.observable(self.data().id);
-        self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}) : null);
+        self.twuser = ko.observable(self.data().twitterid ? ds.twUser({id: self.data().twitterid}).loadDetails() : null);
         self.favorite = ko.observable();
         self.presence = ko.observable(Presences.NO);
         self.feelings = {
@@ -234,12 +234,17 @@
                 loadData(self, {id: self.id(), screen_name: self.screenname()}); // reset
                 self.loading(true);
                 var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
+                if(options.fetchMode){
+                    param += "&fetchMode="+options.fetchMode;
+                }
+
                 getJSON(
-                    models.baseUrl + '/twitter/userInfos?'+param,
+                    models.baseUrl + '/twitter/infos?'+param,
                     function(data) {
                         loadData(self, data.twitterUser);
-                        self.followers(_(data.followers).map(serverTwitterUserToTwUser));
-                        self.friends(_(data.friends).map(serverTwitterUserToTwUser));
+
+                        self.followers(_(data.followersIds).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
+                        self.friends(_(data.friendsIds).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
                     },
                     { authenticate: true, usenetwork: '+1d' }
                 ).always(function() {self.loading(false);});
@@ -277,7 +282,7 @@
     var User = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
-        self.twuser = ko.observable(new TwUser({id: data.twitterid, screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true, autoLoadFriends: true}));
+        self.twuser = ko.observable(new TwUser({id: data.twitterid, screen_name: data.id}, {autoLoad: true, fetchMode: "RelatedWithIds" }));
         self.name = ko.computed(function() {
             var name = (isNonNull(self.id()) ? self.id() : 'a')
                 + (isNonNull(self.twuser().id()) ? '(' + self.twuser().id() + ')' : '')
