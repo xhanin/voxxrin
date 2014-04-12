@@ -2,12 +2,28 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta http-equiv="refresh" content="5; url=/" />
-      <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
-      <script type="text/javascript" src="assets/js/libs/tappable.js"></script>
-      <script type="text/javascript" src="assets/js/libs/jquery.mobile-1.1.0-rc.1.js"></script>
-      <link rel="stylesheet" href="assets/css/jquery.mobile-1.1.0-rc.1.min.css" />
-      <link rel="stylesheet" href="assets/css/voxxr.css" />
+    <script type="text/javascript" src="assets/js/libs/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="assets/js/libs/tappable.js"></script>
+    <script type="text/javascript" src="assets/js/libs/jquery.mobile-1.1.0-rc.1.js"></script>
+    <link rel="stylesheet" href="assets/css/jquery.mobile-1.1.0-rc.1.min.css" />
+    <link rel="stylesheet" href="assets/css/voxxr.css" />
+    <script type="text/javascript">
+        $(function(){
+            setTimeout(function(){
+                var e,
+                    a = /\+/g,  // Regex for replacing addition symbol with a space
+                    r = /([^&=]+)=?([^&]*)/g,
+                    d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                    q = window.location.search.substring(1);
+
+                var urlParams = {};
+                while (e = r.exec(q))
+                   urlParams[d(e[1])] = d(e[2]);
+
+                window.location.href = "/"+(urlParams["mode"]?"mode="+urlParams["mode"]:"");
+            }, 5000);
+        });
+    </script>
 </head>
 <body>
 <div>
