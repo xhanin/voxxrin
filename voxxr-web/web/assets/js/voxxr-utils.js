@@ -166,7 +166,7 @@ function postJSON(uri, data, onSuccess) {
     models.Device.current().whenReady(function() {
         if (!models.Device.current().offline()) {
             $.ajax({
-                url: models.baseUrl + uri,
+                url: uri,
                 data: JSON.stringify(data),
                 contentType:"json",
                 dataType:"json",
