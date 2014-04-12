@@ -292,7 +292,6 @@ function getJSON(uri, onSuccess, options) {
                         }
                     });
                 } else {
-                    networkDone = true;
                     if (localDone) {
                         dfd.resolve(obj);
                     }
