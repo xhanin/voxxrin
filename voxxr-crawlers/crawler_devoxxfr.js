@@ -2,7 +2,7 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
     Q = require('q'),
     _ = require('underscore'),
     load = require("./load.js"),
-    dateformat = require('dateformat'),
+    md = require('node-markdown').Markdown
     send = require("./send.js");
 
 module.exports = new VoxxrinCrawler({
@@ -64,7 +64,7 @@ module.exports = new VoxxrinCrawler({
                             __href: speaker.link.href
                         };
                     });
-                    summary = s.talk.summary;
+                    summary = md(s.talk.summary);
                     track = s.talk.track;
                 } else {
                     id = s.slotId;
@@ -104,7 +104,7 @@ module.exports = new VoxxrinCrawler({
         this.loadQueries++;
         load(sp.__href).then(function(speaker) {
             var voxxrinSpeaker = _.extend({}, sp, {
-                'bio':speaker.bio,
+                'bio': md(speaker.bio),
                 'imageUrl':speaker.avatarURL,
                 __twitter: speaker.twitter,
                 __firstName: speaker.firstName,
