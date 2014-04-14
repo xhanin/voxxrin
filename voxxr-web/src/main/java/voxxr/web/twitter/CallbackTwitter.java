@@ -1,6 +1,7 @@
 package voxxr.web.twitter;
 
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.repackaged.com.google.common.base.Function;
 import com.google.appengine.repackaged.com.google.common.base.Optional;
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import twitter4j.Twitter;
@@ -10,10 +11,12 @@ import twitter4j.auth.RequestToken;
 import voxxr.web.RestRouter;
 import voxxr.web.TwitterUser;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -119,4 +122,50 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
         }
     }
 
+    public static List<Entity> findMysByTwitterId(Long twitterId) {
+        List<String> deviceIdsForTwitterId = findMyIdsForTwitterId(twitterId);
+        List<Key> deviceIdKeys = Lists.transform(deviceIdsForTwitterId, new Function<String, Key>() {
+            @Nullable
+            @Override
+            public Key apply(@Nullable String deviceId) {
+                try {
+                    // Trying to convert deviceId to long
+                    return KeyFactory.createKey("My", Long.valueOf(deviceId));
+                } catch (NumberFormatException e) {
+                    // But in some case, the myId can be a string (when it is the twitter screen name)
+                    return KeyFactory.createKey("My", deviceId);
+                }
+            }
+        });
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Query q = new Query("My")
+                .setFilter(new Query.FilterPredicate(Entity.KEY_RESERVED_PROPERTY,
+                        Query.FilterOperator.IN, deviceIdKeys));
+
+        return ds.prepare(q).asList(FetchOptions.Builder.withLimit(deviceIdsForTwitterId.size()));
+    }
+
+    public static List<String> findMyIdsForTwitterId(Long twitterId) {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+
+        Query q = new Query("OAuthAccessToken")
+                .addFilter("twitterid", Query.FilterOperator.EQUAL, twitterId)
+                .addSort("datetime", Query.SortDirection.DESCENDING);
+
+        List<Entity> entities = ds.prepare(q).asList(FetchOptions.Builder.withLimit(100));
+        List<String> myIds = new ArrayList(Lists.transform(entities, new Function<Entity, String>() {
+            @Nullable
+            @Override
+            public String apply(Entity entity) {
+                return (String)entity.getProperty("deviceid");
+            }
+        }));
+
+        if(!entities.isEmpty()) {
+            myIds.add((String)entities.get(0).getProperty("screen_name"));
+        }
+
+        return myIds;
+    }
 }
