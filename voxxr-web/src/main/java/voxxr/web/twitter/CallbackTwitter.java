@@ -2,13 +2,11 @@ package voxxr.web.twitter;
 
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.repackaged.com.google.common.base.Optional;
-import com.google.appengine.repackaged.com.google.common.base.Throwables;
-import org.json.JSONException;
+import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
-import voxxr.web.MyResources;
 import voxxr.web.RestRouter;
 import voxxr.web.TwitterUser;
 
@@ -56,16 +54,6 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
                 oAuthAccessTokenEntity.setProperty("deviceid", deviceid);
                 oAuthAccessTokenEntity.setProperty("status", "CREATED");
                 ds.put(oAuthAccessTokenEntity);
-
-                // Updating "My" user with twitter infos
-                TwitterUser twitterUser = new TwitterUser(
-                        screenName, twitterid, deviceid,
-                        new AccessToken(oAuthAccessToken.getToken(), oAuthAccessToken.getTokenSecret()));
-                try {
-                    MyResources.newMy(twitterUser);
-                } catch (JSONException e) {
-                    Throwables.propagate(e);
-                }
 
                 resp.sendRedirect("/signedin.html"+modeParam);
             } catch (TwitterException e) {
@@ -130,4 +118,5 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
             return null;
         }
     }
+
 }
