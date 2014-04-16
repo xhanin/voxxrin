@@ -177,7 +177,7 @@
             <div class="message" data-bind="visible: since">
                 <span data-bind="text: since"></span>
             </div>
-            <ul data-role="listview" data-inset="true">
+            <ul data-role="listview" data-inset="true" data-bind="visible: nowPlayingEnabled">
                 <li class="nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <span class="ui-li-count" data-bind="text: nowplaying().length"></span></li>
             </ul>
             <h2>Schedule</h2>

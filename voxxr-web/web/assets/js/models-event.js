@@ -30,6 +30,7 @@
         self.data = ko.observable({});
         self.loading = ko.observable(false);
         self.enabled = ko.observable();
+        self.nowPlayingEnabled = ko.observable(false);
         self.my = null;
         var crons = {};
 
@@ -50,6 +51,7 @@
             self.enabled(data.enabled);
             self.nbPresentations(data.nbPresentations);
             self.dates(data.dates);
+            self.nowPlayingEnabled(!!data.nowPlayingEnabled);
             if (has.nowplaying) {
                 self.nowplaying(_(data.nowplaying).map(function(presentation) {
                     var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
