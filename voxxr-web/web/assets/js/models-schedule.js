@@ -21,27 +21,31 @@
         self.uri = ko.observable();
         self.name = ko.observable();
         self.loading = ko.observable(false);
+        self.latestRefreshTime = ko.observable(Date.now());
+        setInterval(function(){
+            self.latestRefreshTime(Date.now());
+        }, 10 * 60 * 1000);
         self.nbPresentations = ko.observable();
         self.presentations = ko.observableArray([]);
         self.slots = ko.observableArray([]);
         self.showPastPresentationsOnToday = ko.observable(false);
         self.scheduleIsToday = ko.computed(function(){
             var slots = self.slots();
-            var now = Date.now();
+            var latestRefreshTime = self.latestRefreshTime();
 
             return slots.length
-                && parseDateFromStr(slots[0].fromTime()) <= now
-                && parseDateFromStr(slots[slots.length-1].toTime()) >= now;
+                && parseDateFromStr(slots[0].fromTime()) <= latestRefreshTime
+                && parseDateFromStr(slots[slots.length-1].toTime()) >= latestRefreshTime;
         });
         self.futureSlots = ko.computed(function(){
             var slots = self.slots();
             var showPastPresentationsOnToday = self.showPastPresentationsOnToday();
-            var now = Date.now();
+            var latestRefreshTime = self.latestRefreshTime();
 
             // If today is the watching day, we should hide past presentations
             if(self.scheduleIsToday() && !showPastPresentationsOnToday) {
                 return _(slots).filter(function(slot) {
-                    return parseDateFromStr(slot.toTime()) > now;
+                    return parseDateFromStr(slot.toTime()) > latestRefreshTime;
                 });
             } else { // Otherwise, no filtering !
                 return slots;
