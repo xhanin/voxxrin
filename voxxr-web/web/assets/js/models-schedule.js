@@ -30,8 +30,8 @@
             var now = Date.now();
 
             return slots.length
-                && Date.parse(slots[0].fromTime()) <= now
-                && Date.parse(slots[slots.length-1].toTime()) >= now;
+                && parseDateFromStr(slots[0].fromTime()) <= now
+                && parseDateFromStr(slots[slots.length-1].toTime()) >= now;
         });
         self.futureSlots = ko.computed(function(){
             var slots = self.slots();
@@ -41,7 +41,7 @@
             // If today is the watching day, we should hide past presentations
             if(self.scheduleIsToday() && !showPastPresentationsOnToday) {
                 return _(slots).filter(function(slot) {
-                    return Date.parse(slot.toTime()) > now;
+                    return parseDateFromStr(slot.toTime()) > now;
                 });
             } else { // Otherwise, no filtering !
                 return slots;
@@ -83,13 +83,13 @@
                         if(s1.fromTime === s2.fromTime) {
                             // If fromTime is the same, we should consider displaying
                             // longest slots first
-                            return Date.parse(s2.toTime) - Date.parse(s1.toTime);
+                            return parseDateFromStr(s2.toTime) - parseDateFromStr(s1.toTime);
                         } else {
-                            return Date.parse(s1.fromTime) - Date.parse(s2.fromTime);
+                            return parseDateFromStr(s1.fromTime) - parseDateFromStr(s2.fromTime);
                         }
                      })).groupBy(function(p) {
-                        var formattedFromTime = dateFormat(new Date(Date.parse(p.fromTime)), new Date(Date.parse(p.fromTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
-                        var formattedToTime = dateFormat(new Date(Date.parse(p.toTime)), new Date(Date.parse(p.toTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
+                        var formattedFromTime = dateFormat(new Date(parseDateFromStr(p.fromTime)), new Date(parseDateFromStr(p.fromTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
+                        var formattedToTime = dateFormat(new Date(parseDateFromStr(p.toTime)), new Date(parseDateFromStr(p.toTime)).getMinutes() ? 'H\'h\'MM' : 'H\'h\'');
                         var slotLabel = formattedFromTime+"-"+formattedToTime;
                         if(!_(sortedSlotsLabels).contains(slotLabel)) {
                             sortedSlotsLabels.push(slotLabel);

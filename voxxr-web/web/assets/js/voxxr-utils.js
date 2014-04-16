@@ -340,3 +340,10 @@ function currentModelObject() {
     });
     return current;
 }
+
+// Used to workaround an issue where safari doesn't parse correctly Date.parse("2014-04-16 08:00:00.0")
+// because it expects a "T" instead of a space (Date.parse("2014-04-16T08:00:00.0") is fine)
+function parseDateFromStr(str) {
+    var a = str.split(/[^0-9]/);
+    return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5] );
+}

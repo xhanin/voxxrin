@@ -17,7 +17,7 @@ $(function() { models.Device.current().whenReady(function() {
             var events = self.events();
             var showPastEvents = self.showPastEvents();
             var filteredEvents = _.filter(events, function(ev) {
-                return showPastEvents || Date.parse(ev.to()) > new Date().getTime();
+                return showPastEvents || parseDateFromStr(ev.to()) > new Date().getTime();
             });
             return filteredEvents;
         });
