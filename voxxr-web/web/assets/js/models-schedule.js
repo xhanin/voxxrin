@@ -114,7 +114,7 @@
                             pres.prevSlotPrezId = previousSlotIndex>=0?slots[sortedSlotsLabels[previousSlotIndex]][0].id:null;
 
                             pres.dayId = data.id;
-                            pres.slot = slot;
+                            pres.dayScheduleSlot = slot;
                         });
 
                         return ds.scheduleSlot({

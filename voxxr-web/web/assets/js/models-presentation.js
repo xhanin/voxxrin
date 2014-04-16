@@ -145,7 +145,9 @@
             self.title(data.title);
             self.type(data.type);
             self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
-            self.slot(data.slot);
+            if(self.slot() === null || data.dayScheduleSlot) {
+                self.slot(data.dayScheduleSlot || data.slot);
+            }
             self.favorites(data.favorites);
             self.fromTime(data.fromTime);
             self.toTime(data.toTime);
