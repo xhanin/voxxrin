@@ -112,7 +112,7 @@ public class MyResources implements RestRouter.RequestHandler {
                         Double myLastModified = extractMapProp(myPresentation, "lastmodified");
                         Double otherLastModified = extractMapProp(otherPresentation, "lastmodified");
 
-                        if(otherLastModified.longValue() > myLastModified.longValue()) {
+                        if(otherLastModified==null || myLastModified==null || otherLastModified.longValue() > myLastModified.longValue()) {
                             myPresentations.put(otherPresentationEntry.getKey(), otherPresentationEntry.getValue());
                         }
                     }
