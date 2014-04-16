@@ -20,4 +20,9 @@
         <property name="presId" direction="asc"/>
         <property name="twitterid" direction="asc"/>
     </datastore-index>
+
+    <datastore-index kind="OAuthAccessToken" ancestor="false" source="auto">
+        <property name="twitterid" direction="asc"/>
+        <property name="datetime" direction="desc"/>
+    </datastore-index>
 </datastore-indexes>
