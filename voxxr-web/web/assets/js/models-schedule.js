@@ -8,7 +8,7 @@
         self.nbPresentations = ko.observable(data.presentations.length);
         self.presentations = ko.observableArray(_.chain(data.presentations)
             .map(function(presentation) { return ds.presentation(_.extend(presentation, {eventId: self.eventId()})); })
-            .sortBy(function (p) { return p.room().id(); })
+            .sortBy(function (p) { return p.type() + p.room().id(); })
             .value());
         self.fromTime = ko.observable(data.fromTime);
         self.toTime = ko.observable(data.toTime);
