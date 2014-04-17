@@ -213,7 +213,7 @@
             <a href="#" id="showPastPrez" data-bind="visible: scheduleIsToday() && !showPastPresentationsOnToday()" data-transition="slidedown" style="margin-right: 100px" class="ui-btn-right">&nbsp;Past&nbsp;</a>
             <a href="#" id="showFuturePrez" data-bind="visible: scheduleIsToday() && showPastPresentationsOnToday()" data-transition="slidedown" style="margin-right: 100px" class="ui-btn-right">&nbsp;Future&nbsp;</a>
             <div class="slotsNav ui-navbar ui-navbar-noicons" role="navigation">
-                <ul class="ui-grid-a" data-bind="foreach: slots">
+                <ul class="ui-grid-a" data-bind="foreach: futureSlots">
                     <li class="ui-block-n" style="width: 95px">
                         <a class="slot ui-btn ui-btn-up-a" data-bind="attr: {'data-slot': name}" data-corners="false" data-shadow="false" data-iconshadow="true" data-inline="false" data-wrapperels="span">
                             <span class="ui-btn-inner"><span class="ui-btn-text" data-bind="text: name"></span></span>
