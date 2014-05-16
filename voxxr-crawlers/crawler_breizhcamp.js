@@ -21,6 +21,7 @@ module.exports = new VoxxrinCrawler({
         });
 
         var talks = [];
+        var talkIds = [];
         try {
             var badIdIncrement = -1;
             _(schedule.programme.jours).each(function (day) {
@@ -28,8 +29,22 @@ module.exports = new VoxxrinCrawler({
                 _(day.tracks).each(function (track) {
                     _(track.proposals).each(function (proposal) {
                         var detailedTalk = detailedTalksById[proposal.id];
+
+                        // First weird thing : some talks (like keynote, or some other talks) has id=0
+                        // which seems weird to me
+                        // I decided to affect a negative incremented id on these special talks in order to make
+                        // them appear in the schedule !
+                        var talkId = proposal.id === 0 ? badIdIncrement-- : proposal.id;
+
+                        // Second weird thing : on the first day, we have several talks with same id but different
+                        // time slots. This makes VoxxrinCrawler crazy, so I decided to create unique ids by appending
+                        // "1" to these ids until I find a unique id.
+                        while(_.contains(talkIds, talkId)) {
+                            talkId = Number("1"+talkId);
+                        }
+                        talkIds.push(talkId);
                         var talk = {
-                            id: proposal.id===0?badIdIncrement--:proposal.id,
+                            id: talkId,
                             title: proposal.title,
                             type: proposal.format,
                             kind: "Talk",
