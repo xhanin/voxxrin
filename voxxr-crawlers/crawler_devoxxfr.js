@@ -2,7 +2,7 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
     Q = require('q'),
     _ = require('underscore'),
     load = require("./load.js"),
-    md = require('node-markdown').Markdown
+    md = require('node-markdown').Markdown,
     send = require("./send.js");
 
 module.exports = new VoxxrinCrawler({
