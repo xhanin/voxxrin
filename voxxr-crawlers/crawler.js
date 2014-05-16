@@ -5,7 +5,8 @@ var http = require("http"),
     mixit = require('./crawler_mixit.js'),
     jugsummercamp = require('./crawler_jugsummercamp.js'),
     lanyrd = require('./crawler_lanyrd.js'),
-    devoxxfr = require('./crawler_devoxxfr.js')
+    devoxxfr = require('./crawler_devoxxfr.js'),
+    breizhcamp = require('./crawler_breizhcamp.js')
     ;
 
 var PROD_BASE_URL = 'http://app.voxxr.in';
@@ -80,6 +81,20 @@ var EVENTS = {
             title: "JugSummerCamp 2013",
             description: "Une journée entière, à l'espace Encan de La Rochelle, pour prendre les dernières nouvelles du monde Java.",
             initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/4"]
+        }
+    },
+    "bzh14": {
+        crawlerType: breizhcamp, authTokens: [ "2", "all" ],
+        event: {
+            /* Breizhcamp 2014 */
+            id: 14,
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: "Breizhcamp 2014",
+            description: "Un mix de technologies, un max de connaissances",
+            initialCrawlingUrls: [
+                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/json/schedule.json",
+                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/json/talks.json"
+            ]
         }
     }
 };
