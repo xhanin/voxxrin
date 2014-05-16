@@ -45,7 +45,7 @@ module.exports = new VoxxrinCrawler({
                                         id: speaker.id,
                                         name: speaker.fullname,
                                         bio: "",
-                                        imageUrl: speaker.avatar,
+                                        imageUrl: speaker.avatar?speaker.avatar.replace("https://", "http://"):null,
                                         "__links": speaker.liens
                                     };
                                 }),
