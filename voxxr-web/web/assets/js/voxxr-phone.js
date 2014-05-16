@@ -19,6 +19,9 @@ $(function() { models.Device.current().whenReady(function() {
             var filteredEvents = _.filter(events, function(ev) {
                 return showPastEvents || parseDateFromStr(ev.to()) > new Date().getTime();
             });
+            if(showPastEvents) {
+                filteredEvents = filteredEvents.reverse();
+            }
             return filteredEvents;
         });
         self.loginBtn = ko.computed(function() {
