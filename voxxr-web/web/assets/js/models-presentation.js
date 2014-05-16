@@ -58,7 +58,7 @@
                var completelyFilledUser = _(models.User.current().twuser().followers()).find(function(twuser){
                    return twuser.id() === fav.twuser().id();
                });
-               fav.twuser.copyFrom(completelyFilledUser);
+               fav.twuser().copyFrom(completelyFilledUser);
                return fav;
             });
 
