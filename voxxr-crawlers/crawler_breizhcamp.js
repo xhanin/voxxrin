@@ -49,7 +49,7 @@ module.exports = new VoxxrinCrawler({
                                         "__links": speaker.liens
                                     };
                                 }),
-                                __summary: detailedTalk.description,
+                                __summary: md(detailedTalk.description),
                                 __track: detailedTalk.track
                             });
                         }
