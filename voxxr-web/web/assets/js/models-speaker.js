@@ -16,6 +16,14 @@
         self.data = {};
 
         function loadData(data) {
+            // For bzh backward compat :
+            // In db for bzh, speaker bios may be "" in presentation models
+            // Problem with that is _.extend() will potentially override a
+            // fully loaded speaker bio with "", when displaying the presentation
+            // => we must delete bio from given data if this is an empty string
+            if(data.bio === "") {
+                delete data.bio;
+            }
             self.data = _.extend(self.data, data);
             self.id(self.data.id);
             self.uri(self.data.uri);

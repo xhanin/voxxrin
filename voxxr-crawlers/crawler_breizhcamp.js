@@ -59,7 +59,6 @@ module.exports = new VoxxrinCrawler({
                                     return {
                                         id: speaker.id,
                                         name: speaker.fullname,
-                                        bio: "",
                                         // Replacing https urls with https since load() cannot handle https urls
                                         // and most of times, it doesn't make any problem
                                         imageUrl: speaker.avatar?speaker.avatar.replace("https://", "http://"):null,
