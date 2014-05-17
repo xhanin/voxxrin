@@ -60,6 +60,8 @@ module.exports = new VoxxrinCrawler({
                                         id: speaker.id,
                                         name: speaker.fullname,
                                         bio: "",
+                                        // Replacing https urls with https since load() cannot handle https urls
+                                        // and most of times, it doesn't make any problem
                                         imageUrl: speaker.avatar?speaker.avatar.replace("https://", "http://"):null,
                                         "__links": speaker.liens
                                     };
@@ -84,7 +86,23 @@ module.exports = new VoxxrinCrawler({
     },
     fetchSpeakerInfosFrom: function(deferred, sp) {
         this.loadQueries++;
-        deferred.resolve(sp);
+
+        load("http://breizhcamp.call-for-papers.io/speakers/"+sp.id).then(function(speaker) {
+            var voxxrinSpeaker = _.extend({}, sp, {
+                'bio': md(speaker.description),
+                __twitter: speaker.twitter,
+                __firstName: speaker.firstName,
+                __lastName: speaker.lastName,
+                __email: speaker.email
+            });
+
+            deferred.resolve(voxxrinSpeaker);
+        }).fail(function(deferred) {
+            // In case of failure (some 404 happen on some speakers) we're only missing the bio
+            // This is reasonable to consider initial speaker info is sufficient
+            deferred.resolve(sp);
+        });
+
         return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
