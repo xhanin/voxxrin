@@ -96,23 +96,52 @@ module.exports = function(opts){
 
                 var daySchedulesPromises = [];
                 _(self.currentContext.sortedSchedule).each(function(s, scheduleIndex) {
+                    var dayScheduleInfos = {
+                        speakersDeferred: null,
+                        speakersDeferredStates: [],
+                        speakerInfosDeferredStates: [],
+                        presentationInfoPromise: null,
+                        presentationInfoPromiseState: null,
+                        mainPromise: null,
+                        mainPromiseState: null,
+                        scheduleIndex: scheduleIndex,
+                        schedule: s
+                    };
+                    function createObservedDeferred(promiseStateFieldName) {
+                        var deferred = Q.defer();
+                        var setPromiseStateFieldValue;
+
+                        if(_.isFunction(promiseStateFieldName)){
+                            setPromiseStateFieldValue = promiseStateFieldName;
+                        } else {
+                            setPromiseStateFieldValue = function(value){ return dayScheduleInfos[promiseStateFieldName] = value; };
+                        }
+
+                        setPromiseStateFieldValue("pending");
+                        Q.when(deferred.promise)
+                         .then(function(){ setPromiseStateFieldValue("resolved"); })
+                         .fail(function(){ setPromiseStateFieldValue("failed"); });
+
+                        return deferred;
+                    }
+
                     console.log("Handling talk number "+scheduleIndex+"...");
 
                     self.event.nbPresentations++;
                     var fromTime = new Date(Date.parse(s.fromTime)),
                         daySchedule = self.daySchedules[dateformat(fromTime, 'yyyy-mm-dd')];
 
-                    var speakersDeferred = [];
+                    dayScheduleInfos.speakersDeferred = [];
                     _(s.speakers).each(function(sp, speakerIndex) {
                         console.log("Handling speaker "+speakerIndex+"...");
 
                         // Generating speaker uri
                         sp.uri = '/events/' + self.event.id + '/speakers/' + sp.id;
 
-                        var speakerDeferred = Q.defer();
-                        speakersDeferred.push(speakerDeferred.promise);
+                        var speakerDeferred = createObservedDeferred(function(value){ dayScheduleInfos.speakersDeferredStates[speakerIndex] = value; });
+                        dayScheduleInfos.speakersDeferred.push(speakerDeferred.promise);
 
-                        var speakerInfosDeferred = Q.defer();
+                        var speakerInfosDeferred = createObservedDeferred(function(value){ dayScheduleInfos.speakerInfosDeferredStates[speakerIndex] = value; });
                         self.options.fetchSpeakerInfosFrom.call(self, speakerInfosDeferred, sp);
                         Q.when(speakerInfosDeferred.promise)
                         .then(function(fetchedSpeaker) {
@@ -170,24 +199,24 @@ module.exports = function(opts){
 
                     self.event.days[daySchedule.dayNumber].nbPresentations++;
 
-                    var presentationInfoPromise = Q.defer();
-                    self.options.fetchPresentationInfosFrom.call(self, presentationInfoPromise, s, voxxrinPres);
+                    dayScheduleInfos.presentationInfoPromise = createObservedDeferred("presentationInfoPromiseState");
+                    self.options.fetchPresentationInfosFrom.call(self, dayScheduleInfos.presentationInfoPromise, s, voxxrinPres);
 
-                    var daySchedulePromise = Q.defer();
-                    daySchedulesPromises.push(daySchedulePromise.promise);
+                    dayScheduleInfos.mainPromise = createObservedDeferred("mainPromiseState");
+                    daySchedulesPromises.push(dayScheduleInfos);
 
-                    Q.all([presentationInfoPromise.promise].concat(speakersDeferred))
+                    Q.all([dayScheduleInfos.presentationInfoPromise.promise].concat(dayScheduleInfos.speakersDeferred))
                     .spread(function(presentationInfos) {
                         console.log("Presentation "+scheduleIndex+" required infos available !");
 
                         daySchedule.schedule.push(presentationInfos);
-                        daySchedulePromise.resolve(presentationInfos);
+                        dayScheduleInfos.mainPromise.resolve(presentationInfos);
 
                         self.sendQueries++;
                         send(baseUrl + '/r' + voxxrinPres.uri, presentationInfos)
                         .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
                         .fail(self.options.onFailureCallback);
-                    });
+                    }).fail(_.bind(self.onDeferredFailureCallback, {deferred: dayScheduleInfos.mainPromise}));;
                 });
 
                 delete self.event.dayDates;
@@ -197,8 +226,11 @@ module.exports = function(opts){
                     console.log('EVENT:', self.event);
                 }).fail(self.options.onFailureCallback);
 
+                // Uncomment to debug in setInterval() :
+                // global.globDaySchedulesPromises = daySchedulesPromises;
+
                 // Waiting for every presentations being persisted
-                Q.all(daySchedulesPromises).spread(function(){
+                Q.all(_(daySchedulesPromises).map(function(dsp){ return dsp.mainPromise.promise; })).spread(function(){
                     _(self.daySchedules).each(function (ds) {
                         self.sendQueries++;
                         send(baseUrl + '/r/events/' + self.event.id + '/day/' + ds.id, ds).then(function(){
