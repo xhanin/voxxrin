@@ -114,8 +114,6 @@ module.exports = new VoxxrinCrawler({
 
             deferred.resolve(voxxrinSpeaker);
         }).fail(_.bind(this.onDeferredFailureCallback, {deferred: deferred}));
-
-        return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
 //        voxxrinPres.fromTime = moment(voxxrinPres.fromTime, "Europe/Paris").format("YYYY-MM-DD HH:mm:ss.0"),
@@ -134,6 +132,5 @@ module.exports = new VoxxrinCrawler({
             'summary': s.__summary,
             'track': s.__track
         }));
-        return deferred.promise;
     }
 });

@@ -52,12 +52,10 @@ module.exports = new VoxxrinCrawler({
             'bio': sp['__description'],
             'imageUrl': sp['__pictureUrl']
         });
-        return deferred.promise;
     },
     fetchPresentationInfosFrom: function(deferred, s, voxxrinPres) {
         deferred.resolve(_.extend({}, voxxrinPres, {
             'summary': s['__summary']
         }));
-        return deferred.promise;
     }
 });

@@ -41,7 +41,7 @@ module.exports = new VoxxrinCrawler({
                         // "1" to these ids until I find a unique id.
                         while(_.contains(talkIds, talkId)) {
                             talkId = Number("1"+talkId);
-                        }
+                            }
                         talkIds.push(talkId);
                         var talk = {
                             id: talkId,
@@ -101,8 +101,6 @@ module.exports = new VoxxrinCrawler({
             // This is reasonable to consider initial speaker info is sufficient
             deferred.resolve(sp);
         });
-
-        return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
         return false;
@@ -114,6 +112,5 @@ module.exports = new VoxxrinCrawler({
             'summary': s.__summary,
             'track': s.__track
         }));
-        return deferred.promise;
     }
 });

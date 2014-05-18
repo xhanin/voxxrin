@@ -74,8 +74,6 @@ module.exports = new VoxxrinCrawler({
 
             deferred.resolve(voxxrinSpeaker);
         }).fail(_.bind(this.onDeferredFailureCallback, {deferred: deferred}));
-
-        return deferred.promise;
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
 //        voxxrinPres.fromTime = dateformat(voxxrinPres.fromTime,"yyyy-mm-dd HH:MM:ss.0"),
@@ -97,6 +95,5 @@ module.exports = new VoxxrinCrawler({
             }),
             'summary': s.summary + "\n\n" + s.description
         }));
-        return deferred.promise;
     }
 });
