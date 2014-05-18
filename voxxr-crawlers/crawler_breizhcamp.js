@@ -39,9 +39,13 @@ module.exports = new VoxxrinCrawler({
                         // Second weird thing : on the first day, we have several talks with same id but different
                         // time slots. This makes VoxxrinCrawler crazy, so I decided to create unique ids by appending
                         // "1" to these ids until I find a unique id.
-                        while(_.contains(talkIds, talkId)) {
+                        if(_.contains(talkIds, talkId)) {
                             talkId = Number("1"+talkId);
+                            while(_.contains(talkIds, -talkId)) {
+                                talkId = Number("1"+talkId);
                             }
+                            talkId = -talkId;
+                        }
                         talkIds.push(talkId);
                         var talk = {
                             id: talkId,
