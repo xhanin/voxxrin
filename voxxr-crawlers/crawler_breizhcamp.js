@@ -96,7 +96,7 @@ module.exports = new VoxxrinCrawler({
             });
 
             deferred.resolve(voxxrinSpeaker);
-        }).fail(function(deferred) {
+        }).fail(function() {
             // In case of failure (some 404 happen on some speakers) we're only missing the bio
             // This is reasonable to consider initial speaker info is sufficient
             deferred.resolve(sp);
