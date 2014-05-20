@@ -92,8 +92,8 @@ var EVENTS = {
             title: "Breizhcamp 2014",
             description: "Un mix de technologies, un max de connaissances",
             initialCrawlingUrls: [
-                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/json/schedule.json",
-                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/json/talks.json"
+                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/_includes/json/schedule.json",
+                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/_includes/json/talks.json"
             ]
         }
     }
