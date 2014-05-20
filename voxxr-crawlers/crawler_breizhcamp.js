@@ -52,8 +52,8 @@ module.exports = new VoxxrinCrawler({
                             title: proposal.title,
                             type: proposal.format,
                             kind: "Talk",
-                            fromTime: moment(dayDateStr + " " + proposal.start, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate(),
-                            toTime: moment(dayDateStr + " " + proposal.end, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate(),
+                            fromTime: moment.tz(dayDateStr + " " + proposal.start, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate(),
+                            toTime: moment.tz(dayDateStr + " " + proposal.end, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate(),
                             roomName: proposal.room
                         };
                         // Some talks might not have been detailed (like keynote)
