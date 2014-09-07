@@ -44,8 +44,8 @@ module.exports = new VoxxrinCrawler({
                     'kind': 'Conference',
                     // Will be done.. later (see below)
                     'speakers': [],
-                'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+")))),
-                'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+")))),
+                    'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+")))),
+                    'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+")))),
                     'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
 
                     '__summary': $el.find('div.desc').text()
@@ -103,6 +103,6 @@ module.exports = new VoxxrinCrawler({
     fetchPresentationInfosFrom: function(deferred, s, voxxrinPres) {
         deferred.resolve(_.extend({}, voxxrinPres, {
             'summary': s['__summary']
-        }));
+        }, this.currentContext.event.presentationUpdater?this.currentContext.event.presentationUpdater(voxxrinPres):{}));
     }
 });
