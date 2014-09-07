@@ -96,6 +96,36 @@ var EVENTS = {
                 "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/_includes/json/talks.json"
             ]
         }
+    },
+    "bdxio14": {
+        crawlerType: lanyrd, authTokens: [ "7", "all" ],
+        event: {
+            /* BDXIO 2014 */
+            id: 'bdxio14',
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: 'BDXIO 2014',
+            domainUrl: 'http://lanyrd.com',
+            baseUrl: 'http://lanyrd.com/2014/bdxio/',
+            schedulePagesCount: 2,
+            presentationUpdater: function(pres){
+                var type, title;
+                if(pres.title.indexOf("[CONF]") !== -1){
+                    type = "Conference";
+                    title = pres.title.replace("[CONF] ","");
+                } else if(pres.title.indexOf("[QUICK]") !== -1){
+                    type = "Quickie";
+                    title = pres.title.replace("[QUICK] ","");
+                } else if(pres.title.indexOf("[HANDS-ON]") !== -1){
+                    type = "Hand's On"
+                    title = pres.title.replace("[HANDS-ON] ","");
+                } else {
+                    type = "Unknown";
+                    title = pres.title;
+                }
+
+                return {type:type, title:title};
+            }
+        }
     }
 };
 

@@ -7,6 +7,7 @@ module.exports = {
         4: 'jugSummercampToken',
         5: 'leanKanbanToken',
         6: 'mixitToken',
+        7: 'bdxioToken',
         'all': 'adminToken'
     }
 };
