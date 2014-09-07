@@ -134,7 +134,18 @@ var EVENTS = {
                     title = pres.title;
                 }
 
-                return {type:type, title:title};
+                var id, uri, match;
+                var cfpIdRegex = /(.*)\s\((.+)\)$/gi;
+                if(match = cfpIdRegex.exec(title)){
+                    title = match[1];
+                    id = "bdxio14-"+match[2].toLowerCase();
+                    uri = pres.uri.replace(pres.id, id);
+                } else {
+                    id = pres.id;
+                    uri = pres.uri;
+                }
+
+                return {type:type, title:title, id:id, uri:uri};
             }
         }
     }
