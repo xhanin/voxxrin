@@ -4,9 +4,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.repackaged.com.google.common.base.Predicates;
 import com.google.appengine.repackaged.com.google.common.collect.Collections2;
 import com.google.appengine.repackaged.com.google.common.base.Function;
 import com.google.appengine.repackaged.com.google.common.base.Throwables;
+import com.google.appengine.repackaged.com.google.common.collect.FluentIterable;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 
@@ -87,13 +89,16 @@ public class EventResources implements RestRouter.RequestHandler {
                 }
                 speakerKeys = ImmutableSet.copyOf(speakerKeys); // Removing duplicates
 
-                Collection<String> roomKeys = Collections2.transform(schedules, new Function<Map, String>() {
-                    @Override
-                    public String apply(@Nullable Map map) {
-                        return (String)((Map)map.get("room")).get("id");
-                    }
-                });
-                roomKeys = ImmutableSet.copyOf(roomKeys);
+                Collection<String> roomKeys = FluentIterable
+                        .from(schedules)
+                        .transform(new Function<Map, String>() {
+                            @Override
+                            public String apply(@Nullable Map map) {
+                                Map room = (Map) map.get("room");
+                                return room==null?null:(String)room.get("id");
+                            }
+                        }).filter(Predicates.notNull())
+                        .toSet();
 
                 Collection<String> prezKeys = Collections2.transform(schedules, new Function<Map, String>() {
                     @Override
