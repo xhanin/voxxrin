@@ -175,7 +175,7 @@ module.exports = function(opts){
                         }).fail(_.bind(self.onDeferredFailureCallback, {deferred: speakerInfosDeferred}));
                     });
 
-                    var prezId = (self.options.prefix + s.id).toLowerCase().replace(/_/gi, "-");
+                    var prezId = (event.id + "-" + s.id).toLowerCase().replace(/_/gi, "-");
                     var voxxrinPres = {
                         'id': prezId,
                         'title': s.title,
@@ -214,7 +214,7 @@ module.exports = function(opts){
 
                         self.sendQueries++;
                         send(baseUrl + '/r' + voxxrinPres.uri, presentationInfos)
-                        .then(function() {console.log('PRESENTATION: ', voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
+                        .then(function() {console.log('PRESENTATION: ', voxxrinPres.id, voxxrinPres.title, daySchedule.id, voxxrinPres.slot)})
                         .fail(self.options.onFailureCallback);
                     }).fail(_.bind(self.onDeferredFailureCallback, {deferred: dayScheduleInfos.mainPromise}));;
                 });
