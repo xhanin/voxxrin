@@ -11,10 +11,18 @@ module.exports = new VoxxrinCrawler({
     name: 'Lanyrd',
     prefix: 'lrd',
     initialCrawlingUrls: function(event) {
-        return [
+        var crawlingUrls = [
             event.baseUrl,
             event.baseUrl+"schedule/"
         ];
+
+        if(event.schedulePagesCount) {
+            _.each(_.range(2, event.schedulePagesCount+1), function(pageIdx){
+                crawlingUrls.push(event.baseUrl+"schedule/?page="+pageIdx);
+            });
+        }
+
+        return crawlingUrls;
     },
     initialUrlParsingCallback: function(url) {
         var deferred = Q.defer();
@@ -26,19 +34,20 @@ module.exports = new VoxxrinCrawler({
     logInitialCrawlingResults: function(baseUrlBody, scheduleBody){
         console.log("loaded event "+this.currentContext.event.title);
     },
-    extractScheduleFromInitialCrawling: function(deferred, baseUrlBody, scheduleBody) {
-        var self = this;
+    extractScheduleFromInitialCrawling: function() {
+        var deferred = arguments[0];
+        var baseUrlBody = arguments[1];
+        var scheduleBodies = Array.prototype.slice.call(arguments, 2, arguments.length);
 
-        self.currentContext.$ = cheerio.load(scheduleBody);
-        var $ = self.currentContext.$;
-
-        var speakersDeferred = [];
-        var schedules = $(".schedule-item").map(function(i) {
+        var self = this, speakersDeferred = [], schedules = [], scheduleId=0;
+        _.each(scheduleBodies, function(scheduleBody){
+            var $ = cheerio.load(scheduleBody);
+            Array.prototype.push.apply(schedules, $(".schedule-item").map(function() {
                 var $el = $(this);
                 var fromTimeVal = $el.find('.dtstart .value-title').attr("title");
                 var toTimeVal = $el.find('.dtend .value-title').attr("title");
                 var schedule = {
-                'id': i,
+                    'id': scheduleId++,
                     'title': $el.find("h2 a").text(),
                     'type': 'Talk',
                     'kind': 'Conference',
@@ -78,7 +87,9 @@ module.exports = new VoxxrinCrawler({
                 });
 
                 return schedule;
+            }));
         });
+
         Q.all(speakersDeferred).spread(function(){
             deferred.resolve(schedules);
         });
