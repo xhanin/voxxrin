@@ -83,6 +83,17 @@ var EVENTS = {
             initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/4"]
         }
     },
+    "jsc14": {
+        crawlerType: jugsummercamp, authTokens: [ "4", "all" ],
+        event: {
+            /* Jugsummercamp 2014 */
+            id: 14,
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: "JugSummerCamp 2014",
+            description: "Une journée entière, à l'espace Encan de La Rochelle, pour prendre les dernières nouvelles du monde Java.",
+            initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/5"]
+        }
+    },
     "bzh14": {
         crawlerType: breizhcamp, authTokens: [ "2", "all" ],
         event: {
