@@ -34,49 +34,49 @@ module.exports = new VoxxrinCrawler({
 
         var speakersDeferred = [];
         var schedules = $(".schedule-item").map(function(i) {
-            var $el = $(this);
-            var fromTimeVal = $el.find('.dtstart .value-title').attr("title");
-            var toTimeVal = $el.find('.dtend .value-title').attr("title");
-            var schedule = {
+                var $el = $(this);
+                var fromTimeVal = $el.find('.dtstart .value-title').attr("title");
+                var toTimeVal = $el.find('.dtend .value-title').attr("title");
+                var schedule = {
                 'id': i,
-                'title': $el.find("h2 a").text(),
-                'type': 'Talk',
-                'kind': 'Conference',
-                // Will be done.. later (see below)
-                'speakers': [],
+                    'title': $el.find("h2 a").text(),
+                    'type': 'Talk',
+                    'kind': 'Conference',
+                    // Will be done.. later (see below)
+                    'speakers': [],
                 'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+")))),
                 'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+")))),
-                'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
+                    'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
 
-                '__summary': $el.find('div.desc').text()
-            };
+                    '__summary': $el.find('div.desc').text()
+                };
 
-            var prezUrl = self.currentContext.event.domainUrl + $el.find('h2 a').attr('href');
+                var prezUrl = self.currentContext.event.domainUrl + $el.find('h2 a').attr('href');
 
-            var speakerDeferred = Q.defer();
-            speakersDeferred.push(speakerDeferred.promise);
-            request({uri:prezUrl}, function(error,response,speakerPageBody){
-                var $ = cheerio.load(speakerPageBody);
+                var speakerDeferred = Q.defer();
+                speakersDeferred.push(speakerDeferred.promise);
+                request({uri:prezUrl}, function(error,response,speakerPageBody){
+                    var $ = cheerio.load(speakerPageBody);
 
-                schedule.speakers = $('div.primary div.mini-profile').map(function(){
-                    var $el = $(this);
-                    var speakerProfileUrl = $el.find('.name a').attr('href').replace(/\/$/, "")
-                    try {
-                        return {
-                            'id': self.options.prefix + '-' + speakerProfileUrl.substring(speakerProfileUrl.lastIndexOf('/')).replace(/^\//, "").replace("_","-"),
-                            'name': $el.find('.name a').text(),
-                            'bio': $el.find('div.profile-longdesc p').text(),
-                            '__pictureUrl': $el.find('div.avatar a img').attr('src')
-                        };
-                    }catch(e){
-                        console.error(e);
-                    }
+                    schedule.speakers = $('div.primary div.mini-profile').map(function(){
+                        var $el = $(this);
+                        var speakerProfileUrl = $el.find('.name a').attr('href').replace(/\/$/, "")
+                        try {
+                            return {
+                                'id': self.options.prefix + '-' + speakerProfileUrl.substring(speakerProfileUrl.lastIndexOf('/')).replace(/^\//, "").replace(/_/g, "-"),
+                                'name': $el.find('.name a').text(),
+                                'bio': $el.find('div.profile-longdesc p').text(),
+                                '__pictureUrl': $el.find('div.avatar a img').attr('src')
+                            };
+                        }catch(e){
+                            console.error(e);
+                        }
+                    });
+
+                    speakerDeferred.resolve(schedule.speakers);
                 });
 
-                speakerDeferred.resolve(schedule.speakers);
-            });
-
-            return schedule;
+                return schedule;
         });
         Q.all(speakersDeferred).spread(function(){
             deferred.resolve(schedules);
