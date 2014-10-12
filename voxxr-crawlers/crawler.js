@@ -110,11 +110,27 @@ var EVENTS = {
         }
     },
     "bdxio14": {
-        crawlerType: lanyrd, authTokens: [ "7", "all" ],
+        crawlerType: devoxxfr, authTokens: [ "7", "all" ],
         event: {
             /* BDXIO 2014 */
-            id: 'bdxio14',
+            id: '14',
             /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2014-10-17T08:00:00.000+02:00")),
+            to: new Date(Date.parse("2014-10-17T18:20:00.000+02:00")),
+            title: "BDXIO 2014",
+            subtitle: "",
+            description: "",
+            timezone: "Europe/Paris",
+            location: "ENSEIRB",
+            initialCrawlingUrls: [
+                "http://cfp.bdx.io/api/conferences/BdxIO2014/schedules/friday"
+            ],
+            prefix: 'bdxio'
+        }
+        /* old crawler for lanyrd ...
+        crawlerType: lanyrd, authTokens: [ "7", "all" ],
+        event: {
+            id: 'bdxio14',
             title: 'BDXIO 2014',
             domainUrl: 'http://lanyrd.com',
             baseUrl: 'http://lanyrd.com/2014/bdxio/',
@@ -149,6 +165,7 @@ var EVENTS = {
                 return {type:type, title:title, id:id, uri:uri};
             }
         }
+        */
     }
 };
 
