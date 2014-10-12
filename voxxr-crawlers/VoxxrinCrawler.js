@@ -54,7 +54,7 @@ module.exports = function(opts){
 
                 self.event = self.options.extractEventFromInitialCrawling.apply(self, promisesResults);
                 self.event = _.extend({}, {
-                    id: (self.options.prefix + event.id).toLowerCase(),
+                    id: (self.options.getPrefix(self) + event.id).toLowerCase(),
                     title: self.currentContext.event.title,
                     description: self.currentContext.event.description,
                     timezone: self.currentContext.event.timezone || "Europe/Paris",
@@ -453,7 +453,13 @@ module.exports = function(opts){
              * deferred.resolve(presentation).
              * This makes xhr calls to subsequent urls (for additionnal event infos for instance) possible
              */
-            fetchPresentationInfosFrom: function(deferred, schedule, voxxrinPres){ throw "Should be implemented : fetchPresentationInfosFrom" }
+            fetchPresentationInfosFrom: function(deferred, schedule, voxxrinPres){ throw "Should be implemented : fetchPresentationInfosFrom" },
+            /**
+             * Prefix qill be something which will be appended at the beginning of
+             * every ids in the urls
+             * Be default, using options.prefix initial parameter
+             */
+            getPrefix: function(self){ return self.options.prefix; }
         }, opts);
 
         self.onDeferredFailureCallback = function(err){
