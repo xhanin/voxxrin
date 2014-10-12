@@ -30,7 +30,8 @@ var EVENTS = {
                 "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/wednesday",
                 "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/thursday",
                 "http://cfp.devoxx.fr/api/conferences/devoxxFR2014/schedules/friday"
-            ]
+            ],
+            prefix: 'dvxfr'
         }
     },
     "mixit13": {

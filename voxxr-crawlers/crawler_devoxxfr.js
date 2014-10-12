@@ -7,7 +7,9 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
 
 module.exports = new VoxxrinCrawler({
     name: 'DevoxxFr',
-    prefix: 'dvxfr',
+    getPrefix: function(self){
+        return self.currentContext.event.prefix;
+    },
     logInitialCrawlingResults: function(){
         var schedules = arguments;
         var presentationCount = 0;
