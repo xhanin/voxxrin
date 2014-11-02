@@ -44,8 +44,17 @@ module.exports = new VoxxrinCrawler({
             var $ = cheerio.load(scheduleBody);
             Array.prototype.push.apply(schedules, $(".schedule-item").map(function() {
                 var $el = $(this);
-                var fromTimeVal = $el.find('.dtstart .value-title').attr("title");
-                var toTimeVal = $el.find('.dtend .value-title').attr("title");
+                var fromTimeValStr = $el.find('.dtstart .value-title').attr("title");
+                var toTimeValStr = $el.find('.dtend .value-title').attr("title");
+
+                var fromTime = new Date(Date.parse(fromTimeValStr.substr(0, fromTimeValStr.indexOf("+"))));
+                var toTime = new Date(Date.parse(toTimeValStr.substr(0, toTimeValStr.indexOf("+"))));
+
+                // Subtracting timezone offset because time string is displayed in current timezone and we want to store
+                // it as plain UTC timestamp
+                fromTime = new Date(fromTime.getTime() + fromTime.getTimezoneOffset()*60*1000);
+                toTime = new Date(toTime.getTime() + toTime.getTimezoneOffset()*60*1000);
+
                 var schedule = {
                     'id': scheduleId++,
                     'title': $el.find("h2 a").text(),
@@ -53,8 +62,8 @@ module.exports = new VoxxrinCrawler({
                     'kind': 'Conference',
                     // Will be done.. later (see below)
                     'speakers': [],
-                    'fromTime': new Date(Date.parse(fromTimeVal.substr(0, fromTimeVal.indexOf("+")))),
-                    'toTime': new Date(Date.parse(toTimeVal.substr(0, toTimeVal.indexOf("+")))),
+                    'fromTime': fromTime,
+                    'toTime': toTime,
                     'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
 
                     '__summary': $el.find('div.desc').text()
