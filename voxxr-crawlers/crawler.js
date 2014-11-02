@@ -167,6 +167,23 @@ var EVENTS = {
             }
         }
         */
+    },
+    "lkfr14": {
+        crawlerType: lanyrd, authTokens: [ "5", "all" ],
+        event: {
+            /* Lean Kanban France 2014 */
+            id: 14,
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: 'Lean Kanban France 2014',
+            domainUrl: 'http://lanyrd.com',
+            baseUrl: 'http://lanyrd.com/2014/lkfr14/',
+            roomNameTransformer: function(roomName) {
+                // Transforming room name like "In\n\t\t\t\tSalle Emile Laffon (250),\n\t\t\t\tMaison des Associations de Solidarité"
+                // to something like "Salle Emile Laffon"
+                return roomName.replace(/In\s+(.+)\s\(\d+.*\),\s+.*/, "$1");
+            },
+            prefix: 'lkfr'
+        }
     }
 };
 
