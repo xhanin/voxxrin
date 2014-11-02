@@ -71,7 +71,8 @@ var EVENTS = {
             title: 'Lean Kanban France 2013',
             domainUrl: 'http://lanyrd.com',
             baseUrl: 'http://lanyrd.com/2013/lean-kanban-france/',
-            prefix: 'lkbf'
+            prefix: 'lkbf',
+            timezoneOffset: -120
         }
     },
     "jsc13": {
@@ -182,7 +183,8 @@ var EVENTS = {
                 // to something like "Salle Emile Laffon"
                 return roomName.replace(/In\s+(.+)\s\(\d+.*\),\s+.*/, "$1");
             },
-            prefix: 'lkfr'
+            prefix: 'lkfr',
+            timezoneOffset: -60
         }
     }
 };

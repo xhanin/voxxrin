@@ -54,8 +54,8 @@ module.exports = new VoxxrinCrawler({
 
                 // Subtracting timezone offset because time string is displayed in current timezone and we want to store
                 // it as plain UTC timestamp
-                fromTime = new Date(fromTime.getTime() + fromTime.getTimezoneOffset()*60*1000);
-                toTime = new Date(toTime.getTime() + toTime.getTimezoneOffset()*60*1000);
+                fromTime = new Date(fromTime.getTime() + self.currentContext.event.timezoneOffset*60*1000);
+                toTime = new Date(toTime.getTime() + self.currentContext.event.timezoneOffset*60*1000);
 
                 var roomName = $el.find('.schedule-meta p').filter(function () {
                     return $(this).find("strong").text() === "In";
