@@ -78,12 +78,23 @@ module.exports = new VoxxrinCrawler({
 
                     schedule.speakers = $('div.primary div.mini-profile').map(function(){
                         var $el = $(this);
-                        var speakerProfileUrl = $el.find('.name a').attr('href').replace(/\/$/, "")
+                        var speakerName, userId;
+                        var $speakerName = $el.find('.name');
+                        if($speakerName.find("a").length) {
+                            speakerName = $speakerName.find("a").text();
+
+                            var speakerProfileUrl = $speakerName.find("a").attr('href').replace(/\/$/, "");
+                            userId = speakerProfileUrl.substring(speakerProfileUrl.lastIndexOf('/')).replace(/^\//, "").replace(/_/g, "-");
+                        } else {
+                            speakerName = $speakerName.text();
+                            userId = speakerName.toLowerCase().replace(/\s/, "");
+                        }
+
                         var speakerDesc = $el.find('.profile-longdesc').text()==""?$el.find('.profile-desc').text():$el.find('.profile-longdesc').text();
                         try {
                             return {
-                                'id': self.options.prefix + '-' + speakerProfileUrl.substring(speakerProfileUrl.lastIndexOf('/')).replace(/^\//, "").replace(/_/g, "-"),
-                                'name': $el.find('.name a').text(),
+                                'id': self.options.prefix + '-' + userId,
+                                'name': speakerName,
                                 'bio': speakerDesc,
                                 '__pictureUrl': $el.find('div.avatar a img').attr('src')
                             };
