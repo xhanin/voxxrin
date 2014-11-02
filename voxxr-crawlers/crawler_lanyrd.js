@@ -57,6 +57,14 @@ module.exports = new VoxxrinCrawler({
                 fromTime = new Date(fromTime.getTime() + fromTime.getTimezoneOffset()*60*1000);
                 toTime = new Date(toTime.getTime() + toTime.getTimezoneOffset()*60*1000);
 
+                var roomName = $el.find('.schedule-meta p').filter(function () {
+                    return $(this).find("strong").text() === "In";
+                }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim();
+
+                if(self.currentContext.event.roomNameTransformer){
+                    roomName = self.currentContext.event.roomNameTransformer(roomName);
+                }
+
                 var schedule = {
                     'id': scheduleId++,
                     'title': $el.find("h2 a").text(),
@@ -66,7 +74,7 @@ module.exports = new VoxxrinCrawler({
                     'speakers': [],
                     'fromTime': fromTime,
                     'toTime': toTime,
-                    'roomName': $el.find('.schedule-meta p').filter(function(){ return $(this).find("strong").text() === "In"; }).first().text().replace(/[\s\S]* - ([^(]*)(\(.*\))?,[\s\S]*.*/, "$1").trim(),
+                    'roomName': roomName,
 
                     '__summary': $el.find('div.desc').text()
                 };
