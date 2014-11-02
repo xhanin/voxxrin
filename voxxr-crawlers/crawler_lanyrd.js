@@ -9,7 +9,9 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
 
 module.exports = new VoxxrinCrawler({
     name: 'Lanyrd',
-    prefix: 'lrd',
+    getPrefix: function(self){
+        return self.currentContext.event.prefix;
+    },
     initialCrawlingUrls: function(event) {
         var crawlingUrls = [
             event.baseUrl,

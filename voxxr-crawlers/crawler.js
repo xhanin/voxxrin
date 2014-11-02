@@ -66,11 +66,12 @@ var EVENTS = {
         crawlerType: lanyrd, authTokens: [ "5", "all" ],
         event: {
             /* Lean Kanban France 2013 */
-            id: 'lkbf13',
+            id: 13,
             /* Hardcoding some event details here, since not provided by REST API */
             title: 'Lean Kanban France 2013',
             domainUrl: 'http://lanyrd.com',
-            baseUrl: 'http://lanyrd.com/2013/lean-kanban-france/'
+            baseUrl: 'http://lanyrd.com/2013/lean-kanban-france/',
+            prefix: 'lkbf'
         }
     },
     "jsc13": {
