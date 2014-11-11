@@ -1,5 +1,6 @@
 module.exports = {
-    gae: 'Qh12EEHzVPn2AkKfihVs',
+    //gae: 'Qh12EEHzVPn2AkKfihVs',
+    gae: 'fakeToken',
     crawlersFamilies : {
         1: 'devoxxFrToken',
         2: 'bzhToken',
@@ -8,6 +9,7 @@ module.exports = {
         5: 'leanKanbanToken',
         6: 'mixitToken',
         7: 'bdxioToken',
+        8: 'cesToken',
         'all': 'adminToken'
     }
 };

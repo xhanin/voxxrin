@@ -7,10 +7,18 @@ var http = require("http"),
     lanyrd = require('./crawler_lanyrd.js'),
     devoxxfr = require('./crawler_devoxxfr.js'),
     breizhcamp = require('./crawler_breizhcamp.js')
+    codeursenseine = require('./crawler_codeursenseine.js')
     ;
 
 var PROD_BASE_URL = 'http://app.voxxr.in';
 var DEV_BASE_URL = 'http://localhost:8080';
+
+
+process.on('uncaughtException', function (exception) {
+    console.log(exception); // to see your exception details in the console
+    // if you are on production, maybe you can send the exception details to your
+    // email as well ?
+});
 
 var EVENTS = {
     "devoxxfr14": {
@@ -186,6 +194,20 @@ var EVENTS = {
             prefix: 'lkfr',
             timezoneOffset: -60
         }
+    },
+    "ces14": {
+        crawlerType: codeursenseine, authTokens: [ "8", "all" ],
+        event: {
+            /* Codeurs en Seine 2014 */
+            id: 762,
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: "Codeurs en Seine 2014",
+            description: "Web, Agile, Java et Innovation",
+            initialCrawlingUrls: [
+                "http://www.codeursenseine.com/2014/programme.json",
+                "http://www.codeursenseine.com/2014/speakers.json"
+            ]
+        }
     }
 };
 
@@ -197,7 +219,7 @@ http.createServer(function(req, response) {
 
     // Updating base url in dev mode
     var baseUrl = mode==="dev"?DEV_BASE_URL:PROD_BASE_URL;
-    var debugQueries = true || mode==="dev";
+    var debugQueries = true|| mode==="dev";_.keys(EVENTS);
 
 
     // Browsing only specific event family if "eventFamiliyId" http query param is provided
