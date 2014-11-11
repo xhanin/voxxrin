@@ -41,13 +41,16 @@ module.exports = new VoxxrinCrawler({
                         var starttime=moment.tz(dayDateStr + " " + talk.time, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate();
                         var endtime=undefined;
                         if (talk.format=="conference") {
-                            endtime=moment(starttime).add(50,"m");
+                            endtime=moment(starttime).add(50,"m").toDate() ;
                         }
                         if (talk.format=="quickie") {
-                            endtime=moment(starttime).add(15,"m");
+                            endtime=moment(starttime).add(15,"m").toDate() ;
                         }
                         if (talk.format=="keynote") {
-                            endtime=moment(starttime).add(50,"m");
+                            endtime=moment(starttime).add(50,"m").toDate() ;
+                        }
+                        if (talk.format=="break") {
+                            endtime=moment(starttime).add(50,"m").toDate() ;
                         }
                         talkIds.push(talkId);
                         var talk = {
