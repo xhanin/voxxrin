@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-  <application>voxxr-web</application>
-  <version>5</version>
+  <application>fcrvoxxr-web</application>
+  <version>10</version>
     <static-files>
         <include path="/assets/**" />
         <include path="/m.html" />
@@ -10,5 +10,8 @@
         <include path="/d.html" />
         <include path="/d-wall.html" />
         <include path="/p.html" />
+        <include path="/robots.txt" />
+        <include path="/favicon.ico" />
     </static-files>
+    <threadsafe>true</threadsafe>
 </appengine-web-app>

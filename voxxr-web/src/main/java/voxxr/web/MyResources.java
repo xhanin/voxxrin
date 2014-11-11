@@ -3,13 +3,19 @@ package voxxr.web;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.repackaged.com.google.common.base.Function;
+import com.google.appengine.repackaged.com.google.common.base.Optional;
+import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import voxxr.web.twitter.CallbackTwitter;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -19,6 +25,9 @@ import java.util.logging.Logger;
  * Time: 8:51 PM
  */
 public class MyResources implements RestRouter.RequestHandler {
+
+    Gson gson = new Gson();
+
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, Map<String, String> params) throws IOException {
         String kind = "My";
@@ -31,16 +40,21 @@ public class MyResources implements RestRouter.RequestHandler {
                     me = user;
                 }
             }
+
+            Entity my;
             try {
-                Rests.maybeSendAsJsonObject(Rests.createKey(kind, me.getId()), req, resp);
+                my = Rests.findEntityByKey(Rests.createKey(kind, me.getId()));
             } catch (EntityNotFoundException e) {
                 try {
-                    Entity entity = newMy(me);
-                    Rests.sendAsJsonObject(entity, req, resp);
+                    my = newMy(me);
                 } catch (JSONException e1) {
                     throw new RuntimeException(e1);
                 }
             }
+
+            mergeTwitterInfos(my);
+
+            Rests.sendAsJsonObject(my, req, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
             try {
                 JSONObject json = Rests.jsonObjectFromRequest(req);
@@ -58,6 +72,69 @@ public class MyResources implements RestRouter.RequestHandler {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private void mergeTwitterInfos(Entity my) {
+        Map myMap = gson.fromJson(((Text) my.getProperty("json")).getValue(), Map.class);
+        if(myMap.containsKey("twitterid")) {
+            Double twitterId = (Double)myMap.get("twitterid");
+
+            for(Map jsonMatchingTwitterId : findMyJsonsMatchingTwitterId(twitterId.longValue())){
+                mergeJsons(myMap, jsonMatchingTwitterId);
+            }
+        }
+
+        my.setProperty("json", new Text(gson.toJson(myMap)));
+    }
+
+    private void mergeJsons(Map myJson, Map otherJson) {
+        Map<String, Map> myEvents = extractMapProp(myJson, "events");
+        Map<String, Map> otherEvents = extractMapProp(otherJson, "events");
+        
+        for(Map.Entry<String, Map> otherEventEntry: otherEvents.entrySet()){
+            if(!myEvents.containsKey(otherEventEntry.getKey())) {
+                myEvents.put(otherEventEntry.getKey(), otherEventEntry.getValue());
+            } else {
+                Map<String, Map> myEvent = extractMapProp(myEvents, otherEventEntry.getKey());
+                Map<String, Map> otherEvent = extractMapProp(myEvents, otherEventEntry.getKey());
+
+                Map<String, Map> myPresentations = extractMapProp(myEvent, "presentations");
+                Map<String, Map> otherPresentations = extractMapProp(otherEvent, "presentations");
+
+                for(Map.Entry<String, Map> otherPresentationEntry: otherPresentations.entrySet()) {
+                    if(!myPresentations.containsKey(otherPresentationEntry.getKey())) {
+                        myPresentations.put(otherPresentationEntry.getKey(), otherPresentationEntry.getValue());
+                    } else {
+                        // Keeping only the most recent
+                        Map<String, Map> myPresentation = extractMapProp(myPresentations, otherPresentationEntry.getKey());
+                        Map<String, Map> otherPresentation = extractMapProp(otherPresentations, otherPresentationEntry.getKey());
+
+                        Double myLastModified = extractMapProp(myPresentation, "lastmodified");
+                        Double otherLastModified = extractMapProp(otherPresentation, "lastmodified");
+
+                        if(otherLastModified==null || myLastModified==null || otherLastModified.longValue() > myLastModified.longValue()) {
+                            myPresentations.put(otherPresentationEntry.getKey(), otherPresentationEntry.getValue());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static <T> T extractMapProp(Map map, String propName) {
+        return (T)map.get(propName);
+    }
+
+    private List<Map> findMyJsonsMatchingTwitterId(Long twitterId) {
+        List<Entity> mys = CallbackTwitter.findMysByTwitterId(twitterId);
+
+        return Lists.transform(mys, new Function<Entity, Map>() {
+            @Nullable
+            @Override
+            public Map apply(Entity entity) {
+                return gson.fromJson(((Text) entity.getProperty("json")).getValue(), Map.class);
+            }
+        });
     }
 
     public static Entity newMy(User me) throws JSONException {

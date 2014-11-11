@@ -50,7 +50,7 @@
         if (my) {
             function sendToServer() {
                 if (!self.data().eventId || !self.data().presId || !self.data().userid) return;
-                postJSON('/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
+                postJSON(models.baseUrl + '/events/' + self.data().eventId + '/presentations/' + self.data().presId + '/my', self.data(),
                     function(data) {
                         self.data().lastmodified = data.lastmodified;
                         my.store(data.lastmodified);
@@ -110,14 +110,14 @@
 
 
         function save() {
-            postJSON('/my', self.data, function(data) {
+            postJSON(models.baseUrl + '/my', self.data, function(data) {
                 store(data.lastmodified);
             }).fail(function() { store(); });
         }
 
         function store(lastmodified) {
             self.data.lastmodified = lastmodified || new Date().getTime();
-            getJSON.updateLocalCache('/my', JSON.stringify(self.data));
+            getJSON.updateLocalCache(models.baseUrl + '/my', JSON.stringify(self.data));
         }
 
         loadData(data);
@@ -153,11 +153,15 @@
         }
     };
     My.load = function(user, options) {
-        getJSON('/my', function(data) {
+        getJSON(models.baseUrl + '/my', function(data) {
+            if(!data){ // It can happen on some devices under phonegap (didn't understood why ATM)
+                return;
+            }
+
             console.log('loaded My: user.id()=' + user.id()
                 + '; user.twuser().id()=' + user.twuser().id()
                 + '; user.my().data=' + ((typeof(user.my()) !== 'undefined') ? user.my().data : null)
-                + '; data.twitterid=' + data.twitterid);
+                + '; data.twitterid=' + (data?data.twitterid:null));
             if (user.my() && user.my().data // user my already loaded
                 && user.my().data.id === data.id // for the same user as the current one
                 && user.my().data.lastmodified // and we have lastmodified info (stored after lastmodified feature was implemented)
@@ -194,7 +198,9 @@
         self.location = ko.observable();
         self.followers = ko.observableArray([]);
         self.friends = ko.observableArray([]);
-        self.authenticated = ko.computed(function() { return isNonNull(self.id()) || isNonNull(self.screenname()) });
+        self.authenticated = ko.computed(function() {
+            return (isNonNull(self.id()) || isNonNull(self.screenname())) && isNonNull(models.User.current());
+        });
         self.ready = ko.observable(false);
         self.loading = ko.observable(false);
 
@@ -202,58 +208,60 @@
             return self.authenticated();
         }
 
-        function loadData(data) {
-            self.id(data.id);
-            self.screenname(data.screen_name);
-            self.name(data.name);
-            self.pictureURL(data.profile_image_url);
-            self.location(data.location);
-            self.loading(false);
-            self.ready(data.profile_image_url ? true : false);
+        function loadData(target, data) {
+            target.id(data.id);
+            target.screenname(data.screenName);
+            target.name(data.name);
+            target.pictureURL(data.profileImageUrl);
+            target.location(data.location);
+            target.loading(false);
+            target.ready(data.profileImageUrl ? true : false);
+        }
+
+        function serverTwitterUserToTwUser(twitterUser) {
+            // Explicitely not using ds.twUser() here because we want to avoid
+            // a TwUser.load() call which would trigger another server side call
+            // This is because server will serve followers/friends twitter users
+            // as completely filled objects (and not lazy ones)
+            var u = new TwUser({});
+            loadData(u, twitterUser);
+            return u;
         }
         
         function load() {
             if (self.loading()) return;
             if (isAuthenticated()) {
-                loadData({id: self.id(), screen_name: self.screenname()}); // reset
+                loadData(self, {id: self.id(), screen_name: self.screenname()}); // reset
                 self.loading(true);
                 var param = isNonNull(self.id()) ? 'user_id=' + self.id() : 'screen_name=' + self.screenname();
+                if(options.fetchMode){
+                    param += "&fetchMode="+options.fetchMode;
+                }
+
                 getJSON(
-                    'https://api.twitter.com/1/users/lookup.json?' + param + '&callback=?',
+                    models.baseUrl + '/twitter/infos?'+param,
                     function(data) {
-                        loadData(data[0]);
-                        if (options.autoLoadFollowers) {
-                            self.loadFollowers();
-                        }
-                        if (options.autoLoadFriends) {
-                            self.loadFriends();
-                        }
+                        loadData(self, data.twitterUser);
+
+                        self.followers(_(data.followersIds).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
+                        self.friends(_(data.friendsIds).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
                     },
-                    { authenticate: false, usenetwork: '+1d' }
+                    { authenticate: true, usenetwork: '+1d' }
                 ).always(function() {self.loading(false);});
             } else {
                 self.clear();
             }
         }
 
-        self.loadFollowers = function() {
-            getJSON(
-                'https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
-                function(data) {
-                    self.followers(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
-                },
-                { authenticate: false, uselocal: 'whenoffline' }
-            );
-        }
-        self.loadFriends = function() {
-            getJSON(
-                'https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + self.id() + '&callback=?',
-                function(data) {
-                    self.friends(_(data.ids).map(function(twitterid) { return ds.twUser({id: twitterid}) }));
-                },
-                { authenticate: false, uselocal: 'whenoffline' }
-            );
-        }
+        self.copyFrom = function(anotherKoTwUser) {
+            loadData(self, {
+                id: anotherKoTwUser.id(),
+                screenName: anotherKoTwUser.screenname(),
+                name: anotherKoTwUser.name(),
+                profileImageUrl: anotherKoTwUser.pictureURL(),
+                location: anotherKoTwUser.location()
+            });
+        };
 
         self.loadDetails = function() {
             if (!self.pictureURL()) {
@@ -263,7 +271,7 @@
         };
 
         self.clear = function() {
-            loadData({});
+            loadData(self, {});
         };
 
         if (options.autoLoad) {
@@ -274,7 +282,7 @@
     var User = function(data) {
         var self = this;
         self.id = ko.observable(data.id);
-        self.twuser = ko.observable(new TwUser({id: data.twitterid, screen_name: data.id}, {autoLoad: true, autoLoadFollowers: true, autoLoadFriends: true}));
+        self.twuser = ko.observable(new TwUser({id: data.twitterid, screen_name: data.id}, {autoLoad: true, fetchMode: "RelatedWithIds" }));
         self.name = ko.computed(function() {
             var name = (isNonNull(self.id()) ? self.id() : 'a')
                 + (isNonNull(self.twuser().id()) ? '(' + self.twuser().id() + ')' : '')

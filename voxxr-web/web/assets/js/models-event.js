@@ -25,10 +25,12 @@
         self.days = ko.observableArray([]);
         self.remaining = ko.observable();
         self.since = ko.observable();
-        self.hash = ko.computed(function() {return "#event~" + self.id()});
-        self.nowplaying.hash = ko.computed(function() {return "#nowplaying~" + self.id()});
+        self.hash = ko.computed(function() {return "index#!event~" + self.id()});
+        self.nowplaying.hash = ko.computed(function() {return "index#!nowplaying~" + self.id()});
         self.data = ko.observable({});
         self.loading = ko.observable(false);
+        self.enabled = ko.observable();
+        self.nowPlayingEnabled = ko.observable(false);
         self.my = null;
         var crons = {};
 
@@ -46,8 +48,10 @@
             self.subtitle(data.subtitle);
             self.from(data.from);
             self.to(data.to);
+            self.enabled(data.enabled);
             self.nbPresentations(data.nbPresentations);
             self.dates(data.dates);
+            self.nowPlayingEnabled(!!data.nowPlayingEnabled);
             if (has.nowplaying) {
                 self.nowplaying(_(data.nowplaying).map(function(presentation) {
                     var p = ds.presentation(_.extend(presentation, {eventId: self.id()}));
@@ -56,8 +60,12 @@
                 }));
             }
             if (has.days) {
-                self.days(_(data.days).map(function(day) {
-                    return ds.scheduleDay(_.extend(day, {eventId: self.id()}));
+                self.days(_(data.days).map(function(day, index) {
+                    return ds.scheduleDay(_.extend(day, {
+                        eventId: self.id(),
+                        prevDayId: index>0?data.days[index-1].id:null,
+                        nextDayId: index<data.days.length-1?data.days[index+1].id:null
+                    }));
                 }));
             }
             self.loading(false);

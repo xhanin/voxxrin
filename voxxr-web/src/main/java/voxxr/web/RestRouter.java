@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import voxxr.tasks.ScheduleCheckTask;
 import voxxr.web.twitter.CallbackTwitter;
 import voxxr.web.twitter.SignInTwitter;
+import voxxr.web.twitter.TwitterUserInfos;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -71,6 +72,10 @@ public class RestRouter extends HttpServlet {
         new Route(new ScheduleCheckTask(), Pattern.compile("/t/schedule/check"),
                 new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new SignInTwitter(), Pattern.compile("/r/twitter/signin"),
+                new ImmutableMap.Builder<Integer, String>().build()),
+        new Route(new TwitterUserInfos(false), Pattern.compile("/r/twitter/infos"),
+                new ImmutableMap.Builder<Integer, String>().build()),
+        new Route(new TwitterUserInfos(true), Pattern.compile("/r/twitter/userInfos"),
                 new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new CallbackTwitter(), Pattern.compile("/r/twitter/authentified/(.+)"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "requestTokenKeyString").build())

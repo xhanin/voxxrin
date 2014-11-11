@@ -26,6 +26,7 @@
         self.eventId = ko.observable();
         self.uri = ko.observable();
         self.title = ko.observable(null);
+        self.type = ko.observable(null);
         self.speakers = ko.observableArray(null);
         self.slot = ko.observable(null);
         self.fromTime = ko.observable(null);
@@ -52,6 +53,15 @@
                     && followerIds.indexOf(myPres.twuser().id()) >= 0
                     && friendsIds.indexOf(myPres.twuser().id()) === -1 // do not display friends in followers
             });
+
+            _(favFol).map(function(fav){
+               var completelyFilledUser = _(models.User.current().twuser().followers()).find(function(twuser){
+                   return twuser.id() === fav.twuser().id();
+               });
+               fav.twuser().copyFrom(completelyFilledUser);
+               return fav;
+            });
+
             return favFol;
         });
         self.involvedUsers.friends = ko.computed(function() {
@@ -59,6 +69,15 @@
             var friendsIds = _(models.User.current().twuser().friends()).map(function(twuser) { return twuser.id() });
             var favFol = _(self.involvedUsers()).filter(function(myPres) {
                 return (myPres.favorite() || myPres.presence() !== 'NO') && friendsIds.indexOf(myPres.twuser().id()) >= 0 });
+
+            _(favFol).map(function(fav){
+               var completelyFilledUser = _(models.User.current().twuser().friends()).find(function(twuser){
+                   return twuser.id() === fav.twuser().id();
+               });
+               fav.twuser().copyFrom(completelyFilledUser);
+               return fav;
+            });
+
             return favFol;
         });
         self.involvedUsers.inroom = ko.computed(function() {
@@ -72,7 +91,7 @@
         }
         self.time = ko.observable('');
         self.hotFactor = ko.observable(0);
-        self.hash = ko.computed(function() {return "#presentation~" + self.eventId() + "~" + self.id()});
+        self.hash = ko.computed(function() {return "index#!presentation~" + self.eventId() + "~" + self.id()});
         self.my = ko.computed(function() {
             if (!models.User.current()) return null; // for dashboard and poll
             return models.User.current().my() ? models.User.current().my().presentation(self.eventId(), self.id()) : null
@@ -80,6 +99,18 @@
         self.favorite = ko.computed(function() { return self.my() && self.my().favorite() });
         self.user = models.User.current;
         self.data = ko.observable({});
+        self.nextPrezId = ko.observable(null);
+        self.nextPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.nextPrezId(); });
+        self.prevPrezId = ko.observable(null);
+        self.prevPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.prevPrezId(); });
+        self.nextSlotPrezId = ko.observable(null);
+        self.nextSlotPrezDefined = ko.computed(function(){ return !_.isNull(self.nextSlotPrezId()) && !_.isUndefined(self.nextSlotPrezId()); });
+        self.nextSlotPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.nextSlotPrezId(); });
+        self.prevSlotPrezId = ko.observable(null);
+        self.prevSlotPrezHash = ko.computed(function() { return "index#!presentation~" + self.eventId() + "~" + self.prevSlotPrezId(); });
+        self.prevSlotPrezDefined = ko.computed(function(){ return !_.isNull(self.prevSlotPrezId()) && !_.isUndefined(self.prevSlotPrezId()); });
+        self.dayId = ko.observable(null);
+        self.backHash = ko.computed(function() { return "index#!dayschedule~" + self.eventId() + "~" + self.dayId(); });
 
         self.speakerNames = ko.computed(function() {
             return _(this.speakers()).map(function(s){return s.name();}).join(', ');
@@ -112,13 +143,21 @@
             self.eventId(data.eventId);
             self.uri(data.id ? (data.uri || ('/events/' + data.eventId + '/presentations/' + data.id)) : '');
             self.title(data.title);
+            self.type(data.type);
             self.speakers(_(data.speakers).map(function(s) { return ds.speaker(s);}));
-            self.slot(data.slot);
+            if(self.slot() === null || data.dayScheduleSlot) {
+                self.slot(data.dayScheduleSlot || data.slot);
+            }
             self.favorites(data.favorites);
             self.fromTime(data.fromTime);
             self.toTime(data.toTime);
             self.room(ds.room(data.room ? data.room : {}));
             self.summary(data.summary);
+            self.prevPrezId(data.prevPrezId);
+            self.nextPrezId(data.nextPrezId);
+            self.prevSlotPrezId(data.prevSlotPrezId);
+            self.nextSlotPrezId(data.nextSlotPrezId);
+            self.dayId(data.dayId);
             if (hasInvolvedUsers) {
                 self.involvedUsers(_(data.involvedUsers).map(function(myPres) {
                     return ds.myPresentation(_.extend({id: myPres.id

@@ -5,7 +5,7 @@
     <title>Voxxrin ~ Your conference companion</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Voxxrin, your conference companion">
-    <meta name="author" content="Xavier Hanin">
+    <meta name="author" content="Xavier Hanin, Frédéric Camblor">
 
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
@@ -43,7 +43,7 @@
                 <li class="active"><a href="#">Home</a></li>
                 <li><a href="#events">Events</a></li>
                 <li><a href="http://app.voxxr.in/">App</a></li>
-                <li><a href="#news">News</a></li>
+                <!--<li><a href="#news">News</a></li>-->
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="#support">Support</a></li>
@@ -91,36 +91,52 @@
 
 <hr>
 <div class="row">
-    <div class="span4">
-        <a name="news"></a>
+    <!--<div class="span4">-->
+        <!--<a name="news"></a>-->
+        <!--<div>-->
+            <!--<h2>News</h2>-->
+
+            <!--<p>Devoxx France/UK 2013 Dashboard Wall is available</p>-->
+
+            <!--<blockquote>-->
+                <!--<p>Check <a href="http://app.voxxr.in/d-wall.html?event=dvx6">the wall</a> here,-->
+                    <!--and make it live by posting your ratings and feedbacks during the talks!</p>-->
+            <!--</blockquote>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="span4">-->
+        <!--<div>-->
+            <!--<h2>Voxxrin presentation at Devoxx France</h2>-->
+
+            <!--<blockquote>-->
+                <!--<p>Don't miss <a href="http://app.voxxr.in/#presentation~dvx6~dvx655">Xavier's presentation on Thursday, at 1:25pm</a></p>-->
+                <!--<small>It's gonna be fun with a lot of real time interactivity!</small>-->
+            <!--</blockquote>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="span6">
+        <a name="events"></a>
         <div>
-            <h2>News</h2>
+            <h2>Events</h2>
 
-            <p>Devoxx France 2012 Dashboard Wall is available</p>
+            <p>Here is the list of events planned to be covered by Voxxrin</p>
 
-            <blockquote>
-                <p>Check <a href="http://app.voxxr.in/d-wall.html?event=dvx6">the wall</a> here,
-                    and make it live by posting your ratings and feedbacks during the talks!</p>
-            </blockquote>
+            <div id="events" data-bind="foreach: events">
+                <blockquote>
+                    <p><span data-bind="text: title">Devoxx</span> ~ <em data-bind="text: subtitle"> </em></p>
+                    <small data-bind="text: dates">Apr 18-20</small>
+                </blockquote>
+            </div>
         </div>
     </div>
-    <div class="span4">
-        <div>
-            <h2>Voxxrin presentation at Devoxx France</h2>
 
-            <blockquote>
-                <p>Don't miss <a href="http://app.voxxr.in/#presentation~dvx6~dvx655">Xavier's presentation on Thursday, at 1:25pm</a></p>
-                <small>It's gonna be fun with a lot of real time interactivity!</small>
-            </blockquote>
-        </div>
-    </div>
-    <div class="span4">
+    <div class="span6">
         <div>
             <h2>Voxxrin source code is now open source!</h2>
 
             <blockquote>
                 <p>Wanna check voxxrin source code? Want to host it yourself? Want to participate?</p>
-                <small>Check out the source code on github:<br><a href="https://github.com/xhanin/voxxrin">https://github.com/xhanin/voxxrin</a></small>
+                <small>Check out the source code on github:<br><a href="https://github.com/fcamblor/voxxrin">https://github.com/fcamblor/voxxrin</a></small>
             </blockquote>
         </div>
     </div>
@@ -129,31 +145,16 @@
 <hr>
 
 <div class="row">
- <div class="span4">
-	      <a name="events"></a>
-	      <div>
-		      <h2>Events</h2>
-		      <p>Here is the list of events planned to be covered by Voxxrin</p>
-		      <div id="events" data-bind="foreach: events">
-                <blockquote>
-			<p><span data-bind="text: title">Devoxx</span> ~ <em data-bind="text: subtitle"> </em> </p>
-  <small  data-bind="text: dates">Apr 18-20</small>
-</blockquote>
-		      </div>
-	      </div>
-      </div>
-
-
-      <div class="span4">
+      <div class="span6">
 	      <a name="about"></a>
 	      <div>
 		      <h2>About</h2>
-		      <p>Voxxrin has been created for <a href="http://devoxx.fr/">Devoxx France 2012</a>, the conference made by developers for developers.</p>
+		      <p>Voxxrin has been created for <a href="http://www.devoxx.com/display/FR12/Accueil">Devoxx France 2012</a>, the conference made by developers for developers.</p>
 		      <p>It is currently limited to only a few events, if your favorite conference is not listed here, you can <a href="#contact">contact us</a> and ask for it.</p>
 	      </div>
       </div>
 
-      <div class="span4">
+      <div class="span6">
           <a name="support"></a>
 	      <div>
 		      <h2>Support</h2>
@@ -173,7 +174,7 @@
       <hr>
 
       <footer>
-        <p>&copy; Voxxrin 2012</p>
+        <p>&copy; Voxxrin 2013</p>
       </footer>
 
     </div> <!-- /container -->

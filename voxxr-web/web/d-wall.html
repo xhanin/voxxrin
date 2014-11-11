@@ -9,6 +9,7 @@
       <script type="text/javascript" src="assets/js/libs/date.format.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
+      <script type="text/javascript" src="assets/js/voxxr-conf.js"></script>
 
       <script type="text/javascript">
           $(function(){
@@ -18,11 +19,11 @@
                   var eventId = urlParams['event'];
 
                   $.ajax({
-                        url: "http://app.voxxr.in/r/events/" + eventId + "/nowplaying",
+                        url: models.baseUrl + "/r/events/" + eventId + "/nowplaying",
                         dataType:"json",
                         success: function(data) {
                             _(data).each(function(p) {
-                               $('<div class="conf"><h2>' + p.title + '</h2><iframe src="http://app.voxxr.in/d.html?event=' + eventId + '&prez=' + p.id + '"></iframe></div>')
+                               $('<div class="conf"><h2>' + p.title + '</h2><iframe src="' + models.baseUrl + '/d.html?event=' + eventId + '&prez=' + p.id + '"></iframe></div>')
                                        .appendTo("#dashboard-wall");
                             });
                         }

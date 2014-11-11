@@ -8,6 +8,14 @@
         <servlet-name>RestRouter</servlet-name>
         <servlet-class>voxxr.web.RestRouter</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SitemapServlet</servlet-name>
+        <servlet-class>voxxr.web.SitemapServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>S4AServlet</servlet-name>
+        <servlet-class>com.seo4ajax.S4AServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>RestRouter</servlet-name>
@@ -19,6 +27,15 @@
         <url-pattern>/t/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>SitemapServlet</servlet-name>
+        <url-pattern>/sitemap.xml</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>S4AServlet</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>m.html</welcome-file>

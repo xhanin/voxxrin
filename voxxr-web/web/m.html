@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
       <!--
       <script>window.WeinreServerId = "anonymous";</script>
       <script src="http://192.168.0.45:8080/target/target-script-min.js"></script>
@@ -20,6 +20,7 @@
       <script type="text/javascript" src="assets/js/libs/phonegap-1.4.1.js"></script>
       <script type="text/javascript" src="assets/js/libs/ChildBrowser.js"></script>
       <script type="text/javascript" src="assets/js/libs/tappable.js"></script>
+      <script type="text/javascript" src="assets/js/libs/date.format.js"></script>
 
       <script type="text/javascript" src="assets/js/voxxr-utils.js"></script>
       <script type="text/javascript" src="assets/js/voxxr-route.js"></script>
@@ -49,9 +50,10 @@
 <div id="jqt">
     <div id="events" class="events page" data-role="page">
         <div data-role="header" >
-            <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">Login</a>
-            <h1>Voxxrin</h1>
-            <a href="#about" data-transition="slidedown" class="ui-btn-right">About</a>
+            <a href="#signin" data-transition="slidedown" data-bind="btntext: loginBtn" data-theme="e" class="ui-btn-left">&nbsp;Login&nbsp;</a>
+            <h1 style="text-align: left">Voxxrin</h1>
+            <a href="#about" data-transition="slidedown" class="ui-btn-right">&nbsp;About&nbsp;</a>
+            <a href="#events" id="showPastEvents" data-bind="visible: !showPastEvents()" data-transition="slidedown" style="margin-right: 90px" class="ui-btn-right">&nbsp;Past&nbsp;</a>
         </div>
         <div data-role="content">
         <p class="loading" data-bind="visible: events.loading">
@@ -60,7 +62,7 @@
         <p data-bind="visible: events().length === 0 && !events.loading()">
             No upcoming event covered :(
         </p>
-        <ul class="events"  data-role="listview" data-bind="listview: events">
+        <ul class="events"  data-role="listview" data-bind="listview: showableEvents">
             <li data-theme="a"><a data-bind="href: hash">
                 <h3 data-bind="text: title"> </h3>
                 <p><strong data-bind="text: subtitle"></strong> ~ <span data-bind="text: dates"></span></p>
@@ -166,7 +168,7 @@
     <div id="event" class="event page" data-role="page">
         <div data-role="header">
             <h1 data-bind="text: title"></h1>
-            <a href="#events" data-rel="back" data-icon="arrow-l">Back</a>
+            <a href="#events" data-rel="backToEvents" data-icon="back">Events</a>
         </div>
         <div data-role="content">
             <div class="message" data-bind="visible: remaining">
@@ -175,7 +177,7 @@
             <div class="message" data-bind="visible: since">
                 <span data-bind="text: since"></span>
             </div>
-            <ul data-role="listview" data-inset="true">
+            <ul data-role="listview" data-inset="true" data-bind="visible: nowPlayingEnabled">
                 <li class="nowplaying"><a data-bind="href: nowplaying.hash">Now playing</a> <span class="ui-li-count" data-bind="text: nowplaying().length"></span></li>
             </ul>
             <h2>Schedule</h2>
@@ -204,11 +206,15 @@
     </div>
     <div id="dayschedule" class="dayschedule page" data-role="page">
         <div data-role="header">
-            <h1 data-bind="text: name"></h1>
-            <a href="#" data-rel="back" data-icon="arrow-l">Event</a>
+            <h1 data-bind="text: name" style="text-align: left"></h1>
+            <a data-bind="href: eventHash" data-rel="backToEvent" data-icon="back">Event</a>
+            <a href="#" data-bind="href: nextDayHash, visible: nextDayDefined" data-rel="nextDay" style="margin-right: 0px" class="ui-btn-right" data-icon="arrow-r">&nbsp;</a>
+            <a href="#" data-bind="href: prevDayHash, visible: prevDayDefined" data-rel="prevDay" style="margin-right: 50px" class="ui-btn-right" data-icon="arrow-l">&nbsp;</a>
+            <a href="#" id="showPastPrez" data-bind="visible: scheduleIsToday() && !showPastPresentationsOnToday()" data-transition="slidedown" style="margin-right: 100px" class="ui-btn-right">&nbsp;Past&nbsp;</a>
+            <a href="#" id="showFuturePrez" data-bind="visible: scheduleIsToday() && showPastPresentationsOnToday()" data-transition="slidedown" style="margin-right: 100px" class="ui-btn-right">&nbsp;Future&nbsp;</a>
             <div class="slotsNav ui-navbar ui-navbar-noicons" role="navigation">
-                <ul class="ui-grid-a" data-bind="foreach: slots">
-                    <li class="ui-block-n" data-bind="blockn: $parent.slots().length">
+                <ul class="ui-grid-a" data-bind="foreach: futureSlots">
+                    <li class="ui-block-n" style="width: 95px">
                         <a class="slot ui-btn ui-btn-up-a" data-bind="attr: {'data-slot': name}" data-corners="false" data-shadow="false" data-iconshadow="true" data-inline="false" data-wrapperels="span">
                             <span class="ui-btn-inner"><span class="ui-btn-text" data-bind="text: name"></span></span>
                         </a>
@@ -223,16 +229,19 @@
         <div data-bind="visible: slots().length === 0 && !slots.loading() && !loading()" class="message">
             Schedule not available yet.
         </div>
-        <ul class="schedule" data-role="listview" data-bind="listview: slots" data-filter="true" data-theme="a">
+        <ul class="schedule" data-role="listview" data-bind="listview: futureSlots" data-filter="true" data-theme="a">
             <li class="slot" data-role="list-divider" data-bind="attr: {'data-slot': name}">
                 <span class="ui-icon ui-icon-arrow-u ui-icon-shadow"></span>
                 <span data-bind="text: name"></span>
             </li>
             <!-- ko foreach: presentations -->
             <li data-bind="css: { favorite: favorite }" class="presentation"><a data-bind="href: hash">
-                <h3 data-bind="text: title"> </h3>
-                <p> <span class="favorites" data-bind="text: favorites, css: { favorite1: favorites() > 0, favorite10: favorites() >= 10, favorite100: favorites() >= 100 }"></span>
-                    <span class="speakers" data-bind="text: speakerNames"></span> <span class="room" data-bind="text: room().name"></span>
+                <h3 data-bind="text: title"></h3>
+                <p class="li-prez-infos">
+                    <span class="favorites" data-bind="text: favorites, css: { favorite1: favorites() > 0, favorite10: favorites() >= 10, favorite100: favorites() >= 100 }"></span>
+                    <span class="type" data-bind="text: type"></span>
+                    <span class="room" data-bind="text: room().name"></span>
+                    <span class="speakers" data-bind="text: speakerNames"></span>
                 </p>
             </a></li>
             <!-- /ko -->
@@ -240,12 +249,15 @@
         </div>
     </div>
     <div id="presentation" class="presentation page" data-role="page">
-        <div data-role="header">
-            <h1 data-bind="text: title"> </h1>
-            <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
+        <div data-role="header" style="height: 45px">
+            <a href="#" data-bind="href: backHash" data-rel="backToDaylySchedule" data-icon="back">Schedule</a>
+            <a href="#" data-bind="href: nextPrezHash" data-rel="nextPrez" style="margin-right: 0px" class="ui-btn-right" data-icon="arrow-r">&nbsp;</a>
+            <a href="#" data-bind="href: prevPrezHash" data-rel="prevPrez" style="margin-right: 50px" class="ui-btn-right" data-icon="arrow-l">&nbsp;</a>
+            <a href="#" data-bind="href: nextSlotPrezHash, visible: nextSlotPrezDefined" data-rel="nextSlot" style="margin-right: 120px" class="ui-btn-right" data-icon="arrow-d">&nbsp;</a>
+            <a href="#" data-bind="href: prevSlotPrezHash, visible: prevSlotPrezDefined" data-rel="prevSlot" style="margin-right: 170px" class="ui-btn-right" data-icon="arrow-u">&nbsp;</a>
         </div>
         <div data-role="content">
-        <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
+        <h2><a class="toggleFavorite" data-bind="css: { favorite: favorite }"></a> [<span data-bind="text: type"></span>] <span class="title" data-bind="text: title"> </span> <em><span class="slot" data-bind="text: slot"> </span> <span class="room" data-bind="text: room().name"> </span></em></h2>
         <a href="#roomRT" class="showroom" data-role="button" data-theme="e" data-transition="flip"
            data-bind="visible: playing">
             Show room now</a>
@@ -253,7 +265,7 @@
         <div class="summary">
             <p class="loading" data-bind="visible: loading">
             </p>
-            <p data-bind="text: summary">
+            <p data-bind="html: summary">
             </p>
         </div>
         <a data-role="button" data-theme="b" class="toggleDetails" data-icon="arrow-d"></a>
@@ -262,7 +274,7 @@
             <li class="speaker"><img data-bind="visible: !loading(), attr: {src: pictureURL}">
                 <h4 data-bind="text: name"></h4>
                 <span class="loading" data-bind="visible: loading"></span>
-                <p data-bind="visible: !loading(), text: bio"></p>
+                <p data-bind="visible: !loading(), html: bio"></p>
             </li>
         </ul>
         <p class="signinPrompt" data-bind="visible: !user().twuser().authenticated()">

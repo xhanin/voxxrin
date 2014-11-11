@@ -7,11 +7,23 @@ $(function() { models.Device.current().whenReady(function() {
         self.chosenEventId = ko.observable(null);
         self.chosenDay = models.ScheduleDay.current;
         self.chosenDayId = ko.observable(null);
+        self.showPastEvents = ko.observable(false);
         self.chosenPresentation = models.Presentation.current;
         self.chosenPresentationId = ko.observable(null);
         self.currentRoom = models.Room.current;
         self.user = models.User.current;
         self.device = models.Device.current;
+        self.showableEvents = ko.computed(function() {
+            var events = self.events();
+            var showPastEvents = self.showPastEvents();
+            var filteredEvents = _.filter(events, function(ev) {
+                return showPastEvents || parseDateFromStr(ev.to()) > new Date().getTime();
+            });
+            if(showPastEvents) {
+                filteredEvents = filteredEvents.reverse();
+            }
+            return filteredEvents;
+        });
         self.loginBtn = ko.computed(function() {
             var u = self.user();
             return (u && u.id()) || 'Login';
@@ -107,29 +119,29 @@ $(function() { models.Device.current().whenReady(function() {
     var voxxr = new VoxxrViewModel();
     voxxr.load();
     Route
-        .add('events', function() {
+        .add('!events', function() {
             return voxxr.gotoEvents();
         }, [])
-        .add('event~:event', function() {
+        .add('!event~:event', function() {
             return voxxr.gotoEvent(this.params.event);
-        }, ["#events"])
-        .add('nowplaying~:event', function() {
+        }, ["index#!events"])
+        .add('!nowplaying~:event', function() {
             return voxxr.gotoNowPlaying(this.params.event);
-        }, ["#events", "#event~:event"])
-        .add('dayschedule~:event~:day', function() {
+        }, ["index#!events", "index#!event~:event"])
+        .add('!dayschedule~:event~:day', function() {
             return voxxr.gotoDay(this.params.event, this.params.day);
-        }, ["#events", "#event~:event"])
-        .add('presentation~:event~:presentation', function() {
+        }, ["index#!events", "index#!event~:event"])
+        .add('!presentation~:event~:presentation', function() {
             return voxxr.gotoPresentation(this.params.event, this.params.presentation);
-        }, ["#events", "#event~:event"])
-        .add('roomRT', function() {
-            if (!models.Room.current()) setTimeout(function() {location.hash = '#events'}, 0);
+        }, ["index#!events", "index#!event~:event"])
+        .add('!roomRT', function() {
+            if (!models.Room.current()) setTimeout(function() {location.hash = '#!events'}, 0);
             return voxxr.gotoRoom();
         })
         .add('', function() {
             return voxxr.gotoEvents();
         }, [])
-        .start('events');
+        .start('!events');
 
     ko.applyBindings(voxxr.user(), $('#signin').get(0));
 
@@ -302,6 +314,15 @@ $(function() { models.Device.current().whenReady(function() {
     } else if (typeof ChildBrowser !== 'undefined') {
         client_browser = ChildBrowser.install();
     }
+    tappable("a#showPastEvents", function() {
+        voxxr.showPastEvents(true);
+    });
+    tappable("a#showFuturePrez", function() {
+        models.ScheduleDay.current().showPastPresentationsOnToday(false);
+    });
+    tappable("a#showPastPrez", function() {
+        models.ScheduleDay.current().showPastPresentationsOnToday(true);
+    });
     tappable("a.signin", function() {
         if (client_browser != null) {
             console.log('registering onLocationChange');
@@ -325,6 +346,9 @@ $(function() { models.Device.current().whenReady(function() {
 
         function twitterSignin(deviceId) {
             var url = models.baseUrl + '/twitter/signin?deviceid=' + deviceId;
+            if(urlParams['mode'] === 'dev') {
+                url += '&mode=dev';
+            }
             if (client_browser) {
                 console.log('opening child web page ' + url);
                 window.plugins.childBrowser.showWebPage(url);

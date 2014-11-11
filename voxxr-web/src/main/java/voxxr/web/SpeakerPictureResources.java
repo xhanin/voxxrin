@@ -5,6 +5,7 @@ import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.io.ByteStreams;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -39,15 +40,21 @@ public class SpeakerPictureResources implements RestRouter.RequestHandler {
 
         } else if ("PUT".equalsIgnoreCase(req.getMethod())) {
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            ServletInputStream requestInputStream = null;
             try {
                 Entity entity = Rests.findEntityByKey(Rests.createKey(kind, speakerId));
-                entity.setProperty("picture", new Blob(ByteStreams.toByteArray(req.getInputStream())));
+                requestInputStream = req.getInputStream();
+                entity.setProperty("picture", new Blob(ByteStreams.toByteArray(requestInputStream)));
                 datastore.put(entity);
                 Rests.clearEntityCache(entity.getKey());
                 images.delete(KeyFactory.keyToString(entity.getKey()));
                 Rests.sendJson("{\"status\":\"ok\"}", req, resp);
             } catch (EntityNotFoundException e) {
                 resp.sendError(404);
+            } finally {
+                if(requestInputStream != null) {
+                    requestInputStream.close();
+                }
             }
         }
     }

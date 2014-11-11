@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/voxxr-devoxx-crawler/voxxr-devoxx-crawler.iml" filepath="$PROJECT_DIR$/voxxr-devoxx-crawler/voxxr-devoxx-crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/voxxr-crawlers/voxxr-crawlers.iml" filepath="$PROJECT_DIR$/voxxr-crawlers/voxxr-crawlers.iml" />
       <module fileurl="file://$PROJECT_DIR$/voxxr-droid/voxxr-droid.iml" filepath="$PROJECT_DIR$/voxxr-droid/voxxr-droid.iml" />
-      <module fileurl="file://$PROJECT_DIR$/voxxr-home/voxxr-home.iml" filepath="$PROJECT_DIR$/voxxr-home/voxxr-home.iml" />
       <module fileurl="file://$PROJECT_DIR$/voxxr-home-j/voxxr-home-j.iml" filepath="$PROJECT_DIR$/voxxr-home-j/voxxr-home-j.iml" />
       <module fileurl="file://$PROJECT_DIR$/voxxr-prez/voxxr-prez.iml" filepath="$PROJECT_DIR$/voxxr-prez/voxxr-prez.iml" />
       <module fileurl="file://$PROJECT_DIR$/voxxr-room/voxxr-room.iml" filepath="$PROJECT_DIR$/voxxr-room/voxxr-room.iml" />

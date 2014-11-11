@@ -95,4 +95,8 @@
                 <fileset dir="${basedir}/libs/childbrowser" includes="*.png" />
         </copy>
     </target>
+
+    <target name="assets-then-release" depends="clean,assets,release" description="--> Build assets folder, then release apk">
+        <echo>Release performed successfully !</echo>
+    </target>
 </project>

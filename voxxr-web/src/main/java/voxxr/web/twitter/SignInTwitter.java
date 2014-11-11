@@ -45,7 +45,6 @@ public class SignInTwitter implements RestRouter.RequestHandler {
 		StringBuffer callbackURL = request.getRequestURL();
 		int index = callbackURL.lastIndexOf("/");
 		callbackURL.replace(index, callbackURL.length(), "").append("/authentified/" + KeyFactory.keyToString(key));
-		return callbackURL.toString();
+		return callbackURL.toString() + (request.getParameterMap().containsKey("mode")?"?mode="+request.getParameter("mode"):"");
 	}
-
 }

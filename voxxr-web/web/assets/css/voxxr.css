@@ -202,6 +202,14 @@
   float: left;
   min-height: 1px;
 }
+#jqt .ui-btn-left  .ui-btn-inner,
+#jqt .ui-btn-right .ui-btn-inner {
+  text-overflow: clip;
+}
+#jqt .presentation.page .ui-header .ui-btn-right .ui-btn-inner,
+#jqt .dayschedule.page .ui-header .ui-btn-right .ui-btn-inner {
+  padding-left: 18px;
+}
 #jqt .ui-block-n .ui-btn-inner {
   padding: .8em .5em .9em .5em;
   text-overflow: clip;
@@ -280,6 +288,10 @@
   content: '\a';
   white-space: pre;
 }
+#jqt .ui-listview .presentation a {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
 #jqt .ui-listview .presentation.favorite {
   border: 1px solid #F4C63F;
   background: #FADB4E;
@@ -301,6 +313,10 @@
 }
 #jqt .ui-listview .presentation.favorite a span {
   color: #222;
+}
+#jqt .ui-listview .presentation .li-prez-infos {
+    padding-top: 2px;
+    padding-bottom: 4px;
 }
 #jqt .ui-listview .presentation .favorites {
   display: block;
@@ -333,6 +349,7 @@
 }
 #jqt li.speaker img {
   max-height: 70px;
+  max-width: 70px;
   margin: 5px;
 }
 #jqt li.speaker h4 {
@@ -396,6 +413,9 @@
 }
 #jqt .events.page .events li {
   min-height: 80px;
+}
+#jqt .dayschedule.page li .type {
+  color: #F25AF7;
 }
 #jqt .dayschedule.page li .speakers {
   color: #4ecdc4;
