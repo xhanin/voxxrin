@@ -50,7 +50,7 @@ module.exports = new VoxxrinCrawler({
                             endtime=moment(starttime).add(50,"m").toDate() ;
                         }
                         if (talk.format=="break") {
-                            endtime=moment(starttime).add(50,"m").toDate() ;
+                            endtime=moment(starttime).add(80,"m").toDate() ;
                         }
                         talkIds.push(talkId);
                         var talk = {
