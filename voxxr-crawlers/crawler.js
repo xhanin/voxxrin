@@ -42,6 +42,27 @@ var EVENTS = {
             prefix: 'dvxfr'
         }
     },
+    "devoxxfr15": {
+        crawlerType: devoxxfr, authTokens: [ "6", "all" ],
+        event: {
+            /* Devoxx Fr 2015 */
+            id: 15,
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2015-04-08T08:00:00.000+02:00")),
+            to: new Date(Date.parse("2015-04-10T18:55:00.000+02:00")),
+            title: "Devoxx France 2015",
+            subtitle: "",
+            description: "",
+            timezone: "Europe/Paris",
+            location: "Palais des Congrès",
+            initialCrawlingUrls: [
+                "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/wednesday",
+                "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/thursday",
+                "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/friday"
+            ],
+            prefix: 'dvxfr'
+        }
+    },
     "mixit13": {
         crawlerType: mixit, authTokens: [ "1", "all" ],
         event: {
