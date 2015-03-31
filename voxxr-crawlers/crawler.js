@@ -84,10 +84,24 @@ var EVENTS = {
             id: 14,
             /* Hardcoding some event details here, since not provided by REST API */
             from: new Date(Date.parse("2014-04-29T09:00:00.000+02:00")),
-            to: new Date(Date.parse("2013-04-30T18:30:00.000+02:00")),
+            to: new Date(Date.parse("2014-04-30T18:30:00.000+02:00")),
             title: "Mix-IT 2014",
             subtitle: "",
             description: "Java, Agilité, Web, Innovations... Des idées pour tout de suite !",
+            location: "CPE Lyon"
+        }
+    },
+    "mixit15": {
+        crawlerType: mixit, authTokens: [ "1", "all" ],
+        event: {
+            /* Mix-IT 2015 */
+            id: 15,
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2015-04-16T09:00:00.000+02:00")),
+            to: new Date(Date.parse("2015-04-17T18:30:00.000+02:00")),
+            title: "Mix-IT 2015",
+            subtitle: "",
+            description: "Développement, Agilité, Innovations, DevOps, Lean Startup... Des idées pour tout de suite !",
             location: "CPE Lyon"
         }
     },
