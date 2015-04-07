@@ -12,6 +12,7 @@
         <include path="/p.html" />
         <include path="/robots.txt" />
         <include path="/favicon.ico" />
+        <include path="/manifest.appcache" />
     </static-files>
     <threadsafe>true</threadsafe>
 </appengine-web-app>
