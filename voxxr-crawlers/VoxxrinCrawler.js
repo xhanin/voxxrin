@@ -176,6 +176,9 @@ module.exports = function(opts){
                     });
 
                     var prezId = (event.id + "-" + s.id).toLowerCase().replace(/_/gi, "-");
+                    if(event.idTransformer){
+                        prezId = event.idTransformer(prezId, event.id, s);
+                    }
                     var voxxrinPres = {
                         'id': prezId,
                         'title': s.title,

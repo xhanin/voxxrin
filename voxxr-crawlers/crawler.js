@@ -58,9 +58,20 @@ var EVENTS = {
             initialCrawlingUrls: [
                 "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/wednesday",
                 "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/thursday",
-                "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/friday"
+                "http://cfp.devoxx.fr/api/conferences/devoxxFR2015/schedules/friday",
+                "https://gist.githubusercontent.com/fcamblor/0e8a9729de364c1818f5/raw/15c38775d2f60e23d3cadd8651826148f9e0f5cb/devoxxfr2015-special.json"
             ],
-            prefix: 'dvxfr'
+            prefix: 'dvxfr',
+            idTransformer: function(calculatedPrezId, eventId, initialSchedule) {
+                // For special additionnal shedules having same id on different times, we should provide additionnal
+                // part in the id (we use utc hours in order to make it deterministic)
+                if(initialSchedule.id === 'SFJ-5646') {
+                    var fromTime = new Date(Date.parse(initialSchedule.fromTime));
+                    return calculatedPrezId + '-' + fromTime.getUTCHours();
+                } else {
+                    return calculatedPrezId;
+                }
+            }
         }
     },
     "mixit13": {
