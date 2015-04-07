@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Time: Tue Apr 07 2015 10:18:22 GMT+0000 (UTC)
+# Time: Tue Apr 08 2015 00:22:22 GMT+0000 (UTC)
 
 CACHE:
 http://app.voxxr.in/m.html
@@ -41,8 +41,6 @@ http://app.voxxr.in/assets/img/interrogation.png
 http://app.voxxr.in/assets/css/images/ajax-loader.gif
 http://app.voxxr.in/assets/img/ajax-loader.gif
 http://app.voxxr.in/assets/css/images/icons-18-white.png
-http://app.voxxr.in/r/my
-http://app.voxxr.in/r/events
 
 FALLBACK:
 / /m.html
