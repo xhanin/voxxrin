@@ -1,3 +1,9 @@
+Disclaimer
+----------
+
+This repository is not maintained anymore, maintenance has moved to https://github.com/fcamblor/voxxrin
+
+
 Voxxr.in
 ========
 
