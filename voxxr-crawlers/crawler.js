@@ -22,7 +22,7 @@ process.on('uncaughtException', function (exception) {
 
 var EVENTS = {
     "devoxxfr14": {
-        crawlerType: devoxxfr, authTokens: [ "6", "all" ],
+        crawlerType: devoxxfr, authTokens: [ "dvxfr", "all" ],
         event: {
             /* Devoxx Fr 2014 */
             id: 14,
@@ -43,7 +43,7 @@ var EVENTS = {
         }
     },
     "devoxxfr15": {
-        crawlerType: devoxxfr, authTokens: [ "6", "all" ],
+        crawlerType: devoxxfr, authTokens: [ "dvxfr", "all" ],
         event: {
             /* Devoxx Fr 2015 */
             id: 15,
@@ -75,7 +75,7 @@ var EVENTS = {
         }
     },
     "mixit13": {
-        crawlerType: mixit, authTokens: [ "1", "all" ],
+        crawlerType: mixit, authTokens: [ "mixit", "all" ],
         event: {
             /* Mix-IT 2013 */
             id: 13,
@@ -89,7 +89,7 @@ var EVENTS = {
         }
     },
     "mixit14": {
-        crawlerType: mixit, authTokens: [ "1", "all" ],
+        crawlerType: mixit, authTokens: [ "mixit", "all" ],
         event: {
             /* Mix-IT 2014 */
             id: 14,
@@ -103,7 +103,7 @@ var EVENTS = {
         }
     },
     "mixit15": {
-        crawlerType: mixit, authTokens: [ "1", "all" ],
+        crawlerType: mixit, authTokens: [ "mixit", "all" ],
         event: {
             /* Mix-IT 2015 */
             id: 15,
@@ -117,7 +117,7 @@ var EVENTS = {
         }
     },
     "lkbf13": {
-        crawlerType: lanyrd, authTokens: [ "5", "all" ],
+        crawlerType: lanyrd, authTokens: [ "leanKB", "all" ],
         event: {
             /* Lean Kanban France 2013 */
             id: 13,
@@ -130,7 +130,7 @@ var EVENTS = {
         }
     },
     "jsc13": {
-        crawlerType: jugsummercamp, authTokens: [ "4", "all" ],
+        crawlerType: jugsummercamp, authTokens: [ "jgscmp", "all" ],
         event: {
             /* Jugsummercamp 2013 */
             id: 13,
@@ -141,7 +141,7 @@ var EVENTS = {
         }
     },
     "jsc14": {
-        crawlerType: jugsummercamp, authTokens: [ "4", "all" ],
+        crawlerType: jugsummercamp, authTokens: [ "jgscmp", "all" ],
         event: {
             /* Jugsummercamp 2014 */
             id: 14,
@@ -152,7 +152,7 @@ var EVENTS = {
         }
     },
     "bzh15": {
-        crawlerType: breizhcamp, authTokens: [ "2", "all" ],
+        crawlerType: breizhcamp, authTokens: [ "bzh", "all" ],
         event: {
             /* Breizhcamp 2015 */
             id: 15,
@@ -171,7 +171,7 @@ var EVENTS = {
         }
     },
     "bzh14": {
-        crawlerType: breizhcamp, authTokens: [ "2", "all" ],
+        crawlerType: breizhcamp, authTokens: [ "bzh", "all" ],
         event: {
             /* Breizhcamp 2014 */
             id: 14,
@@ -185,7 +185,7 @@ var EVENTS = {
         }
     },
     "bdxio14": {
-        crawlerType: devoxxfr, authTokens: [ "7", "all" ],
+        crawlerType: devoxxfr, authTokens: [ "bdxio", "all" ],
         event: {
             /* BDXIO 2014 */
             id: '14',
@@ -243,7 +243,7 @@ var EVENTS = {
         */
     },
     "lkfr14": {
-        crawlerType: lanyrd, authTokens: [ "5", "all" ],
+        crawlerType: lanyrd, authTokens: [ "leanKB", "all" ],
         event: {
             /* Lean Kanban France 2014 */
             id: 14,
@@ -261,7 +261,7 @@ var EVENTS = {
         }
     },
     "ces14": {
-        crawlerType: codeursenseine, authTokens: [ "8", "all" ],
+        crawlerType: codeursenseine, authTokens: [ "ces", "all" ],
         event: {
             /* Codeurs en Seine 2014 */
             id: 762,
