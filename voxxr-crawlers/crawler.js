@@ -151,6 +151,20 @@ var EVENTS = {
             initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/5"]
         }
     },
+    "bzh15": {
+        crawlerType: breizhcamp, authTokens: [ "2", "all" ],
+        event: {
+            /* Breizhcamp 2015 */
+            id: 15,
+            /* Hardcoding some event details here, since not provided by REST API */
+            title: "Breizhcamp 2015",
+            description: "Un mix de technologies, un max de connaissances",
+            initialCrawlingUrls: [
+                "http://www.breizhcamp.org/json/schedule.json",
+                "http://www.breizhcamp.org/json/talks.json"
+            ]
+        }
+    },
     "bzh14": {
         crawlerType: breizhcamp, authTokens: [ "2", "all" ],
         event: {
