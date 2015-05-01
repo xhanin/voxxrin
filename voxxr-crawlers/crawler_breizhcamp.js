@@ -30,22 +30,13 @@ module.exports = new VoxxrinCrawler({
                     _(track.proposals).each(function (proposal) {
                         var detailedTalk = detailedTalksById[proposal.id];
 
-                        // First weird thing : some talks (like keynote, or some other talks) has id=0
-                        // which seems weird to me
-                        // I decided to affect a negative incremented id on these special talks in order to make
-                        // them appear in the schedule !
-                        var talkId = proposal.id === 0 ? badIdIncrement-- : proposal.id;
-
-                        // Second weird thing : on the first day, we have several talks with same id but different
-                        // time slots. This makes VoxxrinCrawler crazy, so I decided to create unique ids by appending
-                        // "1" to these ids until I find a unique id.
-                        if(_.contains(talkIds, talkId)) {
-                            talkId = Number("1"+talkId);
-                            while(_.contains(talkIds, -talkId)) {
-                                talkId = Number("1"+talkId);
-                            }
-                            talkId = -talkId;
+                        var talkId = proposal.id;
+                        var index = 2;
+                        while(_.contains(talkIds, talkId)) {
+                            talkId = proposal.id+index;
+                            index++;
                         }
+                        
                         talkIds.push(talkId);
                         var talk = {
                             id: talkId,
@@ -60,13 +51,11 @@ module.exports = new VoxxrinCrawler({
                         if(detailedTalk) {
                             talk = _.extend(talk, {
                                 speakers: _(detailedTalk.speakers).map(function (speaker) {
+                                	var splittedHref = speaker.href.split("/");
                                     return {
-                                        id: speaker.id,
+                                        id: splittedHref[splittedHref.length - 1],
                                         name: speaker.fullname,
-                                        // Replacing https urls with https since load() cannot handle https urls
-                                        // and most of times, it doesn't make any problem
-                                        imageUrl: speaker.avatar?speaker.avatar.replace("https://", "http://"):null,
-                                        "__links": speaker.liens
+                                        __href: speaker.href
                                     };
                                 }),
                                 __summary: md(detailedTalk.description),
@@ -90,13 +79,14 @@ module.exports = new VoxxrinCrawler({
     fetchSpeakerInfosFrom: function(deferred, sp) {
         this.loadQueries++;
 
-        load("http://breizhcamp.call-for-papers.io/speakers/"+sp.id).then(function(speaker) {
+        load(sp.__href).then(function(speaker) {
             var voxxrinSpeaker = _.extend({}, sp, {
-                'bio': md(speaker.description),
+                'bio': md(speaker.bio),
+                'imageUrl':speaker.avatarURL,
                 __twitter: speaker.twitter,
                 __firstName: speaker.firstName,
                 __lastName: speaker.lastName,
-                __email: speaker.email
+                __company: speaker.company
             });
 
             deferred.resolve(voxxrinSpeaker);
