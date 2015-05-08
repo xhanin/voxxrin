@@ -26,8 +26,7 @@ module.exports = new VoxxrinCrawler({
             var badIdIncrement = -1;
             _(schedule.programme.jours).each(function (day) {
                 var dayDateStr = day.date;
-                _(day.tracks).each(function (track) {
-                    _(track.proposals).each(function (proposal) {
+                    _(day.proposals).each(function (proposal) {
                         var detailedTalk = detailedTalksById[proposal.id];
 
                         var talkId = proposal.id;
@@ -63,7 +62,6 @@ module.exports = new VoxxrinCrawler({
                             });
                         }
                         talks.push(talk);
-                    });
                 });
             });
         }catch(e){
