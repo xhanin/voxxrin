@@ -7,6 +7,7 @@ var VoxxrinCrawler = require('./VoxxrinCrawler.js'),
 
 module.exports = new VoxxrinCrawler({
     name: 'DevoxxFr',
+    titlePropName: 'nameFR',
     getPrefix: function(self){
         return self.currentContext.event.prefix;
     },
@@ -47,7 +48,7 @@ module.exports = new VoxxrinCrawler({
                 if (s.break) {
                     // We should use slotId because "dej" slots have the same id on different days
                     id = s.slotId;
-                    title = s.break.nameFR;
+                    title = s.break[self.currentContext.event.titlePropName];
                     type = "Break";
                     kind = "Break";
                     speakers = [];
