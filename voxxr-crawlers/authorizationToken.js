@@ -3,6 +3,7 @@ module.exports = {
     gae: 'fakeToken',
     crawlersFamilies : {
         dvxfr: 'devoxxFrToken',
+        dvxpl: 'devoxxPlToken',
         bzh: 'bzhToken',
         jgscmp: 'jugSummercampToken',
         leanKB: 'leanKanbanToken',

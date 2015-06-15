@@ -74,6 +74,29 @@ var EVENTS = {
             }
         }
     },
+    "devoxxpl15": {
+        crawlerType: devoxxfr, authTokens: [ "dvxpl", "all" ],
+        event: {
+            /* Devoxx Poland 2015 */
+            id: 15,
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2015-06-22T08:00:00.000+02:00")),
+            to: new Date(Date.parse("2015-06-25T18:55:00.000+02:00")),
+            title: "Devoxx Poland 2015",
+            titlePropName: 'nameEN',
+            subtitle: "",
+            description: "",
+            timezone: "Europe/Warsaw",
+            location: "ICE Congress Centre",
+            initialCrawlingUrls: [
+                "http://cfp.devoxx.pl/api/conferences/DevoxxPL2015/schedules/monday",
+                "http://cfp.devoxx.pl/api/conferences/DevoxxPL2015/schedules/tuesday",
+                "http://cfp.devoxx.pl/api/conferences/DevoxxPL2015/schedules/wednesday",
+                "http://cfp.devoxx.pl/api/conferences/DevoxxPL2015/schedules/thursday"
+            ],
+            prefix: 'dvxpl'
+        }
+    },
     "mixit13": {
         crawlerType: mixit, authTokens: [ "mixit", "all" ],
         event: {
