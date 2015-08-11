@@ -11,7 +11,7 @@ var http = require("http"),
     ;
 
 var PROD_BASE_URL = 'http://app.voxxr.in';
-var DEV_BASE_URL = 'http://localhost:8080';
+var DEV_BASE_URL = 'http://localhost:8081';
 
 
 process.on('uncaughtException', function (exception) {

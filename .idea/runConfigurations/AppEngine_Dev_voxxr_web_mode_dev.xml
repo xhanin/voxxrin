@@ -1,12 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AppEngine Dev voxxr-web mode=dev" type="GoogleAppEngineDevServer" factoryName="Local" APPLICATION_SERVER_NAME="AppEngine Dev" ALTERNATIVE_JRE_ENABLED="false" ALTERNATIVE_JRE_PATH="">
-    <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/?mode=dev" />
+    <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8081/?mode=dev" />
     <option name="COMMON_VM_ARGUMENTS" value="-Djetty.host=0.0.0.0 -Dmode=dev" />
     <option name="UPDATE_ON_FRAME_DEACTIVATION" value="true" />
     <option name="UPDATE_CLASSES_ON_FRAME_DEACTIVATION" value="true" />
     <server-settings>
       <option name="artifact" value="fcr-voxxr-web:war exploded" />
+      <option name="port" value="8081" />
       <option name="serverParameters" value="--address=0.0.0.0" />
+      <port>8081</port>
       <artifact>fcr-voxxr-web:war exploded</artifact>
       <server-parameters>--address=0.0.0.0</server-parameters>
     </server-settings>
