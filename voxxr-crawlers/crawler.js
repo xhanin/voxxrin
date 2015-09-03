@@ -218,6 +218,25 @@ var EVENTS = {
             ]
         }
     },
+    "bdxio15": {
+        crawlerType: devoxxfr, authTokens: [ "bdxio", "all" ],
+        event: {
+            /* BDXIO 2015 */
+            id: '15',
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2015-10-16T08:00:00.000+02:00")),
+            to: new Date(Date.parse("2015-10-16T18:20:00.000+02:00")),
+            title: "BDXIO 2015",
+            subtitle: "",
+            description: "",
+            timezone: "Europe/Paris",
+            location: "ENSEIRB",
+            initialCrawlingUrls: [
+                "http://cfp.bdx.io/api/conferences/BdxIO2015/schedules/friday"
+            ],
+            prefix: 'bdxio'
+        }
+    },
     "bdxio14": {
         crawlerType: devoxxfr, authTokens: [ "bdxio", "all" ],
         event: {
