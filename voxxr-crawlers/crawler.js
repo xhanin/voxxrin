@@ -227,6 +227,7 @@ var EVENTS = {
             from: new Date(Date.parse("2015-10-16T08:00:00.000+02:00")),
             to: new Date(Date.parse("2015-10-16T18:20:00.000+02:00")),
             title: "BDXIO 2015",
+            titlePropName: 'nameFR',
             subtitle: "",
             description: "",
             timezone: "Europe/Paris",
