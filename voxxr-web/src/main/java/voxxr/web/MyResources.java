@@ -52,7 +52,7 @@ public class MyResources implements RestRouter.RequestHandler {
                 }
             }
 
-            mergeTwitterInfos(my);
+            mergeTwitterInfos(my, gson);
 
             Rests.sendAsJsonObject(my, req, resp);
         } else if ("POST".equalsIgnoreCase(req.getMethod())) {
@@ -74,20 +74,23 @@ public class MyResources implements RestRouter.RequestHandler {
         }
     }
 
-    private void mergeTwitterInfos(Entity my) {
+    public static void mergeTwitterInfos(Entity my, Gson gson) {
         Map myMap = gson.fromJson(((Text) my.getProperty("json")).getValue(), Map.class);
-        if(myMap.containsKey("twitterid")) {
-            Double twitterId = (Double)myMap.get("twitterid");
-
-            for(Map jsonMatchingTwitterId : findMyJsonsMatchingTwitterId(twitterId.longValue())){
-                mergeJsons(myMap, jsonMatchingTwitterId);
-            }
-        }
-
+        mergeTwitterInfos(myMap, gson);
         my.setProperty("json", new Text(gson.toJson(myMap)));
     }
 
-    private void mergeJsons(Map myJson, Map otherJson) {
+    public static void mergeTwitterInfos(Map myMap, Gson gson) {
+        if(myMap.containsKey("twitterid")) {
+            Double twitterId = (Double)myMap.get("twitterid");
+
+            for(Map jsonMatchingTwitterId : findMyJsonsMatchingTwitterId(twitterId.longValue(), gson)){
+                mergeJsons(myMap, jsonMatchingTwitterId);
+            }
+        }
+    }
+
+    private static void mergeJsons(Map myJson, Map otherJson) {
         Map<String, Map> myEvents = extractMapProp(myJson, "events");
         Map<String, Map> otherEvents = extractMapProp(otherJson, "events");
         
@@ -125,7 +128,7 @@ public class MyResources implements RestRouter.RequestHandler {
         return (T)map.get(propName);
     }
 
-    private List<Map> findMyJsonsMatchingTwitterId(Long twitterId) {
+    private static List<Map> findMyJsonsMatchingTwitterId(Long twitterId, final Gson gson) {
         List<Entity> mys = CallbackTwitter.findMysByTwitterId(twitterId);
 
         return Lists.transform(mys, new Function<Entity, Map>() {
