@@ -195,6 +195,11 @@ public class Rests {
         }
     }
 
+    public static Iterable<Entity> fetchAll(String kind) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        return datastore.prepare(new Query(kind)).asIterable(FetchOptions.Builder.withChunkSize(1000));
+    }
+
     public static Entity getOrCreateEntityForUpdate(String kind, String id) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity entity = null;
