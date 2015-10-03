@@ -77,6 +77,8 @@ public class RestRouter extends HttpServlet {
                 new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new TwitterUserInfos(true), Pattern.compile("/r/twitter/userInfos"),
                 new ImmutableMap.Builder<Integer, String>().build()),
+        new Route(new ExportFavsResource(), Pattern.compile("/r/favs/export"),
+                new ImmutableMap.Builder<Integer, String>().build()),
         new Route(new CallbackTwitter(), Pattern.compile("/r/twitter/authentified/(.+)"),
                 new ImmutableMap.Builder<Integer, String>().put(1, "requestTokenKeyString").build())
     );
