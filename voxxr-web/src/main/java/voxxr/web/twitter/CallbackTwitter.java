@@ -138,6 +138,10 @@ public class CallbackTwitter implements RestRouter.RequestHandler {
             }
         });
 
+        if(deviceIdKeys.isEmpty()) {
+            return new ArrayList<Entity>();
+        }
+
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         Query q = new Query("My")
                 .setFilter(new Query.FilterPredicate(Entity.KEY_RESERVED_PROPERTY,
