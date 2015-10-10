@@ -347,7 +347,7 @@ var EVENTS = {
             ],
             prefix: 'ces'
         }
-    },
+    }
 };
 
 var port = process.env.PORT || 3000;
