@@ -190,7 +190,7 @@ var EVENTS = {
         event: {
             /* Breizhcamp 2015 */
             id: 15,
-            /* Hardcoding some event details here, since not provided by REST API */            
+            /* Hardcoding some event details here, since not provided by REST API */
             from: new Date(Date.parse("2015-06-10T13:00:00.000+02:00")),
             to: new Date(Date.parse("2015-06-12T18:25:00.000+02:00")),
             title: "Breizhcamp 2015",
@@ -326,6 +326,26 @@ var EVENTS = {
                 "http://www.codeursenseine.com/2014/programme.json",
                 "http://www.codeursenseine.com/2014/speakers.json"
             ]
+        }
+    },
+    "ces15": {
+        crawlerType: devoxxfr, authTokens: [ "ces", "all" ],
+        event: {
+            /* CES 2015 */
+            id: 763,
+            /* Hardcoding some event details here, since not provided by REST API */
+            from: new Date(Date.parse("2015-11-26T09:00:00.000+02:00")),
+            to: new Date(Date.parse("2015-11-26T18:00:00.000+02:00")),
+            title: "Codeurs En Seine 2015",
+            titlePropName: 'nameFR',
+            subtitle: "",
+            description: "",
+            timezone: "Europe/Paris",
+            location: "Université de Rouen, Saint-Étienne-du-Rouvray",
+            initialCrawlingUrls: [
+                "http://cfp.codeursenseine.com/api/conferences/CodeursEnSeine2015/schedules/thursday/"
+            ],
+            prefix: 'ces'
         }
     }
 };
