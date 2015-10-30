@@ -323,6 +323,7 @@ var EVENTS = {
             title: 'Lean Kanban France 2015',
             domainUrl: 'http://lanyrd.com',
             baseUrl: 'http://lanyrd.com/2015/lkfr15/',
+            schedulePagesCount: 2,
             roomNameTransformer: function(roomName) {
                 // Transforming room name like "In\n\t\t\t\tSalle Emile Laffon (250),\n\t\t\t\tMaison des Associations de Solidarité"
                 // to something like "Salle Emile Laffon"
