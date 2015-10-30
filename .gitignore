@@ -1,7 +1,10 @@
 *~
 out
 .idea/workspace.xml
+.idea/
+!.idea/runConfigurations/*
 .DS_Store
+logs/
 voxxr-crx/assets/
 voxxr-crx/m.html
 voxxr-crx/voxxr-crx.zip
@@ -16,3 +19,7 @@ voxxr-room/current-seed-ip
 voxxr-room/voxxr.log
 voxxr_rsa
 voxxr_rsa.pub
+voxxr-droid/node_modules/
+voxxr-crawlers/node_modules/
+voxxr-web/web/WEB-INF/classes/
+
