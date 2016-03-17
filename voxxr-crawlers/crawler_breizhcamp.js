@@ -10,59 +10,52 @@ module.exports = new VoxxrinCrawler({
     name: 'BreizhCamp',
     prefix: 'bzh',
     logInitialCrawlingResults: function(){
-        var schedule = arguments[0];
-        var talks = arguments[1];
-        console.log("loaded event Breizhcamp, " + talks.length + " presentations");
+        var schedules = arguments[0];
+        console.log("loaded event Breizhcamp, " + schedules.length + " presentations");
     },
-    extractScheduleFromInitialCrawling: function(deferred, schedule, detailedTalks) {
-        var detailedTalksById = {};
-        _(detailedTalks).each(function(detailedTalk) {
-            detailedTalksById[detailedTalk.id] = detailedTalk;
-        });
+    extractScheduleFromInitialCrawling: function(deferred, schedules) {
 
         var talks = [];
         var talkIds = [];
-        try {
-            var badIdIncrement = -1;
-            _(schedule.programme.jours).each(function (day) {
-                var dayDateStr = day.date;
-                    _(day.proposals).each(function (proposal) {
-                        var detailedTalk = detailedTalksById[proposal.id];
+        var rooms = {
+            'Track1': 'Amphi 1',
+            'Track2': 'Amphi 2',
+            'Track3': 'Amphi 3',
+            'Track4': 'Amphi 4',
+            'Track5 (labs)': 'Esp. Lab.',
+            'Track6': 'Hall'
 
-                        var talkId = proposal.id;
-                        var index = 2;
-                        while(_.contains(talkIds, talkId)) {
-                            talkId = proposal.id+index;
-                            index++;
-                        }
-                        
-                        talkIds.push(talkId);
-                        var talk = {
-                            id: talkId,
-                            title: proposal.title,
-                            type: proposal.format,
-                            kind: "Talk",
-                            fromTime: moment.tz(dayDateStr + " " + proposal.start, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate(),
-                            toTime: moment.tz(dayDateStr + " " + proposal.end, "DD/MM/YYYY HH:mm", "Europe/Paris").toDate(),
-                            roomName: proposal.room
+        }
+        try {
+            _(schedules).each(function (schedule) {
+
+                var talkId = schedule.id;
+                var index = 2;
+                while(_.contains(talkIds, talkId)) {
+                    talkId = schedule.id+index;
+                    index++;
+                }
+
+                talkIds.push(talkId);
+                var talk = {
+                    id: talkId,
+                    title: schedule.name,
+                    type: schedule.format,
+                    kind: "Talk",
+                    fromTime: moment.tz(schedule.event_start, "YYYY-MM-DD'T'HH:mm:ss", "Europe/Paris").toDate(),
+                    toTime: moment.tz(schedule.event_end, "YYYY-MM-DD'T'HH:mm:ss", "Europe/Paris").toDate(),
+                    roomName: rooms[schedule.venue],
+                    __summary: md(schedule.description),
+                    __track: schedule.venue,
+                    speakers: _(schedule.speakers.split(", ")).map(function (speaker) {
+                        return {
+                            id: speaker,
+                            name: speaker
                         };
-                        // Some talks might not have been detailed (like keynote)
-                        if(detailedTalk) {
-                            talk = _.extend(talk, {
-                                speakers: _(detailedTalk.speakers).map(function (speaker) {
-                                	var splittedHref = speaker.href.split("/");
-                                    return {
-                                        id: splittedHref[splittedHref.length - 1],
-                                        name: speaker.fullname,
-                                        __href: speaker.href
-                                    };
-                                }),
-                                __summary: md(detailedTalk.description),
-                                __track: detailedTalk.track
-                            });
-                        }
-                        talks.push(talk);
-                });
+                    }),
+                };
+                talks.push(talk);
+
             });
         }catch(e){
             console.error(e);
@@ -75,24 +68,15 @@ module.exports = new VoxxrinCrawler({
         return {};
     },
     fetchSpeakerInfosFrom: function(deferred, sp) {
-        this.loadQueries++;
+        deferred.resolve(_.extend({}, sp, {
+            'bio': '',
+            'imageUrl':'',
+            __twitter: '',
+            __firstName: '',
+            __lastName: '',
+            __company: ''
+        }));
 
-        load(sp.__href).then(function(speaker) {
-            var voxxrinSpeaker = _.extend({}, sp, {
-                'bio': md(speaker.bio),
-                'imageUrl':speaker.avatarURL,
-                __twitter: speaker.twitter,
-                __firstName: speaker.firstName,
-                __lastName: speaker.lastName,
-                __company: speaker.company
-            });
-
-            deferred.resolve(voxxrinSpeaker);
-        }).fail(function() {
-            // In case of failure (some 404 happen on some speakers) we're only missing the bio
-            // This is reasonable to consider initial speaker info is sufficient
-            deferred.resolve(sp);
-        });
     },
     decorateVoxxrinPresentation: function(voxxrinPres, daySchedule) {
         return false;
