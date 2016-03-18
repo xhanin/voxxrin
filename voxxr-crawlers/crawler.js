@@ -199,7 +199,8 @@ var EVENTS = {
             timezone: "Europe/Paris",
             location: "Bâtiment 2A, Campus de Beaulieu - Rennes",
             initialCrawlingUrls: [
-                "http://www.breizhcamp.org/json/2016/schedule.json"
+                "http://www.breizhcamp.org/json/2016/schedule.json",
+                "http://www.breizhcamp.org/json/2016/speakers.json"
             ]
         }
     },

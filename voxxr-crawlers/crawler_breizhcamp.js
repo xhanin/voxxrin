@@ -13,10 +13,11 @@ module.exports = new VoxxrinCrawler({
         var schedules = arguments[0];
         console.log("loaded event Breizhcamp, " + schedules.length + " presentations");
     },
-    extractScheduleFromInitialCrawling: function(deferred, schedules) {
+    extractScheduleFromInitialCrawling: function(deferred, schedules, speakers) {
 
         var talks = [];
         var talkIds = [];
+        var speakersByName = {};
         var rooms = {
             'Track1': 'Amphi 1',
             'Track2': 'Amphi 2',
@@ -27,6 +28,21 @@ module.exports = new VoxxrinCrawler({
 
         }
         try {
+
+            _(speakers).each(function(speaker) {
+                var sp = {
+                    id: speaker.id,
+                    name: speaker.firstname + ' ' + speaker.lastname,
+                    bio: speaker.bio,
+                    imageUrl: speaker.imageProfilURL,
+                    __twitter: speaker.twitter,
+                    __firstName: speaker.firstname,
+                    __lastName: speaker.lastname,
+                    __company: speaker.company
+                }
+                speakersByName[sp.name] = sp;
+            });
+
             _(schedules).each(function (schedule) {
 
                 var talkId = schedule.id;
@@ -47,11 +63,8 @@ module.exports = new VoxxrinCrawler({
                     roomName: rooms[schedule.venue],
                     __summary: md(schedule.description),
                     __track: schedule.venue,
-                    speakers: _(schedule.speakers.split(", ")).map(function (speaker) {
-                        return {
-                            id: speaker,
-                            name: speaker
-                        };
+                    speakers: _(schedule.speakers.split(", ")).map(function (speakerName) {
+                        return speakersByName[speakerName]
                     }),
                 };
                 talks.push(talk);
@@ -69,12 +82,12 @@ module.exports = new VoxxrinCrawler({
     },
     fetchSpeakerInfosFrom: function(deferred, sp) {
         deferred.resolve(_.extend({}, sp, {
-            'bio': '',
-            'imageUrl':'',
-            __twitter: '',
-            __firstName: '',
-            __lastName: '',
-            __company: ''
+            'bio': sp.bio,
+            'imageUrl': sp.imageUrl,
+            __twitter: sp.__twitter,
+            __firstName: sp.__firstName,
+            __lastName: sp.__lastName,
+            __company: sp.__company
         }));
 
     },
