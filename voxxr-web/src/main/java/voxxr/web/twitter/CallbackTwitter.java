@@ -1,9 +1,9 @@
 package voxxr.web.twitter;
 
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.repackaged.com.google.common.base.Function;
-import com.google.appengine.repackaged.com.google.common.base.Optional;
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
