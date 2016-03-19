@@ -19,10 +19,10 @@ module.exports = new VoxxrinCrawler({
         var talkIds = [];
         var speakersByName = {};
         var rooms = {
-            'Track1': 'Amphi 1',
-            'Track2': 'Amphi 2',
-            'Track3': 'Amphi 3',
-            'Track4': 'Amphi 4',
+            'Track1': 'Amphi A',
+            'Track2': 'Amphi B',
+            'Track3': 'Amphi C',
+            'Track4': 'Amphi D',
             'Track5 (labs)': 'Esp. Lab.',
             'Track6': 'Hall'
 
