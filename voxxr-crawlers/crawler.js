@@ -185,36 +185,22 @@ var EVENTS = {
             initialCrawlingUrls: ["http://www.jugsummercamp.com/api/edition/6"]
         }
     },
-    "bzh15": {
+    "bzh16": {
         crawlerType: breizhcamp, authTokens: [ "bzh", "all" ],
         event: {
-            /* Breizhcamp 2015 */
-            id: 15,
-            /* Hardcoding some event details here, since not provided by REST API */
-            from: new Date(Date.parse("2015-06-10T13:00:00.000+02:00")),
-            to: new Date(Date.parse("2015-06-12T18:25:00.000+02:00")),
-            title: "Breizhcamp 2015",
+            /* Breizhcamp 2016 */
+            id: 16,
+            /* Hardcoding some event details here, since not provided by REST API */            
+            from: new Date(Date.parse("2016-03-23T13:00:00.000+02:00")),
+            to: new Date(Date.parse("2016-03-25T18:25:00.000+02:00")),
+            title: "Breizhcamp 2016",
             subtitle: "",
-            description: "Un mix de technologies, un max de connaissances",
+            description: "La conférence à l'Ouest",
             timezone: "Europe/Paris",
-            location: "ISTIC Campus de Beaulieu - Rennes",
+            location: "Bâtiment 2A, Campus de Beaulieu - Rennes",
             initialCrawlingUrls: [
-                "http://www.breizhcamp.org/json/schedule.json",
-                "http://www.breizhcamp.org/json/talks.json"
-            ]
-        }
-    },
-    "bzh14": {
-        crawlerType: breizhcamp, authTokens: [ "bzh", "all" ],
-        event: {
-            /* Breizhcamp 2014 */
-            id: 14,
-            /* Hardcoding some event details here, since not provided by REST API */
-            title: "Breizhcamp 2014",
-            description: "Un mix de technologies, un max de connaissances",
-            initialCrawlingUrls: [
-                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/_includes/json/schedule.json",
-                "https://raw.githubusercontent.com/BreizhJUG/breizhcamp-www/gh-pages/_includes/json/talks.json"
+                "http://www.breizhcamp.org/json/2016/schedule.json",
+                "http://www.breizhcamp.org/json/2016/speakers.json"
             ]
         }
     },
